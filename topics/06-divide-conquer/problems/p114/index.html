@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
 
   <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
   <link rel="stylesheet" href="../../../../assets/css/base.css" />
@@ -116,127 +116,64 @@
           <span class="chip chip--steel">O(N²)</span>
         </div>
 
-        <div class="tex-doc">
+        <h2 class="section__title">題意拆解</h2>
 
-          <div class="tex-doc__masthead">W06 · Divide and Conquer / 個人學習筆記</div>
+        <p>
+          王老先生有一塊 <code>N × N</code> 的正方形土地，其中 <code>N = 2ᴷ</code>（K 為正整數）。
+          土地被切成 <code>N × N</code> 個邊長為 1 的小方格，
+          位置以 <code>(i, j)</code> 表示：<code>i</code> 為由上到下第 <code>i</code> 列、<code>j</code> 為由左至右第 <code>j</code> 行（皆從 1 開始）。
+        </p>
 
-          <h1 class="tex-doc__title">Problem A:&nbsp;王老先生</h1>
+        <p>
+          王老先生先挑一格 <code>(X, Y)</code> 作為自己的養老用地，
+          剩下 <code>N² − 1</code> 格要平分給 <code>(N² − 1) / 3</code> 個子孫。
+          <strong>每個子孫剛好分到 3 格相連，且必須排成 L 型（不能是 1 × 3 直線）。</strong>
+          任兩個子孫不得有重疊。
+        </p>
 
-          <p>
-            王老先生有一塊很大的正方形土地，邊長為 <i>N</i>，且 <i>N</i> 必為 2 的正整數次方
-            （即存在正整數 <i>K</i> 使 <i>N</i> = 2<sup><i>K</i></sup>）。
-          </p>
+        <h3>輸入 / 輸出</h3>
+        <p>本題採 <strong>互動式評測</strong>。請實作以下函式（<code>lib0114.h</code> 已宣告）：</p>
 
-          <p>
-            王老先生把整塊地切成 <i>N</i>×<i>N</i> 個邊長為 1 的方格，
-            位置以 (<i>i</i>, <i>j</i>) 表示，意思是由上至下第 <i>i</i> 列、由左至右第 <i>j</i> 行，
-            編號從 1 開始。他先選一格 (<i>X</i>, <i>Y</i>) 作為自己的養老用地，
-            剩下 <i>N</i>×<i>N</i>−1 格要平分給
-            <span class="frac"><span class="frac__num"><i>N</i>×<i>N</i>−1</span><span class="frac__den">3</span></span>
-            個子孫。每個子孫剛好分到相連的 3 格，<em>必須排成 L 型</em>（不可為 1×3 直線）。
-          </p>
-
-          <p>
-            任兩個人不得分到同一格。請你設計分配方案，使得王老先生家中和平。
-          </p>
-
-          <h3>Input</h3>
-
-          <p>
-            本題採互動式評測。請實作以下函式（已於 <code>lib0114.h</code> 中宣告）：
-          </p>
-
-<pre>void solve(int N, int X, int Y);</pre>
-
-          <p class="no-indent">
-            其中 <i>N</i> 表示王老先生土地的邊長，(<i>X</i>, <i>Y</i>) 為他選的養老地座標。
-          </p>
-
-          <p class="no-indent">
-            對配分 30% 的測試資料，滿足 1 &lt; <i>N</i> ≤ 8。
-          </p>
-
-          <p class="no-indent">
-            對配分 100% 的測試資料，滿足 1 &lt; <i>N</i> ≤ 1024、1 ≤ <i>X</i>, <i>Y</i> ≤ <i>N</i>，
-            且存在正整數 <i>K</i> 使 <i>N</i> = 2<sup><i>K</i></sup>。
-          </p>
-
-          <h3>Output</h3>
-
-          <p>
-            請以 <code>Report(x1, y1, x2, y2, x3, y3)</code> 函式回傳答案。
-            每呼叫一次代表該子孫分到的三個格子為 (<i>x</i><sub>1</sub>, <i>y</i><sub>1</sub>)、
-            (<i>x</i><sub>2</sub>, <i>y</i><sub>2</sub>)、(<i>x</i><sub>3</sub>, <i>y</i><sub>3</sub>)。
-          </p>
-
-          <p>
-            三個格子之間的順序與多次 <code>Report</code> 之間的順序均不影響判定；
-            只要整體分配滿足規則即視為正確。若 <code>Report</code> 的輸入形狀錯誤、
-            土地重疊、或呼叫次數與題目要求不符，則判定為錯誤。
-          </p>
-
-          <h3>Sample</h3>
-
-          <p class="no-indent">評分程式呼叫：</p>
-
-<pre>solve(4, 3, 4);</pre>
-
-          <p class="no-indent">你的 <code>solve</code> 函式可依分治順序呼叫：</p>
-
-<pre>Report(2, 2,  2, 3,  3, 2);
-Report(1, 1,  1, 2,  2, 1);
-Report(1, 3,  1, 4,  2, 4);
-Report(3, 1,  4, 1,  4, 2);
-Report(3, 3,  4, 3,  4, 4);</pre>
-
-          <p>分配方案如圖所示：</p>
-
-          <div class="tex-doc__figure">
-            <svg viewBox="0 0 280 280" width="280" height="280" xmlns="http://www.w3.org/2000/svg">
-              <rect width="280" height="280" fill="#ffffff" />
-
-              <!-- Thin internal cell grid -->
-              <g stroke="#999" stroke-width="0.6" fill="none">
-                <line x1="0"   y1="70"  x2="280" y2="70"  />
-                <line x1="0"   y1="140" x2="280" y2="140" />
-                <line x1="0"   y1="210" x2="280" y2="210" />
-                <line x1="70"  y1="0"   x2="70"  y2="280" />
-                <line x1="140" y1="0"   x2="140" y2="280" />
-                <line x1="210" y1="0"   x2="210" y2="280" />
-              </g>
-
-              <!-- Special cell (3,4) —王老先生 -->
-              <rect x="210" y="140" width="70" height="70" fill="#5BC97E" />
-
-              <!-- L outlines (thick black) -->
-              <g fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="miter">
-                <!-- L1 center: (2,2)(2,3)(3,2) -->
-                <polygon points="70,70 210,70 210,140 140,140 140,210 70,210" />
-                <!-- L2 TL: (1,1)(1,2)(2,1) -->
-                <polygon points="0,0 140,0 140,70 70,70 70,140 0,140" />
-                <!-- L3 TR: (1,3)(1,4)(2,4) -->
-                <polygon points="140,0 280,0 280,140 210,140 210,70 140,70" />
-                <!-- L4 BL: (3,1)(4,1)(4,2) -->
-                <polygon points="0,140 70,140 70,210 140,210 140,280 0,280" />
-                <!-- L5 BR: (3,3)(4,3)(4,4) -->
-                <polygon points="140,140 210,140 210,210 280,210 280,280 140,280" />
-              </g>
-
-              <!-- Outer board border -->
-              <rect x="0" y="0" width="280" height="280" fill="none" stroke="#1a1a1a" stroke-width="3" />
-            </svg>
+        <div class="code-block">
+          <div class="code-block__head">
+            <span>lib0114.h</span>
+            <span class="code-block__lang">C++</span>
           </div>
-
-          <p class="tex-doc__pagenum">1</p>
-
+<pre><code class="language-cpp">void solve(int N, int X, int Y);   // 你要實作這個
+void Report(int x1, int y1,
+            int x2, int y2,
+            int x3, int y3);       // 由 judge 提供，回報一個 L</code></pre>
         </div>
 
-        <div class="tag-row" style="margin-top: var(--sp-6);">
-          <span class="chip chip--rust">Divide &amp; Conquer</span>
-          <span class="chip">Recursion</span>
-          <span class="chip">Construction</span>
-          <span class="chip chip--warning">Interactive</span>
-          <span class="chip chip--steel">O(N²)</span>
+        <p>
+          <code>solve()</code> 內部對每個 L 呼叫一次 <code>Report</code>，
+          參數為該 L 的三個格子座標。<strong>呼叫順序與三格的順序皆不影響判定</strong>，
+          只要分配滿足規則即視為正確。
+        </p>
+
+        <h3>限制</h3>
+        <ul class="constraint-list">
+          <li><span>30% 資料：1 &lt; N ≤ 8</span></li>
+          <li><span>100% 資料：1 &lt; N ≤ 1024，1 ≤ X, Y ≤ N</span></li>
+          <li><span>N 保證為 2 的正整數次方，存在正整數 K 使 N = 2ᴷ</span></li>
+        </ul>
+
+        <h3>範例</h3>
+        <p>judge 呼叫 <code>solve(4, 3, 4)</code>，你的程式可以依照分治 DFS 順序回報 5 次 <code>Report</code>：</p>
+
+        <div class="io-pair">
+          <div class="io-box">
+            <div class="io-box__head">// JUDGE</div>
+            <div class="io-box__body">solve(4, 3, 4);</div>
+          </div>
+          <div class="io-box">
+            <div class="io-box__head">// YOUR REPORTS</div>
+            <div class="io-box__body">Report(2,2, 2,3, 3,2);
+Report(1,1, 1,2, 2,1);
+Report(1,3, 1,4, 2,4);
+Report(3,1, 4,1, 4,2);
+Report(3,3, 4,3, 4,4);</div>
+          </div>
         </div>
 
         <blockquote>
