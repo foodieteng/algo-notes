@@ -57,7 +57,7 @@ PROBLEMS = {
         ('p18', 'Maximum Subarray Sum', 'main', 'demo'),
     ],
     '06': [
-        ('p114', '王老先生',       'main',     'todo'),
+        ('p114', '王老先生',       'main',     'done'),
         ('p115', '逆序數對',       'main',     'todo'),
         ('p501', '好的序列',       'main',     'todo'),
         ('p507', '最近點對',       'main',     'todo'),

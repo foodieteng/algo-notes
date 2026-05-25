@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P114 // 王老先生 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../../assets/css/problem.css" />
+</head>
+<body>
+
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
+
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>W06 / P114</span>
+      <span>王老先生 · L-TROMINO TILING</span>
+      <span>⚙ DIVIDE &amp; CONQUER · O(N²)</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>W06 / P114</span>
+      <span>王老先生 · L-TROMINO TILING</span>
+      <span>⚙ DIVIDE &amp; CONQUER · O(N²)</span>
+    </div>
+  </div>
+
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>PROBLEM 114</span>
+      <span>W06 · DIVIDE &amp; CONQUER</span>
+      <span>LOG_2026.05.25</span>
+    </div>
+    <h1 class="workshop-title">王老<br/>先生.</h1>
+    <p class="workshop-subtitle">
+      L-tromino 鋪滿缺一格的 2<span class="num">ᴷ</span>×2<span class="num">ᴷ</span> 方格 ／ 分治構造法 ／ <span class="num">O(N²)</span> Time
+    </p>
+  </header>
+
+  <div class="shell">
+
+    <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <div class="nav-label">// ON THIS PAGE</div>
+      <nav>
+        <ul>
+          <li><a href="#s-problem">01 · Problem</a></li>
+          <li><a href="#s-concept">02 · Concept</a></li>
+          <li><a href="#s-viz">03 · Visualization</a></li>
+          <li><a href="#s-code">04 · Clean Code</a></li>
+          <li><a href="#s-walkthrough">05 · Walkthrough</a></li>
+          <li><a href="#s-variants">06 · Variants</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// CURRICULUM</div>
+      <nav>
+        <ul>
+          <li><a href="../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
+          <li><a href="../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
+          <li><a href="../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
+          <li><a href="../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
+          <li><a href="../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
+          <li><a href="../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
+          <li><a href="../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
+          <li><a href="../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// PAGES</div>
+      <nav>
+        <ul>
+          <li><a href="../../../index.html">Home</a></li>
+          <li><a href="../../../about.html">About</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- ============================================================
+         MAIN — 6 sections
+         ============================================================ -->
+    <main class="content">
+
+      <div class="crumb">
+        <a href="../../../index.html">Home</a>
+        <span class="crumb__sep">/</span>
+        <a href="../index.html">W06 · Divide &amp; Conquer</a>
+        <span class="crumb__sep">/</span>
+        <span>P114</span>
+      </div>
+
+      <article>
+        <span class="stamp">▼ ENTRY</span>
+        <div class="article-meta">
+          <span>2026.05.25</span>
+          <span>DIVIDE &amp; CONQUER</span>
+          <span>O(N²) TIME · O(log N) STACK</span>
+        </div>
+
+        <div class="tag-row">
+          <span class="chip chip--rust">Divide &amp; Conquer</span>
+          <span class="chip">Recursion</span>
+          <span class="chip">Construction</span>
+          <span class="chip chip--warning">Interactive</span>
+          <span class="chip chip--steel">O(N²)</span>
+        </div>
+
+        <!-- ===== SECTION 01 — Problem ===== -->
+        <section class="section" id="s-problem">
+          <div class="section__marker">
+            <span class="section__marker-num">[ 01 ]</span>
+            <span>Problem</span>
+            <span class="section__marker-line"></span>
+          </div>
+          <h2 class="section__title">題意拆解</h2>
+
+          <p>
+            王老先生有一塊 <code>N × N</code> 的正方形土地，其中 <code>N = 2ᴷ</code>（K ≥ 1 的正整數）。
+            土地被切成 <code>N × N</code> 個邊長為 1 的小方格，
+            位置以 <code>(i, j)</code> 表示：<code>i</code> 為由上到下第 <code>i</code> 列、<code>j</code> 為由左至右第 <code>j</code> 行（皆從 1 開始）。
+          </p>
+
+          <p>
+            王老先生先挑一格 <code>(X, Y)</code> 作為自己的養老用地，
+            剩下 <code>N² − 1</code> 格要平分給 <code>(N² − 1) / 3</code> 個子孫。
+            <strong>每個子孫剛好分到 3 格相連，且必須排成 L 型（不能是 1 × 3 直線）。</strong>
+            任兩個子孫不得有重疊。
+          </p>
+
+          <h4>輸入 / 輸出</h4>
+          <p>本題採 <strong>互動式評測</strong>。請實作以下函式（lib0114.h 已宣告）：</p>
+
+          <div class="code-block">
+            <div class="code-block__head">
+              <span>lib0114.h</span>
+              <span class="code-block__lang">C++</span>
+            </div>
+<pre><code>void solve(int N, int X, int Y);  // 你要實作這個
+void Report(int x1, int y1,
+            int x2, int y2,
+            int x3, int y3);      // 由 judge 提供，回報一個 L</code></pre>
+          </div>
+
+          <p>
+            <code>solve()</code> 內部對每個 L 呼叫一次 <code>Report</code>，
+            參數為該 L 的三個格子座標。<strong>呼叫順序與三格的順序皆不影響判定</strong>，
+            只要分配滿足規則即視為正確。
+          </p>
+
+          <h4>限制</h4>
+          <ul class="constraint-list">
+            <li><span>30% 資料：1 &lt; N ≤ 8</span></li>
+            <li><span>100% 資料：1 &lt; N ≤ 1024，1 ≤ X, Y ≤ N</span></li>
+            <li><span>N 保證為 2 的正整數次方，存在正整數 K 使 N = 2ᴷ</span></li>
+          </ul>
+
+          <h4>範例</h4>
+          <p>judge 呼叫 <code>solve(4, 3, 4)</code>，你的程式回報 5 次 <code>Report</code>：</p>
+
+          <div class="io-pair">
+            <div class="io-box">
+              <div class="io-box__head">// JUDGE</div>
+              <div class="io-box__body">solve(4, 3, 4);</div>
+            </div>
+            <div class="io-box">
+              <div class="io-box__head">// YOUR REPORTS</div>
+              <div class="io-box__body">Report(2,1, 1,2, 1,1);
+Report(1,3, 1,4, 2,4);
+Report(3,3, 4,3, 4,4);
+Report(3,1, 4,1, 4,2);
+Report(3,2, 2,2, 2,3);</div>
+            </div>
+          </div>
+
+          <blockquote>
+            <code>N = 4</code>、特殊格 <code>(3, 4)</code> 共需 <code>(16 − 1) / 3 = 5</code> 個 L-tromino。
+            上面的分配方案在下面的動畫區可以一步一步看到。
+          </blockquote>
+        </section>
+
+        <!-- ===== SECTION 02 — Concept ===== -->
+        <section class="section" id="s-concept">
+          <div class="section__marker">
+            <span class="section__marker-num">[ 02 ]</span>
+            <span>Concept</span>
+            <span class="section__marker-line"></span>
+          </div>
+          <h2 class="section__title">演算法概念</h2>
+
+          <h3>觀察一：數量必為整數</h3>
+          <p>
+            總非特殊格數 <code>= N² − 1 = 4ᴷ − 1</code>。
+            因為 <code>4 ≡ 1 (mod 3)</code>，
+            所以 <code>4ᴷ ≡ 1 (mod 3)</code>，即 <code>4ᴷ − 1 ≡ 0 (mod 3)</code>。
+            L 數量 <code>(N² − 1) / 3</code> <strong>一定是整數</strong>，
+            這暗示分配方案有解 — 接下來用 <em>構造法</em> 直接寫出來。
+          </p>
+
+          <h3>觀察二：分治</h3>
+          <p>
+            將 <code>N × N</code> 板切成 4 個 <code>N/2 × N/2</code> 象限 TL、TR、BL、BR。
+            特殊格 <code>(X, Y)</code> 必然落在<em>恰好一個</em>象限裡。
+            <strong>關鍵步驟：在棋盤正中央放一個 L</strong>，
+            讓 L 的 3 個 cell 分別佔住<em>另外 3 個象限</em>最靠近中心的那一個角。
+            這樣每個象限都變成「N/2 × N/2 板 + 1 個 special 格」，
+            就是同樣的子問題 — 遞迴解之。
+          </p>
+
+          <div class="math-block">
+            T(N) = 4 · T(N/2) + O(1)  &nbsp;&nbsp;⇒&nbsp;&nbsp; T(N) = Θ(N²)
+          </div>
+
+          <h3>Base Case</h3>
+          <p>
+            <code>N = 2</code> 時，2×2 板共 4 格，扣掉 special 剩 3 格 — 這 3 格本身就是 L，直接 <code>Report</code> 即可。
+          </p>
+
+          <h3>遞迴正確性</h3>
+          <ul>
+            <li>每個子問題的形狀仍是 <code>2ᴷ × 2ᴷ + 1 個 special</code>。</li>
+            <li>Base case 直接可解。</li>
+            <li>遞迴步驟「在中央放 1 個 L」一定不會與後續放的 L 重疊，因為這 L 的 3 個 cell 被各自象限「吃掉」當 special。</li>
+            <li>歸納成立 ⇒ 演算法正確。</li>
+          </ul>
+
+          <h3>複雜度</h3>
+          <p>
+            <span class="complexity"><span class="complexity__label">Time</span> O(N²)</span>
+            <span class="complexity"><span class="complexity__label">Space</span> O(log N)</span>
+          </p>
+          <p>
+            時間：每呼叫一次 <code>Report</code> 是 O(1)，總共 <code>(N²−1)/3</code> 次 ⇒ Θ(N²)。
+            空間：遞迴深度 <code>log₂ N = K</code>。對 N = 1024 來說只有 10 層，棧很淺。
+          </p>
+        </section>
+
+        <!-- ===== SECTION 03 — Visualization ===== -->
+        <section class="section" id="s-viz">
+          <div class="section__marker">
+            <span class="section__marker-num">[ 03 ]</span>
+            <span>Visualization</span>
+            <span class="section__marker-line"></span>
+          </div>
+          <h2 class="section__title">動畫演示</h2>
+
+          <p>
+            以範例 <code>solve(4, 3, 4)</code> 為例。綠色 <strong>★</strong> 為王老先生選的特殊格 <code>(3, 4)</code>。
+            按 <strong>Play / Next</strong> 看 5 個 L 依序鋪上：
+          </p>
+
+          <ol style="font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--ink-dim); margin: 16px 0 24px 24px;">
+            <li>先在中央放 <strong>L1</strong>，覆蓋 TL/TR/BL 三象限的「最靠近中心」角落（橘色）。</li>
+            <li>遞迴解 <strong>TL</strong>（2×2 + special = (2,2)）⇒ L2。</li>
+            <li>遞迴解 <strong>TR</strong>（2×2 + special = (2,3)）⇒ L3。</li>
+            <li>遞迴解 <strong>BL</strong>（2×2 + special = (3,2)）⇒ L4。</li>
+            <li>遞迴解 <strong>BR</strong>（2×2 + special = (3,4)，原本的 special）⇒ L5。</li>
+          </ol>
+
+          <div class="viz">
+            <canvas id="viz-canvas" class="viz__canvas"></canvas>
+            <div class="viz__controls">
+              <button class="btn" id="viz-reset">Reset</button>
+              <button class="btn" id="viz-prev">Prev</button>
+              <button class="btn btn--primary" id="viz-play">Play</button>
+              <button class="btn" id="viz-next">Next</button>
+              <span class="viz__step" id="viz-step">-- / --</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 04 — Clean Code ===== -->
+        <section class="section" id="s-code">
+          <div class="section__marker">
+            <span class="section__marker-num">[ 04 ]</span>
+            <span>Clean Code</span>
+            <span class="section__marker-line"></span>
+          </div>
+          <h2 class="section__title">Clean Code</h2>
+
+          <div class="code-block">
+            <div class="code-block__head">
+              <span>p114.cpp</span>
+              <span class="code-block__lang">C++</span>
+            </div>
+<pre><code>#include &lt;iostream&gt;
+#include "lib0114.h"
+using namespace std;
+
+// 在以 (r, c) 為左上角、邊長為 n 的子方格內鋪 L-tromino，
+// special cell 位於 (sx, sy)。
+void tile(int r, int c, int n, int sx, int sy) {
+    if (n == 2) {
+        // 4 格中除 special 外的 3 格本身就是一個 L
+        int xs[3], ys[3], k = 0;
+        for (int dr = 0; dr &lt; 2; ++dr) {
+            for (int dc = 0; dc &lt; 2; ++dc) {
+                int x = r + dr, y = c + dc;
+                if (x == sx &amp;&amp; y == sy) continue;
+                xs[k] = x; ys[k] = y; ++k;
+            }
+        }
+        Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
+        return;
+    }
+
+    int h  = n / 2;
+    int mr = r + h - 1;     // 上半最後一列
+    int mc = c + h - 1;     // 左半最後一行
+
+    // 4 個象限「最靠近中心」的格子座標
+    int qx[4] = { mr, mr,     mr + 1, mr + 1 };
+    int qy[4] = { mc, mc + 1, mc,     mc + 1 };
+
+    // special 落在哪個象限？  0=TL, 1=TR, 2=BL, 3=BR
+    int sq = (sx &gt; mr) * 2 + (sy &gt; mc);
+
+    // 在中央放 L：3 cell = 不含 special 的 3 個象限的最角落
+    int rx[3], ry[3], k = 0;
+    for (int q = 0; q &lt; 4; ++q) {
+        if (q == sq) continue;
+        rx[k] = qx[q]; ry[k] = qy[q]; ++k;
+    }
+    Report(rx[0], ry[0], rx[1], ry[1], rx[2], ry[2]);
+
+    // 對 4 象限分別遞迴；非 special 象限以「剛放下的角落格」當新 special
+    int sr[4] = { r,     r,     r + h, r + h };
+    int sc[4] = { c,     c + h, c,     c + h };
+    for (int q = 0; q &lt; 4; ++q) {
+        int nx = (q == sq) ? sx : qx[q];
+        int ny = (q == sq) ? sy : qy[q];
+        tile(sr[q], sc[q], h, nx, ny);
+    }
+}
+
+void solve(int N, int X, int Y) {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    tile(1, 1, N, X, Y);
+}
+</code></pre>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 05 — Walkthrough ===== -->
+        <section class="section" id="s-walkthrough">
+          <div class="section__marker">
+            <span class="section__marker-num">[ 05 ]</span>
+            <span>Walkthrough</span>
+            <span class="section__marker-line"></span>
+          </div>
+          <h2 class="section__title">Code 走讀</h2>
+
+          <p>核心是 <code>tile(r, c, n, sx, sy)</code>：對一個左上角 <code>(r,c)</code>、邊長 <code>n</code>、缺一格 <code>(sx,sy)</code> 的子板鋪 L。</p>
+
+          <div class="code-annotated">
+
+            <div class="code-annotated__line">
+              <div class="code-annotated__code">if (n == 2) {
+    /* 4 格扣掉 special 後直接 Report */
+}</div>
+              <div class="code-annotated__note">
+                <strong>Base case。</strong>
+                2×2 板只有 4 格，扣掉 special 後剩 3 格<em>必然構成 L</em>（除非 special 不在這 2×2 內，但遞迴保證它在）。
+                直接掃 4 格，跳過 special，剩 3 格送進 <code>Report</code>。
+              </div>
+            </div>
+
+            <div class="code-annotated__line">
+              <div class="code-annotated__code">int mr = r + h - 1;
+int mc = c + h - 1;
+int qx[4] = { mr, mr,     mr+1, mr+1 };
+int qy[4] = { mc, mc + 1, mc,   mc+1 };</div>
+              <div class="code-annotated__note">
+                <strong>中央 4 角座標。</strong>
+                每個象限「最靠近中心」的格子，依 TL/TR/BL/BR 順序排：
+                <code>(mr,mc)</code>、<code>(mr,mc+1)</code>、<code>(mr+1,mc)</code>、<code>(mr+1,mc+1)</code>。
+                這 4 格就是放置中央 L 的候選。
+              </div>
+            </div>
+
+            <div class="code-annotated__line">
+              <div class="code-annotated__code">int sq = (sx &gt; mr) * 2 + (sy &gt; mc);</div>
+              <div class="code-annotated__note">
+                <strong>判斷 special 在哪個象限。</strong>
+                把 2 個布林值編成 0~3：
+                <br/>· TL = 0：sx ≤ mr 且 sy ≤ mc
+                <br/>· TR = 1：sx ≤ mr 且 sy &gt; mc
+                <br/>· BL = 2：sx &gt; mr 且 sy ≤ mc
+                <br/>· BR = 3：sx &gt; mr 且 sy &gt; mc
+              </div>
+            </div>
+
+            <div class="code-annotated__line">
+              <div class="code-annotated__code">for (int q = 0; q &lt; 4; ++q) {
+    if (q == sq) continue;
+    rx[k] = qx[q]; ry[k] = qy[q]; ++k;
+}
+Report(rx[0], ry[0], rx[1], ry[1], rx[2], ry[2]);</div>
+              <div class="code-annotated__note">
+                <strong>放中央 L。</strong>
+                收集「不含 special」3 個象限的最角落格，組成 L 直接 <code>Report</code>。
+                <em>注意</em>這 3 格之後在各自象限遞迴時會被當成 special — 它們已經被「占用」掉。
+              </div>
+            </div>
+
+            <div class="code-annotated__line">
+              <div class="code-annotated__code">for (int q = 0; q &lt; 4; ++q) {
+    int nx = (q == sq) ? sx : qx[q];
+    int ny = (q == sq) ? sy : qy[q];
+    tile(sr[q], sc[q], h, nx, ny);
+}</div>
+              <div class="code-annotated__note">
+                <strong>遞迴 4 個象限。</strong>
+                special 落在哪個象限，那象限就用<em>原 special</em>遞迴；
+                其他 3 個象限則用<em>剛放下的角落格</em>當 new special。
+                這保證所有 4 個子問題都是「方板 + 1 special」的同形式。
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout--warn">
+            <div class="callout__title">// Common Pitfalls</div>
+            <ul style="margin: 0;">
+              <li>座標 1-indexed：題目給 (X, Y) 從 1 開始，<code>tile</code> 的初始呼叫要傳 <code>tile(1, 1, N, X, Y)</code>。</li>
+              <li><code>mr = r + h − 1</code>：是上半的<em>最後一列</em>，不是中線；下半從 <code>mr + 1</code> 開始。寫成 <code>r + h/2</code> 是錯的（因為這層的 n 已經是 h 的 2 倍）。</li>
+              <li>Base case 不需要再判斷 sq — <code>n=2</code> 時直接 4 格枚舉就好。</li>
+              <li>本題不需 cin/cout I/O，<code>ios::sync_with_stdio</code> 純粹是習慣性放著（若有額外讀檔再用）。</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 06 — Variants ===== -->
+        <section class="section" id="s-variants">
+          <div class="section__marker">
+            <span class="section__marker-num">[ 06 ]</span>
+            <span>Variants</span>
+            <span class="section__marker-line"></span>
+          </div>
+          <h2 class="section__title">延伸 / 變形題</h2>
+
+          <table>
+            <thead>
+              <tr><th>變形</th><th>差異</th><th>解法概念</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>非 2ᴷ 邊長的 deficient board</td>
+                <td>例如 N×N 的 N 不是 2 的次方</td>
+                <td>不一定可解；需檢查 (N²−1) ≡ 0 (mod 3) 的必要條件並做 case analysis</td>
+              </tr>
+              <tr>
+                <td>輸出全部 L 的編號 / 顏色</td>
+                <td>要區分哪格屬於哪個 L</td>
+                <td>tile 中加一個 id 計數器，<code>Report</code> 改成把同一 L 標同色寫進二維陣列</td>
+              </tr>
+              <tr>
+                <td>非互動版本（直接輸出）</td>
+                <td>沒有 Report 函式，要 cout 輸出全部 L</td>
+                <td>把 <code>Report</code> 換成 <code>printf</code>，記得 <code>ios::sync_with_stdio(false)</code> 加速</td>
+              </tr>
+              <tr>
+                <td>分治經典題 — 逆序數對</td>
+                <td>同章 W06 / P115</td>
+                <td>Merge Sort 過程順便算跨段逆序，T(N) = 2T(N/2) + O(N) = O(N log N)</td>
+              </tr>
+              <tr>
+                <td>分治經典題 — 最近點對</td>
+                <td>同章 W06 / P507</td>
+                <td>排序後依 x 中線分治，跨界區用 strip + y 排序在 O(N) 合併</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+      </article>
+
+    </main>
+
+  </div>
+
+  <footer class="workshop-footer">
+    <div>© 2026 // W06 · P114 · 王老先生</div>
+    <div><a href="../index.html">← BACK TO W06</a></div>
+    <div>SERIAL_NO. AW-W06-P114</div>
+  </footer>
+
+  <script src="../../../assets/js/viz/p114-lboard.js"></script>
+</body>
+</html>
