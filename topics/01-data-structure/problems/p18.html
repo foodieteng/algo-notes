@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P18 — Maximum Subarray Sum // ALGO_NOTES</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../../assets/css/problem.css" />
+</head>
+<body>
+  <div class="page">
+
+    <!-- ============================================================
+         NAV
+         ============================================================ -->
+    <nav class="nav">
+      <div class="container nav__inner">
+        <a class="nav__brand" href="../../../index.html">
+          <span class="nav__brand-mark"></span>
+          <span class="nav__brand-text">ALGO_NOTES</span>
+          <span class="nav__brand-tag">v0.1</span>
+        </a>
+        <div class="nav__links">
+          <a href="../../../index.html">Index</a>
+          <a href="../../../index.html#topics" class="is-active">Topics</a>
+          <a href="../../../about.html">About</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header class="hero">
+      <div class="container">
+        <div class="crumb">
+          <a href="../../../index.html">Index</a>
+          <span class="crumb__sep">/</span>
+          <a href="../index.html">W01 · Data Structure</a>
+          <span class="crumb__sep">/</span>
+          <span>P18</span>
+        </div>
+
+        <div class="hero__meta">
+          <span>// PROBLEM 18 / DEMO</span>
+        </div>
+        <h1 class="hero__title">Maximum<br/>Subarray Sum</h1>
+        <p class="hero__lede">
+          給定一個整數陣列，找出其中總和最大的連續子陣列。經典 DP 入門題，Kadane 演算法以 O(n) 解決。
+        </p>
+
+        <div class="tag-row" style="margin-top: var(--sp-5);">
+          <span class="tag tag--accent">Dynamic Programming</span>
+          <span class="tag">Array</span>
+          <span class="tag tag--success">O(n)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         BODY
+         ============================================================ -->
+    <div class="container">
+      <div class="problem" style="padding: var(--sp-6) 0;">
+
+        <main class="problem__main">
+
+          <!-- ===== SECTION 01 — 題意拆解 ===== -->
+          <section class="section" id="s-problem">
+            <div class="section__marker">
+              <span class="section__marker-num">[ 01 ]</span>
+              <span>Problem</span>
+              <span class="section__marker-line"></span>
+            </div>
+            <h2 class="section__title">題意拆解</h2>
+
+            <p>給一個長度為 <code>n</code> 的整數陣列 <code>a[0..n-1]</code>（元素可為負）。找一段連續區間 <code>[l, r]</code>，使得 <code>a[l] + a[l+1] + ... + a[r]</code> 最大，並輸出此最大值。</p>
+
+            <h6 style="margin-top: var(--sp-5);">輸入 / 輸出</h6>
+            <div class="io-pair">
+              <div class="io-box">
+                <div class="io-box__head">// INPUT</div>
+                <div class="io-box__body">9
+-2 1 -3 4 -1 2 1 -5 4</div>
+              </div>
+              <div class="io-box">
+                <div class="io-box__head">// OUTPUT</div>
+                <div class="io-box__body">6</div>
+              </div>
+            </div>
+
+            <h6>限制</h6>
+            <ul class="constraint-list">
+              <li><span>1 ≤ n ≤ 10⁵</span></li>
+              <li><span>−10⁴ ≤ a[i] ≤ 10⁴</span></li>
+              <li><span>必須選至少一個元素（不可空區間）</span></li>
+            </ul>
+
+            <div class="callout">
+              <div class="callout__title">// Note</div>
+              <p style="margin: 0;">最佳子陣列為 <code>a[3..6] = [4, -1, 2, 1]</code>，總和為 <strong>6</strong>。</p>
+            </div>
+          </section>
+
+          <!-- ===== SECTION 02 — 演算法概念 ===== -->
+          <section class="section" id="s-concept">
+            <div class="section__marker">
+              <span class="section__marker-num">[ 02 ]</span>
+              <span>Concept</span>
+              <span class="section__marker-line"></span>
+            </div>
+            <h2 class="section__title">演算法概念</h2>
+
+            <h3>直覺發想</h3>
+            <p>暴力做法是枚舉所有區間 <code>(l, r)</code> 共 O(n²) 對，逐一求和 O(n)，總共 O(n³)。利用前綴和可優化到 O(n²)。但我們真正在乎的，其實是「以 <code>i</code> 為結尾的最佳區間和」。</p>
+
+            <p>定義：</p>
+            <div class="math-block">
+              dp[i] = 以 a[i] 結尾的最大子陣列和
+            </div>
+
+            <p>則狀態轉移為：</p>
+            <div class="math-block">
+              dp[i] = max( a[i],  dp[i-1] + a[i] )
+            </div>
+
+            <p>答案即為 <code>max(dp[0..n-1])</code>。</p>
+
+            <h3>為什麼這樣對？</h3>
+            <p>對任意以 <code>i</code> 結尾的最佳區間 <code>[l, i]</code>：</p>
+            <ul>
+              <li>若 <code>l == i</code>，則 <code>dp[i] = a[i]</code></li>
+              <li>若 <code>l &lt; i</code>，則 <code>[l, i-1]</code> 必然是以 <code>i-1</code> 結尾的最佳區間，否則我們可以用更好的取代它，矛盾。</li>
+            </ul>
+            <p>因此 <code>dp[i]</code> 只需要看 <code>dp[i-1] + a[i]</code> 與 <code>a[i]</code> 何者較大。</p>
+
+            <h3>複雜度</h3>
+            <p>
+              <span class="complexity"><span class="complexity__label">Time</span> O(n)</span>
+              &nbsp;
+              <span class="complexity"><span class="complexity__label">Space</span> O(1)</span>
+            </p>
+            <p>只需單一變數 <code>cur</code> 滾動 <code>dp[i-1]</code>，故空間可從 O(n) 壓到 O(1)。</p>
+          </section>
+
+          <!-- ===== SECTION 03 — 動畫演示 ===== -->
+          <section class="section" id="s-viz">
+            <div class="section__marker">
+              <span class="section__marker-num">[ 03 ]</span>
+              <span>Visualization</span>
+              <span class="section__marker-line"></span>
+            </div>
+            <h2 class="section__title">動畫演示</h2>
+
+            <p>陣列 <code>[-2, 1, -3, 4, -1, 2, 1, -5, 4]</code>。深橘高亮代表目前 <code>cur</code> 區間，粗框為當下最佳區間 <code>best</code>。</p>
+
+            <div class="viz">
+              <canvas id="viz-canvas" class="viz__canvas"></canvas>
+              <div class="viz__controls">
+                <button class="btn" id="viz-reset">Reset</button>
+                <button class="btn" id="viz-prev">Prev</button>
+                <button class="btn btn--primary" id="viz-play">Play</button>
+                <button class="btn" id="viz-next">Next</button>
+                <span class="viz__step" id="viz-step">-- / --</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== SECTION 04 — Clean Code ===== -->
+          <section class="section" id="s-code">
+            <div class="section__marker">
+              <span class="section__marker-num">[ 04 ]</span>
+              <span>Clean Code</span>
+              <span class="section__marker-line"></span>
+            </div>
+            <h2 class="section__title">Clean Code</h2>
+
+            <div class="code-block">
+              <div class="code-block__head">
+                <span>kadane.cpp</span>
+                <span class="code-block__lang">C++</span>
+              </div>
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int max_subarray_sum(const vector&lt;int&gt;&amp; a) {
+    int cur = a[0];
+    int best = a[0];
+    for (int i = 1; i &lt; (int)a.size(); ++i) {
+        cur = max(a[i], cur + a[i]);
+        best = max(best, cur);
+    }
+    return best;
+}
+
+int main() {
+    int n;  cin &gt;&gt; n;
+    vector&lt;int&gt; a(n);
+    for (int&amp; x : a) cin &gt;&gt; x;
+    cout &lt;&lt; max_subarray_sum(a) &lt;&lt; '\n';
+    return 0;
+}
+</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__head">
+                <span>kadane.py</span>
+                <span class="code-block__lang">Python</span>
+              </div>
+<pre><code>def max_subarray_sum(a: list[int]) -&gt; int:
+    cur = best = a[0]
+    for x in a[1:]:
+        cur = max(x, cur + x)
+        best = max(best, cur)
+    return best
+
+
+if __name__ == "__main__":
+    n = int(input())
+    a = list(map(int, input().split()))
+    print(max_subarray_sum(a))
+</code></pre>
+            </div>
+          </section>
+
+          <!-- ===== SECTION 05 — Code 走讀 ===== -->
+          <section class="section" id="s-walkthrough">
+            <div class="section__marker">
+              <span class="section__marker-num">[ 05 ]</span>
+              <span>Walkthrough</span>
+              <span class="section__marker-line"></span>
+            </div>
+            <h2 class="section__title">Code 走讀</h2>
+
+            <p>逐段拆解 <code>kadane.cpp</code>：</p>
+
+            <div class="code-annotated">
+              <div class="code-annotated__line">
+                <div class="code-annotated__code">int cur = a[0];
+int best = a[0];</div>
+                <div class="code-annotated__note">
+                  <strong>初始化兩個變數：</strong>
+                  <br/>· <code>cur</code> = 以當前位置為結尾的最大區間和
+                  <br/>· <code>best</code> = 目前看過的全域最大
+                  <br/>都以 <code>a[0]</code> 起始，因為題目保證至少要選一個元素，不能用 0。
+                </div>
+              </div>
+              <div class="code-annotated__line">
+                <div class="code-annotated__code">for (int i = 1; i &lt; (int)a.size(); ++i) {</div>
+                <div class="code-annotated__note">
+                  從 <code>i=1</code> 開始掃，因為 <code>i=0</code> 已在初始化處理。
+                </div>
+              </div>
+              <div class="code-annotated__line">
+                <div class="code-annotated__code">    cur = max(a[i], cur + a[i]);</div>
+                <div class="code-annotated__note">
+                  狀態轉移：要不要「延續」前面的區間。<br/>
+                  <code>cur + a[i] &lt; a[i]</code> ⇔ <code>cur &lt; 0</code>，前面是負擔就拋棄重起。
+                </div>
+              </div>
+              <div class="code-annotated__line">
+                <div class="code-annotated__code">    best = max(best, cur);
+}</div>
+                <div class="code-annotated__note">
+                  更新全域最佳。注意是 <strong>每一步都更新</strong>，而非結尾才更新。
+                </div>
+              </div>
+            </div>
+
+            <div class="callout callout--warn">
+              <div class="callout__title">// Common Pitfalls</div>
+              <ul style="margin: 0;">
+                <li><code>best</code> 初始化用 <code>0</code> 會在「全為負數」時錯誤地回傳 0。</li>
+                <li>若改成允許空區間，需顯式判斷或將 <code>best</code> 初始化為 <code>0</code>。</li>
+                <li>累加會溢位時用 <code>long long</code>（本題 n×|a[i]| ≈ 10⁹，剛好邊界）。</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- ===== SECTION 06 — 延伸 ===== -->
+          <section class="section" id="s-variants">
+            <div class="section__marker">
+              <span class="section__marker-num">[ 06 ]</span>
+              <span>Variants</span>
+              <span class="section__marker-line"></span>
+            </div>
+            <h2 class="section__title">延伸 / 變形題</h2>
+
+            <table>
+              <thead>
+                <tr><th>變形</th><th>差異</th><th>解法概念</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>輸出區間端點 [l, r]</td>
+                  <td>不只求和，要回傳起訖</td>
+                  <td>追蹤 <code>curL</code>；當 <code>cur</code> 重起時更新 <code>curL = i</code>；<code>best</code> 更新時記下 <code>(curL, i)</code></td>
+                </tr>
+                <tr>
+                  <td>環形陣列</td>
+                  <td>區間可跨越尾端接到開頭</td>
+                  <td>答案 = max(直線版 Kadane, 總和 − 最小子陣列和)；特例：全為負</td>
+                </tr>
+                <tr>
+                  <td>二維最大子矩陣</td>
+                  <td>從一維推廣到 m×n 矩陣</td>
+                  <td>固定上下界，把列壓成一維後跑 Kadane；O(m²·n)</td>
+                </tr>
+                <tr>
+                  <td>長度限制 k</td>
+                  <td>區間長度 ≤ k</td>
+                  <td>前綴和 + 單調隊列維護視窗最小前綴</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+        </main>
+
+        <!-- ===== TOC ===== -->
+        <aside class="problem__toc">
+          <div class="problem__toc-label">// On this page</div>
+          <a href="#s-problem">01 · Problem</a>
+          <a href="#s-concept">02 · Concept</a>
+          <a href="#s-viz">03 · Visualization</a>
+          <a href="#s-code">04 · Clean Code</a>
+          <a href="#s-walkthrough">05 · Walkthrough</a>
+          <a href="#s-variants">06 · Variants</a>
+        </aside>
+
+      </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span>// W01 · P18 · Maximum Subarray</span>
+        <span><a href="../index.html">← back to W01</a></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../../assets/js/viz/max-subarray.js"></script>
+</body>
+</html>

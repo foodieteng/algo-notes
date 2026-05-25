@@ -1,0 +1,174 @@
+/* ============================================================
+   Problem Page — Two-column layout, TOC, dense reading
+   ============================================================ */
+
+.problem {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-6);
+}
+
+@media (min-width: 1080px) {
+  .problem {
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: var(--sp-7);
+  }
+}
+
+.problem__main { min-width: 0; }
+
+.problem__toc {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--sp-5));
+  align-self: start;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-left: 1px solid var(--border-default);
+  padding-left: var(--sp-4);
+}
+.problem__toc-label {
+  color: var(--text-muted);
+  margin-bottom: var(--sp-3);
+}
+.problem__toc a {
+  display: block;
+  color: var(--text-secondary);
+  padding: var(--sp-2) 0;
+  border: none;
+  border-left: 2px solid transparent;
+  margin-left: -16px;
+  padding-left: 14px;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.problem__toc a:hover {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+/* ---- IO Examples ---- */
+.io-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+@media (max-width: 600px) { .io-pair { grid-template-columns: 1fr; } }
+
+.io-box {
+  border: 1px solid var(--border-default);
+  background: var(--bg-code);
+}
+.io-box__head {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+}
+.io-box__body {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  padding: var(--sp-3);
+  color: var(--text-primary);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ---- Constraints list ---- */
+.constraint-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+.constraint-list li {
+  padding: var(--sp-2) 0;
+  border-bottom: 1px dashed var(--border-subtle);
+  color: var(--text-secondary);
+  display: flex;
+  gap: var(--sp-3);
+}
+.constraint-list li::before {
+  content: '▸';
+  color: var(--accent);
+}
+
+/* ---- Walkthrough (step-by-step) ---- */
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+}
+.steps > li {
+  counter-increment: step;
+  border-left: 1px solid var(--border-default);
+  padding: 0 0 var(--sp-5) var(--sp-5);
+  margin-left: var(--sp-3);
+  position: relative;
+}
+.steps > li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: -16px;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--accent);
+  background: var(--bg-base);
+  padding: 0 var(--sp-2);
+}
+.steps > li:last-child { border-left-color: transparent; }
+
+/* ---- Code with line comments ---- */
+.code-annotated { display: grid; gap: var(--sp-3); margin: var(--sp-4) 0; }
+.code-annotated__line {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  align-items: start;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--sp-3);
+}
+.code-annotated__line:last-child { border-bottom: none; }
+.code-annotated__code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  background: var(--bg-code);
+  border-left: 2px solid var(--accent);
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-primary);
+  white-space: pre;
+  overflow-x: auto;
+}
+.code-annotated__note {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+@media (max-width: 800px) {
+  .code-annotated__line { grid-template-columns: 1fr; }
+}
+
+/* ---- Complexity badge ---- */
+.complexity {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.complexity__label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About // ALGO_NOTES</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+</head>
+<body>
+  <div class="page">
+
+    <nav class="nav">
+      <div class="container nav__inner">
+        <a class="nav__brand" href="index.html">
+          <span class="nav__brand-mark"></span>
+          <span class="nav__brand-text">ALGO_NOTES</span>
+          <span class="nav__brand-tag">v0.1</span>
+        </a>
+        <div class="nav__links">
+          <a href="index.html">Index</a>
+          <a href="index.html#topics">Topics</a>
+          <a href="about.html" class="is-active">About</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="container">
+        <div class="hero__meta">
+          <span>// META</span>
+        </div>
+        <h1 class="hero__title">ABOUT</h1>
+        <p class="hero__lede">
+          本站為個人演算法學習筆記，依照「資訊之芽算法班」課程主題編排，每一題包含完整的概念講解、Clean Code、互動動畫、與走讀。
+        </p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container container--narrow">
+        <h2>結構</h2>
+        <p>每篇題目筆記皆遵循固定六段結構：</p>
+        <ul>
+          <li><strong>01 · Problem</strong> — 題意拆解、輸入輸出、範例與限制</li>
+          <li><strong>02 · Concept</strong> — 直覺發想、狀態定義、正確性論證、複雜度</li>
+          <li><strong>03 · Visualization</strong> — 互動動畫，可步進播放</li>
+          <li><strong>04 · Clean Code</strong> — 可編譯範例（C++ &amp; Python）</li>
+          <li><strong>05 · Walkthrough</strong> — 逐段註解、常見錯誤</li>
+          <li><strong>06 · Variants</strong> — 延伸與變形題</li>
+        </ul>
+
+        <h2>更新節奏</h2>
+        <p>由我（學習者）挑題，由 Claude 協作整理。整套流程已封裝為 Claude Code 的 <code>algo-notes</code> Skill。</p>
+
+        <h2>本地檢視</h2>
+        <p>直接以瀏覽器開啟 <code>index.html</code>，或在專案根目錄執行：</p>
+<pre><code>python3 -m http.server 8000</code></pre>
+        <p>再開 <code>http://localhost:8000</code>。</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span>// ALGO_NOTES — About</span>
+        <span>BUILD 0.1.0</span>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

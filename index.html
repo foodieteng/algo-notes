@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALGO // 資訊之芽算法班學習筆記</title>
+  <meta name="description" content="演算法主題式複習筆記 — 概念、Clean Code、動畫、走讀" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+</head>
+<body>
+  <div class="page">
+
+    <nav class="nav">
+      <div class="container nav__inner">
+        <a class="nav__brand" href="index.html">
+          <span class="nav__brand-mark"></span>
+          <span class="nav__brand-text">ALGO_NOTES</span>
+          <span class="nav__brand-tag">v0.1</span>
+        </a>
+        <div class="nav__links">
+          <a href="index.html" class="is-active">Index</a>
+          <a href="#topics">Topics</a>
+          <a href="about.html">About</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="container">
+        <div class="hero__meta">
+          <span>// 資訊之芽算法班 / 2026</span>
+        </div>
+        <h1 class="hero__title">ALGORITHM<br/>STUDY NOTES</h1>
+        <p class="hero__lede">
+          以主題為單位整理的演算法複習筆記。每題包含題意拆解、概念講解、互動動畫、Clean Code 與逐段走讀。
+        </p>
+      </div>
+    </header>
+
+    <section class="section" id="topics">
+      <div class="container">
+        <div class="section__marker">
+          <span class="section__marker-num">[ 00 ]</span>
+          <span>Curriculum Map</span>
+          <span class="section__marker-line"></span>
+          <span>14 Topics</span>
+        </div>
+
+        <div class="grid grid--3">
+
+          <a class="card card--link" href="topics/01-data-structure/index.html">
+            <div class="card__index">// W01</div>
+            <h3 class="card__title">Data Structure</h3>
+            <p class="card__desc">陣列、鏈表、堆疊、佇列等基礎結構。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W02</div>
+            <h3 class="card__title">Complexity &amp; Tree</h3>
+            <p class="card__desc">複雜度分析與樹結構入門。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W03</div>
+            <h3 class="card__title">Graph / Flood Fill / Heap</h3>
+            <p class="card__desc">基本圖論、Flood Fill、Heap。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W04</div>
+            <h3 class="card__title">Enumeration &amp; Search</h3>
+            <p class="card__desc">枚舉與搜尋技巧。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W05</div>
+            <h3 class="card__title">Greedy</h3>
+            <p class="card__desc">貪心策略與正確性論證。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W06</div>
+            <h3 class="card__title">Divide &amp; Conquer</h3>
+            <p class="card__desc">分治法、倍增、主定理。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W07</div>
+            <h3 class="card__title">Dynamic Programming 1</h3>
+            <p class="card__desc">DP 入門與狀態設計。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W09</div>
+            <h3 class="card__title">Dynamic Programming 2</h3>
+            <p class="card__desc">區間 DP、樹 DP。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W10</div>
+            <h3 class="card__title">Dynamic Programming 3</h3>
+            <p class="card__desc">狀態壓縮、位元 DP。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W11</div>
+            <h3 class="card__title">MST &amp; Shortest Path</h3>
+            <p class="card__desc">拓樸排序、MST、最短路。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W12</div>
+            <h3 class="card__title">String — Trie / KMP</h3>
+            <p class="card__desc">字串匹配與字典樹。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W13</div>
+            <h3 class="card__title">Geometry / Math / Game</h3>
+            <p class="card__desc">計算幾何、數學、賽局理論。</p>
+          </a>
+
+          <a class="card card--link" href="#">
+            <div class="card__index">// W14</div>
+            <h3 class="card__title">Connectivity / Segment Tree</h3>
+            <p class="card__desc">連通性、線段樹。</p>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section__marker">
+          <span class="section__marker-num">[ 01 ]</span>
+          <span>Progress</span>
+          <span class="section__marker-line"></span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat__label">Topics</div>
+            <div class="stat__value"><span class="stat__value--accent">0</span> / 14</div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Problems Solved</div>
+            <div class="stat__value"><span class="stat__value--accent">0</span></div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Last Updated</div>
+            <div class="stat__value">2026.05.25</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <span>// ALGO_NOTES — Personal Study Repository</span>
+        <span>BUILD 0.1.0</span>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
