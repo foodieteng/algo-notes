@@ -417,6 +417,64 @@ td { color: var(--ink-dim); }
 td:first-child { color: var(--ink); }
 
 /* ============================================================
+   13.5 — SECTION PAGER (book-style prev/next)
+   ============================================================ */
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  margin: var(--sp-7) 0 var(--sp-4);
+  padding-top: var(--sp-5);
+  border-top: 1px dashed var(--line-bright);
+}
+.pager__item {
+  display: block;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-bottom: none;
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.pager__item--prev { border-left: 3px solid var(--rust); }
+.pager__item--next {
+  border-right: 3px solid var(--rust);
+  text-align: right;
+}
+.pager__item:hover {
+  background: var(--bg-3);
+  border-color: var(--rust);
+}
+.pager__item:hover .pager__title {
+  color: var(--rust-bright);
+}
+.pager__item.is-disabled {
+  opacity: 0.32;
+  pointer-events: none;
+  border-color: var(--line);
+  border-left-color: var(--line);
+  border-right-color: var(--line);
+}
+.pager__label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  color: var(--concrete);
+  text-transform: uppercase;
+}
+.pager__title {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--ink);
+}
+.pager__item--prev .pager__label::before { content: '← '; }
+.pager__item--next .pager__label::after  { content: ' →'; }
+
+/* ============================================================
    14 — BUTTONS
    ============================================================ */
 .btn {

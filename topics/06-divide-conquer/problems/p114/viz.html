@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P114 · 03 Visualization // 王老先生 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
+</head>
+<body>
+
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
+
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P114 · 03 VISUALIZATION</span>
+      <span>N = 4 · SPECIAL = (3, 4)</span>
+      <span>⚙ LIVE TRACE</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P114 · 03 VISUALIZATION</span>
+      <span>N = 4 · SPECIAL = (3, 4)</span>
+      <span>⚙ LIVE TRACE</span>
+    </div>
+  </div>
+
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>P114 · 王老先生</span>
+      <span>W06 · DIVIDE &amp; CONQUER</span>
+      <span>SECTION 03 / 04</span>
+    </div>
+    <h1 class="workshop-title">Viz.</h1>
+    <p class="workshop-subtitle">
+      N = 4 · special = (3, 4) · 一步一步看 5 個 L 鋪上來
+    </p>
+  </header>
+
+  <div class="shell">
+
+    <aside class="sidebar">
+
+      <div class="nav-label">// P114 SECTIONS</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">01 · Problem</a></li>
+          <li><a href="concept.html">02 · Concept</a></li>
+          <li><a href="viz.html" class="is-active">03 · Visualization</a></li>
+          <li><a href="code.html">04 · Code</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// CURRICULUM</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// PAGES</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../index.html">Home</a></li>
+          <li><a href="../../../../about.html">About</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <div class="crumb">
+        <a href="../../../../index.html">Home</a>
+        <span class="crumb__sep">/</span>
+        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+        <span class="crumb__sep">/</span>
+        <a href="index.html">P114</a>
+        <span class="crumb__sep">/</span>
+        <span>Visualization</span>
+      </div>
+
+      <article>
+        <span class="stamp">▼ SECTION 03</span>
+        <div class="article-meta">
+          <span>P114 · LIVE TRACE</span>
+          <span>STEP MODE</span>
+        </div>
+
+        <h2 class="section__title">動畫演示</h2>
+
+        <p>
+          以範例 <code>solve(4, 3, 4)</code> 為例。
+          綠色 ★ 為王老先生選的特殊格 <code>(3, 4)</code>。
+          按 <strong>Play</strong> 自動播放，或用 <strong>Prev / Next</strong> 逐步檢視 5 個 L-tromino。
+          剛放下的 L 邊框會用<strong>橘色高亮</strong>，已放好的維持白色粗框。
+        </p>
+
+        <div class="viz viz--lg">
+          <canvas id="viz-canvas" class="viz__canvas"></canvas>
+          <div class="viz__controls">
+            <button class="btn" id="viz-reset">Reset</button>
+            <button class="btn" id="viz-prev">Prev</button>
+            <button class="btn btn--primary" id="viz-play">Play</button>
+            <button class="btn" id="viz-next">Next</button>
+            <span class="viz__step" id="viz-step">-- / --</span>
+          </div>
+          <div class="viz__label" id="viz-label">
+            <strong>INITIAL</strong> · 4×4 board · special = <code>(3, 4)</code>
+          </div>
+        </div>
+
+        <h3>遞迴順序對照</h3>
+        <p>下面是 5 個 L 對應的 <code>tile()</code> 呼叫順序（在實際 code 中，遞迴是 DFS，所以中央 L 會「最先 Report」）：</p>
+
+        <table>
+          <thead>
+            <tr><th>Step</th><th>L 名稱</th><th>覆蓋的格子</th><th>來自</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>L1 · Center</td><td>(2,2), (2,3), (3,2)</td><td>tile(1,1,4,3,4) 中央放 L</td></tr>
+            <tr><td>2</td><td>L2 · TL</td><td>(1,1), (1,2), (2,1)</td><td>tile(1,1,2,2,2) base case</td></tr>
+            <tr><td>3</td><td>L3 · TR</td><td>(1,3), (1,4), (2,4)</td><td>tile(1,3,2,2,3) base case</td></tr>
+            <tr><td>4</td><td>L4 · BL</td><td>(3,1), (4,1), (4,2)</td><td>tile(3,1,2,3,2) base case</td></tr>
+            <tr><td>5</td><td>L5 · BR</td><td>(3,3), (4,3), (4,4)</td><td>tile(3,3,2,3,4) base case</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout__title">// 觀察</div>
+          <p style="margin: 0;">
+            L1 在 <em>TL / TR / BL</em> 三個象限的最角落格上各放一個 cell — 這 3 個 cell 在子問題裡就是該象限的「new special」。
+            BR 象限因為「原 special (3,4)」就在裡面，所以不需要中央 L 補一個 cell — 直接遞迴用原 special 解。
+          </p>
+        </div>
+
+        <div class="pager">
+          <a href="concept.html" class="pager__item pager__item--prev">
+            <span class="pager__label">PREV</span>
+            <span class="pager__title">02 · Concept</span>
+          </a>
+          <a href="code.html" class="pager__item pager__item--next">
+            <span class="pager__label">NEXT</span>
+            <span class="pager__title">04 · Code</span>
+          </a>
+        </div>
+
+      </article>
+
+    </main>
+
+  </div>
+
+  <footer class="workshop-footer">
+    <div>© 2026 // W06 · P114 · 03 VISUALIZATION</div>
+    <div><a href="../../index.html">← BACK TO W06</a></div>
+    <div>SERIAL_NO. AW-W06-P114-03</div>
+  </footer>
+
+  <script src="../../../../assets/js/viz/p114-lboard.js"></script>
+</body>
+</html>

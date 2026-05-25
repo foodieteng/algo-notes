@@ -1,6 +1,6 @@
 /* ============================================================
    P114 王老先生 — L-tromino divide & conquer visualization
-   N=4, special at (3, 4)
+   Style: IMG_4850 (thick L outlines, no per-L color)
    ============================================================ */
 
 (function () {
@@ -8,39 +8,56 @@
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
-  const stepEl   = document.getElementById('viz-step');
-  const btnPrev  = document.getElementById('viz-prev');
-  const btnNext  = document.getElementById('viz-next');
-  const btnPlay  = document.getElementById('viz-play');
-  const btnReset = document.getElementById('viz-reset');
+  const stepEl    = document.getElementById('viz-step');
+  const labelEl   = document.getElementById('viz-label');
+  const btnPrev   = document.getElementById('viz-prev');
+  const btnNext   = document.getElementById('viz-next');
+  const btnPlay   = document.getElementById('viz-play');
+  const btnReset  = document.getElementById('viz-reset');
 
   const COLOR = {
     bg:         '#0d0d0d',
-    ink:        '#e8e6e1',
-    inkDim:     '#9a958c',
-    concrete:   '#8a847a',
-    line:       '#3a3a3a',
-    lineBright: '#555555',
+    grid:       '#3a3a3a',
+    fillCell:   'rgba(193, 68, 14, 0.06)',
+    fillActive: 'rgba(232, 93, 31, 0.18)',
     special:    '#5BC97E',
-    L: [
-      '#c1440e', // L1 · Center
-      '#e85d1f', // L2 · TL
-      '#d4a017', // L3 · TR
-      '#b03a3a', // L4 · BL
-      '#6a7a8a', // L5 · BR
-    ],
+    border:     '#e8e6e1',
+    borderHi:   '#e85d1f',
+    text:       '#e8e6e1',
+    textDim:    '#9a958c',
+    textMuted:  '#8a847a',
   };
 
   const N = 4;
   const SPECIAL = [3, 4];
 
-  // L placements in animation order (recursion-emit order: center first, then 4 quadrants).
+  // L placements with recursion description (matches the tile() emit order)
   const LS = [
-    { name: 'L1 · CENTER',  cells: [[2,2],[2,3],[3,2]] },
-    { name: 'L2 · TL',      cells: [[1,1],[1,2],[2,1]] },
-    { name: 'L3 · TR',      cells: [[1,3],[1,4],[2,4]] },
-    { name: 'L4 · BL',      cells: [[3,1],[4,1],[4,2]] },
-    { name: 'L5 · BR',      cells: [[3,3],[4,3],[4,4]] },
+    {
+      cells: [[2,2],[2,3],[3,2]],
+      title: 'L1 · CENTER',
+      desc:  '在棋盤正中央放第 1 個 L，覆蓋 TL/TR/BL 三象限最靠近中心的角落。'
+    },
+    {
+      cells: [[1,1],[1,2],[2,1]],
+      title: 'L2 · TL QUADRANT',
+      desc:  '遞迴解左上 2×2 子板，special = (2, 2)（剛剛中央 L 在 TL 角落留下的）。'
+    },
+    {
+      cells: [[1,3],[1,4],[2,4]],
+      title: 'L3 · TR QUADRANT',
+      desc:  '遞迴解右上 2×2 子板，special = (2, 3)。'
+    },
+    {
+      cells: [[3,1],[4,1],[4,2]],
+      title: 'L4 · BL QUADRANT',
+      desc:  '遞迴解左下 2×2 子板，special = (3, 2)。'
+    },
+    {
+      cells: [[3,3],[4,3],[4,4]],
+      title: 'L5 · BR QUADRANT',
+      desc:  '遞迴解右下 2×2 子板，special = (3, 4) — 原本王老先生選的格子。'
+    },
   ];
 
   let step = -1;       // -1 = initial; 0..4 = after placing LS[step]
@@ -50,10 +67,10 @@
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = Math.min(w, 440);
+    // height comes from CSS; keep DPR-aware
+    const h = rect.height || 480;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
-    canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
@@ -67,94 +84,155 @@
     return null;
   }
 
-  function draw() {
+  function gridGeometry() {
     const w = canvas.clientWidth;
-    const h = parseFloat(canvas.style.height);
-    ctx.clearRect(0, 0, w, h);
-
-    const labelH = 36;
-    const pad = 16;
+    const h = canvas.clientHeight;
+    const pad = 28;
     const availW = w - pad * 2;
-    const availH = h - labelH - pad * 2;
+    const availH = h - pad * 2;
     const cellSize = Math.floor(Math.min(availW, availH) / N);
     const gridW = cellSize * N;
-    const gridH = cellSize * N;
     const x0 = (w - gridW) / 2;
-    const y0 = labelH;
+    const y0 = (h - gridW) / 2;
+    return { cellSize, gridW, x0, y0 };
+  }
 
-    // Top label
-    ctx.fillStyle = COLOR.concrete;
-    ctx.font = '700 11px "Oswald", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    const label = (step === -1)
-      ? `INITIAL · N=${N} · SPECIAL = (${SPECIAL[0]}, ${SPECIAL[1]})`
-      : `STEP ${String(step + 1).padStart(2,'0')} · PLACE ${LS[step].name}`;
-    ctx.fillText(label, x0, 16);
+  function drawCell(r, c, geom) {
+    const { cellSize, x0, y0 } = geom;
+    const x = x0 + (c - 1) * cellSize;
+    const y = y0 + (r - 1) * cellSize;
+    const owner = ownerOf(r, c);
+    const isCurrent = (step >= 0 && owner === step);
 
-    // Right-side counter
-    ctx.textAlign = 'right';
-    ctx.fillStyle = COLOR.inkDim;
-    ctx.font = '500 11px "JetBrains Mono", monospace';
-    const placed = step + 1;
-    ctx.fillText(`${placed} / ${LS.length} TROMINOES`, x0 + gridW, 16);
-
-    // Draw cells
-    for (let r = 1; r <= N; r++) {
-      for (let c = 1; c <= N; c++) {
-        const x = x0 + (c - 1) * cellSize;
-        const y = y0 + (r - 1) * cellSize;
-        const owner = ownerOf(r, c);
-
-        if (owner === -1) {
-          ctx.fillStyle = COLOR.special;
-        } else if (owner === null) {
-          ctx.fillStyle = COLOR.bg;
-        } else {
-          ctx.fillStyle = COLOR.L[owner];
-        }
-        ctx.fillRect(x, y, cellSize, cellSize);
-
-        ctx.strokeStyle = COLOR.line;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x, y, cellSize, cellSize);
-
-        // Coordinate label
-        ctx.fillStyle = (owner === null) ? COLOR.concrete : '#0d0d0d';
-        ctx.font = '500 11px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'top';
-        ctx.fillText(`(${r},${c})`, x + 5, y + 5);
-
-        // Special marker
-        if (owner === -1) {
-          ctx.fillStyle = '#0d0d0d';
-          ctx.font = '700 14px "Oswald", sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('★', x + cellSize / 2, y + cellSize / 2);
-        }
-      }
+    if (owner === -1) {
+      ctx.fillStyle = COLOR.special;
+    } else if (owner === null) {
+      ctx.fillStyle = COLOR.bg;
+    } else if (isCurrent) {
+      ctx.fillStyle = COLOR.fillActive;
+    } else {
+      ctx.fillStyle = COLOR.fillCell;
     }
+    ctx.fillRect(x, y, cellSize, cellSize);
 
-    // Quadrant divider (after step >= 0)
-    if (step >= 0) {
-      ctx.strokeStyle = COLOR.lineBright;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x0 + gridW / 2, y0);
-      ctx.lineTo(x0 + gridW / 2, y0 + gridH);
-      ctx.moveTo(x0, y0 + gridH / 2);
-      ctx.lineTo(x0 + gridW, y0 + gridH / 2);
-      ctx.stroke();
+    ctx.strokeStyle = COLOR.grid;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y + 0.5, cellSize - 1, cellSize - 1);
+
+    // coordinate label
+    ctx.fillStyle = (owner === -1) ? '#0d0d0d' : COLOR.textMuted;
+    ctx.font = '500 11px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`(${r},${c})`, x + 6, y + 6);
+
+    // special star
+    if (owner === -1) {
+      ctx.fillStyle = '#0d0d0d';
+      ctx.font = '700 22px "Oswald", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('★', x + cellSize / 2, y + cellSize / 2 + 2);
     }
   }
 
-  function update() {
+  function drawLBorder(L, geom, color, width) {
+    const { cellSize, x0, y0 } = geom;
+    const cellSet = new Set(L.cells.map(([r, c]) => `${r},${c}`));
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'square';
+    ctx.lineJoin = 'miter';
+
+    for (const [r, c] of L.cells) {
+      const x = x0 + (c - 1) * cellSize;
+      const y = y0 + (r - 1) * cellSize;
+
+      // Top
+      if (!cellSet.has(`${r - 1},${c}`)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + cellSize, y);
+        ctx.stroke();
+      }
+      // Bottom
+      if (!cellSet.has(`${r + 1},${c}`)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y + cellSize);
+        ctx.lineTo(x + cellSize, y + cellSize);
+        ctx.stroke();
+      }
+      // Left
+      if (!cellSet.has(`${r},${c - 1}`)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + cellSize);
+        ctx.stroke();
+      }
+      // Right
+      if (!cellSet.has(`${r},${c + 1}`)) {
+        ctx.beginPath();
+        ctx.moveTo(x + cellSize, y);
+        ctx.lineTo(x + cellSize, y + cellSize);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function draw() {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+
+    const geom = gridGeometry();
+
+    // Draw all cells
+    for (let r = 1; r <= N; r++) {
+      for (let c = 1; c <= N; c++) {
+        drawCell(r, c, geom);
+      }
+    }
+
+    // Outer board border
+    ctx.strokeStyle = COLOR.border;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(
+      geom.x0 - 1,
+      geom.y0 - 1,
+      geom.gridW + 2,
+      geom.gridW + 2
+    );
+
+    // Draw all placed L outlines
+    for (let i = 0; i <= step; i++) {
+      const isCurrent = (i === step);
+      const color = isCurrent ? COLOR.borderHi : COLOR.border;
+      const width = isCurrent ? 5 : 4;
+      drawLBorder(LS[i], geom, color, width);
+    }
+  }
+
+  function updateLabel() {
     if (stepEl) {
       const cur = step === -1 ? '--' : String(step + 1).padStart(2, '0');
       stepEl.textContent = `${cur} / ${String(LS.length).padStart(2, '0')}`;
     }
+    if (labelEl) {
+      if (step === -1) {
+        labelEl.innerHTML =
+          '<strong>INITIAL</strong> · 4×4 board · special = <code>(3, 4)</code>';
+      } else {
+        const ls = LS[step];
+        labelEl.innerHTML =
+          `<strong>STEP ${String(step + 1).padStart(2, '0')} · ${ls.title}</strong>` +
+          `<br/><span style="color:var(--ink-dim)">${ls.desc}</span>`;
+      }
+    }
+  }
+
+  function update() {
+    updateLabel();
     draw();
   }
 
@@ -167,7 +245,7 @@
     timer = setInterval(() => {
       if (step >= LS.length - 1) { stop(); return; }
       next();
-    }, 900);
+    }, 1100);
   }
   function stop() {
     if (timer) { clearInterval(timer); timer = null; }

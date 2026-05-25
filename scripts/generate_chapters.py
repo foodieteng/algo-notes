@@ -108,7 +108,24 @@ def sidebar_html(active_week, base):
 # ============================================================
 #  Problem rendering helpers
 # ============================================================
-def render_problem_item(week, slug, title, status, *, indent=''):
+def resolve_problem_link(week_slug, prob_slug):
+    """Pick the right URL for a problem detail page.
+
+    Multi-page layout (preferred):  problems/<slug>/index.html
+    Single-page legacy:              problems/<slug>.html
+    Falls back to multi-page form for not-yet-created entries.
+    """
+    chap_dir = ROOT / 'topics' / week_slug
+    multi = chap_dir / 'problems' / prob_slug / 'index.html'
+    single = chap_dir / 'problems' / f'{prob_slug}.html'
+    if multi.exists():
+        return f'problems/{prob_slug}/index.html'
+    if single.exists():
+        return f'problems/{prob_slug}.html'
+    return f'problems/{prob_slug}/index.html'
+
+
+def render_problem_item(week, week_slug, slug, title, status, *, indent=''):
     """Render a single <li> for a problem (used in both chapter outline and section list)."""
     pid = slug.upper()
     if status == 'todo':
@@ -116,13 +133,14 @@ def render_problem_item(week, slug, title, status, *, indent=''):
             f'{indent}<li><span style="color:var(--concrete)">{pid} · {title} '
             f'<em style="font-style:normal;color:var(--line-bright)">(待補)</em></span></li>'
         )
+    href = resolve_problem_link(week_slug, slug)
     if status == 'demo':
         return (
-            f'{indent}<li><a href="problems/{slug}.html">{pid} · {title}</a>'
+            f'{indent}<li><a href="{href}">{pid} · {title}</a>'
             f'<span class="chip chip--warning" style="margin-left:8px;font-size:9px;">DEMO</span></li>'
         )
     # 'done' or anything else
-    return f'{indent}<li><a href="problems/{slug}.html">{pid} · {title}</a></li>'
+    return f'{indent}<li><a href="{href}">{pid} · {title}</a></li>'
 
 
 def group_problems(probs):
@@ -133,16 +151,14 @@ def group_problems(probs):
     return out
 
 
-def chapter_outline(week, probs):
-    """Build the chapter TOC at the top of the chapter page.
-    Returns a list of HTML <li> strings for the outline list."""
+def chapter_outline(week, week_slug, probs):
+    """Build the chapter TOC at the top of the chapter page."""
     by_cat = group_problems(probs)
     items = []
     items.append(f'          <li><a href="#sec-concept">{week}.1 · 核心概念</a></li>')
 
     idx = 2
     if not probs:
-        # Empty chapter — show single placeholder
         items.append(f'          <li><a href="#sec-problems">{week}.{idx} · 題目列表</a></li>')
         idx += 1
     else:
@@ -152,9 +168,8 @@ def chapter_outline(week, probs):
                 continue
             sec_id = f'sec-{cat}'
             items.append(f'          <li><a href="#{sec_id}">{week}.{idx} · {CATEGORY_NAMES[cat]}</a>')
-            # nested list of problems
             sub = '\n'.join(
-                render_problem_item(week, slug, title, status, indent='              ')
+                render_problem_item(week, week_slug, slug, title, status, indent='              ')
                 for slug, title, _, status in cat_items
             )
             items.append(f'            <ul class="notes-list" style="margin: 6px 0 6px 16px;">')
@@ -167,12 +182,11 @@ def chapter_outline(week, probs):
     return '\n'.join(items)
 
 
-def chapter_sections(week, probs):
+def chapter_sections(week, week_slug, probs):
     """Build the main content sections of the chapter page (concept + per-category + notes)."""
     by_cat = group_problems(probs)
 
     out = []
-    # 1) Concept
     out.append(f'''      <article id="sec-concept">
         <span class="stamp">▼ {week}.1</span>
         <h2>核心概念</h2>
@@ -203,7 +217,7 @@ def chapter_sections(week, probs):
             sec_id = f'sec-{cat}'
             cat_name = CATEGORY_NAMES[cat]
             items = '\n          '.join(
-                render_problem_item(week, slug, title, status)
+                render_problem_item(week, week_slug, slug, title, status)
                 for slug, title, _, status in cat_items
             )
             count = len(cat_items)
@@ -239,8 +253,8 @@ def chapter_page(week, slug, title, subtitle, count):
     base = '../../'
     sidebar = sidebar_html(week, base)
     probs = PROBLEMS.get(week, [])
-    outline = chapter_outline(week, probs)
-    sections = chapter_sections(week, probs)
+    outline = chapter_outline(week, slug, probs)
+    sections = chapter_sections(week, slug, probs)
     actual_count = len(probs) if probs else count
 
     return f'''<!DOCTYPE html>
@@ -360,16 +374,26 @@ def refresh_home_sidebar():
 
 
 def refresh_problem_sidebars():
-    """Refresh the CURRICULUM portion of every existing problem page's sidebar."""
-    for problem_html in (ROOT / 'topics').rglob('problems/*.html'):
-        txt = problem_html.read_text(encoding='utf-8')
-        # determine active week from path
+    """Refresh the CURRICULUM portion of every existing problem page's sidebar.
+    Handles both single-page (problems/p18.html) and multi-page (problems/p114/*.html)."""
+    for problem_html in (ROOT / 'topics').rglob('*.html'):
+        rel = problem_html.relative_to(ROOT)
+        path_str = str(rel)
+        if '/problems/' not in path_str.replace('\\', '/'):
+            continue
+        # active week from path
         week = None
         for w, slug, *_ in CHAPTERS:
-            if slug in str(problem_html):
+            if f'topics/{slug}/'.replace('/', '\\') in path_str \
+               or f'topics/{slug}/' in path_str.replace('\\', '/'):
                 week = w
                 break
-        sidebar = sidebar_html(active_week=week, base='../../../')
+        # base path back to root = (n_parts - 1) levels up
+        depth = len(rel.parts) - 1
+        base = '../' * depth
+
+        txt = problem_html.read_text(encoding='utf-8')
+        sidebar = sidebar_html(active_week=week, base=base)
         pat = re.compile(
             r'<div class="nav-label">// CURRICULUM</div>.*?</aside>',
             re.DOTALL,
@@ -378,7 +402,7 @@ def refresh_problem_sidebars():
         new_txt, n = pat.subn(replacement, txt, count=1)
         if n:
             problem_html.write_text(new_txt, encoding='utf-8')
-            print(f'refreshed {problem_html.relative_to(ROOT)} sidebar')
+            print(f'refreshed {rel} sidebar')
 
 
 # ============================================================

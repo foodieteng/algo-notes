@@ -1,0 +1,148 @@
+/* ============================================================
+   Prism Workshop Theme — VS Code Dark+ inspired C++ palette
+   ============================================================ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #d4d4d4;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+  background: none;
+}
+
+pre[class*="language-"] {
+  background: var(--bg-code);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--rust);
+  margin: 0;
+  padding: var(--sp-4) var(--sp-5);
+  overflow: auto;
+}
+
+pre[class*="language-"]::before {
+  content: '// CODE';
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--rust);
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  padding: 2px var(--sp-2);
+}
+
+:not(pre) > code[class*="language-"] {
+  background: var(--bg-3);
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  color: var(--warning);
+}
+
+/* ============================================================
+   Token colors (VS Code Dark+ palette)
+   ============================================================ */
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6A9955;
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: #d4d4d4;
+}
+
+.token.namespace {
+  color: #4EC9B0;
+  opacity: 1;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #9CDCFE;
+}
+
+.token.boolean,
+.token.number {
+  color: #B5CEA8;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #CE9178;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.token.variable {
+  color: #d4d4d4;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function {
+  color: #DCDCAA;
+}
+
+.token.class-name {
+  color: #4EC9B0;
+}
+
+.token.keyword {
+  color: #569CD6;
+}
+
+.token.regex,
+.token.important {
+  color: #D16969;
+}
+
+.token.macro,
+.token.macro.property {
+  color: #C586C0;
+}
+.token.macro .token.string,
+.token.macro .token.expression {
+  color: #CE9178;
+}
+.token.macro .token.directive-hash,
+.token.macro .token.directive {
+  color: #C586C0;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+/* Slight tweak so the file label & language tag still match design */
+.code-block .code-block__head + pre[class*="language-"] {
+  border-top: none;
+}
+.code-block pre[class*="language-"]::before { content: ''; padding: 0; background: none; }

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P114 · 01 Problem // 王老先生 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
+  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+</head>
+<body>
+
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
+
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P114 · 01 PROBLEM</span>
+      <span>王老先生 · L-TROMINO TILING</span>
+      <span>⚙ INTERACTIVE</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P114 · 01 PROBLEM</span>
+      <span>王老先生 · L-TROMINO TILING</span>
+      <span>⚙ INTERACTIVE</span>
+    </div>
+  </div>
+
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>P114 · 王老先生</span>
+      <span>W06 · DIVIDE &amp; CONQUER</span>
+      <span>SECTION 01 / 04</span>
+    </div>
+    <h1 class="workshop-title">Problem.</h1>
+    <p class="workshop-subtitle">
+      互動式 L-tromino tiling ／ N = 2<span class="num">ᴷ</span> × 2<span class="num">ᴷ</span> 板 ／ 缺一格分配方案
+    </p>
+  </header>
+
+  <div class="shell">
+
+    <aside class="sidebar">
+
+      <div class="nav-label">// P114 SECTIONS</div>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="is-active">01 · Problem</a></li>
+          <li><a href="concept.html">02 · Concept</a></li>
+          <li><a href="viz.html">03 · Visualization</a></li>
+          <li><a href="code.html">04 · Code</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// CURRICULUM</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// PAGES</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../index.html">Home</a></li>
+          <li><a href="../../../../about.html">About</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <div class="crumb">
+        <a href="../../../../index.html">Home</a>
+        <span class="crumb__sep">/</span>
+        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+        <span class="crumb__sep">/</span>
+        <span>P114 · Problem</span>
+      </div>
+
+      <article>
+        <span class="stamp">▼ SECTION 01</span>
+        <div class="article-meta">
+          <span>P114</span>
+          <span>INTERACTIVE</span>
+          <span>2026.05.25</span>
+        </div>
+
+        <div class="tag-row">
+          <span class="chip chip--rust">Divide &amp; Conquer</span>
+          <span class="chip">Recursion</span>
+          <span class="chip">Construction</span>
+          <span class="chip chip--warning">Interactive</span>
+          <span class="chip chip--steel">O(N²)</span>
+        </div>
+
+        <h2 class="section__title">題意拆解</h2>
+
+        <p>
+          王老先生有一塊 <code>N × N</code> 的正方形土地，其中 <code>N = 2ᴷ</code>（K 為正整數）。
+          土地被切成 <code>N × N</code> 個邊長為 1 的小方格，
+          位置以 <code>(i, j)</code> 表示：<code>i</code> 為由上到下第 <code>i</code> 列、<code>j</code> 為由左至右第 <code>j</code> 行（皆從 1 開始）。
+        </p>
+
+        <p>
+          王老先生先挑一格 <code>(X, Y)</code> 作為自己的養老用地，
+          剩下 <code>N² − 1</code> 格要平分給 <code>(N² − 1) / 3</code> 個子孫。
+          <strong>每個子孫剛好分到 3 格相連，且必須排成 L 型（不能是 1 × 3 直線）。</strong>
+          任兩個子孫不得有重疊。
+        </p>
+
+        <h3>輸入 / 輸出</h3>
+        <p>本題採 <strong>互動式評測</strong>。請實作以下函式（<code>lib0114.h</code> 已宣告）：</p>
+
+        <div class="code-block">
+          <div class="code-block__head">
+            <span>lib0114.h</span>
+            <span class="code-block__lang">C++</span>
+          </div>
+<pre><code class="language-cpp">void solve(int N, int X, int Y);   // 你要實作這個
+void Report(int x1, int y1,
+            int x2, int y2,
+            int x3, int y3);       // 由 judge 提供，回報一個 L</code></pre>
+        </div>
+
+        <p>
+          <code>solve()</code> 內部對每個 L 呼叫一次 <code>Report</code>，
+          參數為該 L 的三個格子座標。<strong>呼叫順序與三格的順序皆不影響判定</strong>，
+          只要分配滿足規則即視為正確。
+        </p>
+
+        <h3>限制</h3>
+        <ul class="constraint-list">
+          <li><span>30% 資料：1 &lt; N ≤ 8</span></li>
+          <li><span>100% 資料：1 &lt; N ≤ 1024，1 ≤ X, Y ≤ N</span></li>
+          <li><span>N 保證為 2 的正整數次方，存在正整數 K 使 N = 2ᴷ</span></li>
+        </ul>
+
+        <h3>範例</h3>
+        <p>judge 呼叫 <code>solve(4, 3, 4)</code>，你的程式回報 5 次 <code>Report</code>：</p>
+
+        <div class="io-pair">
+          <div class="io-box">
+            <div class="io-box__head">// JUDGE</div>
+            <div class="io-box__body">solve(4, 3, 4);</div>
+          </div>
+          <div class="io-box">
+            <div class="io-box__head">// YOUR REPORTS</div>
+            <div class="io-box__body">Report(2,1, 1,2, 1,1);
+Report(1,3, 1,4, 2,4);
+Report(3,3, 4,3, 4,4);
+Report(3,1, 4,1, 4,2);
+Report(3,2, 2,2, 2,3);</div>
+          </div>
+        </div>
+
+        <blockquote>
+          <code>N = 4</code>、特殊格 <code>(3, 4)</code> 共需 <code>(16 − 1) / 3 = 5</code> 個 L-tromino。
+          下一節「Concept」說明為什麼這樣的分配一定存在，
+          再下一節「Visualization」可以看 5 個 L 一步一步鋪上來。
+        </blockquote>
+
+        <div class="pager">
+          <span class="pager__item pager__item--prev is-disabled">
+            <span class="pager__label">PREV</span>
+            <span class="pager__title">—</span>
+          </span>
+          <a href="concept.html" class="pager__item pager__item--next">
+            <span class="pager__label">NEXT</span>
+            <span class="pager__title">02 · Concept</span>
+          </a>
+        </div>
+
+      </article>
+
+    </main>
+
+  </div>
+
+  <footer class="workshop-footer">
+    <div>© 2026 // W06 · P114 · 01 PROBLEM</div>
+    <div><a href="../../index.html">← BACK TO W06</a></div>
+    <div>SERIAL_NO. AW-W06-P114-01</div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+</body>
+</html>

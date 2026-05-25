@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P114 · 04 Code // 王老先生 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
+  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+</head>
+<body>
+
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
+
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P114 · 04 CODE</span>
+      <span>CLEAN C++ · WALKTHROUGH</span>
+      <span>⚙ ios::sync_with_stdio</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P114 · 04 CODE</span>
+      <span>CLEAN C++ · WALKTHROUGH</span>
+      <span>⚙ ios::sync_with_stdio</span>
+    </div>
+  </div>
+
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>P114 · 王老先生</span>
+      <span>W06 · DIVIDE &amp; CONQUER</span>
+      <span>SECTION 04 / 04</span>
+    </div>
+    <h1 class="workshop-title">Code.</h1>
+    <p class="workshop-subtitle">
+      Clean C++ 實作 ／ 5 段 annotated walkthrough
+    </p>
+  </header>
+
+  <div class="shell">
+
+    <aside class="sidebar">
+
+      <div class="nav-label">// P114 SECTIONS</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">01 · Problem</a></li>
+          <li><a href="concept.html">02 · Concept</a></li>
+          <li><a href="viz.html">03 · Visualization</a></li>
+          <li><a href="code.html" class="is-active">04 · Code</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// CURRICULUM</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// PAGES</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../index.html">Home</a></li>
+          <li><a href="../../../../about.html">About</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <div class="crumb">
+        <a href="../../../../index.html">Home</a>
+        <span class="crumb__sep">/</span>
+        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+        <span class="crumb__sep">/</span>
+        <a href="index.html">P114</a>
+        <span class="crumb__sep">/</span>
+        <span>Code</span>
+      </div>
+
+      <article>
+        <span class="stamp">▼ SECTION 04</span>
+        <div class="article-meta">
+          <span>P114 · CODE</span>
+          <span>C++17</span>
+        </div>
+
+        <h2 class="section__title">Clean Code</h2>
+
+        <div class="code-block">
+          <div class="code-block__head">
+            <span>p114.cpp</span>
+            <span class="code-block__lang">C++</span>
+          </div>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include "lib0114.h"
+using namespace std;
+
+// 在以 (r, c) 為左上角、邊長為 n 的子方格內鋪 L-tromino，
+// special cell 位於 (sx, sy)。
+void tile(int r, int c, int n, int sx, int sy) {
+    if (n == 2) {
+        // 4 格中除 special 外的 3 格本身就是一個 L
+        int xs[3], ys[3], k = 0;
+        for (int dr = 0; dr &lt; 2; ++dr) {
+            for (int dc = 0; dc &lt; 2; ++dc) {
+                int x = r + dr, y = c + dc;
+                if (x == sx &amp;&amp; y == sy) continue;
+                xs[k] = x; ys[k] = y; ++k;
+            }
+        }
+        Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
+        return;
+    }
+
+    int h  = n / 2;
+    int mr = r + h - 1;     // 上半最後一列
+    int mc = c + h - 1;     // 左半最後一行
+
+    // 4 個象限「最靠近中心」的格子座標
+    int qx[4] = { mr, mr,     mr + 1, mr + 1 };
+    int qy[4] = { mc, mc + 1, mc,     mc + 1 };
+
+    // special 落在哪個象限？  0=TL, 1=TR, 2=BL, 3=BR
+    int sq = (sx &gt; mr) * 2 + (sy &gt; mc);
+
+    // 在中央放 L：3 cell = 不含 special 的 3 個象限的最角落
+    int rx[3], ry[3], k = 0;
+    for (int q = 0; q &lt; 4; ++q) {
+        if (q == sq) continue;
+        rx[k] = qx[q]; ry[k] = qy[q]; ++k;
+    }
+    Report(rx[0], ry[0], rx[1], ry[1], rx[2], ry[2]);
+
+    // 對 4 象限分別遞迴；非 special 象限以「剛放下的角落格」當新 special
+    int sr[4] = { r,     r,     r + h, r + h };
+    int sc[4] = { c,     c + h, c,     c + h };
+    for (int q = 0; q &lt; 4; ++q) {
+        int nx = (q == sq) ? sx : qx[q];
+        int ny = (q == sq) ? sy : qy[q];
+        tile(sr[q], sc[q], h, nx, ny);
+    }
+}
+
+void solve(int N, int X, int Y) {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    tile(1, 1, N, X, Y);
+}
+</code></pre>
+        </div>
+
+        <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
+
+        <p>核心是 <code>tile(r, c, n, sx, sy)</code>：對一個左上角 <code>(r,c)</code>、邊長 <code>n</code>、缺一格 <code>(sx,sy)</code> 的子板鋪 L。</p>
+
+        <div class="code-annotated">
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">if (n == 2) {
+    /* 4 格扣掉 special 後 Report */
+}</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>Base case。</strong>
+              2×2 板只有 4 格，扣掉 special 後剩 3 格<em>必然構成 L</em>。
+              直接掃 4 格，跳過 special，剩 3 格送進 <code>Report</code>。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">int mr = r + h - 1;
+int mc = c + h - 1;
+int qx[4] = { mr, mr, mr+1, mr+1 };
+int qy[4] = { mc, mc+1, mc, mc+1 };</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>中央 4 角座標。</strong>
+              每個象限「最靠近中心」的格子，按 <code>TL / TR / BL / BR</code> 順序排：
+              <code>(mr,mc)</code>、<code>(mr,mc+1)</code>、<code>(mr+1,mc)</code>、<code>(mr+1,mc+1)</code>。
+              這 4 格就是放置中央 L 的候選。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">int sq = (sx &gt; mr) * 2 + (sy &gt; mc);</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>用位元把象限編號。</strong>
+              <code>(sx&gt;mr)</code> 高位、<code>(sy&gt;mc)</code> 低位：
+              <br/>· TL = 0：sx ≤ mr 且 sy ≤ mc
+              <br/>· TR = 1：sx ≤ mr 且 sy &gt; mc
+              <br/>· BL = 2：sx &gt; mr 且 sy ≤ mc
+              <br/>· BR = 3：sx &gt; mr 且 sy &gt; mc
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">for (int q = 0; q &lt; 4; ++q) {
+    if (q == sq) continue;
+    rx[k] = qx[q]; ry[k] = qy[q]; ++k;
+}
+Report(rx[0], ry[0], rx[1], ry[1],
+       rx[2], ry[2]);</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>放中央 L。</strong>
+              收集「不含 special」3 個象限的最角落格，組成 L 直接 <code>Report</code>。
+              <em>注意</em>這 3 格之後在各自象限遞迴時會被當成 special — 它們已經被「占用」掉。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">for (int q = 0; q &lt; 4; ++q) {
+    int nx = (q == sq) ? sx : qx[q];
+    int ny = (q == sq) ? sy : qy[q];
+    tile(sr[q], sc[q], h, nx, ny);
+}</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>遞迴 4 個象限。</strong>
+              special 落在哪個象限，那象限就用<em>原 special</em>遞迴；
+              其他 3 個象限則用<em>剛放下的角落格</em>當 new special。
+              這保證所有 4 個子問題都是「方板 + 1 special」的同形式。
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="callout__title">// Common Pitfalls</div>
+          <ul style="margin: 0;">
+            <li>座標 1-indexed：題目給 (X, Y) 從 1 開始，<code>tile</code> 的初始呼叫要傳 <code>tile(1, 1, N, X, Y)</code>。</li>
+            <li><code>mr = r + h − 1</code>：是上半的<em>最後一列</em>，不是中線；下半從 <code>mr + 1</code> 開始。</li>
+            <li>Base case 不需要再判斷 sq — <code>n=2</code> 時 4 格枚舉即可。</li>
+            <li>本題不需 cin/cout，<code>ios::sync_with_stdio</code> 純粹習慣放著（若有額外讀檔再用）。</li>
+          </ul>
+        </div>
+
+        <div class="pager">
+          <a href="viz.html" class="pager__item pager__item--prev">
+            <span class="pager__label">PREV</span>
+            <span class="pager__title">03 · Visualization</span>
+          </a>
+          <a href="../../index.html" class="pager__item pager__item--next">
+            <span class="pager__label">NEXT</span>
+            <span class="pager__title">↑ Back to W06</span>
+          </a>
+        </div>
+
+      </article>
+
+    </main>
+
+  </div>
+
+  <footer class="workshop-footer">
+    <div>© 2026 // W06 · P114 · 04 CODE</div>
+    <div><a href="../../index.html">← BACK TO W06</a></div>
+    <div>SERIAL_NO. AW-W06-P114-04</div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+</body>
+</html>
