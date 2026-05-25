@@ -109,11 +109,87 @@
 
         <h2 class="section__title">動畫演示</h2>
 
+        <h3>Base Case · n = 2 直接解</h3>
         <p>
-          以範例 <code>solve(4, 3, 4)</code> 為例。
-          綠色 ★ 為王老先生選的特殊格 <code>(3, 4)</code>。
+          在看主動畫之前，先把 <strong>base case</strong> 弄清楚。
+          當 <code>tile()</code> 遞迴到 <code>n = 2</code> 時：
+          <strong>2×2 板共 4 格，扣掉 blocked 後剩 3 格本身就是一個 L</strong>，
+          不需再切象限、不需放中央 L，直接 <code>Report</code> 三格座標即可。
+          以下是 4 種可能的 base case（黑格 ★ 是 blocked，橘格是 L）：
+        </p>
+
+        <div class="base-case-row">
+
+          <div class="base-case">
+            <div class="base-case__title">Case 01</div>
+            <svg class="base-case__svg" viewBox="0 0 80 80" width="140" height="140" preserveAspectRatio="xMidYMid meet" style="max-width:140px;">
+              <rect x="0"  y="0"  width="40" height="40" fill="#1a1a1a" stroke="#888"/>
+              <rect x="40" y="0"  width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="0"  y="40" width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="40" y="40" width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <text x="20" y="28" text-anchor="middle" fill="#fff" font-family="Oswald" font-weight="700" font-size="22">★</text>
+              <rect x="0.5" y="0.5" width="79" height="79" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+            </svg>
+            <div class="base-case__sub">blocked = (1,1)</div>
+          </div>
+
+          <div class="base-case">
+            <div class="base-case__title">Case 02</div>
+            <svg class="base-case__svg" viewBox="0 0 80 80" width="140" height="140" preserveAspectRatio="xMidYMid meet" style="max-width:140px;">
+              <rect x="0"  y="0"  width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="40" y="0"  width="40" height="40" fill="#1a1a1a" stroke="#888"/>
+              <rect x="0"  y="40" width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="40" y="40" width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <text x="60" y="28" text-anchor="middle" fill="#fff" font-family="Oswald" font-weight="700" font-size="22">★</text>
+              <rect x="0.5" y="0.5" width="79" height="79" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+            </svg>
+            <div class="base-case__sub">blocked = (1,2)</div>
+          </div>
+
+          <div class="base-case">
+            <div class="base-case__title">Case 03</div>
+            <svg class="base-case__svg" viewBox="0 0 80 80" width="140" height="140" preserveAspectRatio="xMidYMid meet" style="max-width:140px;">
+              <rect x="0"  y="0"  width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="40" y="0"  width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="0"  y="40" width="40" height="40" fill="#1a1a1a" stroke="#888"/>
+              <rect x="40" y="40" width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <text x="20" y="68" text-anchor="middle" fill="#fff" font-family="Oswald" font-weight="700" font-size="22">★</text>
+              <rect x="0.5" y="0.5" width="79" height="79" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+            </svg>
+            <div class="base-case__sub">blocked = (2,1)</div>
+          </div>
+
+          <div class="base-case">
+            <div class="base-case__title">Case 04</div>
+            <svg class="base-case__svg" viewBox="0 0 80 80" width="140" height="140" preserveAspectRatio="xMidYMid meet" style="max-width:140px;">
+              <rect x="0"  y="0"  width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="40" y="0"  width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="0"  y="40" width="40" height="40" fill="#c1440e" stroke="#888"/>
+              <rect x="40" y="40" width="40" height="40" fill="#1a1a1a" stroke="#888"/>
+              <text x="60" y="68" text-anchor="middle" fill="#fff" font-family="Oswald" font-weight="700" font-size="22">★</text>
+              <rect x="0.5" y="0.5" width="79" height="79" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+            </svg>
+            <div class="base-case__sub">blocked = (2,2)</div>
+          </div>
+
+        </div>
+
+        <div class="callout">
+          <div class="callout__title">// 為什麼 base case 一定有解？</div>
+          <p style="margin: 0;">
+            2×2 中 4 格扣掉任一格，剩下 3 格<strong>一定組成 L</strong>（兩個邊上格 + 一個對角格）—
+            不會出現 1×3 直線，因為 1×3 至少需要 3 個共線的格子，
+            而 2×2 內不可能找到 3 個共線非 blocked 格子。
+            這保證了遞迴在最深層一定能停下並合法輸出。
+          </p>
+        </div>
+
+        <h3>主動畫 · N = 4 範例</h3>
+        <p>
+          以 <code>solve(4, 3, 4)</code> 為例。★ 是王老先生選的特殊格 <code>(3, 4)</code>。
           按 <strong>Play</strong> 自動播放，或用 <strong>Prev / Next</strong> 逐步檢視 5 個 L-tromino。
-          剛放下的 L 邊框會用<strong>橘色高亮</strong>，已放好的維持白色粗框。
+          每個 L 用<strong>不同顏色實心填滿</strong>，剛放下的 L 邊框會加粗黑色高亮。
+          第 1 步是中央 L（遞迴步驟），第 2–5 步全部是 <strong>base case 直接解</strong> — 跟上面 4 個 mini-grid 完全對應。
         </p>
 
         <div class="viz viz--lg">
