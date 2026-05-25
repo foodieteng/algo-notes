@@ -110,134 +110,169 @@
 
         <h2 class="section__title">Clean Code</h2>
 
-        <div class="code-block">
+        <div class="code-block code-block--editor">
           <div class="code-block__head">
-            <span>p114.cpp</span>
-            <span class="code-block__lang">C++</span>
+            <span class="code-block__window">
+              <span class="code-block__dot code-block__dot--red"></span>
+              <span class="code-block__dot code-block__dot--yellow"></span>
+              <span class="code-block__dot code-block__dot--green"></span>
+              <span class="code-block__tab">p114.cpp</span>
+            </span>
+            <span class="code-block__lang">C++17</span>
           </div>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
+<pre><code class="language-cpp">#include &lt;array&gt;
+#include &lt;iostream&gt;
 #include "lib0114.h"
+
 using namespace std;
 
-// 在以 (r, c) 為左上角、邊長為 n 的子方格內鋪 L-tromino，
-// special cell 位於 (sx, sy)。
-void tile(int r, int c, int n, int sx, int sy) {
+struct Cell {
+    int x, y;
+};
+
+void report(const array&lt;Cell, 3&gt;&amp; cells) {
+    Report(cells[0].x, cells[0].y,
+           cells[1].x, cells[1].y,
+           cells[2].x, cells[2].y);
+}
+
+// 鋪滿左上角為 (top, left)、邊長為 n 的子棋盤。
+// blocked 代表這個子棋盤中已經不能再使用的格子。
+void tile(int top, int left, int n, Cell blocked) {
     if (n == 2) {
-        // 4 格中除 special 外的 3 格本身就是一個 L
-        int xs[3], ys[3], k = 0;
-        for (int dr = 0; dr &lt; 2; ++dr) {
-            for (int dc = 0; dc &lt; 2; ++dc) {
-                int x = r + dr, y = c + dc;
-                if (x == sx &amp;&amp; y == sy) continue;
-                xs[k] = x; ys[k] = y; ++k;
+        array&lt;Cell, 3&gt; cells{};
+        int count = 0;
+
+        for (int dx = 0; dx &lt; 2; ++dx) {
+            for (int dy = 0; dy &lt; 2; ++dy) {
+                Cell cur{top + dx, left + dy};
+                if (cur.x == blocked.x &amp;&amp; cur.y == blocked.y) continue;
+                cells[count++] = cur;
             }
         }
-        Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
+
+        report(cells);
         return;
     }
 
-    int h  = n / 2;
-    int mr = r + h - 1;     // 上半最後一列
-    int mc = c + h - 1;     // 左半最後一行
+    const int half = n / 2;
+    const int midX = top + half - 1;
+    const int midY = left + half - 1;
 
-    // 4 個象限「最靠近中心」的格子座標
-    int qx[4] = { mr, mr,     mr + 1, mr + 1 };
-    int qy[4] = { mc, mc + 1, mc,     mc + 1 };
+    // TL, TR, BL, BR 四個象限最靠近中心的格子。
+    array&lt;Cell, 4&gt; center = {{
+        {midX,     midY},
+        {midX,     midY + 1},
+        {midX + 1, midY},
+        {midX + 1, midY + 1}
+    }};
 
-    // special 落在哪個象限？  0=TL, 1=TR, 2=BL, 3=BR
-    int sq = (sx &gt; mr) * 2 + (sy &gt; mc);
+    // blocked 落在哪個象限？0=TL, 1=TR, 2=BL, 3=BR。
+    const int blockedQuadrant = (blocked.x &gt; midX) * 2 + (blocked.y &gt; midY);
 
-    // 在中央放 L：3 cell = 不含 special 的 3 個象限的最角落
-    int rx[3], ry[3], k = 0;
+    // 中央 L 放在「沒有原 blocked」的三個象限。
+    array&lt;Cell, 3&gt; middleL{};
+    int count = 0;
     for (int q = 0; q &lt; 4; ++q) {
-        if (q == sq) continue;
-        rx[k] = qx[q]; ry[k] = qy[q]; ++k;
+        if (q == blockedQuadrant) continue;
+        middleL[count++] = center[q];
     }
-    Report(rx[0], ry[0], rx[1], ry[1], rx[2], ry[2]);
+    report(middleL);
 
-    // 對 4 象限分別遞迴；非 special 象限以「剛放下的角落格」當新 special
-    int sr[4] = { r,     r,     r + h, r + h };
-    int sc[4] = { c,     c + h, c,     c + h };
+    array&lt;Cell, 4&gt; origin = {{
+        {top,        left},
+        {top,        left + half},
+        {top + half, left},
+        {top + half, left + half}
+    }};
+
+    // 原 blocked 所在象限沿用它；其他象限把中央 L 的那格當成 blocked。
     for (int q = 0; q &lt; 4; ++q) {
-        int nx = (q == sq) ? sx : qx[q];
-        int ny = (q == sq) ? sy : qy[q];
-        tile(sr[q], sc[q], h, nx, ny);
+        Cell nextBlocked = (q == blockedQuadrant) ? blocked : center[q];
+        tile(origin[q].x, origin[q].y, half, nextBlocked);
     }
 }
 
 void solve(int N, int X, int Y) {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    tile(1, 1, N, X, Y);
+
+    tile(1, 1, N, Cell{X, Y});
 }
 </code></pre>
         </div>
 
         <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
 
-        <p>核心是 <code>tile(r, c, n, sx, sy)</code>：對一個左上角 <code>(r,c)</code>、邊長 <code>n</code>、缺一格 <code>(sx,sy)</code> 的子板鋪 L。</p>
+        <p>核心是 <code>tile(top, left, n, blocked)</code>：對一個左上角 <code>(top,left)</code>、邊長 <code>n</code>、已有一格不可使用的子板鋪 L。</p>
 
         <div class="code-annotated">
 
           <div class="code-annotated__line">
             <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">if (n == 2) {
-    /* 4 格扣掉 special 後 Report */
+    /* 4 格扣掉 blocked 後 report */
 }</code></pre></div>
             <div class="code-annotated__note">
               <strong>Base case。</strong>
-              2×2 板只有 4 格，扣掉 special 後剩 3 格<em>必然構成 L</em>。
-              直接掃 4 格，跳過 special，剩 3 格送進 <code>Report</code>。
+              2×2 板只有 4 格，扣掉 blocked 後剩 3 格<em>必然構成 L</em>。
+              直接掃 4 格，跳過 <code>blocked</code>，剩 3 格送進 <code>report()</code>。
             </div>
           </div>
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">int mr = r + h - 1;
-int mc = c + h - 1;
-int qx[4] = { mr, mr, mr+1, mr+1 };
-int qy[4] = { mc, mc+1, mc, mc+1 };</code></pre></div>
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">const int half = n / 2;
+const int midX = top + half - 1;
+const int midY = left + half - 1;
+
+array&lt;Cell, 4&gt; center = {{
+    {midX,     midY},
+    {midX,     midY + 1},
+    {midX + 1, midY},
+    {midX + 1, midY + 1}
+}};</code></pre></div>
             <div class="code-annotated__note">
               <strong>中央 4 角座標。</strong>
               每個象限「最靠近中心」的格子，按 <code>TL / TR / BL / BR</code> 順序排：
-              <code>(mr,mc)</code>、<code>(mr,mc+1)</code>、<code>(mr+1,mc)</code>、<code>(mr+1,mc+1)</code>。
+              <code>(midX,midY)</code>、<code>(midX,midY+1)</code>、<code>(midX+1,midY)</code>、<code>(midX+1,midY+1)</code>。
               這 4 格就是放置中央 L 的候選。
             </div>
           </div>
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">int sq = (sx &gt; mr) * 2 + (sy &gt; mc);</code></pre></div>
+            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">const int blockedQuadrant =
+    (blocked.x &gt; midX) * 2 + (blocked.y &gt; midY);</code></pre></div>
             <div class="code-annotated__note">
               <strong>用位元把象限編號。</strong>
-              <code>(sx&gt;mr)</code> 高位、<code>(sy&gt;mc)</code> 低位：
-              <br/>· TL = 0：sx ≤ mr 且 sy ≤ mc
-              <br/>· TR = 1：sx ≤ mr 且 sy &gt; mc
-              <br/>· BL = 2：sx &gt; mr 且 sy ≤ mc
-              <br/>· BR = 3：sx &gt; mr 且 sy &gt; mc
+              <code>(blocked.x &gt; midX)</code> 高位、<code>(blocked.y &gt; midY)</code> 低位：
+              <br/>· TL = 0：blocked.x ≤ midX 且 blocked.y ≤ midY
+              <br/>· TR = 1：blocked.x ≤ midX 且 blocked.y &gt; midY
+              <br/>· BL = 2：blocked.x &gt; midX 且 blocked.y ≤ midY
+              <br/>· BR = 3：blocked.x &gt; midX 且 blocked.y &gt; midY
             </div>
           </div>
 
           <div class="code-annotated__line">
             <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">for (int q = 0; q &lt; 4; ++q) {
-    if (q == sq) continue;
-    rx[k] = qx[q]; ry[k] = qy[q]; ++k;
+    if (q == blockedQuadrant) continue;
+    middleL[count++] = center[q];
 }
-Report(rx[0], ry[0], rx[1], ry[1],
-       rx[2], ry[2]);</code></pre></div>
+report(middleL);</code></pre></div>
             <div class="code-annotated__note">
               <strong>放中央 L。</strong>
-              收集「不含 special」3 個象限的最角落格，組成 L 直接 <code>Report</code>。
-              <em>注意</em>這 3 格之後在各自象限遞迴時會被當成 special — 它們已經被「占用」掉。
+              收集「不含原 blocked」3 個象限的最角落格，組成 L 直接 <code>report()</code>。
+              <em>注意</em>這 3 格之後在各自象限遞迴時會被當成 blocked — 它們已經被「占用」掉。
             </div>
           </div>
 
           <div class="code-annotated__line">
             <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">for (int q = 0; q &lt; 4; ++q) {
-    int nx = (q == sq) ? sx : qx[q];
-    int ny = (q == sq) ? sy : qy[q];
-    tile(sr[q], sc[q], h, nx, ny);
+    Cell nextBlocked =
+        (q == blockedQuadrant) ? blocked : center[q];
+    tile(origin[q].x, origin[q].y, half, nextBlocked);
 }</code></pre></div>
             <div class="code-annotated__note">
               <strong>遞迴 4 個象限。</strong>
-              special 落在哪個象限，那象限就用<em>原 special</em>遞迴；
+              blocked 落在哪個象限，那象限就用<em>原 blocked</em>遞迴；
               其他 3 個象限則用<em>剛放下的角落格</em>當 new special。
               這保證所有 4 個子問題都是「方板 + 1 special」的同形式。
             </div>
@@ -248,8 +283,8 @@ Report(rx[0], ry[0], rx[1], ry[1],
           <div class="callout__title">// Common Pitfalls</div>
           <ul style="margin: 0;">
             <li>座標 1-indexed：題目給 (X, Y) 從 1 開始，<code>tile</code> 的初始呼叫要傳 <code>tile(1, 1, N, X, Y)</code>。</li>
-            <li><code>mr = r + h − 1</code>：是上半的<em>最後一列</em>，不是中線；下半從 <code>mr + 1</code> 開始。</li>
-            <li>Base case 不需要再判斷 sq — <code>n=2</code> 時 4 格枚舉即可。</li>
+            <li><code>midX = top + half − 1</code>：是上半的<em>最後一列</em>，不是中線；下半從 <code>midX + 1</code> 開始。</li>
+            <li>Base case 不需要再判斷象限 — <code>n=2</code> 時 4 格枚舉即可。</li>
             <li>本題不需 cin/cout，<code>ios::sync_with_stdio</code> 純粹習慣放著（若有額外讀檔再用）。</li>
           </ul>
         </div>
@@ -277,8 +312,9 @@ Report(rx[0], ry[0], rx[1], ry[1],
     <div>SERIAL_NO. AW-W06-P114-04</div>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
 </body>
 </html>

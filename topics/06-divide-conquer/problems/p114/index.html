@@ -158,7 +158,7 @@ void Report(int x1, int y1,
         </ul>
 
         <h3>範例</h3>
-        <p>judge 呼叫 <code>solve(4, 3, 4)</code>，你的程式回報 5 次 <code>Report</code>：</p>
+        <p>judge 呼叫 <code>solve(4, 3, 4)</code>，你的程式可以依照分治 DFS 順序回報 5 次 <code>Report</code>：</p>
 
         <div class="io-pair">
           <div class="io-box">
@@ -167,11 +167,11 @@ void Report(int x1, int y1,
           </div>
           <div class="io-box">
             <div class="io-box__head">// YOUR REPORTS</div>
-            <div class="io-box__body">Report(2,1, 1,2, 1,1);
+            <div class="io-box__body">Report(2,2, 2,3, 3,2);
+Report(1,1, 1,2, 2,1);
 Report(1,3, 1,4, 2,4);
-Report(3,3, 4,3, 4,4);
 Report(3,1, 4,1, 4,2);
-Report(3,2, 2,2, 2,3);</div>
+Report(3,3, 4,3, 4,4);</div>
           </div>
         </div>
 
@@ -204,8 +204,9 @@ Report(3,2, 2,2, 2,3);</div>
     <div>SERIAL_NO. AW-W06-P114-01</div>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
 </body>
 </html>
