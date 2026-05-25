@@ -154,17 +154,20 @@
   border-left: 4px solid var(--rust);
 }
 .code-block pre::before { content: ''; padding: 0; background: none; }
+/* macOS-style code window with chrome — DARK theme (VS Code Dark+).
+   Token colors come from prism-workshop.css; we only restyle the chrome. */
 .code-block--editor {
-  border: 1px solid #d0d7de;
-  background: #ffffff;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--line);
+  background: #1e1e1e;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+  position: relative;
 }
 .code-block--editor .code-block__head {
   min-height: 40px;
   padding: 0 var(--sp-3);
-  background: #f3f3f3;
-  border-color: #d0d7de;
-  color: #424242;
+  background: #2d2d30;
+  border-color: var(--line);
+  color: #cccccc;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -181,22 +184,22 @@
   display: inline-block;
   flex: 0 0 auto;
 }
-.code-block__dot--red { background: #ff5f56; }
+.code-block__dot--red    { background: #ff5f56; }
 .code-block__dot--yellow { background: #ffbd2e; }
-.code-block__dot--green { background: #27c93f; }
+.code-block__dot--green  { background: #27c93f; }
 .code-block__tab {
   align-self: stretch;
   display: inline-flex;
   align-items: center;
   margin-left: var(--sp-2);
   padding: 0 var(--sp-4);
-  background: #ffffff;
-  border-left: 1px solid #d0d7de;
-  border-right: 1px solid #d0d7de;
-  color: #24292f;
+  background: #1e1e1e;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  color: #d4d4d4;
 }
 .code-block--editor .code-block__lang {
-  color: #0550ae;
+  color: #569cd6;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -204,22 +207,22 @@
 }
 .code-block--editor pre[class*="language-"] {
   background:
-    linear-gradient(90deg, #f6f8fa 0 52px, transparent 52px),
-    #ffffff;
+    linear-gradient(90deg, #252526 0 52px, transparent 52px),
+    #1e1e1e;
   border: none;
-  border-top: 1px solid #d0d7de;
+  border-top: 1px solid var(--line);
   padding: var(--sp-5) var(--sp-5) var(--sp-5) 72px;
   line-height: 1.72;
   font-size: 13px;
-  box-shadow: inset 52px 0 0 #f6f8fa;
 }
+.code-block--editor pre[class*="language-"]::before { content: none; display: none; }
 .code-block--editor pre[class*="language-"]::after {
   content: '1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 10\A 11\A 12\A 13\A 14\A 15\A 16\A 17\A 18\A 19\A 20\A 21\A 22\A 23\A 24\A 25\A 26\A 27\A 28\A 29\A 30\A 31\A 32\A 33\A 34\A 35\A 36\A 37\A 38\A 39\A 40\A 41\A 42\A 43\A 44\A 45\A 46\A 47\A 48\A 49\A 50\A 51\A 52\A 53\A 54\A 55\A 56\A 57\A 58\A 59\A 60\A 61\A 62\A 63\A 64\A 65\A 66\A 67\A 68\A 69\A 70';
   position: absolute;
   top: var(--sp-5);
   left: 0;
   width: 40px;
-  color: #8c959f;
+  color: #6e7681;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.72;
@@ -227,56 +230,6 @@
   white-space: pre;
   pointer-events: none;
   user-select: none;
-}
-.code-block--editor code[class*="language-"],
-.code-block--editor pre[class*="language-"] {
-  color: #24292f;
-}
-.code-block--editor .token.comment,
-.code-block--editor .token.prolog,
-.code-block--editor .token.doctype,
-.code-block--editor .token.cdata {
-  color: #6a737d;
-}
-.code-block--editor .token.punctuation,
-.code-block--editor .token.operator,
-.code-block--editor .token.entity,
-.code-block--editor .token.url,
-.code-block--editor .token.variable {
-  color: #24292f;
-}
-.code-block--editor .token.property,
-.code-block--editor .token.tag,
-.code-block--editor .token.constant,
-.code-block--editor .token.symbol,
-.code-block--editor .token.deleted {
-  color: #005cc5;
-}
-.code-block--editor .token.boolean,
-.code-block--editor .token.number {
-  color: #005cc5;
-}
-.code-block--editor .token.selector,
-.code-block--editor .token.attr-name,
-.code-block--editor .token.string,
-.code-block--editor .token.char,
-.code-block--editor .token.builtin,
-.code-block--editor .token.inserted {
-  color: #032f62;
-}
-.code-block--editor .token.atrule,
-.code-block--editor .token.attr-value,
-.code-block--editor .token.function {
-  color: #6f42c1;
-}
-.code-block--editor .token.class-name,
-.code-block--editor .token.namespace {
-  color: #22863a;
-}
-.code-block--editor .token.keyword,
-.code-block--editor .token.macro,
-.code-block--editor .token.macro.property {
-  color: #d73a49;
 }
 
 /* ---- Annotated walkthrough ---- */

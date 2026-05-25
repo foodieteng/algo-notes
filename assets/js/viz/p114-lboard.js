@@ -24,16 +24,16 @@
     specialMark:'#ffffff',
     boardEdge:  '#1a1a1a',
     activeEdge: '#000000',
-    // L fill colors — solid, distinct, readable on white
+    // L fill colors — solid and clearly different from one another.
     L: [
-      '#c1440e', // L1 · Center  · rust
-      '#e85d1f', // L2 · TL      · bright orange
-      '#d4a017', // L3 · TR      · warning yellow
-      '#6ba368', // L4 · BL      · green
-      '#6a7a8a', // L5 · BR      · steel blue
+      '#c7352a', // L1 · Center · red
+      '#2f6fb6', // L2 · TL     · blue
+      '#2e9d63', // L3 · TR     · green
+      '#c98a24', // L4 · BL     · orange
+      '#6e41c8', // L5 · BR     · purple
     ],
     LText: [    // text color used on top of each L fill
-      '#ffffff','#ffffff','#1a1a1a','#ffffff','#ffffff',
+      '#ffffff','#ffffff','#ffffff','#ffffff','#ffffff',
     ],
   };
 
