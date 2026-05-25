@@ -488,6 +488,149 @@ pre.trace-block.language-cpp::before {
   color: #d73a49;
 }
 
+/* ============================================================
+   .tex-doc — academic LaTeX-style problem paper
+   (mirrors the PDF format: white paper, serif body, centered title,
+    bold section headings, first-line indented paragraphs)
+   ============================================================ */
+.tex-doc {
+  background: #fdfdfa;
+  color: #1a1a1a;
+  font-family: 'EB Garamond', 'Source Serif Pro', 'Latin Modern Roman', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  padding: var(--sp-8) var(--sp-8) var(--sp-7);
+  margin: var(--sp-5) 0;
+  border: 1px solid #c8c1ac;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  position: relative;
+}
+@media (max-width: 700px) {
+  .tex-doc { padding: var(--sp-6) var(--sp-5); font-size: 16px; }
+}
+
+.tex-doc__masthead {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 6px;
+  margin-bottom: var(--sp-6);
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.tex-doc__title {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 700;
+  font-size: 26px;
+  text-align: center;
+  margin: 0 0 var(--sp-5);
+  color: #1a1a1a;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.2;
+  border-left: none;
+  padding-left: 0;
+}
+
+.tex-doc p {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  color: #1a1a1a;
+  margin: 0 0 0.45em;
+  text-indent: 2em;
+}
+.tex-doc p.no-indent { text-indent: 0; }
+
+.tex-doc h3 {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1a1a1a;
+  margin: var(--sp-5) 0 var(--sp-3);
+  text-transform: none;
+  letter-spacing: 0;
+  border-left: none;
+  padding-left: 0;
+}
+
+.tex-doc i,
+.tex-doc em {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-style: italic;
+  color: #1a1a1a;
+}
+
+.tex-doc code {
+  font-family: 'JetBrains Mono', 'Latin Modern Mono', 'Courier New', monospace;
+  font-size: 0.9em;
+  background: transparent;
+  border: none;
+  color: #1a1a1a;
+  padding: 0;
+}
+
+.tex-doc pre {
+  font-family: 'JetBrains Mono', 'Latin Modern Mono', 'Courier New', monospace;
+  font-size: 14px;
+  background: transparent;
+  border: none;
+  border-left: none;
+  margin: var(--sp-3) 0 var(--sp-3) 2em;
+  padding: 0;
+  color: #1a1a1a;
+  line-height: 1.55;
+  white-space: pre;
+  overflow-x: auto;
+}
+.tex-doc pre::before { content: none !important; display: none !important; }
+.tex-doc pre code { font-size: inherit; line-height: inherit; padding: 0; background: transparent; color: inherit; }
+
+.tex-doc__figure {
+  margin: var(--sp-5) auto;
+  text-align: center;
+}
+.tex-doc__figure svg { max-width: 100%; height: auto; }
+
+.tex-doc__caption {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #1a1a1a;
+  text-align: center;
+  margin-top: var(--sp-2);
+}
+
+.tex-doc__pagenum {
+  text-align: center;
+  margin: var(--sp-7) 0 0;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 16px;
+  color: #1a1a1a;
+  text-indent: 0;
+}
+
+/* Inline fraction — N×N-1 over 3 */
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: -0.5em;
+  text-align: center;
+  font-size: 0.95em;
+  margin: 0 2px;
+  line-height: 1;
+}
+.frac__num {
+  border-bottom: 1px solid currentColor;
+  padding: 0 4px 2px;
+}
+.frac__den {
+  padding: 2px 4px 0;
+}
+
 /* ---- Base case mini-grid showcase ---- */
 .base-case-row {
   display: grid;
