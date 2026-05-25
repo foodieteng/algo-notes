@@ -120,161 +120,148 @@
             </span>
             <span class="code-block__lang">C++17</span>
           </div>
-<pre><code class="language-cpp">#include &lt;array&gt;
-#include &lt;iostream&gt;
+<pre><code class="language-cpp">#include &lt;iostream&gt;
 #include "lib0114.h"
-
 using namespace std;
 
-struct Cell {
-    int x, y;
-};
-
-void report(const array&lt;Cell, 3&gt;&amp; cells) {
-    Report(cells[0].x, cells[0].y,
-           cells[1].x, cells[1].y,
-           cells[2].x, cells[2].y);
-}
-
-// 鋪滿左上角為 (top, left)、邊長為 n 的子棋盤。
-// blocked 代表這個子棋盤中已經不能再使用的格子。
-void tile(int top, int left, int n, Cell blocked) {
+// 鋪滿左上角為 (top, left)、邊長為 n 的子棋盤；
+// (blockedX, blockedY) 是已被佔用、不能再放 L 的格子。
+void tile(int top, int left, int n, int blockedX, int blockedY) {
     if (n == 2) {
-        array&lt;Cell, 3&gt; cells{};
-        int count = 0;
-
+        // 4 格扣掉 blocked 後剩 3 格本身就是 L
+        int xs[3], ys[3], k = 0;
         for (int dx = 0; dx &lt; 2; ++dx) {
             for (int dy = 0; dy &lt; 2; ++dy) {
-                Cell cur{top + dx, left + dy};
-                if (cur.x == blocked.x &amp;&amp; cur.y == blocked.y) continue;
-                cells[count++] = cur;
+                int x = top + dx, y = left + dy;
+                if (x == blockedX &amp;&amp; y == blockedY) continue;
+                xs[k] = x; ys[k] = y; ++k;
             }
         }
-
-        report(cells);
+        Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
         return;
     }
 
     const int half = n / 2;
-    const int midX = top + half - 1;
-    const int midY = left + half - 1;
+    const int midX = top  + half - 1;   // 上半最後一列
+    const int midY = left + half - 1;   // 左半最後一行
 
-    // TL, TR, BL, BR 四個象限最靠近中心的格子。
-    array&lt;Cell, 4&gt; center = {{
-        {midX,     midY},
-        {midX,     midY + 1},
-        {midX + 1, midY},
-        {midX + 1, midY + 1}
-    }};
+    // 4 個象限「最靠近中心」的格子座標 (TL, TR, BL, BR)
+    int cx[4] = { midX,     midX,     midX + 1, midX + 1 };
+    int cy[4] = { midY,     midY + 1, midY,     midY + 1 };
 
-    // blocked 落在哪個象限？0=TL, 1=TR, 2=BL, 3=BR。
-    const int blockedQuadrant = (blocked.x &gt; midX) * 2 + (blocked.y &gt; midY);
+    // blocked 在哪個象限？  0=TL, 1=TR, 2=BL, 3=BR
+    const int bq = (blockedX &gt; midX) * 2 + (blockedY &gt; midY);
 
-    // 中央 L 放在「沒有原 blocked」的三個象限。
-    array&lt;Cell, 3&gt; middleL{};
-    int count = 0;
+    // 中央 L：3 cell = 不含 blocked 的 3 個象限的最角落
+    int lx[3], ly[3], k = 0;
     for (int q = 0; q &lt; 4; ++q) {
-        if (q == blockedQuadrant) continue;
-        middleL[count++] = center[q];
+        if (q == bq) continue;
+        lx[k] = cx[q]; ly[k] = cy[q]; ++k;
     }
-    report(middleL);
+    Report(lx[0], ly[0], lx[1], ly[1], lx[2], ly[2]);
 
-    array&lt;Cell, 4&gt; origin = {{
-        {top,        left},
-        {top,        left + half},
-        {top + half, left},
-        {top + half, left + half}
-    }};
-
-    // 原 blocked 所在象限沿用它；其他象限把中央 L 的那格當成 blocked。
+    // 對 4 象限分別遞迴；blocked 不在的象限以「剛放下的角落格」當新 blocked
+    int ox[4] = { top,        top,         top + half, top + half };
+    int oy[4] = { left,       left + half, left,       left + half };
     for (int q = 0; q &lt; 4; ++q) {
-        Cell nextBlocked = (q == blockedQuadrant) ? blocked : center[q];
-        tile(origin[q].x, origin[q].y, half, nextBlocked);
+        int nx = (q == bq) ? blockedX : cx[q];
+        int ny = (q == bq) ? blockedY : cy[q];
+        tile(ox[q], oy[q], half, nx, ny);
     }
 }
 
 void solve(int N, int X, int Y) {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    tile(1, 1, N, Cell{X, Y});
+    tile(1, 1, N, X, Y);
 }
 </code></pre>
         </div>
 
         <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
 
-        <p>核心是 <code>tile(top, left, n, blocked)</code>：對一個左上角 <code>(top,left)</code>、邊長 <code>n</code>、已有一格不可使用的子板鋪 L。</p>
+        <p>核心是 <code>tile(top, left, n, blockedX, blockedY)</code>：對一個左上角 <code>(top, left)</code>、邊長 <code>n</code>、已有一格 <code>(blockedX, blockedY)</code> 不可使用的子板鋪 L。</p>
 
         <div class="code-annotated">
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">if (n == 2) {
-    /* 4 格扣掉 blocked 後 report */
+            <div class="code-annotated__code"><pre><code class="language-cpp">if (n == 2) {
+    int xs[3], ys[3], k = 0;
+    for (int dx = 0; dx &lt; 2; ++dx)
+        for (int dy = 0; dy &lt; 2; ++dy) {
+            int x = top + dx, y = left + dy;
+            if (x == blockedX &amp;&amp; y == blockedY) continue;
+            xs[k] = x; ys[k] = y; ++k;
+        }
+    Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
+    return;
 }</code></pre></div>
             <div class="code-annotated__note">
               <strong>Base case。</strong>
-              2×2 板只有 4 格，扣掉 blocked 後剩 3 格<em>必然構成 L</em>。
-              直接掃 4 格，跳過 <code>blocked</code>，剩 3 格送進 <code>report()</code>。
+              2×2 板共 4 格，扣掉 blocked 後剩 3 格<em>必然構成 L</em>。
+              直接 double-loop 掃 4 格，跳過 blocked，把剩 3 格塞進 <code>xs / ys</code> 後 <code>Report</code>。
             </div>
           </div>
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">const int half = n / 2;
-const int midX = top + half - 1;
+            <div class="code-annotated__code"><pre><code class="language-cpp">const int half = n / 2;
+const int midX = top  + half - 1;
 const int midY = left + half - 1;
 
-array&lt;Cell, 4&gt; center = {{
-    {midX,     midY},
-    {midX,     midY + 1},
-    {midX + 1, midY},
-    {midX + 1, midY + 1}
-}};</code></pre></div>
+int cx[4] = { midX,   midX,   midX+1, midX+1 };
+int cy[4] = { midY,   midY+1, midY,   midY+1 };</code></pre></div>
             <div class="code-annotated__note">
               <strong>中央 4 角座標。</strong>
-              每個象限「最靠近中心」的格子，按 <code>TL / TR / BL / BR</code> 順序排：
-              <code>(midX,midY)</code>、<code>(midX,midY+1)</code>、<code>(midX+1,midY)</code>、<code>(midX+1,midY+1)</code>。
+              每個象限「最靠近中心」的格子，按 <code>TL / TR / BL / BR</code> 順序排成兩個平行陣列：
+              <code>(cx[0], cy[0]) = (midX, midY)</code>，依此類推。
               這 4 格就是放置中央 L 的候選。
             </div>
           </div>
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">const int blockedQuadrant =
-    (blocked.x &gt; midX) * 2 + (blocked.y &gt; midY);</code></pre></div>
+            <div class="code-annotated__code"><pre><code class="language-cpp">const int bq = (blockedX &gt; midX) * 2
+             + (blockedY &gt; midY);</code></pre></div>
             <div class="code-annotated__note">
               <strong>用位元把象限編號。</strong>
-              <code>(blocked.x &gt; midX)</code> 高位、<code>(blocked.y &gt; midY)</code> 低位：
-              <br/>· TL = 0：blocked.x ≤ midX 且 blocked.y ≤ midY
-              <br/>· TR = 1：blocked.x ≤ midX 且 blocked.y &gt; midY
-              <br/>· BL = 2：blocked.x &gt; midX 且 blocked.y ≤ midY
-              <br/>· BR = 3：blocked.x &gt; midX 且 blocked.y &gt; midY
+              <code>(blockedX &gt; midX)</code> 高位、<code>(blockedY &gt; midY)</code> 低位，組出 0~3：
+              <br/>· TL = 0：blockedX ≤ midX 且 blockedY ≤ midY
+              <br/>· TR = 1：blockedX ≤ midX 且 blockedY &gt; midY
+              <br/>· BL = 2：blockedX &gt; midX 且 blockedY ≤ midY
+              <br/>· BR = 3：blockedX &gt; midX 且 blockedY &gt; midY
             </div>
           </div>
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">for (int q = 0; q &lt; 4; ++q) {
-    if (q == blockedQuadrant) continue;
-    middleL[count++] = center[q];
+            <div class="code-annotated__code"><pre><code class="language-cpp">int lx[3], ly[3], k = 0;
+for (int q = 0; q &lt; 4; ++q) {
+    if (q == bq) continue;
+    lx[k] = cx[q]; ly[k] = cy[q]; ++k;
 }
-report(middleL);</code></pre></div>
+Report(lx[0], ly[0],
+       lx[1], ly[1],
+       lx[2], ly[2]);</code></pre></div>
             <div class="code-annotated__note">
               <strong>放中央 L。</strong>
-              收集「不含原 blocked」3 個象限的最角落格，組成 L 直接 <code>report()</code>。
+              收集「不含 blocked」3 個象限的最角落格塞進 <code>lx / ly</code>，再 <code>Report</code> 出去。
               <em>注意</em>這 3 格之後在各自象限遞迴時會被當成 blocked — 它們已經被「占用」掉。
             </div>
           </div>
 
           <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre style="margin:0;padding:0;border:none;"><code class="language-cpp">for (int q = 0; q &lt; 4; ++q) {
-    Cell nextBlocked =
-        (q == blockedQuadrant) ? blocked : center[q];
-    tile(origin[q].x, origin[q].y, half, nextBlocked);
+            <div class="code-annotated__code"><pre><code class="language-cpp">int ox[4] = { top,  top,         top+half, top+half };
+int oy[4] = { left, left+half,   left,     left+half };
+
+for (int q = 0; q &lt; 4; ++q) {
+    int nx = (q == bq) ? blockedX : cx[q];
+    int ny = (q == bq) ? blockedY : cy[q];
+    tile(ox[q], oy[q], half, nx, ny);
 }</code></pre></div>
             <div class="code-annotated__note">
               <strong>遞迴 4 個象限。</strong>
+              <code>(ox[q], oy[q])</code> 是該象限的左上角。
               blocked 落在哪個象限，那象限就用<em>原 blocked</em>遞迴；
-              其他 3 個象限則用<em>剛放下的角落格</em>當 new special。
-              這保證所有 4 個子問題都是「方板 + 1 special」的同形式。
+              其他 3 個象限則用<em>剛放下的角落格</em>當 new blocked。
+              這保證所有 4 個子問題都是「方板 + 1 blocked」的同形式。
             </div>
           </div>
         </div>
