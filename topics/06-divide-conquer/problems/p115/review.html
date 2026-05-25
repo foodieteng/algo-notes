@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P114 · 05 Review // 王老先生 // ALGO WORKSHOP</title>
+  <title>P115 · 05 Review // 逆序數對 // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,11 +25,11 @@
   <div class="top-strip">
     <div class="marquee">
       <span>※ ALGO WORKSHOP ※</span>
-      <span>P114 · 05 REVIEW</span>
+      <span>P115 · 05 REVIEW</span>
       <span>觀念題 · 範例計算 · 答案</span>
       <span>⚙ SELF-CHECK</span>
       <span>※ ALGO WORKSHOP ※</span>
-      <span>P114 · 05 REVIEW</span>
+      <span>P115 · 05 REVIEW</span>
       <span>觀念題 · 範例計算 · 答案</span>
       <span>⚙ SELF-CHECK</span>
     </div>
@@ -37,7 +37,7 @@
 
   <header class="workshop-header">
     <div class="meta-row">
-      <span><span class="dot"></span>P114 · 王老先生</span>
+      <span><span class="dot"></span>P115 · 逆序數對</span>
       <span>W06 · DIVIDE &amp; CONQUER</span>
       <span>SECTION 05 / 05</span>
     </div>
@@ -51,7 +51,7 @@
 
     <aside class="sidebar">
 
-      <div class="nav-label">// P114 SECTIONS</div>
+      <div class="nav-label">// P115 SECTIONS</div>
       <nav>
         <ul>
           <li><a href="index.html">01 · Problem</a></li>
@@ -97,7 +97,7 @@
         <span class="crumb__sep">/</span>
         <a href="../../index.html">W06 · Divide &amp; Conquer</a>
         <span class="crumb__sep">/</span>
-        <a href="index.html">P114</a>
+        <a href="index.html">P115</a>
         <span class="crumb__sep">/</span>
         <span>Review</span>
       </div>
@@ -105,7 +105,7 @@
       <article>
         <span class="stamp">▼ SECTION 05</span>
         <div class="article-meta">
-          <span>P114 · REVIEW</span>
+          <span>P115 · REVIEW</span>
           <span>SELF-CHECK</span>
         </div>
 
@@ -126,28 +126,28 @@
             </thead>
             <tbody>
               <tr>
-                <td>數學基礎</td>
-                <td><code>4 ≡ 1 (mod 3)</code> ⇒ <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，L 數量 <code>(N² − 1) / 3</code> 必為整數。</td>
+                <td>分治結構</td>
+                <td>把陣列切兩半 → 各自遞迴排序 → merge 時順便算跨界逆序對。</td>
               </tr>
               <tr>
-                <td>分治架構</td>
-                <td>切 4 個 <code>N/2 × N/2</code> 象限；blocked 必落在恰好 1 個象限裡。</td>
+                <td>跨界逆序對</td>
+                <td>merge 時取 <code>a[j]</code>（右半）出來，左半剩 <code>a[i..mid]</code> 個都 &gt; <code>a[j]</code>，全部成對。</td>
               </tr>
               <tr>
-                <td>中央 L 的作用</td>
-                <td>在「不含 blocked」的 3 個象限角落各種一格 — 變成各象限的「新 blocked」，子問題完全同形。</td>
+                <td>貢獻公式</td>
+                <td><code>contrib = remaining_left_sum + a[j] × count</code>，其中 <code>count = mid − i + 1</code>。</td>
               </tr>
               <tr>
-                <td>Base case</td>
-                <td><code>n = 2</code> 時，4 格扣 blocked 剩 3 格本身就是 L，直接 <code>Report</code>。</td>
+                <td>remaining 維護</td>
+                <td>merge 開始時算一次左半總和，左半游標每前進一步就減掉 <code>a[i]</code>，O(1) 取用。</td>
               </tr>
               <tr>
                 <td>時間複雜度</td>
-                <td><code>T(N) = 4·T(N/2) + O(1)</code> ⇒ <code>Θ(N²)</code>（Master Theorem case 1）。</td>
+                <td><code>T(N) = 2·T(N/2) + O(N)</code> ⇒ <code>Θ(N log N)</code>（Master Theorem case 2）。</td>
               </tr>
               <tr>
-                <td>空間複雜度</td>
-                <td>遞迴深度 <code>O(log N) = K</code>；N=1024 只有 10 層。</td>
+                <td>Mod 必要</td>
+                <td>累加進 <code>inv_sum</code> 與 <code>remaining</code> 都 mod；<strong>比較永遠用原始值</strong>。</td>
               </tr>
             </tbody>
           </table>
@@ -166,33 +166,32 @@
 
           <div class="qa">
             <span class="qa__id">Q1</span>
-            <span class="qa__tag">數學</span>
-            <h4>為什麼 <code>(4ᴷ − 1)</code> 一定是 3 的倍數？</h4>
-            <p>請簡述。</p>
+            <span class="qa__tag">分治</span>
+            <h4>在 merge 中取右半的 <code>a[j]</code> 出來時，為什麼左半剩餘的 <code>a[i..mid]</code> 全部跟 <code>a[j]</code> 形成逆序對？</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">Q2</span>
-            <span class="qa__tag">分治</span>
-            <h4>遞迴步驟中，中央 L 的 3 個 cell 為什麼一定不會跟<em>原 blocked</em>所在象限重疊？</h4>
+            <span class="qa__tag">構造</span>
+            <h4>為什麼總逆序對和 = 左半內部逆序對和 + 右半內部逆序對和 + 跨界逆序對和？這三者為何不會重複計算？</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">Q3</span>
-            <span class="qa__tag">構造</span>
-            <h4>放完中央 L 後，為什麼<em>每個</em>子象限都剛好變成「<code>N/2 × N/2</code> 板 + 1 個 blocked」的同類問題？</h4>
+            <span class="qa__tag">複雜度</span>
+            <h4>用 Master Theorem 推導 <code>T(N) = 2·T(N/2) + O(N) = Θ(N log N)</code>。</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">Q4</span>
-            <span class="qa__tag">Base case</span>
-            <h4>2×2 板扣掉 1 格剩 3 格，為什麼這 3 格<em>必為 L 型</em>，不可能是 1×3 直線？</h4>
+            <span class="qa__tag">Mod</span>
+            <h4>為什麼比較大小不能用 <code>a[i] % MOD</code> 後的值？舉一個會出錯的例子。</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">Q5</span>
-            <span class="qa__tag">複雜度</span>
-            <h4>用 Master Theorem 推導 <code>T(N) = 4·T(N/2) + O(1) = Θ(N²)</code>。</h4>
+            <span class="qa__tag">實作</span>
+            <h4><code>remaining</code> 與 <code>contrib</code> 為什麼要宣告成 <code>long long</code>？用 <code>int</code> 會在什麼地方爆掉？</h4>
           </div>
         </section>
 
@@ -210,22 +209,21 @@
           <div class="qa">
             <span class="qa__id">Ex 1</span>
             <span class="qa__tag">Base case</span>
-            <h4><code>solve(2, 2, 2)</code> 會輸出什麼？</h4>
-            <p>N=2 直接命中 base case，請寫出唯一一次的 <code>Report</code> 呼叫。</p>
+            <h4><code>[3, 1]</code> 跑一次 merge sort 後 <code>inv_sum</code> 是多少？</h4>
+            <p>提示：N = 2 直接命中最底層的 merge。</p>
           </div>
 
           <div class="qa">
             <span class="qa__id">Ex 2</span>
             <span class="qa__tag">完整 trace</span>
-            <h4><code>solve(4, 1, 1)</code> 共 5 次 Report，請逐步算出。</h4>
-            <p>提示：先算第 1 層 <code>tile(1, 1, 4, 1, 1)</code> 的 <code>midX, midY, bq</code>、中央 L 落點，再展開 4 個 base case。</p>
+            <h4>對序列 <code>[4, 2, 3, 1]</code> 跑完整 merge sort，列出每個 merge 步驟與 <code>inv_sum</code>。</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">Ex 3</span>
-            <span class="qa__tag">象限定位</span>
-            <h4><code>solve(4, 2, 3)</code> 中第 1 層放下的中央 L，3 個 cell 座標是？</h4>
-            <p>只算第 1 層的 Report，不用完整展開遞迴。</p>
+            <span class="qa__tag">Mod 練習</span>
+            <h4>假設 <code>MOD = 7</code>、序列 <code>[10, 5]</code>，<code>inv_sum</code> 是多少？</h4>
+            <p>提示：先算「未 mod」的貢獻，再 mod 7。注意比較要用原始值。</p>
           </div>
         </section>
 
@@ -242,20 +240,20 @@
 
           <div class="qa">
             <span class="qa__id">A1</span>
-            <span class="qa__tag">數量</span>
-            <h4>N = 8、16、1024 時，各要放幾個 L？</h4>
+            <span class="qa__tag">最壞情況</span>
+            <h4>N = 10⁶ 全降序時，<em>逆序對的數量</em>是多少？</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">A2</span>
-            <span class="qa__tag">遞迴深度</span>
-            <h4>N = 1024 時，<code>tile()</code> 的最大遞迴深度是？</h4>
+            <span class="qa__tag">配分</span>
+            <h4>為什麼 70% 配分上限訂在 <code>N ≤ 45,678</code> 而不是更小？</h4>
           </div>
 
           <div class="qa">
             <span class="qa__id">A3</span>
-            <span class="qa__tag">象限編號</span>
-            <h4>給 <code>N = 8, X = 5, Y = 7</code>，第 1 層 tile 中 <code>bq</code> 等於多少？該 blocked 落在哪個象限？</h4>
+            <span class="qa__tag">特例</span>
+            <h4>對已排序的序列 <code>[1, 2, 3, 4, 5]</code> 跑 code，<code>inv_sum</code> 是多少？</h4>
           </div>
         </section>
 
@@ -273,62 +271,72 @@
 
         <!-- ===== A1 - A5: 觀念題 ===== -->
         <div class="qa qa--answer">
-          <span class="qa__id">A1 · 數學</span>
+          <span class="qa__id">A1 · 分治</span>
           <p>
-            <code>4 ≡ 1 (mod 3)</code>，所以 <code>4ᴷ ≡ 1ᴷ ≡ 1 (mod 3)</code>，
-            因此 <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，即 <code>(N² − 1) / 3</code> 必為整數。
+            因為左半在 merge 之前已經<em>排序</em>過，所以 <code>a[i] ≤ a[i+1] ≤ … ≤ a[mid]</code>。
+            又 <code>a[i] &gt; a[j]</code>（觸發取右），所以 <code>a[i..mid]</code> 全部 &gt; <code>a[j]</code>。
+            再者左半的「原始下標」全部 &lt; 右半的「原始下標」（合併時保留 left 在前），
+            所以 <code>(a[p], a[j])</code> 對於 <code>p ∈ [i, mid]</code> 都滿足
+            「下標小者 &gt; 下標大者」⇒ 逆序對。
           </p>
         </div>
 
         <div class="qa qa--answer">
-          <span class="qa__id">A2 · 分治</span>
+          <span class="qa__id">A2 · 構造</span>
           <p>
-            中央 L 的 3 個 cell 是「<em>不含 blocked</em>」的 3 個象限各自的「最靠近中心」角落。
-            程式用 <code>bq</code> 把 blocked 所在象限編號出來，再用 <code>if (q == bq) continue;</code> 跳過它。
-            因此 blocked 那一象限<em>不會有</em>中央 L 的 cell。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A3 · 構造</span>
-          <p>
-            放完中央 L 後：
+            任一逆序對 <code>(p, q)</code> 滿足 p &lt; q 且 <code>a[p] &gt; a[q]</code>。
+            把它依下標歸類到「左半」「右半」「跨界」三種情境：
           </p>
           <ul>
-            <li><strong>含原 blocked 的象限</strong>：仍只有 1 個 blocked（原本的 (X, Y)）。</li>
-            <li><strong>其他 3 個象限</strong>：被中央 L 在最角落種了 1 個 cell — 那一格就成為該象限的「新 blocked」。</li>
+            <li>若 p、q <em>都</em>在左半 ⇒ 在左半內部遞迴時被算到。</li>
+            <li>若 p、q <em>都</em>在右半 ⇒ 在右半內部遞迴時被算到。</li>
+            <li>若 p 在左、q 在右 ⇒ 在「合併這層」的 merge 中被算到。</li>
           </ul>
           <p>
-            每個子象限都是「<code>N/2 × N/2</code> 板 + <em>恰好 1 個</em> blocked」，跟原問題同形。
-            因此可以放心遞迴。
+            三種互不相交，且每對<em>恰好</em>在一處被算進。因此三者相加即為總數，
+            無重複也無遺漏。
           </p>
         </div>
 
         <div class="qa qa--answer">
-          <span class="qa__id">A4 · Base case</span>
+          <span class="qa__id">A3 · 複雜度</span>
           <p>
-            2×2 中任意 3 個格子<em>不可能</em>共線，因為：
+            Master Theorem 形式 <code>T(N) = a·T(N/b) + f(N)</code>，本題 <code>a = 2, b = 2, f(N) = O(N)</code>。
           </p>
-          <ul>
-            <li>同一列只有 2 格（c 從 1 到 2）。</li>
-            <li>同一行只有 2 格。</li>
-          </ul>
           <p>
-            因此扣掉 1 格剩 3 格時，這 3 格必然包含至少一個轉折 — 就是 L 型。
+            計算 <code>log_b a = log₂ 2 = 1</code>，而 <code>f(N) = Θ(N^1)</code>。
+            這屬 case 2（<code>f(N) = Θ(N^{log_b a})</code>）⇒
+            <code>T(N) = Θ(N^{log_b a} · log N) = Θ(N log N)</code>。
+          </p>
+          <p>
+            直覺：recursion tree 共 <code>log₂ N</code> 層，每層所有 merge 加起來掃過總共 N 個元素 ⇒ 總工時 Θ(N log N)。
           </p>
         </div>
 
         <div class="qa qa--answer">
-          <span class="qa__id">A5 · 複雜度</span>
+          <span class="qa__id">A4 · Mod</span>
           <p>
-            Master Theorem 形式：<code>T(N) = a·T(N/b) + f(N)</code>，這裡 <code>a = 4, b = 2, f(N) = O(1) = O(N⁰)</code>。
+            <code>mod</code> 會把不同的大數對映到相同的餘數，<strong>破壞順序</strong>。
+            例如 <code>MOD = 7</code>、<code>a = 9</code>、<code>b = 2</code>：
+          </p>
+          <pre class="trace-block">原始比較：9 &gt; 2     → 是逆序對 ✓
+mod 後比較：9 % 7 = 2、2 % 7 = 2
+          2 &gt; 2 為 false → 誤判為非逆序對 ✗</pre>
+          <p>
+            排序與比較必須用<em>原始值</em>，<code>mod</code> 只對 <code>inv_sum</code> 累加與 <code>remaining</code> 維護生效。
+          </p>
+        </div>
+
+        <div class="qa qa--answer">
+          <span class="qa__id">A5 · 實作</span>
+          <p>
+            <code>remaining</code> 雖然 mod 後 &lt; 10⁷ 可用 int，但中間運算
+            <code>(remaining + (a[j] % MOD) × (count % MOD))</code> 的乘法
+            <code>10⁷ × 10⁶ ≈ 10¹³</code>，<strong>遠超 32-bit int</strong>（≤ 2.1 × 10⁹）。
+            int 在乘法當下就溢位。改用 long long 才安全。
           </p>
           <p>
-            計算 <code>log_b a = log₂ 4 = 2</code>。
-            因為 <code>f(N) = O(N⁰)</code> 且 <code>0 &lt; 2</code>，進入 case 1 ⇒ <code>T(N) = Θ(N^{log_b a}) = Θ(N²)</code>。
-          </p>
-          <p>
-            直覺：總共要放 <code>(N² − 1)/3 = Θ(N²)</code> 個 L，每個 L 是 O(1) 工作，所以總工時 Θ(N²)。
+            <code>a[i]</code> 本身 ≤ 10⁹，也已逼近 int 上限。一律 long long 最保險。
           </p>
         </div>
 
@@ -336,86 +344,104 @@
         <div class="qa qa--answer">
           <span class="qa__id">A · Ex 1</span>
           <p>
-            <code>solve(2, 2, 2)</code> 直接命中 base case：4 格 <code>(1,1), (1,2), (2,1), (2,2)</code> 扣掉 blocked <code>(2,2)</code> 剩 3 格。
+            <code>[3, 1]</code> 只有一次 merge：左 <code>[3]</code>、右 <code>[1]</code>。
           </p>
-          <pre class="trace-block">Report(1, 1,
-       1, 2,
-       2, 1);</pre>
-          <p>三格的順序可能依 double-loop 順序略異，但只要是這 3 格組合就正確。</p>
+          <pre class="trace-block">remaining = 3
+i = 0, j = 1
+a[0] = 3, a[1] = 1
+3 &gt; 1 ⇒ count = 1
+contrib = 3 + 1 × 1 = 4
+
+inv_sum = 4</pre>
+          <p>結果 <code>inv_sum = 4</code>（對應到唯一一個逆序對 (3,1)，兩數和 4）。</p>
         </div>
 
         <div class="qa qa--answer">
           <span class="qa__id">A · Ex 2</span>
-          <p>逐步算 <code>solve(4, 1, 1)</code>：</p>
+          <p>對 <code>[4, 2, 3, 1]</code> 跑 merge sort：</p>
 
-          <pre class="trace-block">tile(1, 1, 4, 1, 1)
-  half = 2, midX = 2, midY = 2
-  bq = (1 &gt; 2) * 2 + (1 &gt; 2) = 0 * 2 + 0 = 0    → TL
+          <pre class="trace-block">merge_sort(a, 0, 3)
+  merge_sort(a, 0, 1)         遞迴左半 [4, 2]
+    merge_sort(a, 0, 0)       base
+    merge_sort(a, 1, 1)       base
+    merge(a, 0, 0, 1):
+      remaining = 4
+      4 &gt; 2 ⇒ contrib = 4 + 2×1 = 6
+    ▸ inv_sum = 6
+    a = [2, 4, 3, 1]
 
-  中央 L = q ∈ {1, 2, 3} 的角落：
-    q=1 (TR): (midX,   midY+1) = (2, 3)
-    q=2 (BL): (midX+1, midY  ) = (3, 2)
-    q=3 (BR): (midX+1, midY+1) = (3, 3)
-  ▸ Report(2, 3,  3, 2,  3, 3)
+  merge_sort(a, 2, 3)         遞迴右半 [3, 1]
+    merge_sort(a, 2, 2)       base
+    merge_sort(a, 3, 3)       base
+    merge(a, 2, 2, 3):
+      remaining = 3
+      3 &gt; 1 ⇒ contrib = 3 + 1×1 = 4
+    ▸ inv_sum = 10
+    a = [2, 4, 1, 3]
 
-遞迴 4 象限：
-  TL (q=0)  tile(1, 1, 2, 1, 1)   → 原 blocked
-  TR (q=1)  tile(1, 3, 2, 2, 3)   → 用剛種的
-  BL (q=2)  tile(3, 1, 2, 3, 2)   → 用剛種的
-  BR (q=3)  tile(3, 3, 2, 3, 3)   → 用剛種的
+  merge(a, 0, 1, 3):           合併左半 [2,4] 與右半 [1,3]
+    remaining = 2 + 4 = 6
+    a[0]=2, a[2]=1: 2 &gt; 1 ⇒ count = 2, contrib = 6 + 1×2 = 8
+  ▸ inv_sum = 18
+    a[0]=2, a[3]=3: 2 ≤ 3 ⇒ 取左，remaining 變 4
+    a[1]=4, a[3]=3: 4 &gt; 3 ⇒ count = 1, contrib = 4 + 3×1 = 7
+  ▸ inv_sum = 25
+    a = [1, 2, 3, 4]</pre>
 
-每個都命中 base case：
-
-  ▸ tile(1, 1, 2, 1, 1)  →  Report(1, 2,  2, 1,  2, 2)
-  ▸ tile(1, 3, 2, 2, 3)  →  Report(1, 3,  1, 4,  2, 4)
-  ▸ tile(3, 1, 2, 3, 2)  →  Report(3, 1,  4, 1,  4, 2)
-  ▸ tile(3, 3, 2, 3, 3)  →  Report(3, 4,  4, 3,  4, 4)
-
-共 5 個 Report — 對應 (4² − 1) / 3 = 5。</pre>
+          <p>
+            最終 <code>inv_sum = 25</code>。
+            驗算：所有逆序對 (4,2)=6、(4,3)=7、(4,1)=5、(2,1)=3、(3,1)=4 ⇒ 6+7+5+3+4 = 25 ✓
+          </p>
         </div>
 
         <div class="qa qa--answer">
           <span class="qa__id">A · Ex 3</span>
-          <p><code>solve(4, 2, 3)</code> 第 1 層 trace：</p>
+          <p><code>MOD = 7</code>、<code>[10, 5]</code>：</p>
+          <pre class="trace-block">merge(a, 0, 0, 1):
+  比較用原始值：10 &gt; 5 ⇒ 是逆序對
+  remaining = 10 % 7 = 3
+  contrib = (3 + (5 % 7) × (1 % 7)) % 7
+          = (3 + 5 × 1) % 7
+          = 8 % 7
+          = 1
 
-          <pre class="trace-block">tile(1, 1, 4, 2, 3)
-  half = 2, midX = 2, midY = 2
-  bq = (2 &gt; 2) * 2 + (3 &gt; 2) = 0 * 2 + 1 = 1   → TR
-
-  中央 L = q ∈ {0, 2, 3} 的角落：
-    q=0 (TL): (midX,   midY  ) = (2, 2)
-    q=2 (BL): (midX+1, midY  ) = (3, 2)
-    q=3 (BR): (midX+1, midY+1) = (3, 3)
-
-▸ Report(2, 2,  3, 2,  3, 3)</pre>
+inv_sum = 1</pre>
+          <p>注意比較永遠用 10 vs 5（原始），不會用 mod 後的 3 vs 5。</p>
         </div>
 
         <!-- ===== App 1-3 ===== -->
         <div class="qa qa--answer">
           <span class="qa__id">A · App 1</span>
-          <p>套公式 <code>(N² − 1) / 3</code>：</p>
-          <ul>
-            <li>N = 8&nbsp;&nbsp;&nbsp; ⇒ <code>(64 − 1) / 3 = 21</code> 個 L</li>
-            <li>N = 16&nbsp; ⇒ <code>(256 − 1) / 3 = 85</code> 個 L</li>
-            <li>N = 1024 ⇒ <code>(1,048,576 − 1) / 3 = 349,525</code> 個 L</li>
-          </ul>
+          <p>
+            全降序時，每一對 <code>(i, j) with i &lt; j</code> 都是逆序對。
+          </p>
+          <p>
+            數量 = <code>C(N, 2) = N(N − 1)/2</code>。
+            N = 10⁶ ⇒ <code>10⁶ × (10⁶ − 1)/2 ≈ 5 × 10¹¹</code> 對。
+          </p>
+          <p>這正是為何不能 O(N²) 暴力 — 5 × 10¹¹ 次運算需要好幾小時。</p>
         </div>
 
         <div class="qa qa--answer">
           <span class="qa__id">A · App 2</span>
           <p>
-            遞迴深度 = <code>log₂ N</code>。
-            N = 1024 = 2¹⁰，所以最深 <code>10</code> 層（從 1024 → 512 → 256 → ... → 4 → 2）。
+            <code>45,678² ≈ 2.09 × 10⁹</code>，剛好是常數內運算「2-3 秒」能跑完的量級（典型 OJ 時限）。
+          </p>
+          <p>
+            這是<em>故意</em>給 70% 配分一個 O(N²) 也能勉強過的空間 — 沒寫出 merge sort 解法的人，
+            還是能用暴力撈到 30% + 部分 70%。100% 必須 O(N log N)。
           </p>
         </div>
 
         <div class="qa qa--answer">
           <span class="qa__id">A · App 3</span>
-          <p>N = 8, half = 4, midX = 4, midY = 4：</p>
-          <pre class="trace-block">bq = (5 &gt; 4) * 2 + (7 &gt; 4)
-   = 1 * 2 + 1
-   = 3                  → BR</pre>
-          <p>blocked (5, 7) 位於 <strong>右下 (BR)</strong> 象限。</p>
+          <p>
+            <code>[1, 2, 3, 4, 5]</code> 已嚴格遞增，<em>沒有任何逆序對</em>。
+          </p>
+          <p>
+            跑 merge sort 時每個 merge step 都進「取左、無貢獻」分支，<code>inv_sum</code> 維持 <code>0</code>。
+            程式仍會跑 O(N log N) 的 merge sort，只是不累加任何貢獻。
+          </p>
         </div>
 
         <!-- pager -->
@@ -437,9 +463,9 @@
   </div>
 
   <footer class="workshop-footer">
-    <div>© 2026 // W06 · P114 · 05 REVIEW</div>
+    <div>© 2026 // W06 · P115 · 05 REVIEW</div>
     <div><a href="../../index.html">← BACK TO W06</a></div>
-    <div>SERIAL_NO. AW-W06-P114-05</div>
+    <div>SERIAL_NO. AW-W06-P115-05</div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P115 · 04 Code // 逆序數對 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../../../../assets/css/base.css" />
+  <link rel="stylesheet" href="../../../../assets/css/components.css" />
+  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
+  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+</head>
+<body>
+
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
+
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P115 · 04 CODE</span>
+      <span>MERGE SORT · INV_SUM</span>
+      <span>⚙ MOD 10000019</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>P115 · 04 CODE</span>
+      <span>MERGE SORT · INV_SUM</span>
+      <span>⚙ MOD 10000019</span>
+    </div>
+  </div>
+
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>P115 · 逆序數對</span>
+      <span>W06 · DIVIDE &amp; CONQUER</span>
+      <span>SECTION 04 / 05</span>
+    </div>
+    <h1 class="workshop-title">Code.</h1>
+    <p class="workshop-subtitle">
+      Merge Sort 實作 ／ remaining 滾動 ／ 5 段 annotated walkthrough
+    </p>
+  </header>
+
+  <div class="shell">
+
+    <aside class="sidebar">
+
+      <div class="nav-label">// P115 SECTIONS</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">01 · Problem</a></li>
+          <li><a href="concept.html">02 · Concept</a></li>
+          <li><a href="viz.html">03 · Visualization</a></li>
+          <li><a href="code.html" class="is-active">04 · Code</a></li>
+          <li><a href="review.html">05 · Review</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// CURRICULUM</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
+          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
+          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// PAGES</div>
+      <nav>
+        <ul>
+          <li><a href="../../../../index.html">Home</a></li>
+          <li><a href="../../../../about.html">About</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <div class="crumb">
+        <a href="../../../../index.html">Home</a>
+        <span class="crumb__sep">/</span>
+        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+        <span class="crumb__sep">/</span>
+        <a href="index.html">P115</a>
+        <span class="crumb__sep">/</span>
+        <span>Code</span>
+      </div>
+
+      <article>
+        <span class="stamp">▼ SECTION 04</span>
+        <div class="article-meta">
+          <span>P115 · CODE</span>
+          <span>C++17</span>
+        </div>
+
+        <h2 class="section__title">Clean Code</h2>
+
+        <div class="code-block code-block--editor">
+          <div class="code-block__head">
+            <span class="code-block__window">
+              <span class="code-block__dot code-block__dot--red"></span>
+              <span class="code-block__dot code-block__dot--yellow"></span>
+              <span class="code-block__dot code-block__dot--green"></span>
+              <span class="code-block__tab">p115.cpp</span>
+            </span>
+            <span class="code-block__lang">C++17</span>
+          </div>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+const long long MOD = 10000019;
+
+long long inv_sum = 0;
+vector&lt;long long&gt; buf;          // merge 用的暫存陣列
+
+// 合併 a[left..mid] 和 a[mid+1..right]，
+// 同時把這次跨界產生的逆序對「兩數和」累進 inv_sum。
+void merge(vector&lt;long long&gt;&amp; a, int left, int mid, int right) {
+    // remaining = a[left..mid] 之和（mod MOD），左半游標前進時遞減
+    long long remaining = 0;
+    for (int p = left; p &lt;= mid; ++p) {
+        remaining = (remaining + a[p] % MOD) % MOD;
+    }
+
+    int i = left;          // 左半游標
+    int j = mid + 1;       // 右半游標
+    int k = left;          // 寫入暫存陣列的位置
+
+    while (i &lt;= mid &amp;&amp; j &lt;= right) {
+        if (a[i] &lt;= a[j]) {
+            // 取左半，無新逆序對；remaining 遞減扣掉 a[i]
+            buf[k++] = a[i];
+            remaining = (remaining - a[i] % MOD + MOD) % MOD;
+            ++i;
+        } else {
+            // a[i] &gt; a[j]：左半剩餘 a[i..mid] 全部 &gt; a[j]，
+            // 都跟 a[j] 形成逆序對。貢獻 = remaining + a[j] × count
+            long long count = mid - i + 1;
+            long long contrib = (remaining + (a[j] % MOD) * (count % MOD)) % MOD;
+            inv_sum = (inv_sum + contrib) % MOD;
+            buf[k++] = a[j];
+            ++j;
+        }
+    }
+    while (i &lt;= mid)   buf[k++] = a[i++];
+    while (j &lt;= right) buf[k++] = a[j++];
+
+    for (int p = left; p &lt;= right; ++p) a[p] = buf[p];
+}
+
+void merge_sort(vector&lt;long long&gt;&amp; a, int left, int right) {
+    if (left &gt;= right) return;
+    int mid = (left + right) / 2;
+    merge_sort(a, left, mid);
+    merge_sort(a, mid + 1, right);
+    merge(a, left, mid, right);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;long long&gt; a(n);
+    for (int i = 0; i &lt; n; ++i) cin &gt;&gt; a[i];
+
+    buf.assign(n, 0);
+    merge_sort(a, 0, n - 1);
+
+    cout &lt;&lt; inv_sum &lt;&lt; '\n';
+    return 0;
+}
+</code></pre>
+        </div>
+
+        <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
+
+        <p>核心是 <code>merge(a, left, mid, right)</code>：合併兩個已排序子陣列，同時累計跨界逆序對的「兩數和」。</p>
+
+        <div class="code-annotated">
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre><code class="language-cpp">long long remaining = 0;
+for (int p = left; p &lt;= mid; ++p) {
+    remaining = (remaining + a[p] % MOD) % MOD;
+}</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>初始化 remaining。</strong>
+              用 <code>remaining</code> 維護「左半剩餘元素之和 (mod MOD)」。
+              merge 開始前一次性算完 <code>a[left..mid]</code> 的總和；之後左半游標前進時遞減，避免每次重新求和。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre><code class="language-cpp">if (a[i] &lt;= a[j]) {
+    buf[k++] = a[i];
+    remaining = (remaining - a[i] % MOD + MOD) % MOD;
+    ++i;
+}</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>取左半元素。</strong>
+              比較用<em>原始值</em>，所以即使陣列含大數也直接拿來比。
+              取走 <code>a[i]</code> 後 <code>remaining</code> 必須扣掉 <code>a[i] % MOD</code>，並加上 MOD 防止負數。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre><code class="language-cpp">} else {
+    long long count = mid - i + 1;
+    long long contrib = (remaining
+        + (a[j] % MOD) * (count % MOD)) % MOD;
+    inv_sum = (inv_sum + contrib) % MOD;
+    buf[k++] = a[j];
+    ++j;
+}</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>取右半元素 + 累計貢獻。</strong>
+              <code>a[i] &gt; a[j]</code> 時，左半剩 <code>count = mid - i + 1</code> 個元素，每個都跟 <code>a[j]</code> 構成逆序對。
+              本步貢獻 = <code>remaining + a[j] × count</code>；
+              <code>(a[j] % MOD) × (count % MOD)</code> ≤ 10⁷ × 10⁶ ≈ 10¹³，仍在 long long 範圍。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre><code class="language-cpp">while (i &lt;= mid)   buf[k++] = a[i++];
+while (j &lt;= right) buf[k++] = a[j++];</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>把剩餘的單邊倒進 buf。</strong>
+              若主迴圈結束時左半還沒清空，剩下的元素都 ≤ 右半已被吃光的所有元素 — 不會再產生跨界逆序對，<em>不需更新 inv_sum</em>。
+              右半同理。
+            </div>
+          </div>
+
+          <div class="code-annotated__line">
+            <div class="code-annotated__code"><pre><code class="language-cpp">for (int p = left; p &lt;= right; ++p) a[p] = buf[p];</code></pre></div>
+            <div class="code-annotated__note">
+              <strong>寫回原陣列。</strong>
+              merge 完成後 <code>a[left..right]</code> 已排序好，回傳給上層遞迴繼續往上 merge。
+              因為 <code>buf</code> 是全域大小 N 的暫存，所以避免每次 merge 都 new/delete。
+            </div>
+          </div>
+
+        </div>
+
+        <div class="callout callout--warn">
+          <div class="callout__title">// Common Pitfalls</div>
+          <ul style="margin: 0;">
+            <li>排序比較永遠用 <strong>原始值</strong>，不要先 mod。陣列裡的值維持原本大小。</li>
+            <li>累加進 <code>inv_sum</code> 時務必每步都 mod，否則最壞情況 (N=10⁶ 全降序) 會溢位 long long。</li>
+            <li>減法 <code>(remaining - a[i] % MOD + MOD) % MOD</code> 一定要 <code>+ MOD</code>，避免結果為負。</li>
+            <li><code>buf</code> 用全域而不是每次 merge 內 <code>new</code>：避免 10⁶ × log(10⁶) 次的 malloc / free 開銷。</li>
+            <li><code>cin / cout</code> 速度：<code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 必加，否則 10⁶ 筆輸入可能 TLE。</li>
+            <li>本題 <code>cout &lt;&lt; '\n'</code>，避免 <code>endl</code> 的 flush 開銷。</li>
+          </ul>
+        </div>
+
+        <div class="pager">
+          <a href="viz.html" class="pager__item pager__item--prev">
+            <span class="pager__label">PREV</span>
+            <span class="pager__title">03 · Visualization</span>
+          </a>
+          <a href="review.html" class="pager__item pager__item--next">
+            <span class="pager__label">NEXT</span>
+            <span class="pager__title">05 · Review</span>
+          </a>
+        </div>
+
+      </article>
+
+    </main>
+
+  </div>
+
+  <footer class="workshop-footer">
+    <div>© 2026 // W06 · P115 · 04 CODE</div>
+    <div><a href="../../index.html">← BACK TO W06</a></div>
+    <div>SERIAL_NO. AW-W06-P115-04</div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
+</body>
+</html>
