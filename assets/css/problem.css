@@ -398,35 +398,33 @@
   background: var(--warning);
 }
 
-/* Trace block — shows step-by-step recursion trace */
+/* Trace block — shows step-by-step recursion trace (cream/yellow paper). */
 .trace-block {
-  border: 1px solid #d0d7de;
-  background: #ffffff;
-  border-left: 4px solid #0969da;
+  position: relative;
+  border: 1px solid #e6d49a;
+  background: #fff8e0;
+  border-left: 4px solid #d4a017;
   padding: var(--sp-4) var(--sp-5);
   margin: var(--sp-4) 0;
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
   line-height: 1.9;
-  white-space: pre-wrap;
-  word-break: normal;
-  overflow-wrap: anywhere;
+  white-space: pre;
   overflow-x: auto;
-  color: #24292f;
+  color: #3a2f10;
   tab-size: 2;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
 }
 .trace-block.language-cpp,
 pre.trace-block.language-cpp {
-  background: #ffffff;
-  border: 1px solid #d0d7de;
-  border-left: 4px solid #0969da;
-  color: #24292f;
+  background: #fff8e0;
+  border: 1px solid #e6d49a;
+  border-left: 4px solid #d4a017;
+  color: #3a2f10;
   padding: var(--sp-4) var(--sp-5);
   line-height: 1.9;
-  white-space: pre-wrap;
-  word-break: normal;
-  overflow-wrap: anywhere;
+  white-space: pre;
+  overflow-x: auto;
 }
 .trace-block code,
 .trace-block code[class*="language-"] {
