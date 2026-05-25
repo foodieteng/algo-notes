@@ -154,19 +154,21 @@
   border-left: 4px solid var(--rust);
 }
 .code-block pre::before { content: ''; padding: 0; background: none; }
-/* macOS-style code window with chrome — light IDE theme. */
+/* macOS-style code window with chrome — VS Code Dark+ theme.
+   Token colors come from prism-workshop.css; here we only re-skin
+   the window chrome + line-number gutter. */
 .code-block--editor {
-  border: 1px solid #d0d7de;
-  background: #ffffff;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--line);
+  background: #1e1e1e;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
   position: relative;
 }
 .code-block--editor .code-block__head {
   min-height: 40px;
   padding: 0 var(--sp-3);
-  background: #f3f3f3;
-  border-color: #d0d7de;
-  color: #424242;
+  background: #2d2d30;
+  border-color: var(--line);
+  color: #cccccc;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -192,13 +194,13 @@
   align-items: center;
   margin-left: var(--sp-2);
   padding: 0 var(--sp-4);
-  background: #ffffff;
-  border-left: 1px solid #d0d7de;
-  border-right: 1px solid #d0d7de;
-  color: #24292f;
+  background: #1e1e1e;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  color: #d4d4d4;
 }
 .code-block--editor .code-block__lang {
-  color: #0550ae;
+  color: #569cd6;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -206,10 +208,10 @@
 }
 .code-block--editor pre[class*="language-"] {
   background:
-    linear-gradient(90deg, #f6f8fa 0 52px, transparent 52px),
-    #ffffff;
+    linear-gradient(90deg, #252526 0 52px, transparent 52px),
+    #1e1e1e;
   border: none;
-  border-top: 1px solid #d0d7de;
+  border-top: 1px solid var(--line);
   padding: var(--sp-5) var(--sp-5) var(--sp-5) 72px;
   line-height: 1.72;
   font-size: 13px;
@@ -221,7 +223,7 @@
   top: var(--sp-5);
   left: 0;
   width: 40px;
-  color: #8c959f;
+  color: #6e7681;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.72;
@@ -229,54 +231,6 @@
   white-space: pre;
   pointer-events: none;
   user-select: none;
-}
-.code-block--editor code[class*="language-"],
-.code-block--editor pre[class*="language-"] {
-  color: #24292f;
-}
-.code-block--editor .token.comment,
-.code-block--editor .token.prolog,
-.code-block--editor .token.doctype,
-.code-block--editor .token.cdata {
-  color: #6a737d;
-}
-.code-block--editor .token.punctuation,
-.code-block--editor .token.operator,
-.code-block--editor .token.entity,
-.code-block--editor .token.url,
-.code-block--editor .token.variable {
-  color: #24292f;
-}
-.code-block--editor .token.property,
-.code-block--editor .token.tag,
-.code-block--editor .token.constant,
-.code-block--editor .token.symbol,
-.code-block--editor .token.deleted,
-.code-block--editor .token.boolean,
-.code-block--editor .token.number {
-  color: #005cc5;
-}
-.code-block--editor .token.selector,
-.code-block--editor .token.attr-name,
-.code-block--editor .token.string,
-.code-block--editor .token.char,
-.code-block--editor .token.builtin,
-.code-block--editor .token.inserted {
-  color: #032f62;
-}
-.code-block--editor .token.atrule,
-.code-block--editor .token.attr-value,
-.code-block--editor .token.function {
-  color: #6f42c1;
-}
-.code-block--editor .token.class-name,
-.code-block--editor .token.namespace {
-  color: #22863a;
-}
-.code-block--editor .token.keyword,
-.code-block--editor .token.macro,
-.code-block--editor .token.macro.property {
-  color: #d73a49;
 }
 
 /* ---- Annotated walkthrough ---- */
