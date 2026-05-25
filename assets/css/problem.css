@@ -154,20 +154,19 @@
   border-left: 4px solid var(--rust);
 }
 .code-block pre::before { content: ''; padding: 0; background: none; }
-/* macOS-style code window with chrome — DARK theme (VS Code Dark+).
-   Token colors come from prism-workshop.css; we only restyle the chrome. */
+/* macOS-style code window with chrome — light IDE theme. */
 .code-block--editor {
-  border: 1px solid var(--line);
-  background: #1e1e1e;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+  border: 1px solid #d0d7de;
+  background: #ffffff;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
   position: relative;
 }
 .code-block--editor .code-block__head {
   min-height: 40px;
   padding: 0 var(--sp-3);
-  background: #2d2d30;
-  border-color: var(--line);
-  color: #cccccc;
+  background: #f3f3f3;
+  border-color: #d0d7de;
+  color: #424242;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -193,13 +192,13 @@
   align-items: center;
   margin-left: var(--sp-2);
   padding: 0 var(--sp-4);
-  background: #1e1e1e;
-  border-left: 1px solid var(--line);
-  border-right: 1px solid var(--line);
-  color: #d4d4d4;
+  background: #ffffff;
+  border-left: 1px solid #d0d7de;
+  border-right: 1px solid #d0d7de;
+  color: #24292f;
 }
 .code-block--editor .code-block__lang {
-  color: #569cd6;
+  color: #0550ae;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
@@ -207,10 +206,10 @@
 }
 .code-block--editor pre[class*="language-"] {
   background:
-    linear-gradient(90deg, #252526 0 52px, transparent 52px),
-    #1e1e1e;
+    linear-gradient(90deg, #f6f8fa 0 52px, transparent 52px),
+    #ffffff;
   border: none;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid #d0d7de;
   padding: var(--sp-5) var(--sp-5) var(--sp-5) 72px;
   line-height: 1.72;
   font-size: 13px;
@@ -222,7 +221,7 @@
   top: var(--sp-5);
   left: 0;
   width: 40px;
-  color: #6e7681;
+  color: #8c959f;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.72;
@@ -230,6 +229,54 @@
   white-space: pre;
   pointer-events: none;
   user-select: none;
+}
+.code-block--editor code[class*="language-"],
+.code-block--editor pre[class*="language-"] {
+  color: #24292f;
+}
+.code-block--editor .token.comment,
+.code-block--editor .token.prolog,
+.code-block--editor .token.doctype,
+.code-block--editor .token.cdata {
+  color: #6a737d;
+}
+.code-block--editor .token.punctuation,
+.code-block--editor .token.operator,
+.code-block--editor .token.entity,
+.code-block--editor .token.url,
+.code-block--editor .token.variable {
+  color: #24292f;
+}
+.code-block--editor .token.property,
+.code-block--editor .token.tag,
+.code-block--editor .token.constant,
+.code-block--editor .token.symbol,
+.code-block--editor .token.deleted,
+.code-block--editor .token.boolean,
+.code-block--editor .token.number {
+  color: #005cc5;
+}
+.code-block--editor .token.selector,
+.code-block--editor .token.attr-name,
+.code-block--editor .token.string,
+.code-block--editor .token.char,
+.code-block--editor .token.builtin,
+.code-block--editor .token.inserted {
+  color: #032f62;
+}
+.code-block--editor .token.atrule,
+.code-block--editor .token.attr-value,
+.code-block--editor .token.function {
+  color: #6f42c1;
+}
+.code-block--editor .token.class-name,
+.code-block--editor .token.namespace {
+  color: #22863a;
+}
+.code-block--editor .token.keyword,
+.code-block--editor .token.macro,
+.code-block--editor .token.macro.property {
+  color: #d73a49;
 }
 
 /* ---- Annotated walkthrough ---- */
@@ -284,8 +331,9 @@
 .qa {
   border-left: 3px solid var(--rust);
   background: var(--bg-2);
-  padding: var(--sp-3) var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
   margin: var(--sp-4) 0;
+  line-height: 1.9;
 }
 .qa__id {
   display: inline-block;
@@ -308,13 +356,19 @@
 }
 .qa h4 {
   margin: 0 0 var(--sp-3);
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
   font-size: var(--fs-md);
   text-transform: none;
   letter-spacing: 0;
+  line-height: 1.75;
   color: var(--ink);
   border-left: none;
   padding-left: 0;
+}
+.qa p,
+.qa li {
+  line-height: 1.9;
 }
 .qa p:last-child { margin-bottom: 0; }
 .qa pre { margin: var(--sp-3) 0 0; }
@@ -346,17 +400,94 @@
 
 /* Trace block — shows step-by-step recursion trace */
 .trace-block {
-  border: 1px solid var(--line);
-  background: var(--bg-code);
-  border-left: 3px solid var(--warning);
-  padding: var(--sp-3) var(--sp-4);
-  margin: var(--sp-3) 0;
+  border: 1px solid #d0d7de;
+  background: #ffffff;
+  border-left: 4px solid #0969da;
+  padding: var(--sp-4) var(--sp-5);
+  margin: var(--sp-4) 0;
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
-  line-height: 1.75;
-  white-space: pre;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: anywhere;
   overflow-x: auto;
-  color: var(--ink);
+  color: #24292f;
+  tab-size: 2;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+}
+.trace-block.language-cpp,
+pre.trace-block.language-cpp {
+  background: #ffffff;
+  border: 1px solid #d0d7de;
+  border-left: 4px solid #0969da;
+  color: #24292f;
+  padding: var(--sp-4) var(--sp-5);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+.trace-block code,
+.trace-block code[class*="language-"] {
+  display: block;
+  color: #24292f;
+  background: transparent;
+  border: none;
+  padding: 0;
+  line-height: inherit;
+  white-space: inherit;
+  font-size: inherit;
+}
+.trace-block::before,
+.trace-block.language-cpp::before,
+pre.trace-block.language-cpp::before {
+  content: none;
+  display: none;
+}
+.trace-block .token.comment,
+.trace-block .token.prolog,
+.trace-block .token.doctype,
+.trace-block .token.cdata {
+  color: #6a737d;
+}
+.trace-block .token.punctuation,
+.trace-block .token.operator,
+.trace-block .token.entity,
+.trace-block .token.url,
+.trace-block .token.variable {
+  color: #24292f;
+}
+.trace-block .token.property,
+.trace-block .token.tag,
+.trace-block .token.constant,
+.trace-block .token.symbol,
+.trace-block .token.deleted,
+.trace-block .token.boolean,
+.trace-block .token.number {
+  color: #005cc5;
+}
+.trace-block .token.selector,
+.trace-block .token.attr-name,
+.trace-block .token.string,
+.trace-block .token.char,
+.trace-block .token.builtin,
+.trace-block .token.inserted {
+  color: #032f62;
+}
+.trace-block .token.atrule,
+.trace-block .token.attr-value,
+.trace-block .token.function {
+  color: #6f42c1;
+}
+.trace-block .token.class-name,
+.trace-block .token.namespace {
+  color: #22863a;
+}
+.trace-block .token.keyword,
+.trace-block .token.macro,
+.trace-block .token.macro.property {
+  color: #d73a49;
 }
 
 /* ---- Base case mini-grid showcase ---- */
