@@ -1,5 +1,5 @@
 /* ============================================================
-   Kadane's Algorithm — Step Visualization
+   Kadane's Algorithm — Step Visualization (workshop theme)
    ============================================================ */
 
 (function () {
@@ -12,6 +12,21 @@
   const btnNext = document.getElementById('viz-next');
   const btnPlay = document.getElementById('viz-play');
   const btnReset = document.getElementById('viz-reset');
+
+  // Color tokens — keep in sync with assets/css/tokens.css
+  const COLOR = {
+    line:        '#3a3a3a',
+    lineBright:  '#555555',
+    bgCode:      '#0d0d0d',
+    ink:         '#e8e6e1',
+    inkDim:      '#9a958c',
+    concrete:    '#8a847a',
+    rust:        '#c1440e',
+    rustBright:  '#e85d1f',
+    warning:     '#d4a017',
+    rustFillBest:'rgba(193, 68, 14, 0.22)',
+    rustFillCur: 'rgba(193, 68, 14, 0.07)',
+  };
 
   const arr = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
 
@@ -42,8 +57,8 @@
     const h = 320;
     ctx.clearRect(0, 0, w, h);
 
-    // Background grid (industrial)
-    ctx.strokeStyle = '#242428';
+    // Subtle grid
+    ctx.strokeStyle = COLOR.line;
     ctx.lineWidth = 1;
     for (let x = 0; x < w; x += 32) {
       ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
@@ -59,46 +74,43 @@
 
     const s = idx >= 0 ? states[idx] : null;
 
-    // Draw cells
     for (let i = 0; i < n; i++) {
       const x = padding + i * cellW;
       const isBest = s && i >= s.bestL && i <= s.bestR;
       const isCur  = s && i >= s.curL && i <= s.i;
       const isHead = s && i === s.i;
 
-      // Cell box
-      ctx.fillStyle = isBest ? 'rgba(255,107,26,0.18)' :
-                      isCur  ? 'rgba(255,107,26,0.06)' : '#0A0A0C';
+      ctx.fillStyle = isBest ? COLOR.rustFillBest :
+                      isCur  ? COLOR.rustFillCur  : COLOR.bgCode;
       ctx.fillRect(x + 2, baseY - 32, cellW - 4, 64);
 
-      ctx.strokeStyle = isHead ? '#FF6B1A' :
-                        isBest ? '#FF6B1A' :
-                        isCur  ? '#B84A0E' : '#2E2E33';
+      ctx.strokeStyle = isHead ? COLOR.rustBright :
+                        isBest ? COLOR.rust       :
+                        isCur  ? COLOR.lineBright : COLOR.line;
       ctx.lineWidth = isHead ? 2 : 1;
       ctx.strokeRect(x + 2, baseY - 32, cellW - 4, 64);
 
-      // Value
-      ctx.fillStyle = isHead ? '#FF6B1A' : '#ECECEE';
-      ctx.font = '600 18px "JetBrains Mono", monospace';
+      ctx.fillStyle = isHead ? COLOR.rustBright : COLOR.ink;
+      ctx.font = '700 18px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(String(arr[i]), x + cellW / 2, baseY);
 
-      // Index label
-      ctx.fillStyle = '#6B6B70';
+      ctx.fillStyle = COLOR.concrete;
       ctx.font = '500 11px "JetBrains Mono", monospace';
       ctx.fillText('[' + i + ']', x + cellW / 2, baseY + 48);
     }
 
-    // Header text
-    ctx.fillStyle = '#6B6B70';
-    ctx.font = '500 11px "JetBrains Mono", monospace';
+    // Header info
+    ctx.fillStyle = COLOR.concrete;
+    ctx.font = '600 11px "Oswald", sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText('STEP ' + (idx < 0 ? '--' : String(idx + 1).padStart(2, '0')) + ' / ' + n, padding, 24);
 
     if (s) {
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#A4A4A8';
+      ctx.fillStyle = COLOR.inkDim;
+      ctx.font = '500 11px "JetBrains Mono", monospace';
       ctx.fillText('cur=' + s.cur + '   best=' + s.best, w - padding, 24);
     }
   }

@@ -3,51 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About // ALGO_NOTES</title>
+  <title>ABOUT // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
 
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
 </head>
 <body>
-  <div class="page">
 
-    <nav class="nav">
-      <div class="container nav__inner">
-        <a class="nav__brand" href="index.html">
-          <span class="nav__brand-mark"></span>
-          <span class="nav__brand-text">ALGO_NOTES</span>
-          <span class="nav__brand-tag">v0.1</span>
-        </a>
-        <div class="nav__links">
-          <a href="index.html">Index</a>
-          <a href="index.html#topics">Topics</a>
-          <a href="about.html" class="is-active">About</a>
-        </div>
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
+
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>META · ABOUT</span>
+      <span>BUILT WITH RUST &amp; STEEL</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>META · ABOUT</span>
+      <span>BUILT WITH RUST &amp; STEEL</span>
+    </div>
+  </div>
+
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>META</span>
+      <span>SYSTEM INFO</span>
+      <span>LOG_2026.05.25</span>
+    </div>
+    <h1 class="workshop-title">About.</h1>
+    <p class="workshop-subtitle">
+      個人演算法學習筆記。資訊之芽算法班 ／ 由筆記擁有者挑題、Claude 協作整理。
+    </p>
+  </header>
+
+  <div class="shell shell--no-sidebar">
+
+    <main class="content">
+
+      <div class="crumb">
+        <a href="index.html">Home</a>
+        <span class="crumb__sep">/</span>
+        <span>About</span>
       </div>
-    </nav>
 
-    <header class="hero">
-      <div class="container">
-        <div class="hero__meta">
-          <span>// META</span>
+      <article>
+        <span class="stamp">▼ STRUCTURE</span>
+        <h2>每題六段結構</h2>
+        <div class="article-meta">
+          <span>SPEC</span>
+          <span>FIXED FORMAT</span>
         </div>
-        <h1 class="hero__title">ABOUT</h1>
-        <p class="hero__lede">
-          本站為個人演算法學習筆記，依照「資訊之芽算法班」課程主題編排，每一題包含完整的概念講解、Clean Code、互動動畫、與走讀。
-        </p>
-      </div>
-    </header>
 
-    <section class="section">
-      <div class="container container--narrow">
-        <h2>結構</h2>
-        <p>每篇題目筆記皆遵循固定六段結構：</p>
-        <ul>
+        <ul class="notes-list">
           <li><strong>01 · Problem</strong> — 題意拆解、輸入輸出、範例與限制</li>
           <li><strong>02 · Concept</strong> — 直覺發想、狀態定義、正確性論證、複雜度</li>
           <li><strong>03 · Visualization</strong> — 互動動畫，可步進播放</li>
@@ -55,24 +69,47 @@
           <li><strong>05 · Walkthrough</strong> — 逐段註解、常見錯誤</li>
           <li><strong>06 · Variants</strong> — 延伸與變形題</li>
         </ul>
+      </article>
 
-        <h2>更新節奏</h2>
-        <p>由我（學習者）挑題，由 Claude 協作整理。整套流程已封裝為 Claude Code 的 <code>algo-notes</code> Skill。</p>
-
+      <article>
+        <span class="stamp">▼ LOCAL</span>
         <h2>本地檢視</h2>
+        <div class="article-meta">
+          <span>DEVELOPMENT</span>
+        </div>
+
         <p>直接以瀏覽器開啟 <code>index.html</code>，或在專案根目錄執行：</p>
 <pre><code>python3 -m http.server 8000</code></pre>
-        <p>再開 <code>http://localhost:8000</code>。</p>
-      </div>
-    </section>
+        <p>再開啟 <code>http://localhost:8000</code>。</p>
+      </article>
 
-    <footer class="footer">
-      <div class="container footer__inner">
-        <span>// ALGO_NOTES — About</span>
-        <span>BUILD 0.1.0</span>
-      </div>
-    </footer>
+      <article>
+        <span class="stamp stamp--draft">⚠ PRIVATE</span>
+        <h2>私密發布</h2>
+        <div class="article-meta">
+          <span>CLOUDFLARE PAGES + ACCESS</span>
+        </div>
+
+        <ul class="notes-list">
+          <li>將 repo 設為 GitHub Private。</li>
+          <li>到 Cloudflare Pages 連結 repo，build 設定留空，輸出目錄填 <code>/</code>。</li>
+          <li>Pages 部署完成後到 Zero Trust → Access → Applications 建立 Self-hosted Application，把 Pages 網域加進去，設定 Email Policy 只允許自己的信箱。</li>
+        </ul>
+
+        <blockquote>
+          Cloudflare Access 免費方案支援 50 個使用者，個人用綽綽有餘。
+        </blockquote>
+      </article>
+
+    </main>
 
   </div>
+
+  <footer class="workshop-footer">
+    <div>© 2026 // ALGO WORKSHOP // ABOUT</div>
+    <div><a href="index.html">← BACK TO INDEX</a></div>
+    <div>SERIAL_NO. AW-META-001</div>
+  </footer>
+
 </body>
 </html>

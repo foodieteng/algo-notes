@@ -3,172 +3,161 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ALGO // 資訊之芽算法班學習筆記</title>
-  <meta name="description" content="演算法主題式複習筆記 — 概念、Clean Code、動畫、走讀" />
+  <title>ALGO // WORKSHOP NOTES</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
 
   <link rel="stylesheet" href="assets/css/tokens.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
 </head>
 <body>
-  <div class="page">
 
-    <nav class="nav">
-      <div class="container nav__inner">
-        <a class="nav__brand" href="index.html">
-          <span class="nav__brand-mark"></span>
-          <span class="nav__brand-text">ALGO_NOTES</span>
-          <span class="nav__brand-tag">v0.1</span>
-        </a>
-        <div class="nav__links">
-          <a href="index.html" class="is-active">Index</a>
-          <a href="#topics">Topics</a>
-          <a href="about.html">About</a>
-        </div>
-      </div>
-    </nav>
+  <!-- decorative rivets -->
+  <div class="rivet tl"></div>
+  <div class="rivet tr"></div>
+  <div class="rivet bl"></div>
+  <div class="rivet br"></div>
 
-    <header class="hero">
-      <div class="container">
-        <div class="hero__meta">
-          <span>// 資訊之芽算法班 / 2026</span>
+  <!-- scrolling top strip -->
+  <div class="top-strip">
+    <div class="marquee">
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>EST. 2026</span>
+      <span>STUDY · CODE · DEPLOY</span>
+      <span>⚙ NOTES IN PROGRESS</span>
+      <span>※ ALGO WORKSHOP ※</span>
+      <span>EST. 2026</span>
+      <span>STUDY · CODE · DEPLOY</span>
+      <span>⚙ NOTES IN PROGRESS</span>
+    </div>
+  </div>
+
+  <!-- header -->
+  <header class="workshop-header">
+    <div class="meta-row">
+      <span><span class="dot"></span>SIGNAL ACTIVE</span>
+      <span>VOL. 01 / 14 TOPICS</span>
+      <span>LOG_2026.05.25</span>
+    </div>
+    <h1 class="workshop-title">Algo<br/>Notes.</h1>
+    <p class="workshop-subtitle">
+      資訊之芽算法班 ／ 個人複習筆記<br/>
+      <span class="num">[ 14 ]</span> topics · <span class="num">[ 00 ]</span> problems · last forged 2026.05.25
+    </p>
+  </header>
+
+  <div class="shell">
+
+    <!-- ============================================================
+         SIDEBAR — Directory Bookmark
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <div class="nav-label">// CURRICULUM</div>
+      <nav>
+        <ul>
+          <li><a href="topics/01-data-structure/index.html" class="is-active">W01 · Data Structure <span class="tag">07</span></a></li>
+          <li><a href="#">W02 · Complexity · Tree <span class="tag">05</span></a></li>
+          <li><a href="#">W03 · Graph · Heap <span class="tag">06</span></a></li>
+          <li><a href="#">W04 · Enumeration · Search <span class="tag">06</span></a></li>
+          <li><a href="#">W05 · Greedy <span class="tag">05</span></a></li>
+          <li><a href="#">W06 · Divide &amp; Conquer <span class="tag">06</span></a></li>
+          <li><a href="#">W07 · DP 1 <span class="tag">06</span></a></li>
+          <li><a href="#">W08 · Stack Frame <span class="tag">02</span></a></li>
+          <li><a href="#">W09 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="#">W10 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="#">W11 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="#">W12 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="#">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="#">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-label">// PAGES</div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+
+    </aside>
+
+    <!-- ============================================================
+         MAIN — Recently Forged
+         ============================================================ -->
+    <main class="content">
+
+      <article id="entry-p18">
+        <span class="stamp">▼ SAMPLE</span>
+        <h2>Maximum Subarray Sum</h2>
+        <div class="article-meta">
+          <span>2026.05.25</span>
+          <span>FILED UNDER: W01 / DP</span>
+          <span>O(n) · Kadane</span>
         </div>
-        <h1 class="hero__title">ALGORITHM<br/>STUDY NOTES</h1>
-        <p class="hero__lede">
-          以主題為單位整理的演算法複習筆記。每題包含題意拆解、概念講解、互動動畫、Clean Code 與逐段走讀。
+        <p>
+          給定整數陣列找出總和最大的連續子陣列。展示版型用，包含題意拆解、概念講解、互動動畫、Clean Code 與走讀。
         </p>
-      </div>
-    </header>
-
-    <section class="section" id="topics">
-      <div class="container">
-        <div class="section__marker">
-          <span class="section__marker-num">[ 00 ]</span>
-          <span>Curriculum Map</span>
-          <span class="section__marker-line"></span>
-          <span>14 Topics</span>
+        <div class="tag-row">
+          <span class="chip chip--rust">DP</span>
+          <span class="chip">Array</span>
+          <span class="chip chip--steel">O(n)</span>
         </div>
+        <p>
+          <a href="topics/01-data-structure/problems/p18.html">→ Open entry</a>
+        </p>
+      </article>
 
-        <div class="grid grid--3">
-
-          <a class="card card--link" href="topics/01-data-structure/index.html">
-            <div class="card__index">// W01</div>
-            <h3 class="card__title">Data Structure</h3>
-            <p class="card__desc">陣列、鏈表、堆疊、佇列等基礎結構。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W02</div>
-            <h3 class="card__title">Complexity &amp; Tree</h3>
-            <p class="card__desc">複雜度分析與樹結構入門。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W03</div>
-            <h3 class="card__title">Graph / Flood Fill / Heap</h3>
-            <p class="card__desc">基本圖論、Flood Fill、Heap。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W04</div>
-            <h3 class="card__title">Enumeration &amp; Search</h3>
-            <p class="card__desc">枚舉與搜尋技巧。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W05</div>
-            <h3 class="card__title">Greedy</h3>
-            <p class="card__desc">貪心策略與正確性論證。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W06</div>
-            <h3 class="card__title">Divide &amp; Conquer</h3>
-            <p class="card__desc">分治法、倍增、主定理。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W07</div>
-            <h3 class="card__title">Dynamic Programming 1</h3>
-            <p class="card__desc">DP 入門與狀態設計。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W09</div>
-            <h3 class="card__title">Dynamic Programming 2</h3>
-            <p class="card__desc">區間 DP、樹 DP。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W10</div>
-            <h3 class="card__title">Dynamic Programming 3</h3>
-            <p class="card__desc">狀態壓縮、位元 DP。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W11</div>
-            <h3 class="card__title">MST &amp; Shortest Path</h3>
-            <p class="card__desc">拓樸排序、MST、最短路。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W12</div>
-            <h3 class="card__title">String — Trie / KMP</h3>
-            <p class="card__desc">字串匹配與字典樹。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W13</div>
-            <h3 class="card__title">Geometry / Math / Game</h3>
-            <p class="card__desc">計算幾何、數學、賽局理論。</p>
-          </a>
-
-          <a class="card card--link" href="#">
-            <div class="card__index">// W14</div>
-            <h3 class="card__title">Connectivity / Segment Tree</h3>
-            <p class="card__desc">連通性、線段樹。</p>
-          </a>
-
+      <article>
+        <span class="stamp stamp--archive">○ EMPTY</span>
+        <h2>Awaiting first problem</h2>
+        <div class="article-meta">
+          <span>--</span>
+          <span>FILED UNDER: --</span>
         </div>
-      </div>
-    </section>
+        <p>
+          貼一題題目給 Claude，會自動依照六段結構（Problem · Concept · Visualization · Clean Code · Walkthrough · Variants）整理進來。
+        </p>
+      </article>
 
-    <section class="section">
-      <div class="container">
-        <div class="section__marker">
-          <span class="section__marker-num">[ 01 ]</span>
-          <span>Progress</span>
-          <span class="section__marker-line"></span>
-        </div>
-
+      <article>
+        <h3 style="border:none;padding:0;margin-top:0;">PROGRESS</h3>
         <div class="stats">
           <div class="stat">
             <div class="stat__label">Topics</div>
             <div class="stat__value"><span class="stat__value--accent">0</span> / 14</div>
           </div>
           <div class="stat">
-            <div class="stat__label">Problems Solved</div>
+            <div class="stat__label">Problems</div>
             <div class="stat__value"><span class="stat__value--accent">0</span></div>
           </div>
           <div class="stat">
-            <div class="stat__label">Last Updated</div>
-            <div class="stat__value">2026.05.25</div>
+            <div class="stat__label">Last Build</div>
+            <div class="stat__value">05.25</div>
           </div>
         </div>
-      </div>
-    </section>
+      </article>
 
-    <footer class="footer">
-      <div class="container footer__inner">
-        <span>// ALGO_NOTES — Personal Study Repository</span>
-        <span>BUILD 0.1.0</span>
-      </div>
-    </footer>
+    </main>
 
   </div>
+
+  <!-- footer -->
+  <footer class="workshop-footer">
+    <div>© 2026 // ALGO WORKSHOP // BUILT WITH RUST &amp; STEEL</div>
+    <div class="barcode" aria-hidden="true">
+      <span style="height:100%"></span><span style="height:60%"></span><span style="height:90%"></span>
+      <span style="height:40%"></span><span style="height:100%"></span><span style="height:70%"></span>
+      <span style="height:30%"></span><span style="height:100%"></span><span style="height:50%"></span>
+      <span style="height:80%"></span><span style="height:100%"></span><span style="height:60%"></span>
+      <span style="height:90%"></span><span style="height:40%"></span><span style="height:100%"></span>
+    </div>
+    <div>SERIAL_NO. AW-001-2026</div>
+  </footer>
+
 </body>
 </html>
