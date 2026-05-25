@@ -280,6 +280,85 @@
   .code-annotated__line { grid-template-columns: 1fr; }
 }
 
+/* ---- Q&A / Review blocks ---- */
+.qa {
+  border-left: 3px solid var(--rust);
+  background: var(--bg-2);
+  padding: var(--sp-3) var(--sp-4);
+  margin: var(--sp-4) 0;
+}
+.qa__id {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  color: var(--rust-bright);
+  text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+.qa__tag {
+  display: inline-block;
+  margin-left: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-dim);
+  background: var(--bg-3);
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+}
+.qa h4 {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+  border-left: none;
+  padding-left: 0;
+}
+.qa p:last-child { margin-bottom: 0; }
+.qa pre { margin: var(--sp-3) 0 0; }
+
+.qa--answer { border-left-color: var(--warning); }
+.qa--answer .qa__id { color: var(--warning); }
+
+.answer-divider {
+  margin: var(--sp-8) 0 var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 2px dashed var(--rust);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.answer-divider__label {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xl);
+  letter-spacing: 0.1em;
+  color: var(--warning);
+  text-transform: uppercase;
+}
+.answer-divider__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--warning);
+}
+
+/* Trace block — shows step-by-step recursion trace */
+.trace-block {
+  border: 1px solid var(--line);
+  background: var(--bg-code);
+  border-left: 3px solid var(--warning);
+  padding: var(--sp-3) var(--sp-4);
+  margin: var(--sp-3) 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.75;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--ink);
+}
+
 /* ---- Base case mini-grid showcase ---- */
 .base-case-row {
   display: grid;
