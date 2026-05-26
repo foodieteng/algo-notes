@@ -60,53 +60,108 @@
 .sc-topnav a:hover { color: var(--sc-coral); }
 
 /* ============================================================
-   Masthead
+   Masthead — hero treatment with decorative ornaments
    ============================================================ */
 .sc-mast {
   max-width: 900px;
-  margin: 0 auto 28px;
+  margin: 8px auto 40px;
   text-align: center;
+  position: relative;
+  padding: 14px 0 6px;
 }
+
 .sc-mast__chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--sc-ink);
   color: #fff;
-  padding: 4px 14px;
+  padding: 5px 22px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.32em;
   font-weight: 700;
-  margin-bottom: 18px;
+  margin: 0 0 26px;
+  border-radius: 2px;
+  position: relative;
 }
+.sc-mast__chip::before,
+.sc-mast__chip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 80px;
+  height: 1px;
+  background: var(--sc-line);
+}
+.sc-mast__chip::before { right: 100%; margin-right: 18px; }
+.sc-mast__chip::after  { left:  100%; margin-left:  18px; }
+
 .sc-mast__title {
   font-family: 'Noto Serif TC', 'EB Garamond', Georgia, serif;
-  font-size: 44px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: clamp(42px, 6.2vw, 58px);
+  font-weight: 900;
+  letter-spacing: 0.06em;
   color: var(--sc-ink);
-  margin: 0 0 8px;
-  line-height: 1.1;
+  margin: 4px 0 10px;
+  line-height: 1.05;
+  text-shadow: 1px 1px 0 rgba(217, 110, 78, 0.06);
 }
+
 .sc-mast__subtitle {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   color: var(--sc-muted);
-  margin: 0 0 14px;
+  margin: 0 0 24px;
+  padding-bottom: 20px;
+  position: relative;
 }
+.sc-mast__subtitle::after {
+  /* Short coral underline beneath the subtitle */
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: var(--sc-coral);
+}
+
 .sc-mast__meta {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--sc-ink-dim);
   letter-spacing: 0.12em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 8px;
 }
-.sc-mast__stars { color: var(--sc-coral); margin-right: 14px; letter-spacing: 0.18em; font-size: 13px; }
-.sc-mast__sep { color: var(--sc-line); margin: 0 8px; }
+.sc-mast__stars { color: var(--sc-coral); font-size: 13px; letter-spacing: 0.22em; margin: 0; }
+.sc-mast__sep   { color: var(--sc-line); margin: 0 4px; }
+
 .sc-mast__rule {
   max-width: 900px;
-  margin: 28px auto;
+  margin: 30px auto 26px;
   height: 1px;
   background: var(--sc-line);
+  position: relative;
+}
+.sc-mast__rule::before {
+  /* Coral diamond in the center of the rule */
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--sc-coral);
+  border: 2px solid var(--sc-paper);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 /* ============================================================
@@ -179,9 +234,24 @@
   background: var(--sc-cream);
   border: 1px solid var(--sc-cream-bd);
   border-left: 4px solid var(--sc-coral);
-  padding: 12px 16px;
-  margin: 10px 0;
+  padding: 20px 24px 22px;
+  margin: 14px 0 18px;
   font-size: 14px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(217, 110, 78, 0.06);
+}
+.sc-question::before {
+  /* Subtle quote ornament in the top-right corner */
+  content: '』';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 32px;
+  color: var(--sc-coral);
+  opacity: 0.18;
+  line-height: 1;
+  font-weight: 900;
 }
 .sc-question__label {
   display: inline-block;
@@ -189,10 +259,19 @@
   color: #fff;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.28em;
   font-weight: 700;
-  padding: 2px 8px;
-  margin-bottom: 6px;
+  padding: 3px 12px;
+  margin-bottom: 12px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.sc-question p {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 15px;
+  line-height: 1.9;
+  margin: 0;
+  color: var(--sc-ink);
 }
 
 /* ============================================================
@@ -239,31 +318,53 @@
 .sc-points {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-  margin: 10px 0;
+  gap: 16px;
+  margin: 14px 0 6px;
 }
 .sc-points__card {
   background: var(--sc-cream);
   border: 1px solid var(--sc-cream-bd);
-  padding: 12px;
+  padding: 18px 18px 18px 18px;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+}
+.sc-points__card:hover {
+  transform: translateY(-2px);
+  border-color: var(--sc-coral);
+  box-shadow: 0 6px 12px rgba(217, 110, 78, 0.12);
 }
 .sc-points__letter {
-  font-family: 'JetBrains Mono', monospace;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  background: #fff;
+  border: 2px solid var(--sc-coral);
+  border-radius: 50%;
+  color: var(--sc-coral);
+  font-family: 'Noto Serif TC', serif;
   font-weight: 700;
   font-size: 14px;
-  color: var(--sc-coral);
-  margin-right: 6px;
+  letter-spacing: 0;
+  vertical-align: middle;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .sc-points__head {
-  font-size: 13px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14.5px;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   color: var(--sc-ink);
+  display: flex;
+  align-items: center;
 }
 .sc-points__body {
-  font-size: 12.5px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13.5px;
   color: var(--sc-ink-dim);
-  line-height: 1.55;
+  line-height: 1.75;
 }
 
 /* ============================================================
