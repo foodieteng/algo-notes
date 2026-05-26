@@ -129,16 +129,16 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
       : STEPS[step].title;
     ctx.fillText(headline, w / 2, 14);
 
-    // sub-line (formula)
+    // sub-line (formula — kept short to avoid colliding with source labels)
     ctx.fillStyle = P501_COLOR.inkDim;
     ctx.font = P501_FONT.sub;
-    ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ] = [ 1 ]  ∥  [ 2 ]', w / 2, 34);
+    ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ]', w / 2, 34);
 
     // Two source f(1) cells (top), connector lines, two destination cells (bottom)
     const sourceCellSize = 36;
     const destCellSize = 44;
-    const sourceY = 76;
-    const destY = h - 60;
+    const sourceY = 96;          // pushed down to keep clear of sub-line
+    const destY = h - 56;
     const leftX = w * 0.32;
     const rightX = w * 0.68;
 
