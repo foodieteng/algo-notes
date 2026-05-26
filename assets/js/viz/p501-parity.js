@@ -178,25 +178,33 @@
 
     const cellSize = 38;
     const gap = 3;
-    const insetW = cellSize * 4 + gap * 3 + 24;
-    const insetH = cellSize + 56;
-    const x = (w - insetW) / 2;
-    const y = main.y0 - insetH - 30;
+    const padX = 16;
+    const insetW = cellSize * 4 + gap * 3 + padX * 2;
+    const titleH = 22;
+    const cellsH = cellSize;
+    const insetH = titleH + cellsH + 14;
 
+    const x = (w - insetW) / 2;
+    const arrowH = 38;
+    const y = main.y0 - insetH - arrowH - 14;
+
+    // Inset box
     ctx.fillStyle = COLOR.insetBg;
     ctx.fillRect(x, y, insetW, insetH);
     ctx.strokeStyle = COLOR.insetBorder;
     ctx.lineWidth = 1.5;
     ctx.strokeRect(x + 0.5, y + 0.5, insetW - 1, insetH - 1);
 
+    // Title (centered)
     ctx.fillStyle = COLOR.ink;
     ctx.font = '700 11px "JetBrains Mono", monospace';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    ctx.fillText('// f(4) = [1, 3, 2, 4]', x + 12, y + 8);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('// f(4) = [1, 3, 2, 4]', x + insetW / 2, y + titleH / 2 + 4);
 
-    const innerX = x + 12;
-    const innerY = y + 28;
+    // f(4) cells
+    const innerX = x + padX;
+    const innerY = y + titleH + 4;
     for (let i = 0; i < 4; i++) {
       const cx = innerX + i * (cellSize + gap);
       ctx.fillStyle = '#fff';
@@ -211,14 +219,24 @@
       ctx.fillText(String(F4[i]), cx + cellSize / 2, innerY + cellSize / 2);
     }
 
-    // Map hint
+    // Arrow + transform hint between inset and main row (only on map steps)
     if (step === 2 || step === 3) {
+      const arrowY = y + insetH + 4;
+      const mapText = step === 2
+        ? '↓   × 2 − 1   →   ODD (left half)'
+        : '↓   × 2   →   EVEN (right half)';
       ctx.fillStyle = COLOR.coral;
       ctx.font = '700 11px "JetBrains Mono", monospace';
-      ctx.textAlign = 'right';
+      ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      const mapText = step === 2 ? '× 2 − 1  →  ODD' : '× 2  →  EVEN';
-      ctx.fillText(mapText, x + insetW - 12, y + 8);
+      ctx.fillText(mapText, w / 2, arrowY);
+    } else {
+      // Plain down-arrow for step 1 (recurse reveal)
+      ctx.fillStyle = COLOR.inkDim;
+      ctx.font = '500 11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('↓', w / 2, y + insetH + 4);
     }
   }
 
