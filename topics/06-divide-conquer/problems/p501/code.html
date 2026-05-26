@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P501 · 02 Code // 好的序列 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P501
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/501/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">好的序列</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · 純 int 陣列
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N log N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p501.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="c">// P501 · 好的序列 — 奇偶切構造</span>
+<span class="c">// f(N) = [ 2·f(⌈N/2⌉) − 1 ]  ∥  [ 2·f(⌊N/2⌋) ]</span>
+<span class="k">#include</span> <span class="s">&lt;iostream&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
+<span class="t">int</span> seq<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// 主答案緩衝區，最後印出 seq[0..N-1]</span>
+<span class="t">int</span> buf<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// 暫存遞迴子結果，避免額外配置</span>
+
+<span class="c">// 把長度 len 的「1..len 的合法排列」build 到 out[0..len-1]</span>
+<span class="k">void</span> <span class="f">build</span><span class="p">(</span><span class="t">int</span> <span class="p">*</span>out<span class="p">,</span> <span class="t">int</span> len<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>len <span class="p">==</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span>                  <span class="c">// base case</span>
+        out<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="t">int</span> leftLen  <span class="p">=</span> <span class="p">(</span>len <span class="p">+</span> <span class="n">1</span><span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>      <span class="c">// ⌈len/2⌉ — 奇數段長度</span>
+    <span class="t">int</span> rightLen <span class="p">=</span> len <span class="p">-</span> leftLen<span class="p">;</span>      <span class="c">// ⌊len/2⌋ — 偶數段長度</span>
+
+    <span class="c">// 先用 buf 解出長 leftLen 的子問題，再就地映成 2x − 1（奇）</span>
+    <span class="f">build</span><span class="p">(</span>buf<span class="p">,</span> leftLen<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> leftLen<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
+        out<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> buf<span class="p">[</span>i<span class="p">]</span> <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span>rightLen <span class="p">==</span> <span class="n">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>           <span class="c">// len == 1 已 return；此處保險</span>
+
+    <span class="c">// 再用 buf 解長 rightLen 的子問題，映成 2x（偶），接在 out[leftLen..]</span>
+    <span class="f">build</span><span class="p">(</span>buf<span class="p">,</span> rightLen<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> rightLen<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
+        out<span class="p">[</span>leftLen <span class="p">+</span> i<span class="p">]</span> <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> buf<span class="p">[</span>i<span class="p">];</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> n<span class="p">;</span> cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+    <span class="f">build</span><span class="p">(</span>seq<span class="p">,</span> n<span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
+        cout <span class="p">&lt;&lt;</span> seq<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="p">(</span>i <span class="p">+</span> <span class="n">1</span> <span class="p">==</span> n <span class="p">?</span> <span class="s">'\n'</span> <span class="p">:</span> <span class="s">' '</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>實作要點</strong>：用兩個全域 int 陣列 <code>seq[]</code> 與 <code>buf[]</code>，
+      <code>build()</code> 把長 <code>len</code> 的子問題直接寫到傳進來的 <code>out</code> 指標。
+      <code>buf</code> 在遞迴前後即用即覆蓋 — 因為每層先「解左」再「映射複製到 out 左半」，
+      接著「解右」再「映射複製到 out 右半」，左右兩次解的中間 <code>buf</code> 內容不需保留。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>把 <code>build(out, len)</code> 一層的工作量拆三段：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>單層成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>遞迴左半</td><td>解一個 ⌈len/2⌉ 的子問題</td><td class="mono">T(⌈len/2⌉)</td></tr>
+        <tr><td>映射並寫入左段</td><td>for-loop 把 buf[i] 映成 2x − 1 寫到 out[0..]</td><td class="mono">O(⌈len/2⌉)</td></tr>
+        <tr><td>遞迴右半</td><td>解一個 ⌊len/2⌋ 的子問題</td><td class="mono">T(⌊len/2⌋)</td></tr>
+        <tr><td>映射並寫入右段</td><td>for-loop 把 buf[i] 映成 2x 寫到 out[leftLen..]</td><td class="mono">O(⌊len/2⌋)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = T(⌈N/2⌉) + T(⌊N/2⌋) + O(N)</div>
+      <div class="sc-formula__hint">合併（映射＋複製）每層 O(N)，共 log N 層 ⇒ <strong>T(N) = O(N log N)</strong></div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>每層 O(N) 映射，共 log N 層</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>seq[] + buf[] 兩支陣列；無動態配置</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層，遠在 stack 安全範圍</td></tr>
+        <tr><td>Constant factor</td><td>極低</td><td>純加減乘、無比較、無排序、無 STL container</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 邊界與陷阱
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>N = 1 直接收尾</strong></td>
+          <td>遞迴 base 寫 <code>if (len == 1) { out[0] = 1; return; }</code>。若忘了寫，<code>leftLen = 1, rightLen = 0</code> 雖然不爆，但右段 for-loop 跑 0 次 ⇒ 仍能正確 return — 不過建議保留顯式 base，可讀性高。</td>
+        </tr>
+        <tr>
+          <td><strong>leftLen 用 <code>⌈N/2⌉</code> 不是 <code>⌊N/2⌋</code></strong></td>
+          <td>奇數段 1..N 有 ⌈N/2⌉ 個（N=5 時奇數 1,3,5 有 3 個）；偶數段才是 ⌊N/2⌋ 個。寫反會在 N 為奇數時越界或漏元素。</td>
+        </tr>
+        <tr>
+          <td><strong>映射順序：先映左、再解右</strong></td>
+          <td><code>buf</code> 是共用緩衝。先 <code>build(buf, leftLen)</code> 然後立刻把 buf 內容映射複製到 out 左段；再 <code>build(buf, rightLen)</code> 覆蓋 buf，這時左段已寫入 out 不會被破壞。</td>
+        </tr>
+        <tr>
+          <td><strong>輸出格式 — 空白與換行</strong></td>
+          <td>題目要求數字之間以空白分隔、結尾換行。用 <code>cout &lt;&lt; seq[i] &lt;&lt; (i + 1 == n ? '\n' : ' ')</code> 一行搞定。<code>endl</code> 會 flush，慢。</td>
+        </tr>
+        <tr>
+          <td><strong>0-indexed vs 1-indexed</strong></td>
+          <td>數值 1..N 與下標 0..N−1 是兩件事 — code 用 0-indexed 跑陣列，輸出本身就是值 1..N，不需 +1。</td>
+        </tr>
+        <tr>
+          <td><strong>I/O 速度</strong></td>
+          <td><code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 必加 — 即使本題 N 不大，養成習慣。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① base case (len = 1)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// len == 1</span>
+out[0] = 1
+直接 return — 沒有遞迴往下，stack 在這停。
+所有遞迴展開後，葉節點都會走到這裡。</pre>
+
+    <p><strong>② 切半：奇數段 / 偶數段</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// split</span>
+leftLen  = (len + 1) / 2     ← ⌈len/2⌉  奇數段
+rightLen = len - leftLen     ← ⌊len/2⌋  偶數段
+
+例：len = 5 ⇒ leftLen = 3, rightLen = 2
+    len = 4 ⇒ leftLen = 2, rightLen = 2
+    len = 3 ⇒ leftLen = 2, rightLen = 1</pre>
+
+    <p><strong>③ 遞迴解左半並映射成奇數</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// build left half (奇數段)</span>
+build(buf, leftLen)            ← 解出 1..leftLen 的合法排列到 buf[0..leftLen-1]
+for i in [0, leftLen):
+    out[i] = 2 * buf[i] - 1    ← 把 1..leftLen 映成 1, 3, 5, ...</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">映射 <code>2x − 1</code> 把整數 1..⌈N/2⌉ 雙射到奇數 1, 3, …, 2·⌈N/2⌉−1，保序且唯一。</p>
+
+    <p><strong>④ 遞迴解右半並映射成偶數，接在後段</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// build right half (偶數段)</span>
+build(buf, rightLen)           ← 重新解出 1..rightLen 的排列，覆蓋 buf
+for i in [0, rightLen):
+    out[leftLen + i] = 2 * buf[i]   ← 映成 2, 4, 6, ... 接到 out 後段</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      <code>buf</code> 在「解左→映左」與「解右→映右」之間可以被覆蓋，因為左段已寫入 <code>out</code>。
+      這就是用<em>單支共用緩衝</em>即可、不需要遞迴內配置記憶體的關鍵。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">兩支全域 int 陣列 + 一個 build() — 左映 2x − 1、右映 2x，遞迴串接。</div>
+    <div class="sc-summary-bar__detail">T(N) = T(⌈N/2⌉) + T(⌊N/2⌋) + O(N) = O(N log N) &nbsp;·&nbsp; 空間 O(N)</div>
+  </div>
+
+</body>
+</html>

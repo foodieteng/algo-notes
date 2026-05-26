@@ -18,11 +18,9 @@ topics/<NN>-<slug>/
     └── review.html             # PAGE 3 · Review (Q&A + worked trace)
 ```
 
-**Canonical templates live at `topics/06-divide-conquer/problems/p507/` (and p114, p115).** All four W06 problems share this layout — read p507's three files to mirror structure when scaffolding a new problem.
+**Canonical templates live at `topics/06-divide-conquer/problems/p507/` (and p114, p115, p501).** All four W06 problems share this layout — read p507's three files to mirror structure when scaffolding a new problem. **Every problem gets 3 pages**, with or without animation. Problems without a canvas just skip the `.sc-viz` block and put the algorithm walkthrough straight into a `.sc-dark-box` proof or `.sc-trace` example.
 
-For simple problems without animation, a single-page variant exists at `topics/06-divide-conquer/problems/p501.html` (all content collapsed into one file). Pick 3-page when the algorithm warrants canvas visualization; 1-page otherwise.
-
-⚠️ **Legacy: the 5-page workshop-dark book format (Problem / Concept / Viz / Code / Review with `problem.css`) is deprecated.** It produced page-bloat and color inconsistency. All W06 problems have been converted. Do not scaffold new problems in that format unless the user explicitly asks.
+⚠️ **Legacy formats deprecated:** the old 5-page workshop-dark book (Problem / Concept / Viz / Code / Review with `problem.css`) and the single-page flat `.html` variant are both gone from W06. Do not scaffold new problems in either format unless the user explicitly asks.
 
 ## Single source of truth
 
@@ -115,9 +113,9 @@ Pager: PREV → `index.html` / NEXT → `review.html`.
 
 Pager: PREV → `code.html` / NEXT → `../../index.html` ("↑ 回 W## 章節").
 
-### Single-page variant (use only when no canvas animation is needed)
+### Animation is universal
 
-For terse problems (e.g. P501), inline all three pages' content into one `topics/<NN>-<slug>/problems/p<id>.html` flat file. Same components, same palette, same masthead — just skip the pager and page-indicator. The generator already handles both layouts via `resolve_problem_link()` in `scripts/generate_chapters.py`.
+Every problem gets a `.sc-viz` block on PAGE 1, even ones without obvious geometry. If the algorithm is sequence construction (P501) or counting (P115), animate the recursive structure: split → recurse → combine. The JS lives at `assets/js/viz/<slug>-<algo>.js` and follows the step-state-machine pattern in `p114-lboard.js` / `p507-closest.js`.
 
 ## Required `<head>` includes per page (study-card variant)
 

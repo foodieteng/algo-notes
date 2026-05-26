@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P501 · 03 Review // 好的序列 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P501
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/501/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">好的序列</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>構造而非搜尋</td>
+            <td>不枚舉、不 DP，<em>直接造</em>一條保證合法的排列。</td></tr>
+        <tr><td>奇偶切原則</td>
+            <td>所有奇數放前段、所有偶數放後段；段內遞迴。</td></tr>
+        <tr><td>跨段零 3-AP</td>
+            <td>3-AP 兩端必同奇偶 ⇒ 已被物理分離 ⇒ 跨段不可能。</td></tr>
+        <tr><td>段內歸納</td>
+            <td>段內變成規模一半的同一個問題，由歸納假設仍 3-AP free。</td></tr>
+        <tr><td>映射公式</td>
+            <td>左段 <code>2x − 1</code> 映成奇數、右段 <code>2x</code> 映成偶數。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>T(N) = T(⌈N/2⌉) + T(⌊N/2⌋) + O(N) = O(N log N)</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">3-AP 性質</span>
+      <h4>為什麼 3-AP 的兩端 <code>a[i], a[k]</code> 必同奇偶？這條性質如何被奇偶切利用？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">切半比例</span>
+      <h4>為何左段長度用 <code>⌈N/2⌉</code> 而非 <code>⌊N/2⌋</code>？反過來會錯在哪？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">構造法 vs 搜尋</span>
+      <h4>為什麼這題用「構造」遠優於「枚舉 + 驗證」或「狀態 DP」？三者複雜度各是多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">合法答案非唯一</span>
+      <h4>本題輸出不唯一 — 如果反過來把偶數放前、奇數放後，是否仍合法？為什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>時間 / 空間 / 遞迴深度各是多少？為什麼合併工作每層 O(N) 而非 O(1)？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · build(out, 5)<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用 <code>N = 5</code> 跑一次 <code>build()</code>，看遞迴怎麼一層一層回上來：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>5</pre>
+
+    <p>遞迴展開的樹狀結構 — 葉節點都是 <code>build(_, 1)</code>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL TREE</span>
+             build(_, 5)
+           /            \
+       build(_, 3)    build(_, 2)
+       /       \      /       \
+   build(_,2) build(_,1)  build(_,1) build(_,1)
+    /    \
+ build(_,1) build(_,1)
+
+⌈5/2⌉ = 3 (左)、⌊5/2⌋ = 2 (右)
+⌈3/2⌉ = 2 (左)、⌊3/2⌋ = 1 (右)
+⌈2/2⌉ = 1 (左)、⌊2/2⌋ = 1 (右)</pre>
+
+    <p>由葉節點往上回傳（每一層都用映射公式 <code>2x − 1</code> 接 <code>2x</code>）：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · build(_, 1)</span>
+out[0] = 1
+return → <span class="sc-trace__out">[1]</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · build(_, 2)</span>
+leftLen = 1, rightLen = 1
+build(buf, 1)              → buf = [1]
+out[0] = 2·1 − 1 = 1       ← 左映成奇
+build(buf, 1)              → buf = [1]
+out[1] = 2·1     = 2       ← 右映成偶
+return → <span class="sc-trace__out">[1, 2]</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · build(_, 3)</span>
+leftLen = 2, rightLen = 1
+build(buf, 2)              → buf = [1, 2]
+out[0] = 2·1 − 1 = 1
+out[1] = 2·2 − 1 = 3
+build(buf, 1)              → buf = [1]
+out[2] = 2·1     = 2
+return → <span class="sc-trace__out">[1, 3, 2]</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 4 · build(_, 5) — 主呼叫</span>
+leftLen = 3, rightLen = 2
+build(buf, 3)              → buf = [1, 3, 2]
+out[0] = 2·1 − 1 = 1
+out[1] = 2·3 − 1 = 5
+out[2] = 2·2 − 1 = 3
+build(buf, 2)              → buf = [1, 2]
+out[3] = 2·1     = 2
+out[4] = 2·2     = 4
+return → <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>1 5 3 2 4</pre>
+
+    <p style="margin-top:14px;">驗證一下：N = 5 共 C(5, 3) = 10 個三元組 <code>(i, j, k)</code>，逐一比 <code>2·a[j]</code> 與 <code>a[i] + a[k]</code>：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr>
+          <th>(i, j, k)</th>
+          <th>(a[i], a[j], a[k])</th>
+          <th>2·a[j] vs a[i] + a[k]</th>
+          <th style="text-align:center; width:10%;">OK?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">(1, 2, 3)</td><td class="mono">(1, 5, 3)</td><td class="mono">10 ≠ 4</td>  <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(1, 2, 4)</td><td class="mono">(1, 5, 2)</td><td class="mono">10 ≠ 3</td>  <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(1, 2, 5)</td><td class="mono">(1, 5, 4)</td><td class="mono">10 ≠ 5</td>  <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(1, 3, 4)</td><td class="mono">(1, 3, 2)</td><td class="mono">6 ≠ 3</td>   <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(1, 3, 5)</td><td class="mono">(1, 3, 4)</td><td class="mono">6 ≠ 5</td>   <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(1, 4, 5)</td><td class="mono">(1, 2, 4)</td><td class="mono">4 ≠ 5</td>   <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(2, 3, 4)</td><td class="mono">(5, 3, 2)</td><td class="mono">6 ≠ 7</td>   <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(2, 3, 5)</td><td class="mono">(5, 3, 4)</td><td class="mono">6 ≠ 9</td>   <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(2, 4, 5)</td><td class="mono">(5, 2, 4)</td><td class="mono">4 ≠ 9</td>   <td style="text-align:center;" class="mono">●</td></tr>
+        <tr><td class="mono">(3, 4, 5)</td><td class="mono">(3, 2, 4)</td><td class="mono">4 ≠ 7</td>   <td style="text-align:center;" class="mono">●</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：10 / 10 全通過 — 證明跟程式輸出一致。
+      注意每組 <code>(a[i], a[k])</code> 都是<em>同奇偶</em>或<em>異奇偶</em>，但 <code>a[j]</code>
+      偏偏沒站在「平均」的位置上 — 這就是奇偶切的力量。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">遞迴深度</span>
+      <h4>N = 10⁶ 時 <code>build</code> 的最大遞迴深度是多少？需要擔心 stack overflow 嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">記憶體配置</span>
+      <h4>為什麼 code 用兩個全域陣列 <code>seq[]</code>、<code>buf[]</code>，而不是在 <code>build()</code> 內部開區域陣列或 <code>vector</code>？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形題</span>
+      <h4>若改題目「避免任意 4 項等差」(4-AP free)，奇偶切還適用嗎？要怎麼修改思路？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 3-AP 性質</span>
+      <p>
+        3-AP 條件 <code>2·a[j] = a[i] + a[k]</code> ⇒ 右式 <code>a[i] + a[k]</code> 為偶數
+        ⇒ <code>a[i]</code> 與 <code>a[k]</code> <strong>同奇偶</strong>（奇+奇=偶、偶+偶=偶；奇+偶=奇排除）。
+      </p>
+      <p>
+        奇偶切把 1..N 按奇偶<em>物理分離</em>到前段與後段。要找跨段 3-AP，必有 i 在前段、k 在後段
+        ⇒ <code>a[i]</code> 是奇數、<code>a[k]</code> 是偶數 ⇒ 違反「同奇偶」必要條件 ⇒ 跨段不存在 3-AP。
+        只剩同段內部的 3-AP — 而段內就是規模一半的同一個問題，由歸納假設仍 3-AP free。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 切半比例</span>
+      <p>
+        1..N 中奇數有 <strong>⌈N/2⌉</strong> 個、偶數有 <strong>⌊N/2⌋</strong> 個。
+        所以左段（奇數段）長度必須是 ⌈N/2⌉。
+      </p>
+      <ul>
+        <li><strong>N 偶</strong>（如 N = 6）：⌈6/2⌉ = ⌊6/2⌋ = 3，左右各半，寫反沒差。</li>
+        <li><strong>N 奇</strong>（如 N = 5）：奇數 {1, 3, 5} 有 3 個、偶數 {2, 4} 有 2 個。
+          若把左段寫成 <code>⌊N/2⌋ = 2</code>，左段只裝得下兩個奇數，第三個奇數沒地方放、第二個偶數位置也錯亂 — 結果不是 1..N 的排列。</li>
+      </ul>
+      <p>正確寫法：<code>leftLen = (len + 1) / 2;</code> 即 <code>⌈len/2⌉</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 構造法 vs 搜尋</span>
+      <table class="sc-table">
+        <thead><tr><th>方法</th><th>複雜度</th><th>能跑到</th></tr></thead>
+        <tbody>
+          <tr><td>枚舉 + 驗證</td><td class="mono">O(N! · N³)</td><td>N ≤ 10 左右</td></tr>
+          <tr><td>狀態 DP (子集)</td><td class="mono">O(2ᴺ · N)</td><td>N ≤ 24</td></tr>
+          <tr><td><strong>奇偶切構造</strong></td><td class="mono"><strong>O(N log N)</strong></td><td>N = 10⁶ 級</td></tr>
+        </tbody>
+      </table>
+      <p>
+        前兩者本質是<em>搜尋空間</em>—「N! 種排列裡找一個合法的」、或「2ᴺ 個子集記憶哪些前綴可行」；
+        構造法則是<em>直接給出公式</em>，不必探索 — 這就是構造類題的標誌：
+        <strong>有合法結構可被精確描述時，造出來比找出來快得多。</strong>
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 合法答案非唯一</span>
+      <p>
+        <strong>仍合法。</strong>把偶數放前、奇數放後（或左右互換）對應原構造的鏡射版本，
+        同樣可由奇偶切的證明保證 3-AP free — 證明本身對前後段對稱。
+      </p>
+      <p>
+        實際上合法答案非常多 — 例如 N = 5 時 <code>[1, 5, 3, 2, 4]</code>、<code>[5, 1, 3, 4, 2]</code>、
+        <code>[2, 4, 1, 5, 3]</code> 等等都合法。題目只要求<em>一個</em>合法答案。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 複雜度</span>
+      <ul>
+        <li><strong>Time</strong> · <code>T(N) = T(⌈N/2⌉) + T(⌊N/2⌋) + O(N) = O(N log N)</code>。Master Theorem case 2。</li>
+        <li><strong>Space</strong> · <code>O(N)</strong> — 兩支固定大小的全域陣列；遞迴 stack <code>O(log N)</code>。</li>
+        <li><strong>Recursion depth</strong> · <code>O(log N)</code>。</li>
+      </ul>
+      <p>
+        合併工作每層 <strong>O(N)</strong>（而非 O(1)）的原因：
+        每一層都要把 <code>buf</code> 內的子問題答案 for-loop 映射 (<code>2x − 1</code> / <code>2x</code>) 並複製到 <code>out</code> 的對應段。
+        左段 ⌈len/2⌉ 個元素、右段 ⌊len/2⌋ 個元素，合起來 = len 個元素的線性 work。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 遞迴深度</span>
+      <p>
+        <code>log₂(10⁶) ≈ 19.9</code>，所以最深約 <strong>20 層</strong>。
+        現代 OS 預設 stack 約 1–8 MB，每層 stack frame 約幾十 bytes，20 層完全沒壓力。
+      </p>
+      <p>
+        但若題目 N 來到 10⁹+ 級（雖然這題不會），就要改成 iterative 版本 — 用 size 1 → 2 → 4 → 8 …
+        bottom-up 倍增、或對 <code>buf</code> 與 <code>out</code> 做 in-place 變換。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 記憶體配置</span>
+      <p>幾個原因：</p>
+      <ul>
+        <li><strong>避免動態配置 overhead</strong> — N = 10⁶ 時若每層 new/delete 或建 vector，常數變大且可能爆 fragmentation。</li>
+        <li><strong>共用緩衝</strong> — <code>buf[]</code> 在「解左→映左」與「解右→映右」之間可以被覆蓋，因為左段答案已寫到 <code>out</code>。整個遞迴只需<em>一支</em> buf。</li>
+        <li><strong>避免 stack 上開大陣列</strong> — 局部變數 <code>int local[len]</code> 在 len 大時直接爆 stack。全域陣列在 BSS 段、無此問題。</li>
+      </ul>
+      <p>這是構造類遞迴題的標準寫法 — 全域陣列 + 指標傳遞 + 共用 scratch buffer。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 4-AP free 變形</span>
+      <p>
+        <strong>奇偶切對 4-AP 不直接適用</strong>。
+        4-AP <code>a[i], a[j], a[k], a[l]</code> 滿足等差 d，端點 <code>a[i], a[l]</code> 不必同奇偶
+        — 例如 <code>(1, 3, 5, 7)</code> 全奇但仍是 4-AP。奇偶切只能阻擋「兩端同奇偶」這條 3-AP 必要條件，對 4-AP 沒效。
+      </p>
+      <p>
+        正確思路要改：4-AP free 問題與 <em>Behrend 構造</em>（在 ℤ/Nℤ 中找大的 3-AP free 集合，再 lift 到整數）有關，
+        建構更困難 — 目前已知最大 4-AP free 集合大小是 N^(1 − ε(N))，沒有像奇偶切這麼乾淨的遞迴公式。
+      </p>
+      <p style="font-size:13px;color:var(--sc-ink-dim);">
+        延伸閱讀：Behrend 1946、Szemerédi 1975（任意長度等差自由集合的上界）— 此屬組合數學 / 加性組合範疇，超出競賽常見範圍。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W06 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + N=5 完整 trace + 10/10 brute verify — 確認構造的正確性。</div>
+    <div class="sc-summary-bar__detail">f(5) = [1, 5, 3, 2, 4] · 10 / 10 三元組全通過 3-AP 檢查</div>
+  </div>
+
+</body>
+</html>
