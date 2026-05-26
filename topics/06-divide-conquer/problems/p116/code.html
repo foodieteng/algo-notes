@@ -75,6 +75,7 @@
         <span class="sc-codewindow__lang">C++17</span>
       </div>
 <pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">#include</span> <span class="s">"lib0116.h"</span>
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
 
 <span class="k">const</span> <span class="t">int</span> N_MAX <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
@@ -201,8 +202,8 @@
           <td><code>rowLo == rowHi</code> 時 <code>mid = rowLo</code>，scan 一次後上下半皆空 — 自然收斂，不需要寫 <code>if (n == 1)</code>。</td>
         </tr>
         <tr>
-          <td><strong>不要包含 <code>lib0116.h</code></strong></td>
-          <td>那是 judge 端的標頭。提交時不寫 include，函式直接呼叫 — judge 會幫忙連結。</td>
+          <td><strong>必須 <code>#include "lib0116.h"</code></strong></td>
+          <td>judge 提供的標頭 — <code>GetVal</code> 與 <code>Report</code> 的宣告在裡面。沒 include 會編譯失敗：<code>'GetVal' was not declared in this scope</code>。</td>
         </tr>
       </tbody>
     </table>
