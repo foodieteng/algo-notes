@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Patrick+Hand&display=swap" />
 
   <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
   <link rel="stylesheet" href="../../../../assets/css/base.css" />
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../../assets/css/problem.css" />
   <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
 </head>
-<body>
+<body class="theme-sketch">
 
   <div class="rivet tl"></div>
   <div class="rivet tr"></div>
@@ -41,7 +41,7 @@
       <span>W06 · DIVIDE &amp; CONQUER</span>
       <span>SECTION 05 / 05</span>
       <span><a href="https://tioj.sprout.tw/contests/20/problems/114/" target="_blank" rel="noopener" style="color:var(--rust-bright); border:none;">原題 ↗</a></span>
-    P114
+    </div>
     <h1 class="workshop-title">Review.</h1>
     <p class="workshop-subtitle">
       重要概念回顧 ／ 觀念題 ／ 範例計算 ／ 答案
@@ -339,9 +339,9 @@
           <p>
             <code>solve(2, 2, 2)</code> 直接命中 base case：4 格 <code>(1,1), (1,2), (2,1), (2,2)</code> 扣掉 blocked <code>(2,2)</code> 剩 3 格。
           </p>
-          <pre class="trace-block">Report(1, 1,
+          <pre class="trace-block language-cpp"><code class="language-cpp">Report(1, 1,
        1, 2,
-       2, 1);</pre>
+       2, 1);</code></pre>
           <p>三格的順序可能依 double-loop 順序略異，但只要是這 3 格組合就正確。</p>
         </div>
 
@@ -349,7 +349,7 @@
           <span class="qa__id">A · Ex 2</span>
           <p>逐步算 <code>solve(4, 1, 1)</code>：</p>
 
-          <pre class="trace-block">tile(1, 1, 4, 1, 1)
+          <pre class="trace-block language-cpp"><code class="language-cpp">tile(1, 1, 4, 1, 1)
   half = 2, midX = 2, midY = 2
   bq = (1 &gt; 2) * 2 + (1 &gt; 2) = 0 * 2 + 0 = 0    → TL
 
@@ -372,14 +372,14 @@
   ▸ tile(3, 1, 2, 3, 2)  →  Report(3, 1,  4, 1,  4, 2)
   ▸ tile(3, 3, 2, 3, 3)  →  Report(3, 4,  4, 3,  4, 4)
 
-共 5 個 Report — 對應 (4² − 1) / 3 = 5。</pre>
+共 5 個 Report — 對應 (4² − 1) / 3 = 5。</code></pre>
         </div>
 
         <div class="qa qa--answer">
           <span class="qa__id">A · Ex 3</span>
           <p><code>solve(4, 2, 3)</code> 第 1 層 trace：</p>
 
-          <pre class="trace-block">tile(1, 1, 4, 2, 3)
+          <pre class="trace-block language-cpp"><code class="language-cpp">tile(1, 1, 4, 2, 3)
   half = 2, midX = 2, midY = 2
   bq = (2 &gt; 2) * 2 + (3 &gt; 2) = 0 * 2 + 1 = 1   → TR
 
@@ -388,7 +388,7 @@
     q=2 (BL): (midX+1, midY  ) = (3, 2)
     q=3 (BR): (midX+1, midY+1) = (3, 3)
 
-▸ Report(2, 2,  3, 2,  3, 3)</pre>
+▸ Report(2, 2,  3, 2,  3, 3)</code></pre>
         </div>
 
         <!-- ===== App 1-3 ===== -->
@@ -413,9 +413,9 @@
         <div class="qa qa--answer">
           <span class="qa__id">A · App 3</span>
           <p>N = 8, half = 4, midX = 4, midY = 4：</p>
-          <pre class="trace-block">bq = (5 &gt; 4) * 2 + (7 &gt; 4)
+          <pre class="trace-block language-cpp"><code class="language-cpp">bq = (5 &gt; 4) * 2 + (7 &gt; 4)
    = 1 * 2 + 1
-   = 3                  → BR</pre>
+   = 3                  → BR</code></pre>
           <p>blocked (5, 7) 位於 <strong>右下 (BR)</strong> 象限。</p>
         </div>
 

@@ -9,25 +9,25 @@
   // Shared color tokens (study card light theme)
   // ------------------------------------------------------------
   const C = {
-    bg:           '#fafaf6',
-    grid:         '#ebe3d2',
-    axis:         '#a09384',
-    axisText:     '#8a847a',
-    ptDefault:    '#1f5a99',
-    ptDim:        '#bfc1c4',
-    ptFocus:      '#d96e4e',
-    ptBest:       '#2f8a5a',
-    ptStrip:      '#d4a017',
-    lineFocus:    '#d96e4e',
-    lineDim:      '#aaa',
-    lineBest:     '#2f8a5a',
-    stripFill:    'rgba(217, 161, 23, 0.18)',
-    stripEdge:    '#d4a017',
-    midline:      '#d96e4e',
-    halfL:        'rgba(31, 90, 153, 0.06)',
-    halfR:        'rgba(156, 77, 47, 0.06)',
-    text:         '#1a1a1a',
-    textDim:      '#8a847a',
+    bg:           '#fdf8ee',                       // matches --paper
+    grid:         '#ece1c8',
+    axis:         '#a59c91',
+    axisText:     '#7d7770',
+    ptDefault:    '#7eb2dc',                       // pastel blue
+    ptDim:        '#cbc6bd',
+    ptFocus:      '#f9a8b4',                       // pastel pink-deep
+    ptBest:       '#8fc480',                       // pastel green-deep
+    ptStrip:      '#f5d76e',                       // pastel yellow-deep
+    lineFocus:    '#f9a8b4',
+    lineDim:      '#b4ada1',
+    lineBest:     '#8fc480',
+    stripFill:    'rgba(245, 215, 110, 0.30)',
+    stripEdge:    '#d2a648',
+    midline:      '#f9a8b4',
+    halfL:        'rgba(126, 178, 220, 0.08)',
+    halfR:        'rgba(249, 168, 180, 0.08)',
+    text:         '#3a3531',
+    textDim:      '#6a625c',
   };
 
   // ------------------------------------------------------------
