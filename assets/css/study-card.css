@@ -170,35 +170,11 @@
 .sc-section {
   max-width: 900px;
   margin: 0 auto 28px;
-  background: rgba(255, 251, 235, 0.7);
-  border: none;
+  background: var(--sc-paper, #faf5e6);
+  border: 1px solid var(--sc-ink);
   padding: 18px 22px 22px;
   position: relative;
-  border-radius: 12px;
-}
-.sc-section::before {
-  /* Wobbly hand-drawn border via SVG filter */
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--sc-ink);
-  border-radius: 12px;
-  pointer-events: none;
-  filter: url(#sn-wobble);
-}
-.sc-section::after {
-  /* Slight offset "drew over twice" second pass */
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 4px;
-  width: calc(100% - 7px);
-  height: calc(100% - 6px);
-  border: 1.5px solid var(--sc-ink);
-  border-radius: 11px;
-  opacity: 0.22;
-  pointer-events: none;
-  filter: url(#sn-wobble);
+  border-radius: 2px;
 }
 
 .sc-section__head {
@@ -207,11 +183,10 @@
   gap: 10px;
   margin: -18px -22px 14px;
   padding: 10px 16px;
-  background: var(--sc-tag);
-  border-bottom: 1px dashed var(--sc-ink);
-  border-radius: 12px 12px 0 0;
+  background: transparent;
+  border-bottom: 1px solid var(--sc-ink);
+  border-radius: 0;
   position: relative;
-  z-index: 1;
 }
 .sc-section__num {
   display: inline-flex;
@@ -260,38 +235,14 @@
    Question callout
    ============================================================ */
 .sc-question {
-  background: #fffceb;
-  border: none;
-  padding: 20px 24px 22px;
+  background: var(--sc-paper, #faf5e6);
+  border: 1px solid var(--sc-ink);
+  border-left: 3px solid var(--sc-coral);
+  padding: 16px 20px 18px;
   margin: 14px 0 18px;
   font-size: 14px;
   position: relative;
-  border-radius: 10px;
-  z-index: 0;
-}
-.sc-question::before {
-  /* Wobbly hand-drawn border */
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--sc-ink);
-  border-radius: 10px;
-  pointer-events: none;
-  filter: url(#sn-wobble);
-}
-.sc-question::after {
-  /* Decorative quote mark top-right */
-  content: '』';
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  font-family: 'Noto Serif TC', serif;
-  font-size: 32px;
-  color: var(--sc-coral);
-  opacity: 0.22;
-  line-height: 1;
-  font-weight: 900;
-  z-index: 1;
+  border-radius: 2px;
 }
 .sc-question__label {
   display: inline-block;
@@ -355,6 +306,143 @@
 /* ============================================================
    ABC numbered points
    ============================================================ */
+/* ============================================================
+   Knockout layout — eliminated options on top, winner below
+   ============================================================ */
+.sc-ko {
+  margin: 18px 0 6px;
+}
+.sc-ko__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .sc-ko__row { grid-template-columns: 1fr; }
+}
+.sc-ko__arrow {
+  text-align: center;
+  margin: 12px 0 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--sc-ink-dim);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.sc-ko__arrow::before { content: '▼ '; opacity: 0.5; letter-spacing: 0; }
+.sc-ko__arrow::after  { content: ' ▼'; opacity: 0.5; letter-spacing: 0; }
+
+.sc-ko-card {
+  padding: 14px 18px 16px;
+  background: var(--sc-paper, #faf5e6);
+  position: relative;
+  border: 1px solid var(--sc-ink);
+  border-radius: 2px;
+}
+.sc-ko-card--bad,
+.sc-ko-card--mid {
+  opacity: 0.62;
+  filter: grayscale(0.4);
+}
+.sc-ko-card--bad .sc-ko-card__title,
+.sc-ko-card--mid .sc-ko-card__title {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--sc-ink);
+}
+.sc-ko-card--good {
+  padding: 18px 22px 20px;
+  border-width: 2px;
+  border-color: var(--sc-coral);
+  box-shadow: 4px 4px 0 var(--sc-ink);
+}
+
+.sc-ko-card__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(0,0,0,0.18);
+}
+.sc-ko-card--good .sc-ko-card__head {
+  border-bottom-style: solid;
+  border-bottom-color: var(--sc-coral);
+}
+.sc-ko-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--sc-ink);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 11px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  letter-spacing: 0;
+}
+.sc-ko-card--good .sc-ko-card__badge {
+  background: var(--sc-coral);
+  color: #fff;
+}
+
+.sc-ko-card__title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--sc-ink);
+  letter-spacing: 0.02em;
+}
+.sc-ko-card--good .sc-ko-card__title { font-size: 16px; }
+
+.sc-ko-card__o {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--sc-ink);
+  border: 1px solid var(--sc-ink);
+  padding: 1px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.02em;
+  background: transparent;
+}
+.sc-ko-card--good .sc-ko-card__o {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sc-coral);
+  border-color: var(--sc-coral);
+}
+
+.sc-ko-card__body {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13px;
+  color: var(--sc-ink-dim);
+  line-height: 1.75;
+  margin-bottom: 6px;
+}
+.sc-ko-card--good .sc-ko-card__body { color: var(--sc-ink); font-size: 13.5px; }
+
+.sc-ko-card__verdict {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  color: var(--sc-ink-dim);
+}
+.sc-ko-card--good .sc-ko-card__verdict {
+  color: var(--sc-coral);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
 .sc-points {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -362,45 +450,28 @@
   margin: 14px 0 6px;
 }
 .sc-points__card {
-  background: #fffceb;
-  border: none;
-  padding: 18px;
-  transition: transform 0.18s ease;
+  background: var(--sc-paper, #faf5e6);
+  border: 1px solid var(--sc-ink);
+  padding: 14px 16px 16px;
   position: relative;
-  border-radius: 10px;
-  z-index: 0;
+  border-radius: 2px;
 }
-.sc-points__card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--sc-ink);
-  border-radius: 10px;
-  pointer-events: none;
-  filter: url(#sn-wobble);
-}
-.sc-points__card:hover { transform: translateY(-2px) rotate(-0.3deg); }
-/* Pastel variants per A/B/C — added to the existing cream theme */
-.sc-points__card:nth-child(1) { background: #fde6ec; }
-.sc-points__card:nth-child(2) { background: #fff4cf; }
-.sc-points__card:nth-child(3) { background: #e3f0d8; }
 .sc-points__letter {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   margin-right: 10px;
-  background: #fff;
-  border: 2px solid var(--sc-coral);
-  border-radius: 50%;
-  color: var(--sc-coral);
-  font-family: 'Noto Serif TC', serif;
+  background: var(--sc-ink);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 11px;
   letter-spacing: 0;
   vertical-align: middle;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 .sc-points__head {
   font-family: 'Noto Sans TC', sans-serif;
@@ -479,38 +550,30 @@
    Reasoning callout (e.g. PIGEONHOLE) — light, readable, breathing
    ============================================================ */
 .sc-dark-box {
-  background: #fff3d9;
+  background: var(--sc-paper, #faf5e6);
   color: var(--sc-ink);
-  padding: 22px 28px 24px;
+  padding: 18px 22px 20px;
   margin: 22px 0;
   text-align: left;
-  border: none;
+  border: 1px solid var(--sc-ink);
   position: relative;
-  border-radius: 12px;
-  z-index: 0;
-}
-.sc-dark-box::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--sc-ink);
-  border-radius: 12px;
-  pointer-events: none;
-  filter: url(#sn-wobble);
+  border-radius: 2px;
 }
 .sc-dark-box__title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 13px;
-  letter-spacing: 0.32em;
-  color: var(--sc-coral);
-  margin: 0 0 16px;
-  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--sc-ink);
+  margin: 0 0 14px;
+  font-weight: 700;
   text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--sc-ink);
 }
 .sc-dark-box__title::before {
-  content: '✦ ';
+  content: '// ';
   color: var(--sc-coral);
-  margin-right: 4px;
+  margin-right: 2px;
   letter-spacing: 0;
 }
 .sc-dark-box__body {
@@ -537,19 +600,18 @@
   content: counter(step);
   position: absolute;
   left: 0;
-  top: 6px;
-  width: 24px;
-  height: 24px;
-  border: 1.5px solid var(--sc-coral);
-  border-radius: 50%;
+  top: 8px;
+  width: 22px;
+  height: 22px;
+  background: var(--sc-ink);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Noto Serif TC', serif;
-  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--sc-coral);
-  background: #fff;
+  border-radius: 2px;
 }
 .sc-dark-box__body ol li + li {
   border-top: 1px dashed var(--sc-cream-bd);
@@ -570,43 +632,27 @@
    Formula box (recurrence) — light theme, serif accents
    ============================================================ */
 .sc-formula {
-  background: #fffceb;
+  background: var(--sc-paper, #faf5e6);
   color: var(--sc-ink);
-  padding: 28px 30px 22px;
+  padding: 22px 26px 20px;
   margin: 22px 0;
   text-align: center;
-  border: none;
+  border: 1px solid var(--sc-ink);
   position: relative;
-  border-radius: 12px;
-  z-index: 0;
-}
-.sc-formula::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--sc-ink);
-  border-radius: 12px;
-  pointer-events: none;
-  filter: url(#sn-wobble);
+  border-radius: 2px;
 }
 .sc-formula::before {
-  content: '∑';
+  content: 'FORMULA';
   position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--sc-paper);
-  color: var(--sc-coral);
-  font-family: 'Noto Serif TC', serif;
-  font-size: 22px;
+  top: -9px;
+  left: 18px;
+  background: var(--sc-paper, #faf5e6);
+  color: var(--sc-ink-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
   font-weight: 700;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--sc-coral);
-  border-radius: 50%;
+  letter-spacing: 0.22em;
+  padding: 0 8px;
 }
 .sc-formula__main {
   font-family: 'JetBrains Mono', monospace;
@@ -618,9 +664,8 @@
   margin: 6px 0 14px;
 }
 .sc-formula__main strong {
-  background: linear-gradient(transparent 60%, #fff588 60%, #fff588 92%, transparent 92%);
-  color: var(--sc-ink);
-  padding: 0 4px;
+  color: var(--sc-coral);
+  padding: 0 2px;
 }
 .sc-formula__hint {
   font-family: 'Noto Serif TC', serif;
@@ -741,15 +786,27 @@
    Insight callout (yellow)
    ============================================================ */
 .sc-insight {
-  background: var(--sc-yellow);
-  border: 1px solid var(--sc-yellow-bd);
-  border-left: 4px solid #d4a017;
+  background: var(--sc-paper, #faf5e6);
+  border: 1px solid var(--sc-ink);
+  border-left: 3px solid var(--sc-coral);
   padding: 14px 18px;
   margin: 6px 0 10px;
   font-size: 13.5px;
   color: var(--sc-ink);
+  position: relative;
+  border-radius: 2px;
 }
-.sc-insight strong { color: #8a5a0c; }
+.sc-insight::before {
+  content: 'INSIGHT';
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--sc-coral);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.sc-insight strong { color: var(--sc-coral); }
 
 /* ============================================================
    Code block (dark)
@@ -780,30 +837,33 @@
 .sc-summary-bar {
   max-width: 900px;
   margin: 18px auto 0;
-  background: var(--sc-coral);
+  background: var(--sc-ink);
   color: #fff;
   padding: 18px 22px;
   text-align: center;
+  border-radius: 2px;
+  box-shadow: 4px 4px 0 var(--sc-coral);
 }
 .sc-summary-bar__label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.3em;
   margin-bottom: 6px;
-  color: #fdebd6;
+  color: var(--sc-coral);
 }
 .sc-summary-bar__body {
   font-family: 'Noto Sans TC', sans-serif;
   font-size: 14.5px;
   font-weight: 600;
   letter-spacing: 0.03em;
+  color: #fff;
 }
 .sc-summary-bar__detail {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   margin-top: 6px;
   letter-spacing: 0.08em;
-  color: #fdebd6;
+  color: rgba(255,255,255,0.62);
 }
 
 /* ============================================================

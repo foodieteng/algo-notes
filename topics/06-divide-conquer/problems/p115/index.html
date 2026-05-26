@@ -3,213 +3,272 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P115 · 01 Problem // 逆序數對 // ALGO WORKSHOP</title>
+  <title>P115 · 01 概念 // 逆序對和 // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
-  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
-  <link rel="stylesheet" href="../../../../assets/css/base.css" />
-  <link rel="stylesheet" href="../../../../assets/css/components.css" />
-  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
-  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 </head>
-<body>
+<body class="study-card">
 
-  <div class="rivet tl"></div>
-  <div class="rivet tr"></div>
-  <div class="rivet bl"></div>
-  <div class="rivet br"></div>
-
-  <div class="top-strip">
-    <div class="marquee">
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P115 · 01 PROBLEM</span>
-      <span>逆序數對 · INVERSION-PAIR SUM</span>
-      <span>⚙ MERGE SORT · O(N log N)</span>
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P115 · 01 PROBLEM</span>
-      <span>逆序數對 · INVERSION-PAIR SUM</span>
-      <span>⚙ MERGE SORT · O(N log N)</span>
-    </div>
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P115
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/115/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
   </div>
 
-  <header class="workshop-header">
-    <div class="meta-row">
-      <span><span class="dot"></span>P115 · 逆序數對</span>
-      <span>W06 · DIVIDE &amp; CONQUER</span>
-      <span>SECTION 01 / 05</span>
-      <span><a href="https://tioj.sprout.tw/contests/20/problems/115/" target="_blank" rel="noopener" style="color:var(--rust-bright); border:none;">原題 ↗</a></span>
-    P115
-    <h1 class="workshop-title">Problem.</h1>
-    <p class="workshop-subtitle">
-      逆序對和 ／ Merge Sort + 計貢獻 ／ <span class="num">O(N log N)</span> Time
-    </p>
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">逆序對和</h1>
+    <p class="sc-mast__subtitle">// Inversion-Pair Sum · Merge Sort 順便算貢獻</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ★</span>
+      核心 Divide &amp; Conquer · Merge Trick
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N log N)</strong>
+    </div>
   </header>
 
-  <div class="shell">
-
-    <aside class="sidebar">
-
-      <div class="nav-label">// P115 SECTIONS</div>
-      <nav>
-        <ul>
-          <li><a href="index.html" class="is-active">01 · Problem</a></li>
-          <li><a href="concept.html">02 · Concept</a></li>
-          <li><a href="viz.html">03 · Visualization</a></li>
-          <li><a href="code.html">04 · Code</a></li>
-          <li><a href="review.html">05 · Review</a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// CURRICULUM</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
-          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// PAGES</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../index.html">Home</a></li>
-          <li><a href="../../../../about.html">About</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="content">
-
-      <div class="crumb">
-        <a href="../../../../index.html">Home</a>
-        <span class="crumb__sep">/</span>
-        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
-        <span class="crumb__sep">/</span>
-        <span>P115 · Problem</span>
-      </div>
-
-      <article>
-        <span class="stamp">▼ SECTION 01</span>
-        <div class="article-meta">
-          <span>P115</span>
-          <span>MERGE SORT</span>
-          <span>2026.05.25</span>
-        </div>
-
-        <div class="tag-row">
-          <span class="chip chip--rust">Divide &amp; Conquer</span>
-          <span class="chip">Merge Sort</span>
-          <span class="chip">Inversion Pairs</span>
-          <span class="chip chip--warning">Modular</span>
-          <span class="chip chip--steel">O(N log N)</span>
-        </div>
-
-        <h2 class="section__title">題意拆解</h2>
-
-        <p>
-          給一個長度為 <code>N</code> 的正整數序列 <code>a[1..N]</code>。
-          定義「<strong>逆序對</strong>」為一組下標 <code>(i, j)</code>，
-          其中 <code>i &lt; j</code> 但 <code>a[i] &gt; a[j]</code>。
-        </p>
-
-        <p>
-          請對<em>每一個</em>逆序對，計算它的兩個值 <code>a[i] + a[j]</code>，
-          然後把所有逆序對的這個和加起來，最後輸出 <code>mod 10000019</code> 之餘數。
-        </p>
-
-        <blockquote>
-          範例：序列 <code>(5, 1, 4, 2, 3)</code> 中，<code>(4, 3)</code> 是一組逆序對
-          （4 出現在 3 之前，但 4 &gt; 3），這組的和為 <code>4 + 3 = 7</code>。
-          加總所有這樣的和即為答案。
-        </blockquote>
-
-        <h3>輸入 / 輸出</h3>
-        <p>標準輸入兩行：</p>
-        <ul class="constraint-list">
-          <li><span>第 1 行：正整數 <code>N</code>。</span></li>
-          <li><span>第 2 行：<code>N</code> 個以空白分隔的正整數，每個 ≤ <code>10⁹</code>。</span></li>
-        </ul>
-
-        <p>輸出一個整數：所有逆序對之兩數和的總和，mod <code>10000019</code>。</p>
-
-        <h3>限制</h3>
-        <ul class="constraint-list">
-          <li><span>1 ≤ N ≤ <strong>1,000,000</strong></span></li>
-          <li><span>每個 <code>a[i]</code> ≤ 10⁹</span></li>
-          <li><span>30% 資料：1 ≤ N ≤ 1,000 — 可用 O(N²) 暴力</span></li>
-          <li><span>70% 資料：1 ≤ N ≤ 45,678 — 需 O(N log N)</span></li>
-          <li><span>100% 資料：N 最大 10⁶ — 需 O(N log N) + 注意 mod 不溢位</span></li>
-        </ul>
-
-        <h3>範例</h3>
-
-        <div class="io-pair">
-          <div class="io-box">
-            <div class="io-box__head">// INPUT</div>
-            <div class="io-box__body">5
-5 4 2 1 3</div>
-          </div>
-          <div class="io-box">
-            <div class="io-box__head">// OUTPUT</div>
-            <div class="io-box__body">51</div>
-          </div>
-        </div>
-
-        <p>
-          範例驗算：序列 <code>[5, 4, 2, 1, 3]</code> 的所有逆序對及其兩數和：
-        </p>
-
-        <ul class="constraint-list">
-          <li><span>(5,4) → 9 ／ (5,2) → 7 ／ (5,1) → 6 ／ (5,3) → 8</span></li>
-          <li><span>(4,2) → 6 ／ (4,1) → 5 ／ (4,3) → 7</span></li>
-          <li><span>(2,1) → 3</span></li>
-          <li><span>合計：9 + 7 + 6 + 8 + 6 + 5 + 7 + 3 = <strong>51</strong></span></li>
-        </ul>
-
-        <blockquote>
-          下一節「Concept」說明為何 merge sort 可以在 O(N log N) 內順便算出這個和；
-          「Visualization」則 step-by-step 跑一次範例。
-        </blockquote>
-
-        <div class="pager">
-          <span class="pager__item pager__item--prev is-disabled">
-            <span class="pager__label">PREV</span>
-            <span class="pager__title">—</span>
-          </span>
-          <a href="concept.html" class="pager__item pager__item--next">
-            <span class="pager__label">NEXT</span>
-            <span class="pager__title">02 · Concept</span>
-          </a>
-        </div>
-
-      </article>
-
-    </main>
-
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
   </div>
 
-  <footer class="workshop-footer">
-    <div>© 2026 // W06 · P115 · 01 PROBLEM</div>
-    <div><a href="../../index.html">← BACK TO W06</a></div>
-    <div>SERIAL_NO. AW-W06-P115-01</div>
-  </footer>
+  <div class="sc-mast__rule"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>長度 <code>N</code> ≤ 10⁶ 的正整數序列 <code>a[1..N]</code>（每個 ≤ 10⁹）。
+      對<strong>每組逆序對</strong> <code>(i, j)</code>（<code>i &lt; j</code> 且 <code>a[i] &gt; a[j]</code>）
+      計算 <code>a[i] + a[j]</code>，加總後輸出 <strong>mod 10000019</strong>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      最壞情況（全降序）逆序對數量 ≈ <code>5 × 10¹¹</code> ⇒ <strong>絕對不能 O(N²) 枚舉</strong>，但仍要把每對的「兩數和」都計到。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 merge sort
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 merge sort<span class="sc-section__title-en">// Why Merge Sort</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">暴力雙迴圈</span>
+            <span class="sc-ko-card__o">O(N²)</span>
+          </div>
+          <div class="sc-ko-card__body">N = 10⁶ ⇒ ~5 × 10¹¹ 次比較</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">BIT / 線段樹</span>
+            <span class="sc-ko-card__o">O(N log N)</span>
+          </div>
+          <div class="sc-ko-card__body">需離散化 + 多寫一個資料結構</div>
+          <div class="sc-ko-card__verdict">△ REJECT · OVERKILL</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">Merge Sort 順便算</span>
+          <span class="sc-ko-card__o">O(N log N)</span>
+        </div>
+        <div class="sc-ko-card__body">一支函式同時排序 + 累計逆序對和</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>merge_sort(left, right)</code> 做 3 件事：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>切半</strong> · <code>mid = (left + right) / 2</code></li>
+      <li><strong>遞迴左右</strong> · 各自排序 + 各自算內部逆序對和</li>
+      <li><strong>合併 merge</strong> · 兩半已排序 → 雙指針合併時順便算<em>跨界</em>逆序對和</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>Base case</strong> · <code>left ≥ right</code> 直接 return（單一元素，無逆序對）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫演示
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · Merge Sort 順便算<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用樣本 <code>[5, 4, 2, 1, 3]</code> 跑一次：看每個 merge 步驟如何在「取右」的當下，
+    把「左半剩餘」這一群逆序對的貢獻一次性加進去。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · MERGE SORT TRACE</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="380"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 5 個元素，準備切半遞迴
+      </div>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>關鍵畫面</strong>：每次 <code>a[i] &gt; a[j]</code> 取右半 <code>a[j]</code> 時，
+      左半剩下 <code>mid − i + 1</code> 個元素，全部與 <code>a[j]</code> 構成逆序對 — 一次累進 <code>remaining + a[j] × count</code>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 跨界 inversion 計數關鍵
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">跨界貢獻的數法<span class="sc-section__title-en">// Cross-Boundary Counting</span></h2>
+    </div>
+
+    <p style="font-size:14px;">假設 merge 進行到某一步，左半游標 <code>i</code>、右半游標 <code>j</code>，
+    且 <code>a[i] &gt; a[j]</code>，要取右半的 <code>a[j]</code>。為什麼這一動可以一次算完一群逆序對？</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// MERGE STEP · 跨界對的數法</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>左半在 merge 前<strong>已排序</strong>，所以 <code>a[i] ≤ a[i+1] ≤ … ≤ a[mid]</code>。</li>
+          <li>既然 <code>a[i] &gt; a[j]</code>，那 <code>a[i+1], …, a[mid]</code> 也<strong>全部 &gt; a[j]</strong>。</li>
+          <li>左半下標<em>全部 &lt;</em> 右半下標 ⇒ 這 <code>mid − i + 1</code> 個元素都跟 <code>a[j]</code> 形成逆序對。</li>
+          <li>本步貢獻 = <code>(a[i] + a[i+1] + … + a[mid]) + a[j] × (mid − i + 1)</code>。</li>
+          <li>用 <code>remaining</code> 滾動維護左半剩餘和：merge 開始算一次，取左半時就 <code>remaining −= a[i]</code> ⇒ O(1) 取用。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      ⇒ 排序與計貢獻<strong>共用一次掃描</strong>，merge 本來就要逐一比較，只是在「取右」時多加一筆 O(1) 計算。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每層 merge 掃過所有 N 個元素一次（O(N)），共切 log N 層：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N) &nbsp;⇒&nbsp; <strong>Θ(N log N)</strong></div>
+      <div class="sc-formula__hint">
+        Master Theorem case 2：<code>a = 2, b = 2, f(N) = O(N) = O(N<sup>log<sub>b</sub> a</sup>)</code>
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>N = 10⁶ ⇒ ~2 × 10⁷ 次運算</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>全域 <code>buf[]</code> 暫存陣列</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>純整數比較、無浮點、無 sqrt</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>利用排序過程<em>順便數</em>，不需要額外資料結構。</strong><br/>
+      Merge 的「取右半」這一動本來就要做，<br/>
+      我們只是在那一瞬間把「左半剩 <code>k</code> 個元素」這群逆序對一次性算進貢獻。<br/>
+      <em>排序與計貢獻共用一條 O(N log N) 流水線。</em>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">Merge sort 取右半時，左半剩 k 個全部與它構成逆序對 ⇒ 一次累進 remaining + a[j]×k。</div>
+    <div class="sc-summary-bar__detail">T(N) = 2·T(N/2) + O(N) = Θ(N log N) · 純整數 · 全程 mod 10000019</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p115-merge.js"></script>
 </body>
 </html>

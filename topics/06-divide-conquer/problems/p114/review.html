@@ -3,447 +3,351 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P114 · 05 Review // 王老先生 // ALGO WORKSHOP</title>
+  <title>P114 · 03 Review // 王老先生 // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Patrick+Hand&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
-  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
-  <link rel="stylesheet" href="../../../../assets/css/base.css" />
-  <link rel="stylesheet" href="../../../../assets/css/components.css" />
-  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
-  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 </head>
-<body>
+<body class="study-card">
 
-  <div class="rivet tl"></div>
-  <div class="rivet tr"></div>
-  <div class="rivet bl"></div>
-  <div class="rivet br"></div>
-
-  <div class="top-strip">
-    <div class="marquee">
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P114 · 05 REVIEW</span>
-      <span>觀念題 · 範例計算 · 答案</span>
-      <span>⚙ SELF-CHECK</span>
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P114 · 05 REVIEW</span>
-      <span>觀念題 · 範例計算 · 答案</span>
-      <span>⚙ SELF-CHECK</span>
-    </div>
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P114
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/114/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
   </div>
 
-  <header class="workshop-header">
-    <div class="meta-row">
-      <span><span class="dot"></span>P114 · 王老先生</span>
-      <span>W06 · DIVIDE &amp; CONQUER</span>
-      <span>SECTION 03 / 03</span>
-      <span><a href="https://tioj.sprout.tw/contests/20/problems/114/" target="_blank" rel="noopener" style="color:var(--rust-bright); border:none;">原題 ↗</a></span>
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">王老先生</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
     </div>
-    <h1 class="workshop-title">Review.</h1>
-    <p class="workshop-subtitle">
-      重要概念回顧 ／ 觀念題 ／ 範例計算 ／ 答案
-    </p>
   </header>
 
-  <div class="shell">
-
-    <aside class="sidebar">
-
-      <div class="nav-label">// P114 SECTIONS</div>
-      <nav>
-        <ul>
-          <li><a href="index.html">01 · Concept</a></li>
-          <li><a href="code.html">02 · Code</a></li>
-          <li><a href="review.html" class="is-active">03 · Review</a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// CURRICULUM</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
-          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// PAGES</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../index.html">Home</a></li>
-          <li><a href="../../../../about.html">About</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="content">
-
-      <div class="crumb">
-        <a href="../../../../index.html">Home</a>
-        <span class="crumb__sep">/</span>
-        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
-        <span class="crumb__sep">/</span>
-        <a href="index.html">P114</a>
-        <span class="crumb__sep">/</span>
-        <span>Review</span>
-      </div>
-
-      <article>
-        <span class="stamp">▼ PAGE 03</span>
-        <div class="article-meta">
-          <span>P114 · REVIEW</span>
-          <span>SELF-CHECK</span>
-        </div>
-
-        <!-- ============================================================
-             5.1 — 重要概念回顧
-             ============================================================ -->
-        <section class="section" id="r-summary">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.1 ]</span>
-            <span>Concept Recap</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">重要概念回顧</h2>
-
-          <table>
-            <thead>
-              <tr><th>關鍵點</th><th>內容</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>數學基礎</td>
-                <td><code>4 ≡ 1 (mod 3)</code> ⇒ <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，L 數量 <code>(N² − 1) / 3</code> 必為整數。</td>
-              </tr>
-              <tr>
-                <td>分治架構</td>
-                <td>切 4 個 <code>N/2 × N/2</code> 象限；blocked 必落在恰好 1 個象限裡。</td>
-              </tr>
-              <tr>
-                <td>中央 L 的作用</td>
-                <td>在「不含 blocked」的 3 個象限角落各種一格 — 變成各象限的「新 blocked」，子問題完全同形。</td>
-              </tr>
-              <tr>
-                <td>Base case</td>
-                <td><code>n = 2</code> 時，4 格扣 blocked 剩 3 格本身就是 L，直接 <code>Report</code>。</td>
-              </tr>
-              <tr>
-                <td>時間複雜度</td>
-                <td><code>T(N) = 4·T(N/2) + O(1)</code> ⇒ <code>Θ(N²)</code>（Master Theorem case 1）。</td>
-              </tr>
-              <tr>
-                <td>空間複雜度</td>
-                <td>遞迴深度 <code>O(log N) = K</code>；N=1024 只有 10 層。</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        <!-- ============================================================
-             5.2 — 觀念題
-             ============================================================ -->
-        <section class="section" id="r-concept">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.2 ]</span>
-            <span>Concept Questions</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">觀念題</h2>
-
-          <div class="qa">
-            <span class="qa__id">Q1</span>
-            <span class="qa__tag">數學</span>
-            <h4>為什麼 <code>(4ᴷ − 1)</code> 一定是 3 的倍數？</h4>
-            <p>請簡述。</p>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q2</span>
-            <span class="qa__tag">分治</span>
-            <h4>遞迴步驟中，中央 L 的 3 個 cell 為什麼一定不會跟<em>原 blocked</em>所在象限重疊？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q3</span>
-            <span class="qa__tag">構造</span>
-            <h4>放完中央 L 後，為什麼<em>每個</em>子象限都剛好變成「<code>N/2 × N/2</code> 板 + 1 個 blocked」的同類問題？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q4</span>
-            <span class="qa__tag">Base case</span>
-            <h4>2×2 板扣掉 1 格剩 3 格，為什麼這 3 格<em>必為 L 型</em>，不可能是 1×3 直線？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q5</span>
-            <span class="qa__tag">複雜度</span>
-            <h4>用 Master Theorem 推導 <code>T(N) = 4·T(N/2) + O(1) = Θ(N²)</code>。</h4>
-          </div>
-        </section>
-
-        <!-- ============================================================
-             5.3 — 範例計算
-             ============================================================ -->
-        <section class="section" id="r-trace">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.3 ]</span>
-            <span>Worked Examples</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">範例計算</h2>
-
-          <div class="qa">
-            <span class="qa__id">Ex 1</span>
-            <span class="qa__tag">Base case</span>
-            <h4><code>solve(2, 2, 2)</code> 會輸出什麼？</h4>
-            <p>N=2 直接命中 base case，請寫出唯一一次的 <code>Report</code> 呼叫。</p>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Ex 2</span>
-            <span class="qa__tag">完整 trace</span>
-            <h4><code>solve(4, 1, 1)</code> 共 5 次 Report，請逐步算出。</h4>
-            <p>提示：先算第 1 層 <code>tile(1, 1, 4, 1, 1)</code> 的 <code>midX, midY, bq</code>、中央 L 落點，再展開 4 個 base case。</p>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Ex 3</span>
-            <span class="qa__tag">象限定位</span>
-            <h4><code>solve(4, 2, 3)</code> 中第 1 層放下的中央 L，3 個 cell 座標是？</h4>
-            <p>只算第 1 層的 Report，不用完整展開遞迴。</p>
-          </div>
-        </section>
-
-        <!-- ============================================================
-             5.4 — 應用題
-             ============================================================ -->
-        <section class="section" id="r-applied">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.4 ]</span>
-            <span>Quick Calculations</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">應用題</h2>
-
-          <div class="qa">
-            <span class="qa__id">A1</span>
-            <span class="qa__tag">數量</span>
-            <h4>N = 8、16、1024 時，各要放幾個 L？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">A2</span>
-            <span class="qa__tag">遞迴深度</span>
-            <h4>N = 1024 時，<code>tile()</code> 的最大遞迴深度是？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">A3</span>
-            <span class="qa__tag">象限編號</span>
-            <h4>給 <code>N = 8, X = 5, Y = 7</code>，第 1 層 tile 中 <code>bq</code> 等於多少？該 blocked 落在哪個象限？</h4>
-          </div>
-        </section>
-
-        <!-- ============================================================
-             ANSWERS
-             ============================================================ -->
-        <div class="answer-divider" id="answers">
-          <span class="answer-divider__label">// ANSWERS</span>
-          <span class="answer-divider__rule"></span>
-        </div>
-
-        <p style="color: var(--ink-dim); font-size: var(--fs-sm); margin-bottom: var(--sp-5);">
-          先自己想過再對答案。下面按題號編排。
-        </p>
-
-        <!-- ===== A1 - A5: 觀念題 ===== -->
-        <div class="qa qa--answer">
-          <span class="qa__id">A1 · 數學</span>
-          <p>
-            <code>4 ≡ 1 (mod 3)</code>，所以 <code>4ᴷ ≡ 1ᴷ ≡ 1 (mod 3)</code>，
-            因此 <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，即 <code>(N² − 1) / 3</code> 必為整數。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A2 · 分治</span>
-          <p>
-            中央 L 的 3 個 cell 是「<em>不含 blocked</em>」的 3 個象限各自的「最靠近中心」角落。
-            程式用 <code>bq</code> 把 blocked 所在象限編號出來，再用 <code>if (q == bq) continue;</code> 跳過它。
-            因此 blocked 那一象限<em>不會有</em>中央 L 的 cell。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A3 · 構造</span>
-          <p>
-            放完中央 L 後：
-          </p>
-          <ul>
-            <li><strong>含原 blocked 的象限</strong>：仍只有 1 個 blocked（原本的 (X, Y)）。</li>
-            <li><strong>其他 3 個象限</strong>：被中央 L 在最角落種了 1 個 cell — 那一格就成為該象限的「新 blocked」。</li>
-          </ul>
-          <p>
-            每個子象限都是「<code>N/2 × N/2</code> 板 + <em>恰好 1 個</em> blocked」，跟原問題同形。
-            因此可以放心遞迴。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A4 · Base case</span>
-          <p>
-            2×2 中任意 3 個格子<em>不可能</em>共線，因為：
-          </p>
-          <ul>
-            <li>同一列只有 2 格（c 從 1 到 2）。</li>
-            <li>同一行只有 2 格。</li>
-          </ul>
-          <p>
-            因此扣掉 1 格剩 3 格時，這 3 格必然包含至少一個轉折 — 就是 L 型。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A5 · 複雜度</span>
-          <p>
-            Master Theorem 形式：<code>T(N) = a·T(N/b) + f(N)</code>，這裡 <code>a = 4, b = 2, f(N) = O(1) = O(N⁰)</code>。
-          </p>
-          <p>
-            計算 <code>log_b a = log₂ 4 = 2</code>。
-            因為 <code>f(N) = O(N⁰)</code> 且 <code>0 &lt; 2</code>，進入 case 1 ⇒ <code>T(N) = Θ(N^{log_b a}) = Θ(N²)</code>。
-          </p>
-          <p>
-            直覺：總共要放 <code>(N² − 1)/3 = Θ(N²)</code> 個 L，每個 L 是 O(1) 工作，所以總工時 Θ(N²)。
-          </p>
-        </div>
-
-        <!-- ===== Ex 1-3 ===== -->
-        <div class="qa qa--answer">
-          <span class="qa__id">A · Ex 1</span>
-          <p>
-            <code>solve(2, 2, 2)</code> 直接命中 base case：4 格 <code>(1,1), (1,2), (2,1), (2,2)</code> 扣掉 blocked <code>(2,2)</code> 剩 3 格。
-          </p>
-          <pre class="trace-block language-cpp"><code class="language-cpp">Report(1, 1,
-       1, 2,
-       2, 1);</code></pre>
-          <p>三格的順序可能依 double-loop 順序略異，但只要是這 3 格組合就正確。</p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · Ex 2</span>
-          <p>逐步算 <code>solve(4, 1, 1)</code>：</p>
-
-          <pre class="trace-block language-cpp"><code class="language-cpp">tile(1, 1, 4, 1, 1)
-  half = 2, midX = 2, midY = 2
-  bq = (1 &gt; 2) * 2 + (1 &gt; 2) = 0 * 2 + 0 = 0    → TL
-
-  中央 L = q ∈ {1, 2, 3} 的角落：
-    q=1 (TR): (midX,   midY+1) = (2, 3)
-    q=2 (BL): (midX+1, midY  ) = (3, 2)
-    q=3 (BR): (midX+1, midY+1) = (3, 3)
-  ▸ Report(2, 3,  3, 2,  3, 3)
-
-遞迴 4 象限：
-  TL (q=0)  tile(1, 1, 2, 1, 1)   → 原 blocked
-  TR (q=1)  tile(1, 3, 2, 2, 3)   → 用剛種的
-  BL (q=2)  tile(3, 1, 2, 3, 2)   → 用剛種的
-  BR (q=3)  tile(3, 3, 2, 3, 3)   → 用剛種的
-
-每個都命中 base case：
-
-  ▸ tile(1, 1, 2, 1, 1)  →  Report(1, 2,  2, 1,  2, 2)
-  ▸ tile(1, 3, 2, 2, 3)  →  Report(1, 3,  1, 4,  2, 4)
-  ▸ tile(3, 1, 2, 3, 2)  →  Report(3, 1,  4, 1,  4, 2)
-  ▸ tile(3, 3, 2, 3, 3)  →  Report(3, 4,  4, 3,  4, 4)
-
-共 5 個 Report — 對應 (4² − 1) / 3 = 5。</code></pre>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · Ex 3</span>
-          <p><code>solve(4, 2, 3)</code> 第 1 層 trace：</p>
-
-          <pre class="trace-block language-cpp"><code class="language-cpp">tile(1, 1, 4, 2, 3)
-  half = 2, midX = 2, midY = 2
-  bq = (2 &gt; 2) * 2 + (3 &gt; 2) = 0 * 2 + 1 = 1   → TR
-
-  中央 L = q ∈ {0, 2, 3} 的角落：
-    q=0 (TL): (midX,   midY  ) = (2, 2)
-    q=2 (BL): (midX+1, midY  ) = (3, 2)
-    q=3 (BR): (midX+1, midY+1) = (3, 3)
-
-▸ Report(2, 2,  3, 2,  3, 3)</code></pre>
-        </div>
-
-        <!-- ===== App 1-3 ===== -->
-        <div class="qa qa--answer">
-          <span class="qa__id">A · App 1</span>
-          <p>套公式 <code>(N² − 1) / 3</code>：</p>
-          <ul>
-            <li>N = 8&nbsp;&nbsp;&nbsp; ⇒ <code>(64 − 1) / 3 = 21</code> 個 L</li>
-            <li>N = 16&nbsp; ⇒ <code>(256 − 1) / 3 = 85</code> 個 L</li>
-            <li>N = 1024 ⇒ <code>(1,048,576 − 1) / 3 = 349,525</code> 個 L</li>
-          </ul>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · App 2</span>
-          <p>
-            遞迴深度 = <code>log₂ N</code>。
-            N = 1024 = 2¹⁰，所以最深 <code>10</code> 層（從 1024 → 512 → 256 → ... → 4 → 2）。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · App 3</span>
-          <p>N = 8, half = 4, midX = 4, midY = 4：</p>
-          <pre class="trace-block language-cpp"><code class="language-cpp">bq = (5 &gt; 4) * 2 + (7 &gt; 4)
-   = 1 * 2 + 1
-   = 3                  → BR</code></pre>
-          <p>blocked (5, 7) 位於 <strong>右下 (BR)</strong> 象限。</p>
-        </div>
-
-        <!-- pager -->
-        <div class="pager">
-          <a href="code.html" class="pager__item pager__item--prev">
-            <span class="pager__label">PREV</span>
-            <span class="pager__title">04 · Code</span>
-          </a>
-          <a href="../../index.html" class="pager__item pager__item--next">
-            <span class="pager__label">NEXT</span>
-            <span class="pager__title">↑ Back to W06</span>
-          </a>
-        </div>
-
-      </article>
-
-    </main>
-
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
   </div>
 
-  <footer class="workshop-footer">
-    <div>© 2026 // W06 · P114 · 03 REVIEW</div>
-    <div><a href="../../index.html">← BACK TO W06</a></div>
-    <div>SERIAL_NO. AW-W06-P114-05</div>
-  </footer>
+  <div class="sc-mast__rule"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>數學基礎</td>
+            <td><code>4 ≡ 1 (mod 3)</code> ⇒ <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，L 數量 <code>(N² − 1) / 3</code> 必為整數。</td></tr>
+        <tr><td>分治架構</td>
+            <td>切 4 個 <code>N/2 × N/2</code> 象限；blocked 必落在恰好 1 個象限。</td></tr>
+        <tr><td>中央 L 的作用</td>
+            <td>在「不含 blocked」3 個象限角落各種 1 cell — 成為各象限的新 blocked，子問題完全同形。</td></tr>
+        <tr><td>Base case</td>
+            <td><code>n = 2</code> 時，4 格扣 blocked 剩 3 格必為 L，直接 <code>Report</code>。</td></tr>
+        <tr><td>時間複雜度</td>
+            <td><code>T(N) = 4·T(N/2) + O(1)</code> ⇒ <code>Θ(N²)</code>（Master Theorem case 1）。</td></tr>
+        <tr><td>空間複雜度</td>
+            <td>遞迴深度 <code>O(log N) = K</code>；N = 1024 只有 10 層。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">數學</span>
+      <h4>為什麼 <code>(4ᴷ − 1)</code> 一定是 3 的倍數？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">分治</span>
+      <h4>中央 L 的 3 個 cell 為什麼一定不會跟<em>原 blocked</em>所在象限重疊？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">構造</span>
+      <h4>放完中央 L 後，為什麼<em>每個</em>子象限都剛好變成「<code>N/2 × N/2</code> 板 + 1 個 blocked」的同類問題？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">Base case</span>
+      <h4>2×2 板扣 1 格剩 3 格，為什麼這 3 格<em>必為 L 型</em>，不可能是 1×3 直線？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>用 Master Theorem 推導 <code>T(N) = 4·T(N/2) + O(1) = Θ(N²)</code>。</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · <code>solve(4, 1, 1)</code> 完整 5 個 Report<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用 <code>N = 4, X = 1, Y = 1</code>（blocked 在左上角）跑一遍 — 共會輸出 <code>(4² − 1) / 3 = 5</code> 個 <code>Report</code>。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · tile(1, 1, 4, 1, 1)</span>
+n = 4 &gt; 2 → 不是 base case
+half = 2
+midX = 1 + 2 − 1 = 2
+midY = 1 + 2 − 1 = 2
+
+bq = (1 &gt; 2) * 2 + (1 &gt; 2) = 0 * 2 + 0 = 0   → TL
+
+4 個中心角：
+  q=0 (TL): (2, 2)
+  q=1 (TR): (2, 3)
+  q=2 (BL): (3, 2)
+  q=3 (BR): (3, 3)
+
+中央 L = q ∈ {1, 2, 3} 的角：(2,3), (3,2), (3,3)
+▸ <span class="sc-trace__out">Report(2, 3,  3, 2,  3, 3)</span>
+
+遞迴 4 個象限：
+  TL (q=0)  tile(1, 1, 2, 1, 1)   ← 用原 blocked
+  TR (q=1)  tile(1, 3, 2, 2, 3)   ← 用剛種的 (2,3)
+  BL (q=2)  tile(3, 1, 2, 3, 2)   ← 用剛種的 (3,2)
+  BR (q=3)  tile(3, 3, 2, 3, 3)   ← 用剛種的 (3,3)</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · tile(1, 1, 2, 1, 1)  →  base case</span>
+n = 2 → 命中 base
+掃 (1,1), (1,2), (2,1), (2,2)，跳過 blocked (1,1)
+▸ <span class="sc-trace__out">Report(1, 2,  2, 1,  2, 2)</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · tile(1, 3, 2, 2, 3)  →  base case</span>
+掃 (1,3), (1,4), (2,3), (2,4)，跳過 blocked (2,3)
+▸ <span class="sc-trace__out">Report(1, 3,  1, 4,  2, 4)</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 4 · tile(3, 1, 2, 3, 2)  →  base case</span>
+掃 (3,1), (3,2), (4,1), (4,2)，跳過 blocked (3,2)
+▸ <span class="sc-trace__out">Report(3, 1,  4, 1,  4, 2)</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 5 · tile(3, 3, 2, 3, 3)  →  base case</span>
+掃 (3,3), (3,4), (4,3), (4,4)，跳過 blocked (3,3)
+▸ <span class="sc-trace__out">Report(3, 4,  4, 3,  4, 4)</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT  ─  共 5 次 Report</span>
+Report(2, 3,  3, 2,  3, 3)
+Report(1, 2,  2, 1,  2, 2)
+Report(1, 3,  1, 4,  2, 4)
+Report(3, 1,  4, 1,  4, 2)
+Report(3, 4,  4, 3,  4, 4)</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：DFS 走訪下，<em>中央 L 永遠最先 Report</em>（因為它在遞迴前印出）；
+      接著是 TL → TR → BL → BR 順序的子板。每個子板在自己呼叫裡也是先 Report 中央 L
+      再遞迴更深層 — 直到 n = 2 base case。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A1</span>
+      <span class="qa__tag">數量</span>
+      <h4>N = 8、16、1024 時，各要放幾個 L？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A2</span>
+      <span class="qa__tag">遞迴深度</span>
+      <h4>N = 1024 時，<code>tile()</code> 的最大遞迴深度是？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A3</span>
+      <span class="qa__tag">象限定位</span>
+      <h4>給 <code>N = 8, X = 5, Y = 7</code>，第 1 層 <code>tile</code> 中 <code>bq</code> 等於多少？blocked 落在哪個象限？中央 L 的 3 個 cell 是？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、A 對應 A。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 數學</span>
+      <p>
+        <code>4 ≡ 1 (mod 3)</code>，所以 <code>4ᴷ ≡ 1ᴷ ≡ 1 (mod 3)</code>，
+        因此 <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，即 <code>(N² − 1) / 3</code> 必為整數。
+      </p>
+      <p>這保證 L 數量是「乾淨的整數」，分配方案<em>有可能</em>存在 — 接下來用構造法直接寫出來。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 分治</span>
+      <p>
+        程式用 <code>bq</code> 把 blocked 所在象限編號出來，
+        放中央 L 時用 <code>if (q == bq) continue;</code> 主動跳過它。
+        因此中央 L 的 3 個 cell 必然落在<em>不含 blocked 的 3 個象限</em>—
+        與原 blocked 所在象限完全不交集。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 構造</span>
+      <p>放完中央 L 後：</p>
+      <ul>
+        <li><strong>含原 blocked 的象限</strong>：仍只有 1 個 blocked（原本的 (X, Y)）。</li>
+        <li><strong>其他 3 個象限</strong>：被中央 L 在最角落各種了 1 個 cell — 那一格就成為該象限的「新 blocked」。</li>
+      </ul>
+      <p>
+        每個子象限都是「<code>N/2 × N/2</code> 板 + <em>恰好 1 個</em> blocked」，與原問題同形。
+        ⇒ 可以安全遞迴。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · Base case</span>
+      <p>2×2 中任意 3 個格子<em>不可能</em>共線，因為：</p>
+      <ul>
+        <li>同一列只有 2 格（c 從 1 到 2）。</li>
+        <li>同一行只有 2 格。</li>
+      </ul>
+      <p>因此扣 1 格剩 3 格時，這 3 格必然包含至少一個轉折 — 就是 L 型。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 複雜度</span>
+      <p>
+        Master Theorem 形式：<code>T(N) = a·T(N/b) + f(N)</code>，這裡 <code>a = 4, b = 2, f(N) = O(1) = O(N⁰)</code>。
+      </p>
+      <p>
+        計算 <code>log_b a = log₂ 4 = 2</code>。
+        因為 <code>f(N) = O(N⁰)</code> 且 <code>0 &lt; 2</code>，進入 case 1 ⇒
+        <code>T(N) = Θ(N^{log_b a}) = Θ(N²)</code>。
+      </p>
+      <p>
+        直覺：總共要放 <code>(N² − 1) / 3 = Θ(N²)</code> 個 L，每個 L 是 O(1) 工作 ⇒ Θ(N²)。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>套公式 <code>(N² − 1) / 3</code>：</p>
+      <ul>
+        <li>N = 8 &nbsp;&nbsp; ⇒ <code>(64 − 1) / 3 = 21</code> 個 L</li>
+        <li>N = 16 &nbsp; ⇒ <code>(256 − 1) / 3 = 85</code> 個 L</li>
+        <li>N = 1024 ⇒ <code>(1,048,576 − 1) / 3 = 349,525</code> 個 L</li>
+      </ul>
+      <p>實作上一次 <code>solve</code> 就是這麼多次 <code>Report</code> 呼叫。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        遞迴深度 = <code>log₂ N</code>。
+        N = 1024 = 2¹⁰，所以最深 <strong>10</strong> 層（1024 → 512 → 256 → ... → 4 → 2）。
+        遠遠在預設 stack 大小可承受範圍內，不需要改 stack 或改 iterative。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>N = 8, half = 4, midX = 1 + 4 − 1 = 4, midY = 1 + 4 − 1 = 4：</p>
+      <pre class="sc-trace"><span class="sc-trace__head">// step 1</span>
+bq = (5 &gt; 4) * 2 + (7 &gt; 4)
+   = 1 * 2 + 1
+   = 3                       → BR 象限
+
+4 個中心角：
+  q=0 (TL): (4, 4)
+  q=1 (TR): (4, 5)
+  q=2 (BL): (5, 4)
+  q=3 (BR): (5, 5)   ← skip (q == bq)
+
+中央 L = q ∈ {0, 1, 2} 的角：(4,4), (4,5), (5,4)
+▸ <span class="sc-trace__out">Report(4, 4,  4, 5,  5, 4)</span></pre>
+      <p>blocked (5, 7) 位於 <strong>BR (右下)</strong> 象限。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W06 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace (solve(4,1,1) → 5 Reports) — 學會驗證 code 跑什麼。</div>
+    <div class="sc-summary-bar__detail">分治 + 中央 L 種子 — 把缺 1 格的 N×N 變成 4 個缺 1 格的 N/2×N/2。</div>
+  </div>
+
 </body>
 </html>

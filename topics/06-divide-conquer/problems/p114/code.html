@@ -3,305 +3,304 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P114 · 04 Code // 王老先生 // ALGO WORKSHOP</title>
+  <title>P114 · 02 Code // 王老先生 // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Patrick+Hand&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
-  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
-  <link rel="stylesheet" href="../../../../assets/css/base.css" />
-  <link rel="stylesheet" href="../../../../assets/css/components.css" />
-  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
-  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 </head>
-<body>
+<body class="study-card">
 
-  <div class="rivet tl"></div>
-  <div class="rivet tr"></div>
-  <div class="rivet bl"></div>
-  <div class="rivet br"></div>
-
-  <div class="top-strip">
-    <div class="marquee">
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P114 · 04 CODE</span>
-      <span>CLEAN C++ · WALKTHROUGH</span>
-      <span>⚙ ios::sync_with_stdio</span>
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P114 · 04 CODE</span>
-      <span>CLEAN C++ · WALKTHROUGH</span>
-      <span>⚙ ios::sync_with_stdio</span>
-    </div>
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P114
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/114/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
   </div>
 
-  <header class="workshop-header">
-    <div class="meta-row">
-      <span><span class="dot"></span>P114 · 王老先生</span>
-      <span>W06 · DIVIDE &amp; CONQUER</span>
-      <span>SECTION 02 / 03</span>
-      <span><a href="https://tioj.sprout.tw/contests/20/problems/114/" target="_blank" rel="noopener" style="color:var(--rust-bright); border:none;">原題 ↗</a></span>
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">王老先生</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity · Interactive</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · lib0114.h
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>Θ(N²)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(log N)</strong>
     </div>
-    <h1 class="workshop-title">Code.</h1>
-    <p class="workshop-subtitle">
-      Clean C++ 實作 ／ 5 段 annotated walkthrough
-    </p>
   </header>
 
-  <div class="shell">
-
-    <aside class="sidebar">
-
-      <div class="nav-label">// P114 SECTIONS</div>
-      <nav>
-        <ul>
-          <li><a href="index.html">01 · Concept</a></li>
-          <li><a href="code.html" class="is-active">02 · Code</a></li>
-          <li><a href="review.html">03 · Review</a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// CURRICULUM</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
-          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// PAGES</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../index.html">Home</a></li>
-          <li><a href="../../../../about.html">About</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="content">
-
-      <div class="crumb">
-        <a href="../../../../index.html">Home</a>
-        <span class="crumb__sep">/</span>
-        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
-        <span class="crumb__sep">/</span>
-        <a href="index.html">P114</a>
-        <span class="crumb__sep">/</span>
-        <span>Code</span>
-      </div>
-
-      <article>
-        <span class="stamp">▼ PAGE 02</span>
-        <div class="article-meta">
-          <span>P114 · CODE</span>
-          <span>C++17</span>
-        </div>
-
-        <h2 class="section__title">Clean Code</h2>
-
-        <div class="code-block code-block--editor">
-          <div class="code-block__head">
-            <span class="code-block__window">
-              <span class="code-block__dot code-block__dot--red"></span>
-              <span class="code-block__dot code-block__dot--yellow"></span>
-              <span class="code-block__dot code-block__dot--green"></span>
-              <span class="code-block__tab">p114.cpp</span>
-            </span>
-            <span class="code-block__lang">C++17</span>
-          </div>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#include "lib0114.h"
-using namespace std;
-
-// 鋪滿左上角為 (top, left)、邊長為 n 的子棋盤；
-// (blockedX, blockedY) 是已被佔用、不能再放 L 的格子。
-void tile(int top, int left, int n, int blockedX, int blockedY) {
-    if (n == 2) {
-        // 4 格扣掉 blocked 後剩 3 格本身就是 L
-        int xs[3], ys[3], k = 0;
-        for (int dx = 0; dx &lt; 2; ++dx) {
-            for (int dy = 0; dy &lt; 2; ++dy) {
-                int x = top + dx, y = left + dy;
-                if (x == blockedX &amp;&amp; y == blockedY) continue;
-                xs[k] = x; ys[k] = y; ++k;
-            }
-        }
-        Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
-        return;
-    }
-
-    const int half = n / 2;
-    const int midX = top  + half - 1;   // 上半最後一列
-    const int midY = left + half - 1;   // 左半最後一行
-
-    // 4 個象限「最靠近中心」的格子座標 (TL, TR, BL, BR)
-    int cx[4] = { midX,     midX,     midX + 1, midX + 1 };
-    int cy[4] = { midY,     midY + 1, midY,     midY + 1 };
-
-    // blocked 在哪個象限？  0=TL, 1=TR, 2=BL, 3=BR
-    const int bq = (blockedX &gt; midX) * 2 + (blockedY &gt; midY);
-
-    // 中央 L：3 cell = 不含 blocked 的 3 個象限的最角落
-    int lx[3], ly[3], k = 0;
-    for (int q = 0; q &lt; 4; ++q) {
-        if (q == bq) continue;
-        lx[k] = cx[q]; ly[k] = cy[q]; ++k;
-    }
-    Report(lx[0], ly[0], lx[1], ly[1], lx[2], ly[2]);
-
-    // 對 4 象限分別遞迴；blocked 不在的象限以「剛放下的角落格」當新 blocked
-    int ox[4] = { top,        top,         top + half, top + half };
-    int oy[4] = { left,       left + half, left,       left + half };
-    for (int q = 0; q &lt; 4; ++q) {
-        int nx = (q == bq) ? blockedX : cx[q];
-        int ny = (q == bq) ? blockedY : cy[q];
-        tile(ox[q], oy[q], half, nx, ny);
-    }
-}
-
-void solve(int N, int X, int Y) {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    tile(1, 1, N, X, Y);
-}
-</code></pre>
-        </div>
-
-        <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
-
-        <p>核心是 <code>tile(top, left, n, blockedX, blockedY)</code>：對一個左上角 <code>(top, left)</code>、邊長 <code>n</code>、已有一格 <code>(blockedX, blockedY)</code> 不可使用的子板鋪 L。</p>
-
-        <div class="code-annotated">
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">if (n == 2) {
-    int xs[3], ys[3], k = 0;
-    for (int dx = 0; dx &lt; 2; ++dx)
-        for (int dy = 0; dy &lt; 2; ++dy) {
-            int x = top + dx, y = left + dy;
-            if (x == blockedX &amp;&amp; y == blockedY) continue;
-            xs[k] = x; ys[k] = y; ++k;
-        }
-    Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
-    return;
-}</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>Base case。</strong>
-              2×2 板共 4 格，扣掉 blocked 後剩 3 格<em>必然構成 L</em>。
-              直接 double-loop 掃 4 格，跳過 blocked，把剩 3 格塞進 <code>xs / ys</code> 後 <code>Report</code>。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">const int half = n / 2;
-const int midX = top  + half - 1;
-const int midY = left + half - 1;
-
-int cx[4] = { midX,   midX,   midX+1, midX+1 };
-int cy[4] = { midY,   midY+1, midY,   midY+1 };</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>中央 4 角座標。</strong>
-              每個象限「最靠近中心」的格子，按 <code>TL / TR / BL / BR</code> 順序排成兩個平行陣列：
-              <code>(cx[0], cy[0]) = (midX, midY)</code>，依此類推。
-              這 4 格就是放置中央 L 的候選。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">const int bq = (blockedX &gt; midX) * 2
-             + (blockedY &gt; midY);</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>用位元把象限編號。</strong>
-              <code>(blockedX &gt; midX)</code> 高位、<code>(blockedY &gt; midY)</code> 低位，組出 0~3：
-              <br/>· TL = 0：blockedX ≤ midX 且 blockedY ≤ midY
-              <br/>· TR = 1：blockedX ≤ midX 且 blockedY &gt; midY
-              <br/>· BL = 2：blockedX &gt; midX 且 blockedY ≤ midY
-              <br/>· BR = 3：blockedX &gt; midX 且 blockedY &gt; midY
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">int lx[3], ly[3], k = 0;
-for (int q = 0; q &lt; 4; ++q) {
-    if (q == bq) continue;
-    lx[k] = cx[q]; ly[k] = cy[q]; ++k;
-}
-Report(lx[0], ly[0],
-       lx[1], ly[1],
-       lx[2], ly[2]);</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>放中央 L。</strong>
-              收集「不含 blocked」3 個象限的最角落格塞進 <code>lx / ly</code>，再 <code>Report</code> 出去。
-              <em>注意</em>這 3 格之後在各自象限遞迴時會被當成 blocked — 它們已經被「占用」掉。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">int ox[4] = { top,  top,         top+half, top+half };
-int oy[4] = { left, left+half,   left,     left+half };
-
-for (int q = 0; q &lt; 4; ++q) {
-    int nx = (q == bq) ? blockedX : cx[q];
-    int ny = (q == bq) ? blockedY : cy[q];
-    tile(ox[q], oy[q], half, nx, ny);
-}</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>遞迴 4 個象限。</strong>
-              <code>(ox[q], oy[q])</code> 是該象限的左上角。
-              blocked 落在哪個象限，那象限就用<em>原 blocked</em>遞迴；
-              其他 3 個象限則用<em>剛放下的角落格</em>當 new blocked。
-              這保證所有 4 個子問題都是「方板 + 1 blocked」的同形式。
-            </div>
-          </div>
-        </div>
-
-        <div class="callout callout--warn">
-          <div class="callout__title">// Common Pitfalls</div>
-          <ul style="margin: 0;">
-            <li>座標 1-indexed：題目給 (X, Y) 從 1 開始，<code>tile</code> 的初始呼叫要傳 <code>tile(1, 1, N, X, Y)</code>。</li>
-            <li><code>midX = top + half − 1</code>：是上半的<em>最後一列</em>，不是中線；下半從 <code>midX + 1</code> 開始。</li>
-            <li>Base case 不需要再判斷象限 — <code>n=2</code> 時 4 格枚舉即可。</li>
-            <li>本題不需 cin/cout，<code>ios::sync_with_stdio</code> 純粹習慣放著（若有額外讀檔再用）。</li>
-          </ul>
-        </div>
-
-        <div class="pager">
-          <a href="index.html" class="pager__item pager__item--prev">
-            <span class="pager__label">PREV</span>
-            <span class="pager__title">01 · Concept</span>
-          </a>
-          <a href="review.html" class="pager__item pager__item--next">
-            <span class="pager__label">NEXT</span>
-            <span class="pager__title">03 · Review</span>
-          </a>
-        </div>
-
-      </article>
-
-    </main>
-
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
   </div>
 
-  <footer class="workshop-footer">
-    <div>© 2026 // W06 · P114 · 02 CODE</div>
-    <div><a href="../../index.html">← BACK TO W06</a></div>
-    <div>SERIAL_NO. AW-W06-P114-04</div>
-  </footer>
+  <div class="sc-mast__rule"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-bottom:10px;">
+      互動式題目：實作 <code>solve(N, X, Y)</code>，由 judge 提供 <code>Report(...)</code>。不需 <code>main()</code>。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p114.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;iostream&gt;</span>
+<span class="k">#include</span> <span class="s">"lib0114.h"</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="c">// 鋪滿左上角為 (top, left)、邊長 n 的子板；</span>
+<span class="c">// (blockedX, blockedY) 是已被佔用、不能再放 L 的格子。</span>
+<span class="t">void</span> <span class="f">tile</span><span class="p">(</span><span class="t">int</span> top<span class="p">,</span> <span class="t">int</span> left<span class="p">,</span> <span class="t">int</span> n<span class="p">,</span> <span class="t">int</span> blockedX<span class="p">,</span> <span class="t">int</span> blockedY<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>n <span class="p">==</span> <span class="n">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c">// 4 格扣掉 blocked 後剩 3 格本身就是 L</span>
+        <span class="t">int</span> xs<span class="p">[</span><span class="n">3</span><span class="p">],</span> ys<span class="p">[</span><span class="n">3</span><span class="p">],</span> k <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> dx <span class="p">=</span> <span class="n">0</span><span class="p">;</span> dx <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> <span class="p">++</span>dx<span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> dy <span class="p">=</span> <span class="n">0</span><span class="p">;</span> dy <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> <span class="p">++</span>dy<span class="p">)</span> <span class="p">{</span>
+                <span class="t">int</span> x <span class="p">=</span> top <span class="p">+</span> dx<span class="p">,</span> y <span class="p">=</span> left <span class="p">+</span> dy<span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span>x <span class="p">==</span> blockedX <span class="p">&amp;&amp;</span> y <span class="p">==</span> blockedY<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+                xs<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> x<span class="p">;</span> ys<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> y<span class="p">;</span> <span class="p">++</span>k<span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="f">Report</span><span class="p">(</span>xs<span class="p">[</span><span class="n">0</span><span class="p">],</span> ys<span class="p">[</span><span class="n">0</span><span class="p">],</span> xs<span class="p">[</span><span class="n">1</span><span class="p">],</span> ys<span class="p">[</span><span class="n">1</span><span class="p">],</span> xs<span class="p">[</span><span class="n">2</span><span class="p">],</span> ys<span class="p">[</span><span class="n">2</span><span class="p">]);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">const</span> <span class="t">int</span> half <span class="p">=</span> n <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+    <span class="k">const</span> <span class="t">int</span> midX <span class="p">=</span> top  <span class="p">+</span> half <span class="p">-</span> <span class="n">1</span><span class="p">;</span>   <span class="c">// 上半最後一列</span>
+    <span class="k">const</span> <span class="t">int</span> midY <span class="p">=</span> left <span class="p">+</span> half <span class="p">-</span> <span class="n">1</span><span class="p">;</span>   <span class="c">// 左半最後一行</span>
+
+    <span class="c">// 4 個象限「最靠近中心」的格子 (TL, TR, BL, BR)</span>
+    <span class="t">int</span> cx<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> midX<span class="p">,</span>     midX<span class="p">,</span>     midX <span class="p">+</span> <span class="n">1</span><span class="p">,</span> midX <span class="p">+</span> <span class="n">1</span> <span class="p">};</span>
+    <span class="t">int</span> cy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> midY<span class="p">,</span>     midY <span class="p">+</span> <span class="n">1</span><span class="p">,</span> midY<span class="p">,</span>     midY <span class="p">+</span> <span class="n">1</span> <span class="p">};</span>
+
+    <span class="c">// blocked 在哪個象限？  0 = TL, 1 = TR, 2 = BL, 3 = BR</span>
+    <span class="k">const</span> <span class="t">int</span> bq <span class="p">=</span> <span class="p">(</span>blockedX <span class="p">&gt;</span> midX<span class="p">)</span> <span class="p">*</span> <span class="n">2</span> <span class="p">+</span> <span class="p">(</span>blockedY <span class="p">&gt;</span> midY<span class="p">);</span>
+
+    <span class="c">// 中央 L：不含 blocked 的 3 個象限的最角落</span>
+    <span class="t">int</span> lx<span class="p">[</span><span class="n">3</span><span class="p">],</span> ly<span class="p">[</span><span class="n">3</span><span class="p">],</span> k <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> q <span class="p">=</span> <span class="n">0</span><span class="p">;</span> q <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> <span class="p">++</span>q<span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+        lx<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> cx<span class="p">[</span>q<span class="p">];</span> ly<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> cy<span class="p">[</span>q<span class="p">];</span> <span class="p">++</span>k<span class="p">;</span>
+    <span class="p">}</span>
+    <span class="f">Report</span><span class="p">(</span>lx<span class="p">[</span><span class="n">0</span><span class="p">],</span> ly<span class="p">[</span><span class="n">0</span><span class="p">],</span> lx<span class="p">[</span><span class="n">1</span><span class="p">],</span> ly<span class="p">[</span><span class="n">1</span><span class="p">],</span> lx<span class="p">[</span><span class="n">2</span><span class="p">],</span> ly<span class="p">[</span><span class="n">2</span><span class="p">]);</span>
+
+    <span class="c">// 對 4 個象限分別遞迴；blocked 不在的象限以「剛種的角」當新 blocked</span>
+    <span class="t">int</span> ox<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> top<span class="p">,</span>  top<span class="p">,</span>         top <span class="p">+</span> half<span class="p">,</span> top <span class="p">+</span> half <span class="p">};</span>
+    <span class="t">int</span> oy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> left<span class="p">,</span> left <span class="p">+</span> half<span class="p">,</span> left<span class="p">,</span>       left <span class="p">+</span> half <span class="p">};</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> q <span class="p">=</span> <span class="n">0</span><span class="p">;</span> q <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> <span class="p">++</span>q<span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> nx <span class="p">=</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="p">?</span> blockedX <span class="p">:</span> cx<span class="p">[</span>q<span class="p">];</span>
+        <span class="t">int</span> ny <span class="p">=</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="p">?</span> blockedY <span class="p">:</span> cy<span class="p">[</span>q<span class="p">];</span>
+        <span class="f">tile</span><span class="p">(</span>ox<span class="p">[</span>q<span class="p">],</span> oy<span class="p">[</span>q<span class="p">],</span> half<span class="p">,</span> nx<span class="p">,</span> ny<span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> N<span class="p">,</span> <span class="t">int</span> X<span class="p">,</span> <span class="t">int</span> Y<span class="p">)</span> <span class="p">{</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+    <span class="f">tile</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> <span class="n">1</span><span class="p">,</span> N<span class="p">,</span> X<span class="p">,</span> Y<span class="p">);</span>
+<span class="p">}</span></pre>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>每呼叫一次 <code>tile()</code> 的工作量（不含遞迴）：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>單呼叫成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>base case 判斷</td><td><code>n == 2</code> 時掃 4 格</td><td class="mono">O(1)</td></tr>
+        <tr><td>算 midX / midY / bq</td><td>4 個位元運算 + 比較</td><td class="mono">O(1)</td></tr>
+        <tr><td>列舉 4 角 + Report</td><td>固定 4 次迴圈，1 次 <code>Report</code></td><td class="mono">O(1)</td></tr>
+        <tr><td>遞迴 4 子板</td><td>4 個 n/2 大小的子問題</td><td class="mono">4 · T(N/2)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 4 · T(N/2) + O(1)</div>
+      <div class="sc-formula__hint">
+        Master Theorem case 1：<code>a = 4, b = 2, log_b a = 2</code>；<code>f(N) = O(N⁰)</code> &lt; <code>N²</code> ⇒ <strong>T(N) = Θ(N²)</strong>
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>Θ(N²)</strong></td><td>總 (N² − 1)/3 個 L，每個 O(1)。</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(log N)</strong></td><td>只用遞迴堆疊；無額外陣列。</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">log₂ N = K</td><td>N = 1024 ⇒ 10 層，stack 很淺。</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>純整數比較與算術；無 STL 容器。</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      下限：要放 (N² − 1)/3 = Θ(N²) 個 L，每個必須 ≥ O(1) ⇒ 演算法已達理論下限。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1-indexed 座標</strong></td>
+          <td>題目給的 <code>(X, Y)</code> 從 1 開始，最外層呼叫必須是 <code>tile(1, 1, N, X, Y)</code>，不是 <code>(0, 0, ...)</code>。</td>
+        </tr>
+        <tr>
+          <td><strong><code>midX</code> 是上半最後一列</strong></td>
+          <td><code>midX = top + half − 1</code>，<em>不是中線</em>。下半從 <code>midX + 1</code> 開始；4 個角是 <code>{midX, midX+1} × {midY, midY+1}</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>bq 編號用比較</strong></td>
+          <td><code>bq = (blockedX &gt; midX) * 2 + (blockedY &gt; midY)</code> — 高位是 X、低位是 Y，剛好 TL=0, TR=1, BL=2, BR=3。注意是 <code>&gt; midX</code>（嚴格大於）。</td>
+        </tr>
+        <tr>
+          <td><strong>base case 不需算 bq</strong></td>
+          <td><code>n = 2</code> 時不切象限；雙重 for 跳過 blocked 即可。提早判斷 <code>n == 2</code> 是必須的，否則 half = 1、midX = top、會繼續往下遞迴變成無限迴圈。</td>
+        </tr>
+        <tr>
+          <td><strong>中央 L 必須先 Report</strong></td>
+          <td>放完中央 L 才能讓其他 3 個象限「有 blocked」可遞迴；順序顛倒會導致子象限沒有 blocked 而行為未定義。</td>
+        </tr>
+        <tr>
+          <td><strong>不用 <code>std::array</code></strong></td>
+          <td>用原始 <code>int cx[4]</code> 等平行陣列，<em>讓索引 0..3 直接對應 TL..BR</em> — 比 struct 清楚。</td>
+        </tr>
+        <tr>
+          <td><strong>不需 <code>cin / cout</code></strong></td>
+          <td>互動式 — 全靠 <code>Report</code>，但 <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 仍習慣加上（無害）。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① base case (n == 2)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// n == 2</span>
+double for-loop 掃 4 格 (top..top+1) × (left..left+1)
+跳過 blocked，把剩 3 格塞進 xs / ys
+一次 Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2])
+return — stack 在這停。</pre>
+
+    <p><strong>② 算 midX / midY (子板的中心邊界)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// split</span>
+half = n / 2
+midX = top  + half - 1   ← 上半最後一列
+midY = left + half - 1   ← 左半最後一行
+
+4 個「最靠近中心」的角 (TL, TR, BL, BR)：
+  cx = { midX,   midX,   midX+1, midX+1 }
+  cy = { midY,   midY+1, midY,   midY+1 }</pre>
+
+    <p><strong>③ 判定 blocked 在哪個象限</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// bq</span>
+bq = (blockedX &gt; midX) * 2 + (blockedY &gt; midY)
+
+  TL = 0 :  blockedX ≤ midX  且  blockedY ≤ midY
+  TR = 1 :  blockedX ≤ midX  且  blockedY &gt; midY
+  BL = 2 :  blockedX &gt; midX  且  blockedY ≤ midY
+  BR = 3 :  blockedX &gt; midX  且  blockedY &gt; midY</pre>
+
+    <p><strong>④ 放中央 L</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// place center L</span>
+for q in 0..3:
+    if q == bq: skip
+    else: 把 (cx[q], cy[q]) 收進 lx / ly
+
+Report(lx[0], ly[0], lx[1], ly[1], lx[2], ly[2])
+
+→ 這 3 格從此被「占用」 ─ 在各自象限的遞迴裡會當新 blocked。</pre>
+
+    <p><strong>⑤ 遞迴 4 個子象限</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// recurse 4 quadrants</span>
+ox = { top,  top,       top+half, top+half }   ← 子板左上 X
+oy = { left, left+half, left,     left+half }  ← 子板左上 Y
+
+for q in 0..3:
+    if q == bq:
+        nx, ny = blockedX, blockedY      ← 用原 blocked
+    else:
+        nx, ny = cx[q], cy[q]            ← 用剛種的角
+    tile(ox[q], oy[q], half, nx, ny)
+
+→ 每個子板都是「n/2 × n/2 + 1 個 blocked」 ─ 與原問題同形。</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">tile(top, left, n, bX, bY) ─ base case n=2 直接 Report，否則切象限算 bq、放中央 L、4 子遞迴。</div>
+    <div class="sc-summary-bar__detail">T(N) = 4·T(N/2) + O(1) ⇒ Θ(N²) &nbsp;·&nbsp; 空間 O(log N)</div>
+  </div>
+
 </body>
 </html>

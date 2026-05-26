@@ -1,26 +1,28 @@
 ---
 name: algo-notes
-description: Use this skill when the user pastes an algorithm problem (from 資訊之芽算法班) into the AlgoToG repo and wants it integrated into their personal study-notes site. Each problem becomes a 5-page "book chapter" set (Problem / Concept / Visualization / Code / Review) with workshop-industrial styling, VS Code Dark+ syntax highlighting, and step-by-step canvas animations. The skill handles file scaffolding, sidebar sync via scripts/generate_chapters.py, and git commits.
+description: Use this skill when the user pastes an algorithm problem (from 資訊之芽算法班) into the AlgoToG repo and wants it integrated into their personal study-notes site. Each problem becomes a 3-page "study card" set (Concept / Code / Review) in industrial-cream styling with manual-token-span syntax highlighting and step-by-step canvas animations. The skill handles file scaffolding, sidebar sync via scripts/generate_chapters.py, and git commits.
 ---
 
 # algo-notes — 資訊之芽算法班 study notes workflow
 
 ## Site layout
 
-Static HTML notebook at the AlgoToG repo root. Each chapter (week) and each problem is a multi-page book structure:
+Static HTML notebook at the AlgoToG repo root. Each chapter (week) holds a set of problems. **Default layout is 3-page study card per problem:**
 
 ```
 topics/<NN>-<slug>/
-├── index.html                  # chapter overview + outline
+├── index.html                  # chapter overview + outline (generated)
 └── problems/<pXXX>/
-    ├── index.html              # 01 Problem (題意 + I/O + sample)
-    ├── concept.html            # 02 Concept (algo + math + complexity)
-    ├── viz.html                # 03 Visualization (canvas animation)
-    ├── code.html               # 04 Clean Code + Walkthrough
-    └── review.html             # 05 Review (Q&A + worked examples)
+    ├── index.html              # PAGE 1 · Concept (題意 + algo + viz)
+    ├── code.html               # PAGE 2 · Code + Complexity
+    └── review.html             # PAGE 3 · Review (Q&A + worked trace)
 ```
 
-The reference template lives at `topics/06-divide-conquer/problems/p114/`. **Always start by reading those 5 files** to mirror the structure exactly when scaffolding a new problem.
+**Canonical templates live at `topics/06-divide-conquer/problems/p507/` (and p114, p115).** All four W06 problems share this layout — read p507's three files to mirror structure when scaffolding a new problem.
+
+For simple problems without animation, a single-page variant exists at `topics/06-divide-conquer/problems/p501.html` (all content collapsed into one file). Pick 3-page when the algorithm warrants canvas visualization; 1-page otherwise.
+
+⚠️ **Legacy: the 5-page workshop-dark book format (Problem / Concept / Viz / Code / Review with `problem.css`) is deprecated.** It produced page-bloat and color inconsistency. All W06 problems have been converted. Do not scaffold new problems in that format unless the user explicitly asks.
 
 ## Single source of truth
 
@@ -57,9 +59,10 @@ It rewrites every `topics/<NN>-<slug>/index.html` chapter page and refreshes the
 4. **If the algorithm benefits from animation**, write `assets/js/viz/<slug>-<algo>.js`. Reference `assets/js/viz/p114-lboard.js` for the pattern:
    - White paper background `#ffffff`
    - Step-by-step state machine driven by Reset / Prev / Play / Next
-   - Solid color fill per discrete piece + thick black L-style outlines if pieces are L-trominoes
-   - Live description text via `<div class="viz__label" id="viz-label">`
+   - Single canvas per page; canvas + control IDs are `viz-canvas`, `viz-reset`, `viz-prev`, `viz-play`, `viz-next`, `viz-step`, `viz-label` (read these via `getElementById`)
+   - Live description text via `<div class="sc-viz__label" id="viz-label">`
    - Special / blocked / important cell distinguished from regular cells
+   - If a page needs TWO animations (base case + general case, like P507), use prefixed IDs `viz-base` / `vb-*` and `viz-general` / `vg-*`
 
 5. **Flip status to `'done'`** in PROBLEMS, then `python3 scripts/generate_chapters.py`.
 
@@ -68,130 +71,71 @@ It rewrites every `topics/<NN>-<slug>/index.html` chapter page and refreshes the
    feat(W<NN>/P<XXX>): <title> — <one-line algorithm summary>
    ```
 
-## Five sub-page contracts
+## Three sub-page contracts (default)
 
-### 01 `index.html` — Problem
+All three pages use `assets/css/study-card.css` and `<body class="study-card">`. Each page has:
+- Top nav strip `.sc-topnav` (Home / W## / P###  ·  原題 link)
+- Masthead `.sc-mast` (chip "學習卡 · STUDY CARD" + title + subtitle "// <page name>" + stars/meta row)
+- Page indicator `.sc-pageind` (`PAGE N / 3 · <NAME>` with 3 dots, current is `is-active`)
+- Rule divider `.sc-mast__rule`
+- Numbered `<section class="sc-section">` blocks
+- Pager `.sc-pager` (PREV / NEXT)
+- Final `.sc-summary-bar` (ink-black bg, one-line summary)
 
-- Workshop header `<h1>Problem.</h1>` + subtitle one-liner.
-- Tag chips row: algorithm family, data structure, complexity, special flags (e.g. Interactive).
-- `<h2 class="section__title">題意拆解</h2>` then narrative paragraphs.
-- `<h3>輸入 / 輸出</h3>` — describe the I/O contract.
-- For interactive problems, include a `.code-block` showing the lib header signatures.
-- `<h3>限制</h3>` + `<ul class="constraint-list">` (uses ▸ bullet).
-- `<h3>範例</h3>` + `<div class="io-pair">` (two `.io-box`: `// INPUT` + `// OUTPUT`, or `// JUDGE` + `// YOUR REPORTS` for interactive).
-- `<blockquote>` summary pointing to the next section.
-- Pager: PREV disabled / NEXT → Concept.
+### PAGE 1 · `index.html` — Concept
 
-### 02 `concept.html` — Concept
+Sections (mirror p507/index.html ordering — adjust count to fit content, 6–8 typical):
 
-- Header `<h1>Concept.</h1>` + complexity subtitle.
-- `<h3>觀察一 · ...</h3>` style numbered observations.
-- `<div class="math-block">` for centered formulas, e.g. `T(N) = 4·T(N/2) + O(1) ⇒ Θ(N²)`.
-- Complexity badges: `<span class="complexity"><span class="complexity__label">Time</span> O(...)</span>`.
-- `.callout` / `.callout--warn` for key insights, pitfalls.
-- Pager: ← Problem / → Visualization.
+1. **題目簡介** · `.sc-question` — coral left-border quote of the problem brief. Mono `QUESTION` label.
+2. **為什麼用 X** · `.sc-ko` knockout layout — 2 eliminated options side-by-side (`--bad`, `--mid`) → mono arrow `BOTH FAIL · ADOPT` → winner card (`--good`). Verdicts: `× REJECT · TLE`, `△ REJECT · UNSTABLE`, `● ADOPT · STABLE` (mono uppercase, never emoji).
+3. **核心策略 · 三步驟** · plain ordered list — keep it terse (3–5 lines max).
+4. **動畫演示** · `.sc-viz` with `<canvas>` + Reset/Prev/Play/Next/step controls + `.sc-viz__label`. If two animations needed (base + general case), prefix IDs as noted above. Reference the existing JS at bottom of body.
+5. **(optional) 關鍵步驟 / 證明** · `.sc-dark-box` titled `// LEMMA NAME` — multi-step proof or detailed mechanism, with ink-black square chips for numbered steps.
+6. **複雜度** · brief paragraph + `.sc-formula` (paper bg, mono `FORMULA` corner label) showing the recurrence, then a 4-row `.sc-table` (Time / Space / Recursion Depth / Constant factor).
+7. **一句洞察** · `.sc-insight` — one-line takeaway, paper bg + coral left border, mono `INSIGHT` label.
 
-### 03 `viz.html` — Visualization
+Pager: PREV disabled / NEXT → `code.html`.
 
-- Header `<h1>Viz.</h1>`.
-- If algorithm has a base case worth diagramming: include a "Base Case · ..." subsection FIRST with inline SVGs (one per case — see `viz.html`'s `.base-case-row` with 4 SVGs for n=2 L-tromino) and a `.callout` explaining why the base case always works.
-- Main animation: `<div class="viz viz--lg">` with `<canvas id="viz-canvas">` + `.viz__controls` (Reset / Prev / Play / Next / step counter) + `<div class="viz__label" id="viz-label">` for the live description.
-- Recursion-order table after the animation if helpful.
-- Pager: ← Concept / → Code.
+### PAGE 2 · `code.html` — Code + Complexity
 
-### 04 `code.html` — Clean Code + Walkthrough
+1. **完整實作** · `.sc-codewindow` (macOS chrome with red/yellow/green dots + `<filename>.cpp` tab + `C++17` lang label) containing a `<pre class="sc-code">` with **manual token spans** — `<span class="k">` keyword, `<span class="t">` type, `<span class="f">` function, `<span class="s">` string, `<span class="n">` number, `<span class="c">` comment, `<span class="p">` punctuation. **Never use Prism + `language-cpp` here** — token classes are pre-styled by `study-card.css`.
+2. **複雜度分析** · table breaking down per-step cost → `.sc-formula` showing the recurrence → second `.sc-table` summarizing Time / Space / Recursion Depth / Constant factor.
+3. **邊界與陷阱** · `.sc-table` of named pitfalls + their fix/explanation.
+4. **細節走讀** · phase-by-phase walk using `.sc-trace` blocks. Each block starts with `<span class="sc-trace__head">// <PHASE>: <name></span>` then pseudocode/comments. `.sc-trace` is for non-C++ trace text (Chinese, arrows, pseudocode) — never add `language-cpp` to a trace block.
 
-- Header `<h1>Code.</h1>`.
-- Main code in macOS-window dark chrome:
-  ```html
-  <div class="code-block code-block--editor">
-    <div class="code-block__head">
-      <span class="code-block__window">
-        <span class="code-block__dot code-block__dot--red"></span>
-        <span class="code-block__dot code-block__dot--yellow"></span>
-        <span class="code-block__dot code-block__dot--green"></span>
-        <span class="code-block__tab">p<NNN>.cpp</span>
-      </span>
-      <span class="code-block__lang">C++17</span>
-    </div>
-    <pre><code class="language-cpp">...</code></pre>
-  </div>
-  ```
-- `<h2 class="section__title">逐段走讀</h2>`.
-- `<div class="code-annotated">` with `.code-annotated__line` rows, each row = left `.code-annotated__code` (containing `<pre><code class="language-cpp">...</code></pre>`) + right `.code-annotated__note` (explanation).
-- `.callout.callout--warn` "// Common Pitfalls" at the end.
-- Pager: ← Viz / → Review.
+Pager: PREV → `index.html` / NEXT → `review.html`.
 
-### 05 `review.html` — Review
+### PAGE 3 · `review.html` — Review
 
-- Header `<h1>Review.</h1>`.
-- `<section class="section">` blocks numbered 5.1 / 5.2 / 5.3 / 5.4:
-  1. **Concept Recap** — summary table of key insights.
-  2. **Concept Questions** — Q1..Q5 with `<div class="qa">` + `.qa__id` + `.qa__tag` + `<h4>`.
-  3. **Worked Examples** — Ex 1..N (base case → full trace → tricky inputs).
-  4. **Quick Calculations** — App 1..N (count formulas, depth, etc.).
-- `.answer-divider` (the dashed yellow separator) between Q and A.
-- Answer blocks: `<div class="qa qa--answer">` (yellow accent).
-- Worked-example traces use `<pre class="trace-block">` — cream-yellow paper, monospace. **DO NOT add `language-cpp` to trace-block** — trace content has Chinese / arrows / non-C++ syntax; adding the class triggers Prism's `// CODE` badge.
-- Pager: ← Code / → Back to W## chapter index.
+1. **重點回顧** · `.sc-table` of key insights — left column the concept name, right column the one-sentence point.
+2. **觀念題** · 5 `.qa` blocks. Each has `<span class="qa__id">Q1</span>`, `<span class="qa__tag">topic</span>`, and a `<h4>` question. No answer here yet.
+3. **範例 Trace** · small input (N=3..6) walked through the actual code, using sequential `.sc-trace` blocks (`// CALL 1`, `// CALL 2`, …). End with `// OUTPUT` block. Conclude with a `.sc-insight` observation.
+4. **應用題** · 3 `.qa` blocks tagged `App 1..3` — practical/derived questions (max recursion depth, edge cases, related problems).
+5. **`.answer-divider`** (the `// ANSWERS` band) then sequential `.qa.qa--answer` blocks providing full answers to all Q1..Q5 + App1..App3. Inside an answer, `.sc-trace` and `<ul>` are fair game.
 
-## Required `<head>` includes per page
+Pager: PREV → `code.html` / NEXT → `../../index.html` ("↑ 回 W## 章節").
+
+### Single-page variant (use only when no canvas animation is needed)
+
+For terse problems (e.g. P501), inline all three pages' content into one `topics/<NN>-<slug>/problems/p<id>.html` flat file. Same components, same palette, same masthead — just skip the pager and page-indicator. The generator already handles both layouts via `resolve_problem_link()` in `scripts/generate_chapters.py`.
+
+## Required `<head>` includes per page (study-card variant)
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
-<link rel="stylesheet" href="../../../../assets/css/tokens.css" />
-<link rel="stylesheet" href="../../../../assets/css/base.css" />
-<link rel="stylesheet" href="../../../../assets/css/components.css" />
-<link rel="stylesheet" href="../../../../assets/css/problem.css" />
+<link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 ```
 
-Code-bearing pages also add:
+That's it — `<body class="study-card">` and you're done. **Do NOT load** `tokens.css`, `base.css`, `components.css`, `problem.css`, `prism-workshop.css`, or any Prism script. Code highlighting is via manual `<span class="k/t/f/s/n/c/p">` token spans, pre-styled by `study-card.css`.
+
+Animation pages add at the bottom of `<body>`:
 
 ```html
-<link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+<script src="../../../../assets/js/viz/<slug>-<algo>.js"></script>
 ```
-
-…and at the bottom of `<body>`:
-
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-<script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
-```
-
-⚠️ Use `prism.min.js`, **not** `prism-core.min.js`. Core has no auto-highlight; code blocks will appear plain monospace if you load the wrong one.
-
-## Sidebar contract per subpage
-
-```html
-<aside class="sidebar">
-  <div class="nav-label">// P<XXX> SECTIONS</div>
-  <nav><ul>
-    <li><a href="index.html" [class="is-active"]>01 · Problem</a></li>
-    <li><a href="concept.html" [class="is-active"]>02 · Concept</a></li>
-    <li><a href="viz.html"     [class="is-active"]>03 · Visualization</a></li>
-    <li><a href="code.html"    [class="is-active"]>04 · Code</a></li>
-    <li><a href="review.html"  [class="is-active"]>05 · Review</a></li>
-  </ul></nav>
-
-  <div class="nav-label">// CURRICULUM</div>
-  <nav><ul>
-    <!-- 13 chapter links — let scripts/generate_chapters.py refresh these -->
-  </ul></nav>
-
-  <div class="nav-label">// PAGES</div>
-  <nav><ul>
-    <li><a href="../../../../index.html">Home</a></li>
-    <li><a href="../../../../about.html">About</a></li>
-  </ul></nav>
-</aside>
-```
-
-Only one `is-active` per nav block. The // CURRICULUM block is auto-managed by the generator — write any placeholder and the generator rewrites it.
 
 ## C++ code conventions (from user's preferences)
 
@@ -218,6 +162,81 @@ Tokens in `assets/css/tokens.css`. Key:
 
 Decorations: 4 fixed corner rivets, top scrolling marquee strip, yellow/black hazard stripe under the workshop header, barcode at footer.
 
+## Study-card variant (single-page or 3-page condensed)
+
+`assets/css/study-card.css` powers the cream/coral "study card" track (P501 single-page; P507 3-page concept/code/review). Used when the 5-page book structure is overkill.
+
+### Industrial-mono palette discipline (the most important rule)
+
+After several pastel iterations the user landed on a restrained industrial-mono look. **The palette is exactly three layers:**
+
+1. **Paper** — `var(--sc-paper)` `#faf5e6` — every block's background
+2. **Ink** — `var(--sc-ink)` — body text, 1px hairline borders, section numbers' shadow
+3. **Coral** — `var(--sc-coral)` — *one accent per block*, used only on:
+   - Section number chips (`.sc-section__num` — the structural spine)
+   - One left-border or top-border accent per callout
+   - The "winner" in a knockout/comparison
+   - `strong` inside `.sc-formula__main`, `.sc-formula__hint`, `.sc-insight`, `.sc-question`
+   - Hard `box-shadow` on the final summary bar
+
+**No other colors.** Specifically forbidden in this variant:
+- Pink/yellow/green pastel backgrounds (e.g. `#fde6ec`, `#fff4cf`, `#e3f0d8`) — drop them; uniform paper bg instead
+- Emoji in verdicts (`❌` `⚠️` `✓`) — use mono symbols `×` `△` `●` with uppercase `REJECT` / `ADOPT`
+- Wobble SVG filter `filter: url(#sn-wobble)` — was a sketchnote experiment, dropped
+- Decorative pseudo-elements like `'∑'` medallion, `'』'` quote mark, `'✦'` bullet — drop
+- Rounded `border-radius: 10px+` — use `2px` (industrial chip corners)
+- Coral bullets/circles for numbered lists — use ink-black square chips (`background: var(--sc-ink)`)
+
+### Knockout layout — comparing options where one wins
+
+Use `.sc-ko` when the narrative is *"considered N options, rejected most, adopted one"*. Pattern (eliminated options grayscaled side-by-side on top, arrow, winner card below with coral border + ink hard shadow):
+
+```html
+<div class="sc-ko">
+  <div class="sc-ko__row">
+    <div class="sc-ko-card sc-ko-card--bad">
+      <div class="sc-ko-card__head">
+        <span class="sc-ko-card__badge">A</span>
+        <span class="sc-ko-card__title">暴力</span>
+        <span class="sc-ko-card__o">O(N²)</span>
+      </div>
+      <div class="sc-ko-card__body">N = 2×10⁵ ⇒ ~2×10¹⁰ 次運算</div>
+      <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+    </div>
+    <div class="sc-ko-card sc-ko-card--mid">
+      <!-- 同結構，verdict 用 △ REJECT · UNSTABLE -->
+    </div>
+  </div>
+
+  <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+  <div class="sc-ko-card sc-ko-card--good">
+    <!-- 同結構，verdict 用 ● ADOPT · STABLE -->
+  </div>
+</div>
+```
+
+Variant modifiers:
+- `--bad` / `--mid` → grayscale + opacity 0.62 + strikethrough on title (visually "eliminated")
+- `--good` → coral border, hard ink shadow, larger padding, coral badge
+
+Use `.sc-points` (3-up uniform grid) instead when the items are *parallel* (e.g. "3 cases of a proof") rather than competing.
+
+### Reusable industrial-mono components
+
+| Component | When to use | Visual signature |
+|---|---|---|
+| `.sc-section` | Numbered top-level section | Paper bg, 1px ink border, coral `.sc-section__num` chip in head |
+| `.sc-question` | Quote the problem statement verbatim | Paper bg, 3px coral left border, mono `QUESTION` chip |
+| `.sc-dark-box` | Multi-step proof / lemma (e.g. PIGEONHOLE) | Paper bg, 1px ink border, mono title `// LEMMA NAME`, numbered ink-black square chips for steps |
+| `.sc-formula` | Centered recurrence / closed-form | Paper bg, 1px ink border, mono `FORMULA` label cut into top-left of border |
+| `.sc-insight` | One-line takeaway you want highlighted | Paper bg, 3px coral left border, mono `INSIGHT` label |
+| `.sc-summary-bar` | Final one-line page summary | **Ink-black bg with coral hard shadow** — the one "dark" block per page |
+| `.sc-table` | Structured comparison | Paper bg, mono uppercase th, coral underline below header |
+| `.sc-case` | Inline lemma case ("Case ①") | Cream bg, 3px coral left border |
+
+Verdict / label text in this variant is **always** uppercase mono with `letter-spacing: 0.1em+`. Never handwriting (`Caveat`) or italic serif.
+
 ## Common pitfalls (memorize these)
 
 1. **Trace blocks must not have `language-cpp` class.** Trace text has Chinese + `→` arrows; adding the class makes Prism slap a `// CODE` badge in the top-right corner.
@@ -226,6 +245,8 @@ Decorations: 4 fixed corner rivets, top scrolling marquee strip, yellow/black ha
 4. **Code blocks use `.code-block--editor`** for the macOS-window dark VS Code chrome. Light-theme overrides under `.code-block--editor .token.*` should NOT exist — `prism-workshop.css` already provides VS Code Dark+ tokens.
 5. **Use `prism.min.js`** (full bundle with autoloader), not `prism-core.min.js`.
 6. **Re-run the generator** after any change to `PROBLEMS` or `CHAPTERS`. Sidebars desync silently otherwise.
+7. **Study-card variant: no pastel-per-position fills.** Cards in a row must share the paper bg `#faf5e6`; the *winner* gets coral border + ink hard shadow. Pink/yellow/green fills (`#fde6ec` / `#fff4cf` / `#e3f0d8`) and emoji verdicts (`❌` `⚠️` `✓`) were explicitly rejected — use mono uppercase `× REJECT` / `△ REJECT` / `● ADOPT` and ink-black square chips for badges.
+8. **No wobble filter** in the study-card variant. `filter: url(#sn-wobble)` and decorative pseudo-elements (`'∑'`, `'』'`, `'✦'`) belong to the abandoned sketchnote experiment — don't reintroduce them.
 
 ## Git workflow
 

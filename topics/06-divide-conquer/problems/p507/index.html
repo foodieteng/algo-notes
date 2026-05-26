@@ -90,18 +90,38 @@
       <h2 class="sc-section__title">為什麼用分治<span class="sc-section__title-en">// Why D&amp;C</span></h2>
     </div>
 
-    <div class="sc-points">
-      <div class="sc-points__card">
-        <div class="sc-points__head"><span class="sc-points__letter">A</span>暴力 O(N²) ❌</div>
-        <div class="sc-points__body">N = 2 × 10⁵ ⇒ <strong>~2 × 10¹⁰ 運算</strong>，TLE。</div>
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">暴力</span>
+            <span class="sc-ko-card__o">O(N²)</span>
+          </div>
+          <div class="sc-ko-card__body">N = 2×10⁵ ⇒ ~2×10¹⁰ 次運算</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">Hash 格子</span>
+            <span class="sc-ko-card__o">期望 O(N)</span>
+          </div>
+          <div class="sc-ko-card__body">最壞退化、浮點精度風險</div>
+          <div class="sc-ko-card__verdict">△ REJECT · UNSTABLE</div>
+        </div>
       </div>
-      <div class="sc-points__card">
-        <div class="sc-points__head"><span class="sc-points__letter">B</span>Hash 格子 ⚠️</div>
-        <div class="sc-points__body">期望 O(N) 但<strong>最壞退化</strong>，浮點切格子有精度風險。</div>
-      </div>
-      <div class="sc-points__card">
-        <div class="sc-points__head"><span class="sc-points__letter">C</span>分治 O(N log² N) ✓</div>
-        <div class="sc-points__body">切半 → 遞迴 → strip 補抓跨界 pair。<strong>穩定純整數</strong>。</div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">分治</span>
+          <span class="sc-ko-card__o">O(N log² N)</span>
+        </div>
+        <div class="sc-ko-card__body">切半 → 遞迴左右 → strip 補抓跨界 pair</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
       </div>
     </div>
   </section>

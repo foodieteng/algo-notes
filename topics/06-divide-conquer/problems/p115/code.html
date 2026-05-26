@@ -3,302 +3,304 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P115 · 04 Code // 逆序數對 // ALGO WORKSHOP</title>
+  <title>P115 · 02 Code // 逆序對和 // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
-  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
-  <link rel="stylesheet" href="../../../../assets/css/base.css" />
-  <link rel="stylesheet" href="../../../../assets/css/components.css" />
-  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
-  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 </head>
-<body>
+<body class="study-card">
 
-  <div class="rivet tl"></div>
-  <div class="rivet tr"></div>
-  <div class="rivet bl"></div>
-  <div class="rivet br"></div>
-
-  <div class="top-strip">
-    <div class="marquee">
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P115 · 04 CODE</span>
-      <span>MERGE SORT · INV_SUM</span>
-      <span>⚙ MOD 10000019</span>
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P115 · 04 CODE</span>
-      <span>MERGE SORT · INV_SUM</span>
-      <span>⚙ MOD 10000019</span>
-    </div>
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P115
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/115/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
   </div>
 
-  <header class="workshop-header">
-    <div class="meta-row">
-      <span><span class="dot"></span>P115 · 逆序數對</span>
-      <span>W06 · DIVIDE &amp; CONQUER</span>
-      <span>SECTION 04 / 05</span>
-      <span><a href="https://tioj.sprout.tw/contests/20/problems/115/" target="_blank" rel="noopener" style="color:var(--rust-bright); border:none;">原題 ↗</a></span>
-    P115
-    <h1 class="workshop-title">Code.</h1>
-    <p class="workshop-subtitle">
-      Merge Sort 實作 ／ remaining 滾動 ／ 5 段 annotated walkthrough
-    </p>
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">逆序對和</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ★</span>
+      C++17 · long long · mod 10000019
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N log N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N)</strong>
+    </div>
   </header>
 
-  <div class="shell">
-
-    <aside class="sidebar">
-
-      <div class="nav-label">// P115 SECTIONS</div>
-      <nav>
-        <ul>
-          <li><a href="index.html">01 · Problem</a></li>
-          <li><a href="concept.html">02 · Concept</a></li>
-          <li><a href="viz.html">03 · Visualization</a></li>
-          <li><a href="code.html" class="is-active">04 · Code</a></li>
-          <li><a href="review.html">05 · Review</a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// CURRICULUM</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
-          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// PAGES</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../index.html">Home</a></li>
-          <li><a href="../../../../about.html">About</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="content">
-
-      <div class="crumb">
-        <a href="../../../../index.html">Home</a>
-        <span class="crumb__sep">/</span>
-        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
-        <span class="crumb__sep">/</span>
-        <a href="index.html">P115</a>
-        <span class="crumb__sep">/</span>
-        <span>Code</span>
-      </div>
-
-      <article>
-        <span class="stamp">▼ SECTION 04</span>
-        <div class="article-meta">
-          <span>P115 · CODE</span>
-          <span>C++17</span>
-        </div>
-
-        <h2 class="section__title">Clean Code</h2>
-
-        <div class="code-block code-block--editor">
-          <div class="code-block__head">
-            <span class="code-block__window">
-              <span class="code-block__dot code-block__dot--red"></span>
-              <span class="code-block__dot code-block__dot--yellow"></span>
-              <span class="code-block__dot code-block__dot--green"></span>
-              <span class="code-block__tab">p115.cpp</span>
-            </span>
-            <span class="code-block__lang">C++17</span>
-          </div>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-#include &lt;vector&gt;
-using namespace std;
-
-const long long MOD = 10000019;
-
-long long inv_sum = 0;
-vector&lt;long long&gt; buf;          // merge 用的暫存陣列
-
-// 合併 a[left..mid] 和 a[mid+1..right]，
-// 同時把這次跨界產生的逆序對「兩數和」累進 inv_sum。
-void merge(vector&lt;long long&gt;&amp; a, int left, int mid, int right) {
-    // remaining = a[left..mid] 之和（mod MOD），左半游標前進時遞減
-    long long remaining = 0;
-    for (int p = left; p &lt;= mid; ++p) {
-        remaining = (remaining + a[p] % MOD) % MOD;
-    }
-
-    int i = left;          // 左半游標
-    int j = mid + 1;       // 右半游標
-    int k = left;          // 寫入暫存陣列的位置
-
-    while (i &lt;= mid &amp;&amp; j &lt;= right) {
-        if (a[i] &lt;= a[j]) {
-            // 取左半，無新逆序對；remaining 遞減扣掉 a[i]
-            buf[k++] = a[i];
-            remaining = (remaining - a[i] % MOD + MOD) % MOD;
-            ++i;
-        } else {
-            // a[i] &gt; a[j]：左半剩餘 a[i..mid] 全部 &gt; a[j]，
-            // 都跟 a[j] 形成逆序對。貢獻 = remaining + a[j] × count
-            long long count = mid - i + 1;
-            long long contrib = (remaining + (a[j] % MOD) * (count % MOD)) % MOD;
-            inv_sum = (inv_sum + contrib) % MOD;
-            buf[k++] = a[j];
-            ++j;
-        }
-    }
-    while (i &lt;= mid)   buf[k++] = a[i++];
-    while (j &lt;= right) buf[k++] = a[j++];
-
-    for (int p = left; p &lt;= right; ++p) a[p] = buf[p];
-}
-
-void merge_sort(vector&lt;long long&gt;&amp; a, int left, int right) {
-    if (left &gt;= right) return;
-    int mid = (left + right) / 2;
-    merge_sort(a, left, mid);
-    merge_sort(a, mid + 1, right);
-    merge(a, left, mid, right);
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int n;
-    cin &gt;&gt; n;
-    vector&lt;long long&gt; a(n);
-    for (int i = 0; i &lt; n; ++i) cin &gt;&gt; a[i];
-
-    buf.assign(n, 0);
-    merge_sort(a, 0, n - 1);
-
-    cout &lt;&lt; inv_sum &lt;&lt; '\n';
-    return 0;
-}
-</code></pre>
-        </div>
-
-        <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
-
-        <p>核心是 <code>merge(a, left, mid, right)</code>：合併兩個已排序子陣列，同時累計跨界逆序對的「兩數和」。</p>
-
-        <div class="code-annotated">
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">long long remaining = 0;
-for (int p = left; p &lt;= mid; ++p) {
-    remaining = (remaining + a[p] % MOD) % MOD;
-}</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>初始化 remaining。</strong>
-              用 <code>remaining</code> 維護「左半剩餘元素之和 (mod MOD)」。
-              merge 開始前一次性算完 <code>a[left..mid]</code> 的總和；之後左半游標前進時遞減，避免每次重新求和。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">if (a[i] &lt;= a[j]) {
-    buf[k++] = a[i];
-    remaining = (remaining - a[i] % MOD + MOD) % MOD;
-    ++i;
-}</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>取左半元素。</strong>
-              比較用<em>原始值</em>，所以即使陣列含大數也直接拿來比。
-              取走 <code>a[i]</code> 後 <code>remaining</code> 必須扣掉 <code>a[i] % MOD</code>，並加上 MOD 防止負數。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">} else {
-    long long count = mid - i + 1;
-    long long contrib = (remaining
-        + (a[j] % MOD) * (count % MOD)) % MOD;
-    inv_sum = (inv_sum + contrib) % MOD;
-    buf[k++] = a[j];
-    ++j;
-}</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>取右半元素 + 累計貢獻。</strong>
-              <code>a[i] &gt; a[j]</code> 時，左半剩 <code>count = mid - i + 1</code> 個元素，每個都跟 <code>a[j]</code> 構成逆序對。
-              本步貢獻 = <code>remaining + a[j] × count</code>；
-              <code>(a[j] % MOD) × (count % MOD)</code> ≤ 10⁷ × 10⁶ ≈ 10¹³，仍在 long long 範圍。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">while (i &lt;= mid)   buf[k++] = a[i++];
-while (j &lt;= right) buf[k++] = a[j++];</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>把剩餘的單邊倒進 buf。</strong>
-              若主迴圈結束時左半還沒清空，剩下的元素都 ≤ 右半已被吃光的所有元素 — 不會再產生跨界逆序對，<em>不需更新 inv_sum</em>。
-              右半同理。
-            </div>
-          </div>
-
-          <div class="code-annotated__line">
-            <div class="code-annotated__code"><pre><code class="language-cpp">for (int p = left; p &lt;= right; ++p) a[p] = buf[p];</code></pre></div>
-            <div class="code-annotated__note">
-              <strong>寫回原陣列。</strong>
-              merge 完成後 <code>a[left..right]</code> 已排序好，回傳給上層遞迴繼續往上 merge。
-              因為 <code>buf</code> 是全域大小 N 的暫存，所以避免每次 merge 都 new/delete。
-            </div>
-          </div>
-
-        </div>
-
-        <div class="callout callout--warn">
-          <div class="callout__title">// Common Pitfalls</div>
-          <ul style="margin: 0;">
-            <li>排序比較永遠用 <strong>原始值</strong>，不要先 mod。陣列裡的值維持原本大小。</li>
-            <li>累加進 <code>inv_sum</code> 時務必每步都 mod，否則最壞情況 (N=10⁶ 全降序) 會溢位 long long。</li>
-            <li>減法 <code>(remaining - a[i] % MOD + MOD) % MOD</code> 一定要 <code>+ MOD</code>，避免結果為負。</li>
-            <li><code>buf</code> 用全域而不是每次 merge 內 <code>new</code>：避免 10⁶ × log(10⁶) 次的 malloc / free 開銷。</li>
-            <li><code>cin / cout</code> 速度：<code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 必加，否則 10⁶ 筆輸入可能 TLE。</li>
-            <li>本題 <code>cout &lt;&lt; '\n'</code>，避免 <code>endl</code> 的 flush 開銷。</li>
-          </ul>
-        </div>
-
-        <div class="pager">
-          <a href="viz.html" class="pager__item pager__item--prev">
-            <span class="pager__label">PREV</span>
-            <span class="pager__title">03 · Visualization</span>
-          </a>
-          <a href="review.html" class="pager__item pager__item--next">
-            <span class="pager__label">NEXT</span>
-            <span class="pager__title">05 · Review</span>
-          </a>
-        </div>
-
-      </article>
-
-    </main>
-
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
   </div>
 
-  <footer class="workshop-footer">
-    <div>© 2026 // W06 · P115 · 04 CODE</div>
-    <div><a href="../../index.html">← BACK TO W06</a></div>
-    <div>SERIAL_NO. AW-W06-P115-04</div>
-  </footer>
+  <div class="sc-mast__rule"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p115.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">long long</span> MOD <span class="p">=</span> <span class="n">10000019</span><span class="p">;</span>
+<span class="k">const</span> <span class="t">int</span>       N_MAX <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
+
+<span class="t">long long</span> a<span class="p">[</span>N_MAX<span class="p">];</span>      <span class="c">// 原序列 (排序時就地更新)</span>
+<span class="t">long long</span> tmp<span class="p">[</span>N_MAX<span class="p">];</span>    <span class="c">// merge 用的暫存陣列</span>
+<span class="t">long long</span> inv_sum <span class="p">=</span> <span class="n">0</span><span class="p">;</span>  <span class="c">// 累積的逆序對「兩數和」(已 mod)</span>
+
+<span class="c">// 合併 a[left..mid] 與 a[mid+1..right]，</span>
+<span class="c">// 同時把跨界逆序對的兩數和累進 inv_sum。</span>
+<span class="t">void</span> <span class="f">merge_range</span><span class="p">(</span><span class="t">int</span> left<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> right<span class="p">)</span> <span class="p">{</span>
+    <span class="c">// remaining = a[left..mid] 之和 (mod MOD)，左半游標前進時遞減</span>
+    <span class="t">long long</span> remaining <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> p <span class="p">=</span> left<span class="p">;</span> p <span class="p">&lt;=</span> mid<span class="p">;</span> <span class="p">++</span>p<span class="p">)</span>
+        remaining <span class="p">=</span> <span class="p">(</span>remaining <span class="p">+</span> a<span class="p">[</span>p<span class="p">]</span> <span class="p">%</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+
+    <span class="t">int</span> i <span class="p">=</span> left<span class="p">;</span>          <span class="c">// 左半游標</span>
+    <span class="t">int</span> j <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span>       <span class="c">// 右半游標</span>
+    <span class="t">int</span> k <span class="p">=</span> left<span class="p">;</span>          <span class="c">// 寫入 tmp 的位置</span>
+
+    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;=</span> mid <span class="p">&amp;&amp;</span> j <span class="p">&lt;=</span> right<span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span>a<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;=</span> a<span class="p">[</span>j<span class="p">])</span> <span class="p">{</span>
+            <span class="c">// 取左半：無新逆序對；remaining 扣掉 a[i]</span>
+            tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>i<span class="p">];</span>
+            remaining <span class="p">=</span> <span class="p">(</span>remaining <span class="p">-</span> a<span class="p">[</span>i<span class="p">]</span> <span class="p">%</span> MOD <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+            <span class="p">++</span>i<span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c">// a[i] &gt; a[j]：左半剩 count 個全 &gt; a[j]，全部跟它配成逆序對</span>
+            <span class="t">long long</span> count   <span class="p">=</span> mid <span class="p">-</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
+            <span class="t">long long</span> contrib <span class="p">=</span> <span class="p">(</span>remaining <span class="p">+</span> <span class="p">(</span>a<span class="p">[</span>j<span class="p">]</span> <span class="p">%</span> MOD<span class="p">)</span> <span class="p">*</span> <span class="p">(</span>count <span class="p">%</span> MOD<span class="p">))</span> <span class="p">%</span> MOD<span class="p">;</span>
+            inv_sum <span class="p">=</span> <span class="p">(</span>inv_sum <span class="p">+</span> contrib<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+            tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>j<span class="p">];</span>
+            <span class="p">++</span>j<span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;=</span> mid<span class="p">)</span>   tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>i<span class="p">++];</span>
+    <span class="k">while</span> <span class="p">(</span>j <span class="p">&lt;=</span> right<span class="p">)</span> tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>j<span class="p">++];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> p <span class="p">=</span> left<span class="p">;</span> p <span class="p">&lt;=</span> right<span class="p">;</span> <span class="p">++</span>p<span class="p">)</span> a<span class="p">[</span>p<span class="p">]</span> <span class="p">=</span> tmp<span class="p">[</span>p<span class="p">];</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">merge_sort</span><span class="p">(</span><span class="t">int</span> left<span class="p">,</span> <span class="t">int</span> right<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>left <span class="p">&gt;=</span> right<span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>left <span class="p">+</span> right<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+    <span class="f">merge_sort</span><span class="p">(</span>left<span class="p">,</span>     mid<span class="p">);</span>
+    <span class="f">merge_sort</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> right<span class="p">);</span>
+    <span class="f">merge_range</span><span class="p">(</span>left<span class="p">,</span> mid<span class="p">,</span> right<span class="p">);</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> n<span class="p">;</span> cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
+
+    <span class="f">merge_sort</span><span class="p">(</span><span class="n">0</span><span class="p">,</span> n <span class="p">-</span> <span class="n">1</span><span class="p">);</span>
+
+    cout <span class="p">&lt;&lt;</span> inv_sum <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>把 <code>merge_sort(left, right)</code> 一層的工作量分成三段：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>單層成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>遞迴左右</td><td>兩個 N/2 子問題</td><td class="mono">2 · T(N/2)</td></tr>
+        <tr><td>算 remaining</td><td>掃左半 N/2 個元素一次求和</td><td class="mono">O(N)</td></tr>
+        <tr><td>雙指針 merge</td><td>i、j 各走過所有元素一遍</td><td class="mono">O(N)</td></tr>
+        <tr><td>跨界貢獻累加</td><td>每次取右半 O(1)，最多取 N 次</td><td class="mono">O(N)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N)</div>
+      <div class="sc-formula__hint">Master Theorem case 2：<code>a = 2, b = 2, f(N) = O(N) = O(N<sup>log<sub>b</sub> a</sup>)</code> ⇒ <strong>T(N) = Θ(N log N)</strong></div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>N = 10⁶ ⇒ 約 2 × 10⁷ 次運算</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>全域 <code>tmp[]</code> 暫存；遞迴堆疊 O(log N)</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>純整數比較、無浮點、無 sqrt</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      與單純的 <em>計逆序對數量</em> 比起來，多算的只是「每次取右時加一筆 <code>remaining + a[j]×count</code>」— 仍是 O(1)，總複雜度不變。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>比較永遠用原始值</strong></td>
+          <td><code>mod</code> 會破壞順序 — 不同的大數可能對映到同一餘數。<code>a[i] &lt;= a[j]</code> 必須用<em>未 mod</em> 的原始值。</td>
+        </tr>
+        <tr>
+          <td><strong>全程 <code>long long</code></strong></td>
+          <td><code>(a[j] % MOD) × (count % MOD) ≤ 10⁷ × 10⁶ = 10¹³</code> — 遠超 int 上限 (2.1 × 10⁹)。<code>remaining</code>、<code>contrib</code>、<code>inv_sum</code>、陣列 a/tmp 都用 <code>long long</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>減法要 <code>+ MOD</code></strong></td>
+          <td><code>(remaining - a[i] % MOD + MOD) % MOD</code> — 不加 MOD 結果會變負，導致下一步累加錯誤。</td>
+        </tr>
+        <tr>
+          <td><strong><code>tmp</code> 用全域</strong></td>
+          <td>10⁶ × log(10⁶) ≈ 2 × 10⁷ 次 malloc/free 開銷太大。<code>static long long tmp[N_MAX]</code> 一次配置永久使用。</td>
+        </tr>
+        <tr>
+          <td><strong>copy back 別忘</strong></td>
+          <td>merge 完後 <code>for (p = left..right) a[p] = tmp[p]</code> — 不寫回的話下一層 merge 還是讀到舊資料。</td>
+        </tr>
+        <tr>
+          <td><strong>剩餘單邊不算貢獻</strong></td>
+          <td>主迴圈結束時，若左半還有剩，那些元素全部小於右半被吃光的所有元素 — 不會再產生新跨界逆序對，<em>不要更新 inv_sum</em>。</td>
+        </tr>
+        <tr>
+          <td><strong>I/O 速度</strong></td>
+          <td><code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 必加；10⁶ 筆輸入用 <code>cin/cout</code> 沒這兩行會 TLE。輸出用 <code>'\n'</code>，別用 <code>endl</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 切半遞迴</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// split + recurse</span>
+if (left &gt;= right) return;          ← base：單一元素，無逆序對
+mid = (left + right) / 2;
+merge_sort(left,     mid);          ← 左半排好、左半內部逆序對計完
+merge_sort(mid + 1, right);         ← 右半排好、右半內部逆序對計完
+merge_range(left, mid, right);      ← 兩半合併 + 算「跨界」逆序對</pre>
+
+    <p><strong>② 初始化 remaining (左半剩餘和)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// remaining init</span>
+remaining = 0
+for p in [left, mid]:
+    remaining = (remaining + a[p] % MOD) % MOD
+
+意義：左半當前剩餘元素之和 (mod MOD)。
+之後每從左半取出一個 a[i]，就 remaining -= a[i]。
+這樣 contrib 計算可以 O(1) 取得「左半剩餘和」。</pre>
+
+    <p><strong>③ 雙指針 merge — 取左 vs 取右</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// two-pointer merge</span>
+i = left, j = mid+1, k = left
+while i &lt;= mid AND j &lt;= right:
+    if a[i] &lt;= a[j]:               ← 比較用原始值！
+        tmp[k++] = a[i]
+        remaining -= a[i] (mod)    ← 別忘了扣
+        ++i
+    else:                          ← a[i] &gt; a[j]，是逆序對群
+        count   = mid - i + 1       ← 左半剩餘個數
+        contrib = remaining + a[j] × count   ← 一次累積
+        inv_sum += contrib (mod)
+        tmp[k++] = a[j]
+        ++j</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">關鍵公式：<code>contrib = remaining + a[j] × count</code> — 左半剩 count 個元素，每個跟 a[j] 配成逆序對，那些元素的和就是 remaining，
+    a[j] 出現 count 次貢獻 a[j] × count。</p>
+
+    <p><strong>④ 收尾 + 寫回原陣列</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// drain + copy back</span>
+while i &lt;= mid:   tmp[k++] = a[i++]   ← 左半剩餘倒進 tmp
+while j &lt;= right: tmp[k++] = a[j++]   ← 右半剩餘倒進 tmp
+
+for p in [left, right]:
+    a[p] = tmp[p]                      ← 寫回，上層 merge 才能讀到</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      <strong>為什麼收尾不算貢獻？</strong>若主迴圈結束時左半還有剩，代表右半被吃完了。那些右半元素都已比左半剩的還小（不然不會被先取出），
+      所以左半剩的元素跟<em>已吃光的右半</em>沒有逆序對關係 — 在前面 if 分支已經處理過了。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">merge_range 中 a[i] &gt; a[j] 時，一次累積 contrib = remaining + a[j] × count。</div>
+    <div class="sc-summary-bar__detail">T(N) = 2·T(N/2) + O(N) ⇒ O(N log N) &nbsp;·&nbsp; 空間 O(N) · 全程 long long + mod</div>
+  </div>
+
 </body>
 </html>

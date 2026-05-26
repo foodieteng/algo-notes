@@ -3,475 +3,394 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P115 · 05 Review // 逆序數對 // ALGO WORKSHOP</title>
+  <title>P115 · 03 Review // 逆序對和 // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
-  <link rel="stylesheet" href="../../../../assets/css/tokens.css" />
-  <link rel="stylesheet" href="../../../../assets/css/base.css" />
-  <link rel="stylesheet" href="../../../../assets/css/components.css" />
-  <link rel="stylesheet" href="../../../../assets/css/problem.css" />
-  <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 </head>
-<body>
+<body class="study-card">
 
-  <div class="rivet tl"></div>
-  <div class="rivet tr"></div>
-  <div class="rivet bl"></div>
-  <div class="rivet br"></div>
-
-  <div class="top-strip">
-    <div class="marquee">
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P115 · 05 REVIEW</span>
-      <span>觀念題 · 範例計算 · 答案</span>
-      <span>⚙ SELF-CHECK</span>
-      <span>※ ALGO WORKSHOP ※</span>
-      <span>P115 · 05 REVIEW</span>
-      <span>觀念題 · 範例計算 · 答案</span>
-      <span>⚙ SELF-CHECK</span>
-    </div>
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P115
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/115/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
   </div>
 
-  <header class="workshop-header">
-    <div class="meta-row">
-      <span><span class="dot"></span>P115 · 逆序數對</span>
-      <span>W06 · DIVIDE &amp; CONQUER</span>
-      <span>SECTION 05 / 05</span>
-      <span><a href="https://tioj.sprout.tw/contests/20/problems/115/" target="_blank" rel="noopener" style="color:var(--rust-bright); border:none;">原題 ↗</a></span>
-    P115
-    <h1 class="workshop-title">Review.</h1>
-    <p class="workshop-subtitle">
-      重要概念回顧 ／ 觀念題 ／ 範例計算 ／ 答案
-    </p>
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">逆序對和</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ★</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
   </header>
 
-  <div class="shell">
-
-    <aside class="sidebar">
-
-      <div class="nav-label">// P115 SECTIONS</div>
-      <nav>
-        <ul>
-          <li><a href="index.html">01 · Problem</a></li>
-          <li><a href="concept.html">02 · Concept</a></li>
-          <li><a href="viz.html">03 · Visualization</a></li>
-          <li><a href="code.html">04 · Code</a></li>
-          <li><a href="review.html" class="is-active">05 · Review</a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// CURRICULUM</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../topics/01-data-structure/index.html">W01 · Data Structure <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/02-complexity-tree/index.html">W02 · Complexity · Tree <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/03-graph-heap-flood/index.html">W03 · Graph · Heap <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/04-enum-search/index.html">W04 · Enumeration · Search <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
-          <li><a href="../../../../topics/06-divide-conquer/index.html" class="is-active">W06 · Divide & Conquer <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/11-mst-shortest/index.html">W11 · MST · Shortest <span class="tag">07</span></a></li>
-          <li><a href="../../../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
-          <li><a href="../../../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
-          <li><a href="../../../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
-        </ul>
-      </nav>
-
-      <div class="nav-label">// PAGES</div>
-      <nav>
-        <ul>
-          <li><a href="../../../../index.html">Home</a></li>
-          <li><a href="../../../../about.html">About</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="content">
-
-      <div class="crumb">
-        <a href="../../../../index.html">Home</a>
-        <span class="crumb__sep">/</span>
-        <a href="../../index.html">W06 · Divide &amp; Conquer</a>
-        <span class="crumb__sep">/</span>
-        <a href="index.html">P115</a>
-        <span class="crumb__sep">/</span>
-        <span>Review</span>
-      </div>
-
-      <article>
-        <span class="stamp">▼ SECTION 05</span>
-        <div class="article-meta">
-          <span>P115 · REVIEW</span>
-          <span>SELF-CHECK</span>
-        </div>
-
-        <!-- ============================================================
-             5.1 — 重要概念回顧
-             ============================================================ -->
-        <section class="section" id="r-summary">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.1 ]</span>
-            <span>Concept Recap</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">重要概念回顧</h2>
-
-          <table>
-            <thead>
-              <tr><th>關鍵點</th><th>內容</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>分治結構</td>
-                <td>把陣列切兩半 → 各自遞迴排序 → merge 時順便算跨界逆序對。</td>
-              </tr>
-              <tr>
-                <td>跨界逆序對</td>
-                <td>merge 時取 <code>a[j]</code>（右半）出來，左半剩 <code>a[i..mid]</code> 個都 &gt; <code>a[j]</code>，全部成對。</td>
-              </tr>
-              <tr>
-                <td>貢獻公式</td>
-                <td><code>contrib = remaining_left_sum + a[j] × count</code>，其中 <code>count = mid − i + 1</code>。</td>
-              </tr>
-              <tr>
-                <td>remaining 維護</td>
-                <td>merge 開始時算一次左半總和，左半游標每前進一步就減掉 <code>a[i]</code>，O(1) 取用。</td>
-              </tr>
-              <tr>
-                <td>時間複雜度</td>
-                <td><code>T(N) = 2·T(N/2) + O(N)</code> ⇒ <code>Θ(N log N)</code>（Master Theorem case 2）。</td>
-              </tr>
-              <tr>
-                <td>Mod 必要</td>
-                <td>累加進 <code>inv_sum</code> 與 <code>remaining</code> 都 mod；<strong>比較永遠用原始值</strong>。</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-        <!-- ============================================================
-             5.2 — 觀念題
-             ============================================================ -->
-        <section class="section" id="r-concept">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.2 ]</span>
-            <span>Concept Questions</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">觀念題</h2>
-
-          <div class="qa">
-            <span class="qa__id">Q1</span>
-            <span class="qa__tag">分治</span>
-            <h4>在 merge 中取右半的 <code>a[j]</code> 出來時，為什麼左半剩餘的 <code>a[i..mid]</code> 全部跟 <code>a[j]</code> 形成逆序對？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q2</span>
-            <span class="qa__tag">構造</span>
-            <h4>為什麼總逆序對和 = 左半內部逆序對和 + 右半內部逆序對和 + 跨界逆序對和？這三者為何不會重複計算？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q3</span>
-            <span class="qa__tag">複雜度</span>
-            <h4>用 Master Theorem 推導 <code>T(N) = 2·T(N/2) + O(N) = Θ(N log N)</code>。</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q4</span>
-            <span class="qa__tag">Mod</span>
-            <h4>為什麼比較大小不能用 <code>a[i] % MOD</code> 後的值？舉一個會出錯的例子。</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Q5</span>
-            <span class="qa__tag">實作</span>
-            <h4><code>remaining</code> 與 <code>contrib</code> 為什麼要宣告成 <code>long long</code>？用 <code>int</code> 會在什麼地方爆掉？</h4>
-          </div>
-        </section>
-
-        <!-- ============================================================
-             5.3 — 範例計算
-             ============================================================ -->
-        <section class="section" id="r-trace">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.3 ]</span>
-            <span>Worked Examples</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">範例計算</h2>
-
-          <div class="qa">
-            <span class="qa__id">Ex 1</span>
-            <span class="qa__tag">Base case</span>
-            <h4><code>[3, 1]</code> 跑一次 merge sort 後 <code>inv_sum</code> 是多少？</h4>
-            <p>提示：N = 2 直接命中最底層的 merge。</p>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Ex 2</span>
-            <span class="qa__tag">完整 trace</span>
-            <h4>對序列 <code>[4, 2, 3, 1]</code> 跑完整 merge sort，列出每個 merge 步驟與 <code>inv_sum</code>。</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">Ex 3</span>
-            <span class="qa__tag">Mod 練習</span>
-            <h4>假設 <code>MOD = 7</code>、序列 <code>[10, 5]</code>，<code>inv_sum</code> 是多少？</h4>
-            <p>提示：先算「未 mod」的貢獻，再 mod 7。注意比較要用原始值。</p>
-          </div>
-        </section>
-
-        <!-- ============================================================
-             5.4 — 應用題
-             ============================================================ -->
-        <section class="section" id="r-applied">
-          <div class="section__marker">
-            <span class="section__marker-num">[ 5.4 ]</span>
-            <span>Quick Calculations</span>
-            <span class="section__marker-line"></span>
-          </div>
-          <h2 class="section__title">應用題</h2>
-
-          <div class="qa">
-            <span class="qa__id">A1</span>
-            <span class="qa__tag">最壞情況</span>
-            <h4>N = 10⁶ 全降序時，<em>逆序對的數量</em>是多少？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">A2</span>
-            <span class="qa__tag">配分</span>
-            <h4>為什麼 70% 配分上限訂在 <code>N ≤ 45,678</code> 而不是更小？</h4>
-          </div>
-
-          <div class="qa">
-            <span class="qa__id">A3</span>
-            <span class="qa__tag">特例</span>
-            <h4>對已排序的序列 <code>[1, 2, 3, 4, 5]</code> 跑 code，<code>inv_sum</code> 是多少？</h4>
-          </div>
-        </section>
-
-        <!-- ============================================================
-             ANSWERS
-             ============================================================ -->
-        <div class="answer-divider" id="answers">
-          <span class="answer-divider__label">// ANSWERS</span>
-          <span class="answer-divider__rule"></span>
-        </div>
-
-        <p style="color: var(--ink-dim); font-size: var(--fs-sm); margin-bottom: var(--sp-5);">
-          先自己想過再對答案。下面按題號編排。
-        </p>
-
-        <!-- ===== A1 - A5: 觀念題 ===== -->
-        <div class="qa qa--answer">
-          <span class="qa__id">A1 · 分治</span>
-          <p>
-            因為左半在 merge 之前已經<em>排序</em>過，所以 <code>a[i] ≤ a[i+1] ≤ … ≤ a[mid]</code>。
-            又 <code>a[i] &gt; a[j]</code>（觸發取右），所以 <code>a[i..mid]</code> 全部 &gt; <code>a[j]</code>。
-            再者左半的「原始下標」全部 &lt; 右半的「原始下標」（合併時保留 left 在前），
-            所以 <code>(a[p], a[j])</code> 對於 <code>p ∈ [i, mid]</code> 都滿足
-            「下標小者 &gt; 下標大者」⇒ 逆序對。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A2 · 構造</span>
-          <p>
-            任一逆序對 <code>(p, q)</code> 滿足 p &lt; q 且 <code>a[p] &gt; a[q]</code>。
-            把它依下標歸類到「左半」「右半」「跨界」三種情境：
-          </p>
-          <ul>
-            <li>若 p、q <em>都</em>在左半 ⇒ 在左半內部遞迴時被算到。</li>
-            <li>若 p、q <em>都</em>在右半 ⇒ 在右半內部遞迴時被算到。</li>
-            <li>若 p 在左、q 在右 ⇒ 在「合併這層」的 merge 中被算到。</li>
-          </ul>
-          <p>
-            三種互不相交，且每對<em>恰好</em>在一處被算進。因此三者相加即為總數，
-            無重複也無遺漏。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A3 · 複雜度</span>
-          <p>
-            Master Theorem 形式 <code>T(N) = a·T(N/b) + f(N)</code>，本題 <code>a = 2, b = 2, f(N) = O(N)</code>。
-          </p>
-          <p>
-            計算 <code>log_b a = log₂ 2 = 1</code>，而 <code>f(N) = Θ(N^1)</code>。
-            這屬 case 2（<code>f(N) = Θ(N^{log_b a})</code>）⇒
-            <code>T(N) = Θ(N^{log_b a} · log N) = Θ(N log N)</code>。
-          </p>
-          <p>
-            直覺：recursion tree 共 <code>log₂ N</code> 層，每層所有 merge 加起來掃過總共 N 個元素 ⇒ 總工時 Θ(N log N)。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A4 · Mod</span>
-          <p>
-            <code>mod</code> 會把不同的大數對映到相同的餘數，<strong>破壞順序</strong>。
-            例如 <code>MOD = 7</code>、<code>a = 9</code>、<code>b = 2</code>：
-          </p>
-          <pre class="trace-block">原始比較：9 &gt; 2     → 是逆序對 ✓
-mod 後比較：9 % 7 = 2、2 % 7 = 2
-          2 &gt; 2 為 false → 誤判為非逆序對 ✗</pre>
-          <p>
-            排序與比較必須用<em>原始值</em>，<code>mod</code> 只對 <code>inv_sum</code> 累加與 <code>remaining</code> 維護生效。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A5 · 實作</span>
-          <p>
-            <code>remaining</code> 雖然 mod 後 &lt; 10⁷ 可用 int，但中間運算
-            <code>(remaining + (a[j] % MOD) × (count % MOD))</code> 的乘法
-            <code>10⁷ × 10⁶ ≈ 10¹³</code>，<strong>遠超 32-bit int</strong>（≤ 2.1 × 10⁹）。
-            int 在乘法當下就溢位。改用 long long 才安全。
-          </p>
-          <p>
-            <code>a[i]</code> 本身 ≤ 10⁹，也已逼近 int 上限。一律 long long 最保險。
-          </p>
-        </div>
-
-        <!-- ===== Ex 1-3 ===== -->
-        <div class="qa qa--answer">
-          <span class="qa__id">A · Ex 1</span>
-          <p>
-            <code>[3, 1]</code> 只有一次 merge：左 <code>[3]</code>、右 <code>[1]</code>。
-          </p>
-          <pre class="trace-block">remaining = 3
-i = 0, j = 1
-a[0] = 3, a[1] = 1
-3 &gt; 1 ⇒ count = 1
-contrib = 3 + 1 × 1 = 4
-
-inv_sum = 4</pre>
-          <p>結果 <code>inv_sum = 4</code>（對應到唯一一個逆序對 (3,1)，兩數和 4）。</p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · Ex 2</span>
-          <p>對 <code>[4, 2, 3, 1]</code> 跑 merge sort：</p>
-
-          <pre class="trace-block">merge_sort(a, 0, 3)
-  merge_sort(a, 0, 1)         遞迴左半 [4, 2]
-    merge_sort(a, 0, 0)       base
-    merge_sort(a, 1, 1)       base
-    merge(a, 0, 0, 1):
-      remaining = 4
-      4 &gt; 2 ⇒ contrib = 4 + 2×1 = 6
-    ▸ inv_sum = 6
-    a = [2, 4, 3, 1]
-
-  merge_sort(a, 2, 3)         遞迴右半 [3, 1]
-    merge_sort(a, 2, 2)       base
-    merge_sort(a, 3, 3)       base
-    merge(a, 2, 2, 3):
-      remaining = 3
-      3 &gt; 1 ⇒ contrib = 3 + 1×1 = 4
-    ▸ inv_sum = 10
-    a = [2, 4, 1, 3]
-
-  merge(a, 0, 1, 3):           合併左半 [2,4] 與右半 [1,3]
-    remaining = 2 + 4 = 6
-    a[0]=2, a[2]=1: 2 &gt; 1 ⇒ count = 2, contrib = 6 + 1×2 = 8
-  ▸ inv_sum = 18
-    a[0]=2, a[3]=3: 2 ≤ 3 ⇒ 取左，remaining 變 4
-    a[1]=4, a[3]=3: 4 &gt; 3 ⇒ count = 1, contrib = 4 + 3×1 = 7
-  ▸ inv_sum = 25
-    a = [1, 2, 3, 4]</pre>
-
-          <p>
-            最終 <code>inv_sum = 25</code>。
-            驗算：所有逆序對 (4,2)=6、(4,3)=7、(4,1)=5、(2,1)=3、(3,1)=4 ⇒ 6+7+5+3+4 = 25 ✓
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · Ex 3</span>
-          <p><code>MOD = 7</code>、<code>[10, 5]</code>：</p>
-          <pre class="trace-block">merge(a, 0, 0, 1):
-  比較用原始值：10 &gt; 5 ⇒ 是逆序對
-  remaining = 10 % 7 = 3
-  contrib = (3 + (5 % 7) × (1 % 7)) % 7
-          = (3 + 5 × 1) % 7
-          = 8 % 7
-          = 1
-
-inv_sum = 1</pre>
-          <p>注意比較永遠用 10 vs 5（原始），不會用 mod 後的 3 vs 5。</p>
-        </div>
-
-        <!-- ===== App 1-3 ===== -->
-        <div class="qa qa--answer">
-          <span class="qa__id">A · App 1</span>
-          <p>
-            全降序時，每一對 <code>(i, j) with i &lt; j</code> 都是逆序對。
-          </p>
-          <p>
-            數量 = <code>C(N, 2) = N(N − 1)/2</code>。
-            N = 10⁶ ⇒ <code>10⁶ × (10⁶ − 1)/2 ≈ 5 × 10¹¹</code> 對。
-          </p>
-          <p>這正是為何不能 O(N²) 暴力 — 5 × 10¹¹ 次運算需要好幾小時。</p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · App 2</span>
-          <p>
-            <code>45,678² ≈ 2.09 × 10⁹</code>，剛好是常數內運算「2-3 秒」能跑完的量級（典型 OJ 時限）。
-          </p>
-          <p>
-            這是<em>故意</em>給 70% 配分一個 O(N²) 也能勉強過的空間 — 沒寫出 merge sort 解法的人，
-            還是能用暴力撈到 30% + 部分 70%。100% 必須 O(N log N)。
-          </p>
-        </div>
-
-        <div class="qa qa--answer">
-          <span class="qa__id">A · App 3</span>
-          <p>
-            <code>[1, 2, 3, 4, 5]</code> 已嚴格遞增，<em>沒有任何逆序對</em>。
-          </p>
-          <p>
-            跑 merge sort 時每個 merge step 都進「取左、無貢獻」分支，<code>inv_sum</code> 維持 <code>0</code>。
-            程式仍會跑 O(N log N) 的 merge sort，只是不累加任何貢獻。
-          </p>
-        </div>
-
-        <!-- pager -->
-        <div class="pager">
-          <a href="code.html" class="pager__item pager__item--prev">
-            <span class="pager__label">PREV</span>
-            <span class="pager__title">04 · Code</span>
-          </a>
-          <a href="../../index.html" class="pager__item pager__item--next">
-            <span class="pager__label">NEXT</span>
-            <span class="pager__title">↑ Back to W06</span>
-          </a>
-        </div>
-
-      </article>
-
-    </main>
-
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
   </div>
 
-  <footer class="workshop-footer">
-    <div>© 2026 // W06 · P115 · 05 REVIEW</div>
-    <div><a href="../../index.html">← BACK TO W06</a></div>
-    <div>SERIAL_NO. AW-W06-P115-05</div>
-  </footer>
+  <div class="sc-mast__rule"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => { if (window.Prism) Prism.highlightAll(); });</script>
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>分治結構</td>
+            <td>切半 → 各自遞迴排序 → merge 時順便算<em>跨界</em>逆序對的兩數和。</td></tr>
+        <tr><td>跨界對的數法</td>
+            <td>merge 取右半 <code>a[j]</code> 時，左半剩 <code>count = mid − i + 1</code> 個全部 &gt; <code>a[j]</code>，全部成對。</td></tr>
+        <tr><td>貢獻公式</td>
+            <td><code>contrib = remaining + a[j] × count</code> — 左半剩餘和 + a[j] 乘上左半剩餘個數。</td></tr>
+        <tr><td>remaining 維護</td>
+            <td>merge 開始算一次左半總和；左半游標前進就 <code>remaining −= a[i]</code>，O(1) 取用。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>T(N) = 2·T(N/2) + O(N) = Θ(N log N)</code>（Master Theorem case 2）。</td></tr>
+        <tr><td>Mod 規則</td>
+            <td>累加進 <code>inv_sum</code>、<code>remaining</code> 都 mod；<strong>比較永遠用原始值</strong>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">跨界數法</span>
+      <h4>merge 中取右半 <code>a[j]</code> 出來時，為什麼左半剩餘的 <code>a[i..mid]</code> <em>全部</em>跟 <code>a[j]</code> 形成逆序對？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">不重不漏</span>
+      <h4>為什麼總逆序對和 = 左半內部和 + 右半內部和 + 跨界和？這三者為何不會重複計算？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>用 Master Theorem 推導 <code>T(N) = 2·T(N/2) + O(N) = Θ(N log N)</code>。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">Mod 陷阱</span>
+      <h4>為什麼比較大小不能用 <code>a[i] % MOD</code> 後的值？舉一個會出錯的具體例子。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">型別</span>
+      <h4><code>remaining</code>、<code>contrib</code> 為什麼要宣告成 <code>long long</code>？用 <code>int</code> 會在哪裡爆掉？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用一個小範例跑 code 一步一步看：N = 4，序列 <code>[4, 2, 3, 1]</code></p>
+
+    <table class="sc-table">
+      <thead><tr><th>idx</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">a[]</td><td class="mono">4</td><td class="mono">2</td><td class="mono">3</td><td class="mono">1</td></tr>
+      </tbody>
+    </table>
+
+    <p>輸入：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>4
+4 2 3 1</pre>
+
+    <p>呼叫 <code>merge_sort(0, 3)</code>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_sort(0, 3)</span>
+mid = (0 + 3) / 2 = 1
+→ merge_sort(0, 1)    遞迴左半 [4, 2]
+→ merge_sort(2, 3)    遞迴右半 [3, 1]
+→ merge_range(0, 1, 3)</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_sort(0, 1) → merge_range(0, 0, 1)</span>
+左半 = [4]、右半 = [2]
+remaining = 4
+i = 0, j = 1
+a[0] = 4, a[1] = 2
+4 &gt; 2 ⇒ count = 1
+contrib = 4 + 2 × 1 = 6
+inv_sum = <span class="sc-trace__out">6</span>
+取右：tmp[0] = 2、++j（j 出界）
+左半剩餘：tmp[1] = 4
+copy back ⇒ a = [2, 4, 3, 1]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_sort(2, 3) → merge_range(2, 2, 3)</span>
+左半 = [3]、右半 = [1]
+remaining = 3
+i = 2, j = 3
+a[2] = 3, a[3] = 1
+3 &gt; 1 ⇒ count = 1
+contrib = 3 + 1 × 1 = 4
+inv_sum = 6 + 4 = <span class="sc-trace__out">10</span>
+取右：tmp[2] = 1、++j（j 出界）
+左半剩餘：tmp[3] = 3
+copy back ⇒ a = [2, 4, 1, 3]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_range(0, 1, 3)  ← 頂層合併</span>
+左半 = [2, 4]、右半 = [1, 3]
+remaining = 2 + 4 = 6
+
+i=0, j=2: a[0]=2, a[2]=1 → 2 &gt; 1
+   count = mid - i + 1 = 1 - 0 + 1 = 2
+   contrib = 6 + 1 × 2 = 8
+   inv_sum = 10 + 8 = <span class="sc-trace__out">18</span>
+   tmp[0] = 1、++j
+
+i=0, j=3: a[0]=2, a[3]=3 → 2 ≤ 3
+   tmp[1] = 2、remaining = 6 - 2 = 4、++i
+
+i=1, j=3: a[1]=4, a[3]=3 → 4 &gt; 3
+   count = mid - i + 1 = 1 - 1 + 1 = 1
+   contrib = 4 + 3 × 1 = 7
+   inv_sum = 18 + 7 = <span class="sc-trace__out">25</span>
+   tmp[2] = 3、++j（j 出界）
+
+左半剩餘：tmp[3] = 4
+copy back ⇒ a = [1, 2, 3, 4]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>25</pre>
+
+    <div class="sc-insight">
+      <strong>驗算</strong>：序列 <code>[4, 2, 3, 1]</code> 的逆序對及兩數和：
+      <code>(4,2)=6 ／ (4,3)=7 ／ (4,1)=5 ／ (2,1)=3 ／ (3,1)=4</code>
+      合計 <strong>6 + 7 + 5 + 3 + 4 = 25 ●</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A1</span>
+      <span class="qa__tag">最壞情況</span>
+      <h4>N = 10⁶ 全降序時，<em>逆序對數量</em>有多少？這也是為什麼不能 O(N²)。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A2</span>
+      <span class="qa__tag">特例</span>
+      <h4>對已遞增的序列 <code>[1, 2, 3, 4, 5]</code> 跑 code，<code>inv_sum</code> 是多少？code 還需要跑完整 merge sort 嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A3</span>
+      <span class="qa__tag">相關題</span>
+      <h4>若把題目改為「對每組逆序對輸出 <code>a[i] − a[j]</code> 之和」，code 要改哪幾行？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、A 對應 A。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 跨界數法</span>
+      <p>
+        因為左半在 merge 之前已經<em>排序</em>過，所以 <code>a[i] ≤ a[i+1] ≤ … ≤ a[mid]</code>。
+        既然 <code>a[i] &gt; a[j]</code>（觸發取右），那 <code>a[i..mid]</code> 全部 &gt; <code>a[j]</code>。
+      </p>
+      <p>
+        再者左半的「原始下標」全部 &lt; 右半（合併時保留左在前），
+        所以每組 <code>(a[p], a[j])</code>（<code>p ∈ [i, mid]</code>）都滿足
+        「下標小者 &gt; 下標大者」⇒ 都是逆序對。
+      </p>
+      <p>共 <code>mid − i + 1</code> 個元素，每個都跟 a[j] 配成一對 ⇒ count 個逆序對一次算完。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 不重不漏</span>
+      <p>
+        任一逆序對 <code>(p, q)</code> 滿足 <code>p &lt; q</code> 且 <code>a[p] &gt; a[q]</code>。
+        把它按下標歸類到三種情境：
+      </p>
+      <ul>
+        <li>若 p、q <em>都</em>在左半 ⇒ 在左半遞迴時算到。</li>
+        <li>若 p、q <em>都</em>在右半 ⇒ 在右半遞迴時算到。</li>
+        <li>若 p 在左、q 在右 ⇒ 在「這層」的 merge_range 中算到。</li>
+      </ul>
+      <p>三種情境<strong>互不相交</strong>且每對<em>恰好</em>在一處被算進 ⇒ 三者相加即為總和，無重複也無遺漏。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 複雜度</span>
+      <p>
+        Master Theorem 形式 <code>T(N) = a · T(N/b) + f(N)</code>，本題 <code>a = 2, b = 2, f(N) = O(N)</code>。
+      </p>
+      <p>
+        <code>log<sub>b</sub> a = log₂ 2 = 1</code>，且 <code>f(N) = Θ(N¹)</code>，
+        屬 <strong>case 2</strong>（<code>f(N) = Θ(N<sup>log<sub>b</sub> a</sup>)</code>）
+        ⇒ <code>T(N) = Θ(N<sup>log<sub>b</sub> a</sup> · log N) = Θ(N log N)</code>。
+      </p>
+      <p>
+        直覺：recursion tree 共 <code>log₂ N</code> 層，每層所有 merge 加起來掃過 N 個元素 ⇒ 總工時 Θ(N log N)。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · Mod 陷阱</span>
+      <p>
+        <code>mod</code> 把不同的大數對映到相同的餘數，<strong>破壞順序</strong>。
+        例如 <code>MOD = 7</code>、<code>a = 9</code>、<code>b = 2</code>：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// COMPARE</span>
+原始比較：9 &gt; 2           → 是逆序對 ●
+mod 後  ：9 % 7 = 2, 2 % 7 = 2
+         2 &gt; 2 為 false  → 誤判為非逆序對 ×</pre>
+      <p>
+        排序與比較必須用<em>原始值</em>。<code>mod</code> 只作用在「累加進 <code>inv_sum</code>」與「<code>remaining</code> 的維護」這兩處。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 型別</span>
+      <p>
+        <code>remaining</code> 雖然 mod 後 &lt; 10⁷ 可用 int，但中間運算
+        <code>(remaining + (a[j] % MOD) × (count % MOD))</code> 的乘法
+        <code>10⁷ × 10⁶ ≈ 10¹³</code>，<strong>遠超 32-bit int</strong>（≤ 2.1 × 10⁹）。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// INT OVERFLOW EXAMPLE</span>
+a[j] % MOD = 9_999_999 (≈ 10⁷)
+count      = 1_000_000 (= 10⁶)
+
+int:       9_999_999 × 1_000_000  ⇒ 溢位 (int 最大 ≈ 2.1 × 10⁹)
+long long: 9_999_999 × 1_000_000 = 9.999... × 10¹²  ● 安全</pre>
+      <p>
+        <code>a[i]</code> 本身 ≤ 10⁹ 也逼近 int 上限。一律宣告 <code>long long</code> 最保險。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        全降序時，每一對 <code>(i, j)</code>（<code>i &lt; j</code>）都是逆序對。
+      </p>
+      <p>
+        數量 = <code>C(N, 2) = N(N − 1)/2</code>。
+        N = 10⁶ ⇒ <code>10⁶ × (10⁶ − 1)/2 ≈ 5 × 10¹¹</code> 對。
+      </p>
+      <p>
+        這正是不能 O(N²) 暴力的原因 — 5 × 10¹¹ 次運算需要好幾分鐘到好幾小時，而 merge sort 的 O(N log N) ≈ 2 × 10⁷ 次運算秒過。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        <code>[1, 2, 3, 4, 5]</code> 已嚴格遞增 ⇒ <em>沒有任何逆序對</em> ⇒ <code>inv_sum = 0</code>。
+      </p>
+      <p>
+        但 code 仍會跑完整的 O(N log N) merge sort — 每個 merge step 都進「取左、無貢獻」分支，
+        <code>inv_sum</code> 從頭到尾維持 0。我們<em>沒有</em>用「是否已排序」做提前終止，因為這需要額外檢查。
+      </p>
+      <p>
+        若想加速，可以在 <code>merge_range</code> 開頭加 <code>if (a[mid] &lt;= a[mid+1]) { 直接 copy 兩半到 tmp 並 return; }</code> —
+        但這個常數優化在隨機資料上沒什麼幫助。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>把 <code>a[i] + a[j]</code> 改為 <code>a[i] − a[j]</code>：左半剩 count 個都 &gt; a[j]，每個都貢獻 <code>a[i] − a[j]</code>。</p>
+      <p>合起來的貢獻 = <code>(a[i] + a[i+1] + … + a[mid]) − a[j] × count = remaining − a[j] × count</code>。</p>
+      <p>code 改動：</p>
+      <ul>
+        <li><code>contrib = remaining − a[j] × count</code>（原本是 <code>+</code>）。</li>
+        <li>因為 <code>remaining − a[j]×count</code> 可能是負數（mod 後也可能負），要寫成
+          <code>(remaining − (a[j] % MOD) × (count % MOD) % MOD + MOD) % MOD</code> 才安全。</li>
+        <li>其他結構（雙指針、remaining 維護、copy back）<em>完全不變</em>。</li>
+      </ul>
+      <p>核心觀念依然是「取右半 a[j] 時，左半剩 count 個全部跟它配對」，只是貢獻公式換了。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W06 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會驗證 code 跑什麼。</div>
+    <div class="sc-summary-bar__detail">[4, 2, 3, 1] 結果：inv_sum = 25（5 組逆序對：6+7+5+3+4）</div>
+  </div>
+
 </body>
 </html>
