@@ -557,3 +557,237 @@
 @media (max-width: 760px) {
   .sc-row-2 { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   Page indicator + pager (for multi-page study cards)
+   ============================================================ */
+.sc-pageind {
+  max-width: 900px;
+  margin: -6px auto 18px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--sc-coral);
+}
+.sc-pageind__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--sc-tag);
+  border: 1px solid var(--sc-line);
+  margin: 0 4px;
+  vertical-align: middle;
+}
+.sc-pageind__dot.is-active { background: var(--sc-coral); border-color: var(--sc-coral); }
+
+.sc-pager {
+  max-width: 900px;
+  margin: 24px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.sc-pager__item {
+  display: block;
+  background: var(--sc-paper);
+  border: 1px solid var(--sc-line);
+  padding: 14px 18px;
+  color: var(--sc-ink);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.sc-pager__item:hover {
+  border-color: var(--sc-coral);
+  background: var(--sc-cream);
+}
+.sc-pager__item--prev { border-left: 3px solid var(--sc-coral); }
+.sc-pager__item--next { border-right: 3px solid var(--sc-coral); text-align: right; }
+.sc-pager__item.is-disabled {
+  opacity: 0.32;
+  pointer-events: none;
+}
+.sc-pager__label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--sc-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.sc-pager__item--prev .sc-pager__label::before { content: '← '; }
+.sc-pager__item--next .sc-pager__label::after  { content: ' →'; }
+.sc-pager__title {
+  display: block;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px;
+  color: var(--sc-ink);
+}
+
+/* ============================================================
+   macOS-style code window (dark, VS Code Dark+)
+   ============================================================ */
+.sc-codewindow {
+  background: #1e1e1e;
+  border: 1px solid var(--sc-line);
+  margin: 12px 0;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.30);
+}
+.sc-codewindow__chrome {
+  background: #2d2d30;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #3a3a3a;
+}
+.sc-codewindow__dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+.sc-codewindow__dot--r { background: #ff5f56; }
+.sc-codewindow__dot--y { background: #ffbd2e; }
+.sc-codewindow__dot--g { background: #27c93f; }
+.sc-codewindow__tab {
+  margin-left: 8px;
+  padding: 4px 14px;
+  background: #1e1e1e;
+  border-left: 1px solid #3a3a3a;
+  border-right: 1px solid #3a3a3a;
+  color: #d4d4d4;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+.sc-codewindow__lang {
+  margin-left: auto;
+  color: #569cd6;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.sc-codewindow .sc-code {
+  margin: 0;
+  border: none;
+  background: #1e1e1e;
+  line-height: 1.7;
+}
+
+/* ============================================================
+   Animation block (canvas + controls + step label)
+   ============================================================ */
+.sc-viz {
+  background: var(--sc-paper);
+  border: 1px solid var(--sc-line);
+  padding: 14px;
+  margin: 12px 0;
+}
+.sc-viz__title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--sc-coral);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.sc-viz__canvas {
+  width: 100%;
+  display: block;
+  background: #fafaf6;
+  border: 1px solid var(--sc-line);
+}
+.sc-viz__controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--sc-line);
+  flex-wrap: wrap;
+}
+.sc-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  background: var(--sc-paper);
+  border: 1px solid var(--sc-line);
+  color: var(--sc-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.sc-btn:hover {
+  border-color: var(--sc-coral);
+  color: var(--sc-coral);
+}
+.sc-btn--primary {
+  background: var(--sc-coral);
+  color: #fff;
+  border-color: var(--sc-coral);
+}
+.sc-btn--primary:hover {
+  background: var(--sc-coral-hi);
+  border-color: var(--sc-coral-hi);
+  color: #fff;
+}
+.sc-viz__step {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--sc-muted);
+  letter-spacing: 0.08em;
+}
+.sc-viz__label {
+  margin-top: 10px;
+  padding: 11px 14px;
+  background: #fbf6ec;
+  border-left: 3px solid var(--sc-coral);
+  font-size: 12.5px;
+  color: var(--sc-ink);
+  line-height: 1.75;
+  min-height: 56px;
+}
+.sc-viz__label code {
+  background: #fff;
+  border: 1px solid var(--sc-line);
+  color: #6a3c2e;
+  padding: 1px 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92em;
+}
+.sc-viz__label strong { color: var(--sc-coral); }
+
+/* ============================================================
+   Trace block (cream-yellow) — for review page worked examples
+   ============================================================ */
+.sc-trace {
+  position: relative;
+  border: 1px solid #e6d49a;
+  background: #fff8e0;
+  border-left: 4px solid #d4a017;
+  padding: 12px 16px;
+  margin: 10px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.75;
+  white-space: pre;
+  overflow-x: auto;
+  color: #3a2f10;
+  tab-size: 2;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+}
+.sc-trace__head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a5a0c;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.sc-trace__out { color: #2f8a5a; }
+.sc-trace__comment { color: #8a847a; font-style: italic; }

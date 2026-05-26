@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P507 · 03 Review // 最近點對 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P507
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/507/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">最近點對</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ★</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>分治架構</td>
+            <td>按 x 切半 → 各自遞迴 → merge 時用 strip 補抓跨界 pair。</td></tr>
+        <tr><td>Strip 條件</td>
+            <td><code>|x − mid_x|² &lt; d</code> — 純整數比平方，避開 sqrt。</td></tr>
+        <tr><td>7 鄰居上限</td>
+            <td>strip 按 y 排序後，pigeonhole 保證每點至多 7 個鄰居可能 &lt; d。</td></tr>
+        <tr><td>Base case</td>
+            <td><code>n ≤ 3</code> brute 3 對；遞迴最深處沒有任何巧思。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>T(N) = 2 T(N/2) + O(N log N) = O(N log² N)</code>。</td></tr>
+        <tr><td>純整數</td>
+            <td>全程 <code>long long</code>，無 sqrt，避免浮點誤差。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">strip 寬度</span>
+      <h4>strip 寬度為何取 <code>2d</code> 而非 <code>d</code> 或 <code>4d</code>？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">pigeonhole</span>
+      <h4>為什麼 strip 內任意 <code>d</code> 高度視窗最多只能放 8 個點？推導用了什麼引理？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">排序方向</span>
+      <h4>strip 內為什麼要<em>按 y 排序</em>後再檢查鄰居？換成按 x 排序行不行？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">資料型別</span>
+      <h4>座標 |x|, |y| ≤ 10⁹，dist² 為何不能用 <code>int</code>？舉一個會溢位的具體例子。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">最佳化</span>
+      <h4>如何把 <code>O(N log² N)</code> 降到 <code>O(N log N)</code>？描述需要的改動。</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用一個小範例跑 code 一步一步看：N = 4 個點</p>
+
+    <table class="sc-table">
+      <thead><tr><th>idx</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
+      <tbody>
+        <tr><td>point</td><td>P1</td><td>P2</td><td>P3</td><td>P4</td></tr>
+        <tr><td class="mono">x</td><td class="mono">1</td><td class="mono">2</td><td class="mono">4</td><td class="mono">6</td></tr>
+        <tr><td class="mono">y</td><td class="mono">1</td><td class="mono">6</td><td class="mono">3</td><td class="mono">2</td></tr>
+      </tbody>
+    </table>
+
+    <p>輸入：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>4
+1 1
+2 6
+4 3
+6 2</pre>
+
+    <p>已按 x 排序好 (本例已遞增)，呼叫 <code>closest(pts, 0, 3)</code>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · closest(pts, 0, 3)</span>
+n = 4 &gt; 3 → 不是 base case
+mid = (0 + 3) / 2 = 1
+mid_x = pts[1].x = 2
+
+→ 遞迴左半 closest(pts, 0, 1)
+→ 遞迴右半 closest(pts, 2, 3)</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · closest(pts, 0, 1)</span>
+n = 2 ≤ 3 → base case (brute)
+比較 P1−P2: dist²(P1, P2) = (1−2)² + (1−6)² = 1 + 25 = 26
+return <span class="sc-trace__out">26</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · closest(pts, 2, 3)</span>
+n = 2 ≤ 3 → base case (brute)
+比較 P3−P4: dist²(P3, P4) = (4−6)² + (3−2)² = 4 + 1 = 5
+return <span class="sc-trace__out">5</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · 合併 strip 階段</span>
+d_L = 26
+d_R = 5
+d   = min(26, 5) = 5
+
+收集 strip (條件 dx² &lt; d = 5):
+  P1(1,1): dx² = (1−2)² = 1 &lt; 5 ✓
+  P2(2,6): dx² = (2−2)² = 0 &lt; 5 ✓
+  P3(4,3): dx² = (4−2)² = 4 &lt; 5 ✓
+  P4(6,2): dx² = (6−2)² = 16 ❌
+strip = [P1, P2, P3]
+
+按 y 排序 strip:
+  P1(y=1), P3(y=3), P2(y=6)
+
+7-neighbor 檢查:
+  i=0 (P1):
+    j=1 (P3): dy² = (3−1)² = 4 &lt; 5
+              dist² = (1−4)² + (1−3)² = 9 + 4 = 13 ≥ 5 (未更新)
+    j=2 (P2): dy² = (6−1)² = 25 ≥ 5 → break
+  i=1 (P3):
+    j=2 (P2): dy² = (6−3)² = 9  ≥ 5 → break
+  i=2 (P2): 無後續
+
+d 維持 5
+return <span class="sc-trace__out">5</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>5</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：本範例右半的 P3-P4 就是最佳 pair，strip 沒有抓到更近的。
+      不過 strip 仍然<em>檢查了 P1-P3</em>（dist²=13）— 這是必要的代價，
+      因為若 P1 比 P3 更近的鄰居在另一邊，strip 就會找出來。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A1</span>
+      <span class="qa__tag">最壞情況</span>
+      <h4>所有點都集中在中線上（x 值都相同），strip 會多大？演算法還能跑嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A2</span>
+      <span class="qa__tag">遞迴深度</span>
+      <h4>N = 2 × 10⁵ 時 <code>closest</code> 的最大遞迴深度是多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">A3</span>
+      <span class="qa__tag">浮點座標</span>
+      <h4>如果輸入座標是 <code>double</code>（非整數），整段 code 要做哪些調整？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、A 對應 A。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · strip 寬度</span>
+      <p>
+        左右遞迴各自保證內部距離 ≥ <code>d</code>。跨界 pair 若要 &lt; <code>d</code>，
+        則它在 x 軸的差也 &lt; <code>d</code>。所以兩個點都必須在 <code>[mid − d, mid + d]</code> — 寬度恰好 <strong>2d</strong>。
+      </p>
+      <ul>
+        <li><strong>取 1d</strong>：會漏掉兩個端點剛好分別距中線略小於 d 的 pair（兩者距離 &lt; d 但都在 ±d 範圍）。</li>
+        <li><strong>取 4d</strong>：正確性沒問題但 strip 變大、無意義候選變多、效能變差。</li>
+      </ul>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · pigeonhole</span>
+      <p>
+        把 <code>2d × d</code> 矩形切成 4 個 <code>(d/2) × (d/2)</code> 子格。每子格對角線
+        <code>d / √2 ≈ 0.71 d &lt; d</code>，所以子格內兩點必互相 &lt; d。
+      </p>
+      <p>
+        但左半已遞迴出 <code>d_L ≥ d</code>，即左半任兩點距離 ≥ d ⇒ 左半 2 個子格各最多 1 個點。
+        右半同理。整個 <code>2d × d</code> 矩形最多 <strong>4</strong> 點。
+        擴成 <code>2d × 2d</code>（兩矩形上下疊）⇒ 最多 <strong>8</strong> 點（含自己）。
+      </p>
+      <p>
+        所以對 strip[i] 而言，後續至多 7 個鄰居可能與它構成 &lt; d 的距離 — 檢查這 7 個即可。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 排序方向</span>
+      <p>
+        要按 <em>y</em> 排序。因為跨界候選 pair 必滿足
+        「<code>|Δx| &lt; d</code> 且 <code>|Δy| &lt; d</code>」。
+        x 軸由 strip 條件保證；y 軸用排序+只看下幾個保證。
+      </p>
+      <p>
+        若按 x 排序，strip 內 x 値會非常接近（都在 ±d 範圍），無法分隔候選 — 等同 O(N²) 暴力比較整個 strip。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 資料型別</span>
+      <p>
+        座標 ≤ 10⁹，<code>Δx</code> 可達 2 × 10⁹。<code>int</code> 上限 ≈ 2.147 × 10⁹，
+        <code>2 × 10⁹ × 2 × 10⁹ = 4 × 10¹⁸</code> — 乘法當下就 <strong>溢位</strong>。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// EXAMPLE (int 溢位)</span>
+P_a = (10⁹, 0)
+P_b = (-10⁹, 0)
+dx  = 10⁹ - (-10⁹) = 2 × 10⁹
+
+int:    dx * dx = 4 × 10¹⁸  ❌ 溢位 (int 最大 2.1 × 10⁹)
+long long: dx * dx = 4 × 10¹⁸  ✓ (long long 最大 ~9.2 × 10¹⁸)</pre>
+      <p>所以 <code>Point.x</code>、<code>Point.y</code>、<code>dist2()</code> 全部用 <code>long long</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 最佳化</span>
+      <p>瓶頸是每層 merge 都對 strip 做 <code>sort by y</code>，每層 O(N log N) → 總 O(N log² N)。</p>
+      <p>消掉這個 log 的辦法：</p>
+      <ul>
+        <li><strong>進入遞迴前</strong>，建立一份「按 y 排序」的索引副本。</li>
+        <li>遞迴每層回傳「該子集合按 y 排序好的結果」。</li>
+        <li>合併兩個已 y-排序的子集合：用 merge sort O(N) 合併。</li>
+        <li>strip 從這個 y-排序好的合併結果線性掃出來即可。</li>
+      </ul>
+      <p>單層工作降為 O(N)，總 <code>T(N) = 2 T(N/2) + O(N) = O(N log N)</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        所有點 x 相同（極端 case）時，strip 條件 <code>|x − mid_x|² = 0 &lt; d</code> 對所有點都成立 ⇒ <strong>strip = 全體 N 點</strong>。
+      </p>
+      <p>
+        看起來像爆炸，但實際還是 OK：strip 按 y 排序後，每點只看 7 個鄰居 ⇒ 仍是 O(N) merge。
+        worst-case 仍然 O(N log² N)，安全通過。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        <code>log₂(2 × 10⁵) ≈ 17.6</code>，所以最深約 <strong>18 層</strong>。
+        遠遠在預設 stack 大小可承受範圍內，不需要改 stack 或改 iterative。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>三個改動：</p>
+      <ul>
+        <li><code>Point.x</code> 與 <code>.y</code> 改為 <code>double</code>。</li>
+        <li><code>dist2</code> 仍可用，回傳 <code>double</code>。比較 <code>dx*dx &lt; d</code> 仍正確。</li>
+        <li>但浮點比較有誤差 — 嚴格的題目可能要 <code>d + ε</code> 或 <code>sqrt</code> 後比。</li>
+      </ul>
+      <p>實務上整數座標就用整數；只在輸入本身是浮點時才改 — <strong>能用整數就用整數</strong>。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W06 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會驗證 code 跑什麼。</div>
+    <div class="sc-summary-bar__detail">最近 pair 答案：d² = 5 (P3, P4 across midline)</div>
+  </div>
+
+</body>
+</html>
