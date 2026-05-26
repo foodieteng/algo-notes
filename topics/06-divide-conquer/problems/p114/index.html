@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../../assets/css/problem.css" />
   <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
 </head>
-<body class="theme-industrial-notes">
+<body>
 
   <div class="rivet tl"></div>
   <div class="rivet tr"></div>
@@ -113,48 +113,6 @@
           <span class="chip">Construction</span>
           <span class="chip chip--warning">Interactive</span>
           <span class="chip chip--steel">O(N²)</span>
-        </div>
-
-        <section class="sketch-hero-card">
-          <div class="sketch-hero-card__copy">
-            <span class="sketch-label">Sketchnote Overview</span>
-            <h2>缺一格棋盤，用中央 L 把問題變回自己</h2>
-            <p>
-              每次把棋盤切成四象限。原本的 blocked 只會落在一個象限；
-              另外三個象限最靠近中心的角落，用一個 L 補起來。
-              這樣四個象限都變成「小一半的棋盤 + 一個 blocked」。
-            </p>
-          </div>
-          <div class="sketch-map" aria-label="P114 divide and conquer sketch">
-            <div class="sketch-map__node sketch-map__node--start">N x N<br/>缺 1 格</div>
-            <div class="sketch-map__arrow">→</div>
-            <div class="sketch-board">
-              <span></span><span></span><span></span><span></span>
-              <span></span><span class="tile tile--center">L</span><span class="tile tile--center">L</span><span></span>
-              <span></span><span class="tile tile--center">L</span><span></span><span class="hole">王</span>
-              <span></span><span></span><span></span><span></span>
-            </div>
-            <div class="sketch-map__arrow">→</div>
-            <div class="sketch-map__node sketch-map__node--done">4 個<br/>同型子問題</div>
-          </div>
-        </section>
-
-        <div class="sketch-note-grid">
-          <section class="sketch-note sketch-note--blue">
-            <span class="sketch-note__num">01</span>
-            <h3>題目目標</h3>
-            <p>保留王老先生的 <code>(X, Y)</code>，其餘格子全部用 L-tromino 覆蓋。</p>
-          </section>
-          <section class="sketch-note sketch-note--yellow">
-            <span class="sketch-note__num">02</span>
-            <h3>中央修補</h3>
-            <p>中央 L 只放在不含 blocked 的三個象限，替它們製造新的 blocked。</p>
-          </section>
-          <section class="sketch-note sketch-note--green">
-            <span class="sketch-note__num">03</span>
-            <h3>Base Case</h3>
-            <p><code>2 x 2</code> 扣掉 1 格後剩 3 格，必然就是一個 L。</p>
-          </section>
         </div>
 
         <h2 class="section__title">題意拆解</h2>

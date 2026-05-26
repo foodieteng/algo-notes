@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700;900&family=Caveat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
 
   <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
 </head>
@@ -57,6 +57,7 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">01</span>
+      <span class="sc-kicker">problem brief · 題目摘要</span>
       <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
     </div>
 
@@ -79,8 +80,14 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">02</span>
+      <span class="sc-kicker">why divide &amp; conquer · 動機</span>
       <h2 class="sc-section__title">為什麼用分治<span class="sc-section__title-en">// Why D&amp;C</span></h2>
     </div>
+
+    <p class="sc-lead">
+      動手寫 D&amp;C 之前，先理解：暴力 O(N²) 太慢、Hash 格子法不穩定。
+      <span class="sc-em">分治才是穩定且純整數的解</span> — 一切從「不要全部比」開始。
+    </p>
 
     <div class="sc-points">
       <div class="sc-points__card">
@@ -104,19 +111,33 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">03</span>
-      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+      <span class="sc-kicker">algorithm outline · 三步驟</span>
+      <h2 class="sc-section__title">核心策略<span class="sc-section__title-en">// Algorithm Outline</span></h2>
     </div>
 
-    <p>對所有點先按 x 預排序。遞迴函式 <code>closest(lo, hi)</code> 做這 3 件事：</p>
+    <p class="sc-lead">
+      對所有點先按 x 預排序。遞迴函式 <code>closest(lo, hi)</code> 只做這
+      <span class="sc-em">三件事</span>，其他都是收尾。
+    </p>
 
-    <ol style="margin-top:8px;">
-      <li><strong>切一半</strong>：取中位索引 <code>mid = (lo + hi) / 2</code>，記下中線 <code>mid_x = pts[mid].x</code>。</li>
-      <li><strong>遞迴左右</strong>：<code>d_L = closest(lo, mid)</code>、<code>d_R = closest(mid+1, hi)</code>，取 <code>d = min(d_L, d_R)</code>。</li>
-      <li><strong>合併 strip</strong>：收集所有 <code>|x − mid_x| &lt; √d</code> 的點，按 y 排序後每點只跟後續 7 個比，更新 d。</li>
-    </ol>
+    <h3>切一半</h3>
+    <p>取中位索引 <code>mid = (lo + hi) / 2</code>，記下中線 <code>mid_x = pts[mid].x</code>。
+    這條中線把點分成<em>左半</em>與<em>右半</em>，兩半各自獨立遞迴。</p>
 
-    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      Base case：<code>n ≤ 3</code> 時直接暴力。最多比 3 對，遞迴下去 mid 也會落在唯一一點上、不便切。
+    <h3>遞迴左右</h3>
+    <p><code>d_L = closest(lo, mid)</code>、<code>d_R = closest(mid+1, hi)</code>，
+    取 <code>d = min(d_L, d_R)</code>。這個 d 是<em>單一半內</em>找到的最小距離，
+    但跨界 pair 可能更近 — 需要下一步補抓。</p>
+
+    <h3>合併 strip</h3>
+    <p>收集所有 <code>|x − mid_x| &lt; √d</code> 的點，按 y 排序後每點只跟後續 7 個比，更新 d。
+    這一步是整個演算法的<em>靈魂</em>。</p>
+
+    <div class="sc-break">✦ &nbsp;&nbsp; ✦ &nbsp;&nbsp; ✦</div>
+
+    <p style="font-size:14.5px;color:var(--sc-ink-dim);">
+      <span class="sc-em">Base case</span> · <code>n ≤ 3</code> 時直接暴力。最多比 3 對，
+      遞迴下去 mid 也會落在唯一一點上、不便切。
     </p>
   </section>
 
@@ -192,11 +213,17 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">06</span>
+      <span class="sc-kicker">pigeonhole · 鴿籠原理</span>
       <h2 class="sc-section__title">為什麼只比 7 個鄰居就夠<span class="sc-section__title-en">// Pigeonhole Bound</span></h2>
     </div>
 
-    <p>令 <code>d</code> 為遞迴左右後的最小距離。strip 內任兩點若要 &lt; d，那它們的 y 軸差也必 &lt; d。
-    考慮在 strip 任意「<code>d</code> 高度視窗」內最多能塞幾個點：</p>
+    <p class="sc-lead">
+      令 <code>d</code> 為遞迴左右後的最小距離。strip 內任兩點若要 &lt; d，
+      那它們的 y 軸差也必 &lt; d。<span class="sc-em">關鍵問題</span>：
+      strip 任意 d 高度視窗內最多能塞幾個點？
+    </p>
+
+    <h3>幾何切割</h3>
 
     <div class="sc-dark-box">
       <div class="sc-dark-box__title">PIGEONHOLE</div>
@@ -209,7 +236,8 @@
       </div>
     </div>
 
-    <p style="margin-top:12px;">
+    <h3>關鍵推論</h3>
+    <p>
       所以按 y 排序的 strip 中，每點之後至多有 <strong>7 個</strong> 鄰居會跟它構成 &lt; d 的距離 —
       檢查這 7 個即可。實作多半再加 <code>if (Δy² ≥ d) break;</code> 提前終止。
     </p>
@@ -221,15 +249,22 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">07</span>
-      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+      <span class="sc-kicker">complexity · 複雜度</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
+
+    <p class="sc-lead">
+      把整層遞迴的工作量拆成<span class="sc-em">三段</span>：左右遞迴、strip 排序、strip 比對。
+      合併階段的排序成本是真正的瓶頸。
+    </p>
 
     <div class="sc-formula">
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N log N)</div>
       <div class="sc-formula__hint">合併階段需要對 strip 排序 ⇒ O(N log N)。總複雜度 <strong>O(N log² N)</strong>。</div>
     </div>
 
-    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+    <h3>能否降到 O(N log N)</h3>
+    <p>
       若改用 merge sort 在遞迴中同步維護「y 已排序」的副本，可降到 <strong>O(N log N)</strong>。
       多數教學版採 O(N log² N) — 程式更直觀，N = 2 × 10⁵ 仍秒過。
     </p>
@@ -241,15 +276,19 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">08</span>
-      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+      <span class="sc-kicker">one-sentence insight · 一句話</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// Key Insight</span></h2>
     </div>
 
-    <div class="sc-insight">
-      <strong>D&amp;C 解這題的價值不在「切半」，而在「合併」</strong>：
-      左右遞迴得到 d 後，畫一條寬 <code>2d</code> 的 strip 就把「可能更近的跨界 pair」候選縮到 O(N)；
-      strip 按 y 排序、每點只看 7 個鄰居又把比對縮到 O(N)。
-      整題的關鍵是<em>幾何 + pigeonhole</em>，而不是遞迴本身。
+    <div class="sc-pullquote">
+      D&amp;C 解這題的價值不在「切半」，而在「合併」。<br/>
+      左右遞迴得到 d 後，<span class="sc-em">寬 2d 的 strip</span> 把跨界候選縮到 O(N)；
+      strip 按 y 排序 + 每點看 7 個鄰居又把比對縮到 O(N)。
     </div>
+
+    <p style="text-align:center;margin-top:14px;color:var(--sc-ink-dim);font-size:14.5px;">
+      整題的關鍵是 <span class="sc-em">幾何 + pigeonhole</span>，而不是遞迴本身。
+    </p>
   </section>
 
   <!-- ============================================================

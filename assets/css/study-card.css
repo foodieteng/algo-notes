@@ -114,53 +114,160 @@
    ============================================================ */
 .sc-section {
   max-width: 900px;
-  margin: 0 auto 22px;
+  margin: 0 auto 32px;
   background: var(--sc-paper);
   border: 1px solid var(--sc-line);
-  padding: 18px 22px 22px;
+  padding: 32px 36px 34px;
 }
 
 .sc-section__head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: -18px -22px 14px;
-  padding: 8px 14px;
-  background: var(--sc-tag);
-  border-bottom: 1px solid var(--sc-line);
+  display: block;
+  margin: 0 0 22px;
+  padding: 0;
+  background: none;
+  border: none;
 }
 .sc-section__num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 22px;
+  display: inline-block;
   background: var(--sc-coral);
   color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-family: 'Caveat', 'Noto Sans TC', cursive;
+  font-size: 19px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.18em;
+  padding: 2px 14px;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 .sc-section__title {
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 14px;
+  display: block;
+  font-family: 'Noto Serif TC', 'Noto Sans TC', serif;
+  font-size: clamp(22px, 2.8vw, 27px);
   font-weight: 700;
-  letter-spacing: 0.05em;
-  margin: 0;
+  letter-spacing: 0.03em;
+  margin: 4px 0 0;
   color: var(--sc-ink);
+  line-height: 1.4;
 }
 .sc-section__title-en {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  display: inline-block;
+  margin-left: 12px;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
   color: var(--sc-muted);
-  margin-left: 6px;
-  letter-spacing: 0.08em;
-  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-weight: 400;
 }
 
-.sc-section p { margin: 0 0 10px; color: var(--sc-ink); }
+/* Body paragraphs in concept sections — wider line-height + larger size */
+.sc-section p {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 15.5px;
+  line-height: 1.95;
+  margin: 0 0 14px;
+  color: var(--sc-ink);
+}
 .sc-section p:last-child { margin-bottom: 0; }
+
+/* Sub-headings inside a section (serif, with accent rule) */
+.sc-section h3 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 17.5px;
+  font-weight: 700;
+  color: var(--sc-ink);
+  margin: 28px 0 12px;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.45;
+}
+.sc-section h3::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background: var(--sc-coral);
+  flex-shrink: 0;
+}
+
+/* Kicker — small handwritten label above a heading or paragraph */
+.sc-kicker {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: var(--sc-coral);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+/* Lead paragraph — emphasized intro using serif italic */
+.sc-lead {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16.5px;
+  font-style: italic;
+  color: var(--sc-ink);
+  line-height: 1.95;
+  margin: 0 0 18px;
+  padding: 6px 0 6px 18px;
+  border-left: 3px solid var(--sc-coral);
+}
+
+/* Pull-quote — centered serif statement for key insights */
+.sc-pullquote {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--sc-ink);
+  text-align: center;
+  margin: 26px auto;
+  padding: 18px 28px;
+  max-width: 88%;
+  border-top: 1px dashed var(--sc-line);
+  border-bottom: 1px dashed var(--sc-line);
+  line-height: 1.7;
+  position: relative;
+}
+.sc-pullquote::before {
+  content: '“';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  font-size: 38px;
+  color: var(--sc-coral);
+  line-height: 1;
+  font-family: 'Noto Serif TC', serif;
+}
+.sc-pullquote::after {
+  content: '”';
+  position: absolute;
+  bottom: -2px;
+  right: 6px;
+  font-size: 38px;
+  color: var(--sc-coral);
+  line-height: 1;
+  font-family: 'Noto Serif TC', serif;
+}
+
+/* Inline decorative break inside a section */
+.sc-break {
+  text-align: center;
+  font-size: 18px;
+  color: var(--sc-muted);
+  margin: 22px 0 18px;
+  letter-spacing: 0.6em;
+}
+
+/* Soft inline emphasis (handwritten accent for key terms) */
+.sc-em {
+  font-family: 'Caveat', cursive;
+  font-size: 1.15em;
+  color: var(--sc-coral);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
 .sc-section code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9em;

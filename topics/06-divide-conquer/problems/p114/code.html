@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../../../assets/css/problem.css" />
   <link rel="stylesheet" href="../../../../assets/css/prism-workshop.css" />
 </head>
-<body class="theme-industrial-notes">
+<body>
 
   <div class="rivet tl"></div>
   <div class="rivet tr"></div>
@@ -110,13 +110,6 @@
 
         <h2 class="section__title">Clean Code</h2>
 
-        <div class="code-badges">
-          <span>C++17</span>
-          <span>Θ(N²)</span>
-          <span>O(log N)</span>
-          <span>Construction</span>
-        </div>
-
         <div class="code-block code-block--editor">
           <div class="code-block__head">
             <span class="code-block__window">
@@ -184,25 +177,6 @@ void solve(int N, int X, int Y) {
 }
 </code></pre>
         </div>
-
-        <section class="formula-panel">
-          <div>
-            <span class="sketch-label">Complexity</span>
-            <h3>每個 L 只 Report 一次</h3>
-          </div>
-          <pre>T(N) = 4T(N/2) + O(1) = Θ(N²)</pre>
-        </section>
-
-        <table class="compact-table">
-          <thead>
-            <tr><th>項目</th><th>結果</th><th>理由</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Reports</td><td><code>(N² - 1) / 3</code></td><td>每個 L-tromino 覆蓋 3 格</td></tr>
-            <tr><td>Time</td><td><code>Θ(N²)</code></td><td>總 Report 數量為 Θ(N²)</td></tr>
-            <tr><td>Space</td><td><code>O(log N)</code></td><td>遞迴深度為 <code>log₂N</code></td></tr>
-          </tbody>
-        </table>
 
         <h2 class="section__title" style="margin-top: var(--sp-7);">逐段走讀</h2>
 
@@ -292,16 +266,14 @@ for (int q = 0; q &lt; 4; ++q) {
           </div>
         </div>
 
-        <div class="callout callout--warn pitfalls-card">
+        <div class="callout callout--warn">
           <div class="callout__title">// Common Pitfalls</div>
-          <table>
-            <tbody>
-              <tr><td>1-indexed</td><td>初始呼叫是 <code>tile(1, 1, N, X, Y)</code></td></tr>
-              <tr><td>中線位置</td><td><code>midX = top + half - 1</code>，下半從 <code>midX + 1</code> 開始</td></tr>
-              <tr><td>中央 L</td><td>跳過 blocked 所在象限，只補另外三象限</td></tr>
-              <tr><td>Base case</td><td><code>n = 2</code> 直接 Report，不要繼續切</td></tr>
-            </tbody>
-          </table>
+          <ul style="margin: 0;">
+            <li>座標 1-indexed：題目給 (X, Y) 從 1 開始，<code>tile</code> 的初始呼叫要傳 <code>tile(1, 1, N, X, Y)</code>。</li>
+            <li><code>midX = top + half − 1</code>：是上半的<em>最後一列</em>，不是中線；下半從 <code>midX + 1</code> 開始。</li>
+            <li>Base case 不需要再判斷象限 — <code>n=2</code> 時 4 格枚舉即可。</li>
+            <li>本題不需 cin/cout，<code>ios::sync_with_stdio</code> 純粹習慣放著（若有額外讀檔再用）。</li>
+          </ul>
         </div>
 
         <div class="pager">
