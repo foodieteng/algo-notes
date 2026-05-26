@@ -84,9 +84,9 @@
 <span class="c">// 在 row 中、欄位範圍 [colLo, colHi] 內 brute 找峰，寫入 answer[row]。</span>
 <span class="t">void</span> <span class="f">scan</span><span class="p">(</span><span class="t">int</span> row<span class="p">,</span> <span class="t">int</span> colLo<span class="p">,</span> <span class="t">int</span> colHi<span class="p">)</span> <span class="p">{</span>
     <span class="t">int</span> bestCol <span class="p">=</span> colLo<span class="p">;</span>
-    <span class="t">long long</span> bestVal <span class="p">=</span> <span class="f">GetVal</span><span class="p">(</span>row<span class="p">,</span> colLo<span class="p">);</span>
+    <span class="t">int</span> bestVal <span class="p">=</span> <span class="f">GetVal</span><span class="p">(</span>row<span class="p">,</span> colLo<span class="p">);</span>
     <span class="k">for</span> <span class="p">(</span><span class="t">int</span> c <span class="p">=</span> colLo <span class="p">+</span> <span class="n">1</span><span class="p">;</span> c <span class="p">&lt;=</span> colHi<span class="p">;</span> <span class="p">++</span>c<span class="p">)</span> <span class="p">{</span>
-        <span class="t">long long</span> v <span class="p">=</span> <span class="f">GetVal</span><span class="p">(</span>row<span class="p">,</span> c<span class="p">);</span>
+        <span class="t">int</span> v <span class="p">=</span> <span class="f">GetVal</span><span class="p">(</span>row<span class="p">,</span> c<span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span>v <span class="p">&gt;</span> bestVal<span class="p">)</span> <span class="p">{</span> bestVal <span class="p">=</span> v<span class="p">;</span> bestCol <span class="p">=</span> c<span class="p">;</span> <span class="p">}</span>
     <span class="p">}</span>
     answer<span class="p">[</span>row<span class="p">]</span> <span class="p">=</span> bestCol<span class="p">;</span>
@@ -94,20 +94,17 @@
 
 <span class="c">// 在列範圍 [rowLo, rowHi]、欄位範圍 [colLo, colHi] 內遞迴找每列峰。</span>
 <span class="t">void</span> <span class="f">dnc</span><span class="p">(</span><span class="t">int</span> rowLo<span class="p">,</span> <span class="t">int</span> rowHi<span class="p">,</span> <span class="t">int</span> colLo<span class="p">,</span> <span class="t">int</span> colHi<span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span>rowLo <span class="p">&gt;</span> rowHi<span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>rowLo <span class="p">&gt;</span> rowHi <span class="p">||</span> colLo <span class="p">&gt;</span> colHi<span class="p">)</span> <span class="k">return</span><span class="p">;</span>
     <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>rowLo <span class="p">+</span> rowHi<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
 
-    <span class="f">scan</span><span class="p">(</span>mid<span class="p">,</span> colLo<span class="p">,</span> colHi<span class="p">);</span>             <span class="c">// 找 row mid 的峰</span>
+    <span class="f">scan</span><span class="p">(</span>mid<span class="p">,</span> colLo<span class="p">,</span> colHi<span class="p">);</span>                 <span class="c">// 找 row mid 的峰</span>
     <span class="t">int</span> m <span class="p">=</span> answer<span class="p">[</span>mid<span class="p">];</span>
 
-    <span class="f">dnc</span><span class="p">(</span>rowLo<span class="p">,</span> mid <span class="p">-</span> <span class="n">1</span><span class="p">,</span> colLo<span class="p">,</span> m<span class="p">);</span>      <span class="c">// 上半：列峰必 ≤ m</span>
-    <span class="f">dnc</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> rowHi<span class="p">,</span> m<span class="p">,</span> colHi<span class="p">);</span>      <span class="c">// 下半：列峰必 ≥ m</span>
+    <span class="f">dnc</span><span class="p">(</span>rowLo<span class="p">,</span> mid <span class="p">-</span> <span class="n">1</span><span class="p">,</span> colLo<span class="p">,</span> m <span class="p">-</span> <span class="n">1</span><span class="p">);</span>     <span class="c">// 上半：列峰必 &lt; m</span>
+    <span class="f">dnc</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> rowHi<span class="p">,</span> m <span class="p">+</span> <span class="n">1</span><span class="p">,</span> colHi<span class="p">);</span>     <span class="c">// 下半：列峰必 &gt; m</span>
 <span class="p">}</span>
 
 <span class="t">void</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> N<span class="p">,</span> <span class="t">int</span> M<span class="p">)</span> <span class="p">{</span>
-    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span>
-    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
-
     <span class="f">dnc</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> N<span class="p">,</span> <span class="n">1</span><span class="p">,</span> M<span class="p">);</span>
 
     <span class="c">// 遞迴順序不是 row 1..N — 必須依 row 序輸出</span>
@@ -138,7 +135,7 @@
       </tbody>
     </table>
 
-    <p style="margin-top:10px;font-size:14px;"><strong>每層欄位總長</strong>：同一層所有子問題的 <code>[colLo, colHi]</code> 加起來 — 相鄰子問題只在端點 <code>m</code> 重疊 1 格，所以總長 ≤ <code>M + 子問題數</code> ≤ <strong>O(M)</strong>。</p>
+    <p style="margin-top:10px;font-size:14px;"><strong>每層欄位總長</strong>：同一層所有子問題的 <code>[colLo, colHi]</code> 加起來 — 相鄰子問題的欄位範圍互不重疊（端點 <code>m</code> 已被中間 row 取走，上下半從 <code>m−1</code> / <code>m+1</code> 起算），所以同層總長 ≤ <code>M</code> ⇒ <strong>O(M) per level</strong>。</p>
 
     <div class="sc-formula">
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(M_layer) &nbsp;且&nbsp; ∑ M_layer ≤ O(M) per level</div>
@@ -186,16 +183,16 @@
           <td>遞迴順序是 row 2 → row 1 → row 3 → row 4（mid-first），不是 row 1..N。必須先 <code>answer[i]</code> 全部存好，最後再依 i 順序 Report。</td>
         </tr>
         <tr>
-          <td><strong>欄位範圍端點包含 <code>m</code></strong></td>
-          <td>傳給上半的是 <code>[colLo, m]</code>、下半是 <code>[m, colHi]</code>，<em>端點 <code>m</code> 兩邊都包含</em>。題目「嚴格遞增」其實保證 <code>p_i ≤ m − 1</code>，但程式裡寫 <code>m</code> 更乾淨，不會錯（最差情況該欄位被多看 1 次）。</td>
+          <td><strong>欄位範圍嚴格 <code>[colLo, m−1]</code> / <code>[m+1, colHi]</code></strong></td>
+          <td>題目保證列峰嚴格遞增 ⇒ 上半 <code>p_i &lt; m</code>、下半 <code>p_i &gt; m</code>。傳 <code>m−1</code> / <code>m+1</code> 比傳 <code>m</code> 少 log N 次 GetVal。但會出現空範圍（mid 列的峰落在 <code>colLo</code> 或 <code>colHi</code> 時），所以 <code>dnc</code> 開頭要多寫 <code>if (colLo &gt; colHi) return;</code>。</td>
         </tr>
         <tr>
           <td><strong>1-indexed</strong></td>
           <td><code>GetVal(row, col)</code> 與 <code>Report(col)</code> 都是 1-indexed。<code>answer[]</code> 開到 <code>[1..N]</code>，<code>dnc(1, N, 1, M)</code>。</td>
         </tr>
         <tr>
-          <td><strong>用 <code>long long</code> 比較</strong></td>
-          <td>題目數值範圍未明示，保險用 <code>long long bestVal</code>。即使 spec 是 int，也不會吃虧。</td>
+          <td><strong>用 <code>int</code> 比較足矣</strong></td>
+          <td>題目數值落在 int 範圍內，<code>int bestVal</code> 即可。寫 <code>long long</code> 是過度保守，無實質好處。</td>
         </tr>
         <tr>
           <td><strong>遞迴 base case 不必特判 n=1</strong></td>
@@ -233,21 +230,21 @@ scan(mid, colLo, colHi):
 
 → 共 (colHi − colLo + 1) 次 GetVal。</pre>
 
-    <p><strong>② RECURSE UPPER (上半列：列峰必 ≤ m)</strong></p>
+    <p><strong>② RECURSE UPPER (上半列：列峰必 &lt; m)</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// RECURSE UPPER</span>
 m = answer[mid]
-dnc(rowLo, mid - 1, colLo, m)
+dnc(rowLo, mid - 1, colLo, m - 1)
 
 → 上半列數 = (mid - 1) - rowLo + 1 ≤ ⌈N/2⌉
-→ 上半欄位範圍縮為 [colLo, m]
+→ 上半欄位範圍縮為 [colLo, m−1]
 → rowLo &gt; rowHi 即 stop（mid 已是最上時 rowLo = mid, rowHi = mid - 1）</pre>
 
-    <p><strong>③ RECURSE LOWER (下半列：列峰必 ≥ m)</strong></p>
+    <p><strong>③ RECURSE LOWER (下半列：列峰必 &gt; m)</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// RECURSE LOWER</span>
-dnc(mid + 1, rowHi, m, colHi)
+dnc(mid + 1, rowHi, m + 1, colHi)
 
 → 下半列數 = rowHi - (mid + 1) + 1 ≤ ⌊N/2⌋
-→ 下半欄位範圍縮為 [m, colHi]
+→ 下半欄位範圍縮為 [m+1, colHi]
 → 同樣 rowLo &gt; rowHi 即 stop</pre>
 
     <p><strong>④ REPORT IN ORDER</strong></p>
@@ -277,7 +274,7 @@ for i in [1, N]:
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">dnc(rowLo, rowHi, colLo, colHi) — scan mid 列 → 上半 [colLo, m]、下半 [m, colHi] 各自遞迴，最後依序 Report。</div>
+    <div class="sc-summary-bar__body">dnc(rowLo, rowHi, colLo, colHi) — scan mid 列 → 上半 [colLo, m−1]、下半 [m+1, colHi] 各自遞迴，最後依序 Report。</div>
     <div class="sc-summary-bar__detail">T(N, M) = O((N+M) log N) · GetVal ≈ 4 × 10⁷ &lt; 10⁸ 上限</div>
   </div>
 

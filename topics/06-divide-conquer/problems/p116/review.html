@@ -70,7 +70,7 @@
         <tr><td>列峰嚴格遞增</td>
             <td>row 1..N 的峰欄位嚴格遞增 — 這條結構性條件是分治能成立的唯一理由。</td></tr>
         <tr><td>欄位範圍縮減</td>
-            <td>scan 完 mid 得到 <code>m</code> ⇒ 上半搜尋 <code>[colLo, m]</code>、下半 <code>[m, colHi]</code>。</td></tr>
+            <td>scan 完 mid 得到 <code>m</code> ⇒ 上半搜尋 <code>[colLo, m−1]</code>、下半 <code>[m+1, colHi]</code>（嚴格遞增保證 <code>p_i ≠ m</code>）。</td></tr>
         <tr><td>遞迴順序 ≠ 輸出順序</td>
             <td>遞迴是 mid-first，先 row 2 再 row 1 再 row 3 ... — 必須先 <code>answer[]</code> 全填好、最後依序 Report。</td></tr>
         <tr><td>GetVal 預算</td>
@@ -107,7 +107,7 @@
     <div class="qa">
       <span class="qa__id">Q3</span>
       <span class="qa__tag">欄位端點</span>
-      <h4>為什麼上半遞迴傳的是 <code>[colLo, m]</code> 而非 <code>[colLo, m − 1]</code>？端點 <code>m</code> 包含進去會不會浪費 GetVal？</h4>
+      <h4>為什麼程式碼用嚴格範圍 <code>[colLo, m−1]</code> 而非寬鬆 <code>[colLo, m]</code>？寫嚴格的代價是什麼？</h4>
     </div>
 
     <div class="qa">
@@ -156,45 +156,45 @@ scan(2, 1, 5):
     answer[2] = <span class="sc-trace__out">2</span>
 m = 2
 
-→ dnc(1, 1, 1, 2)     ← 上半
-→ dnc(3, 4, 2, 5)     ← 下半
+→ dnc(1, 1, 1, 1)     ← 上半
+→ dnc(3, 4, 3, 5)     ← 下半
 GetVal calls: 5</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · dnc(1, 1, 1, 2)</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · dnc(1, 1, 1, 1)</span>
 mid = (1 + 1) / 2 = 1
-scan(1, 1, 2):
-    掃 row 1 cols 1..2: 74, 59
+scan(1, 1, 1):
+    掃 row 1 col 1: 74
     bestCol = 1 (val 74)
     answer[1] = <span class="sc-trace__out">1</span>
 m = 1
 
-→ dnc(1, 0, 1, 1)     ← rowLo &gt; rowHi, return
-→ dnc(2, 1, 1, 2)     ← rowLo &gt; rowHi, return
-GetVal calls: 2</pre>
+→ dnc(1, 0, 1, 0)     ← rowLo &gt; rowHi, return
+→ dnc(2, 1, 2, 1)     ← rowLo &gt; rowHi, return
+GetVal calls: 1</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · dnc(3, 4, 2, 5)</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · dnc(3, 4, 3, 5)</span>
 mid = (3 + 4) / 2 = 3
-scan(3, 2, 5):
-    掃 row 3 cols 2..5: 64, 95, 43, 56
+scan(3, 3, 5):
+    掃 row 3 cols 3..5: 95, 43, 56
     bestCol = 3 (val 95)
     answer[3] = <span class="sc-trace__out">3</span>
 m = 3
 
-→ dnc(3, 2, 2, 3)     ← rowLo &gt; rowHi, return
-→ dnc(4, 4, 3, 5)     ← 下半
-GetVal calls: 4</pre>
+→ dnc(3, 2, 3, 2)     ← rowLo &gt; rowHi, return
+→ dnc(4, 4, 4, 5)     ← 下半
+GetVal calls: 3</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 4 · dnc(4, 4, 3, 5)</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 4 · dnc(4, 4, 4, 5)</span>
 mid = (4 + 4) / 2 = 4
-scan(4, 3, 5):
-    掃 row 4 cols 3..5: 30, 24, 74
+scan(4, 4, 5):
+    掃 row 4 cols 4..5: 24, 74
     bestCol = 5 (val 74)
     answer[4] = <span class="sc-trace__out">5</span>
 m = 5
 
-→ dnc(4, 3, 3, 5)     ← rowLo &gt; rowHi, return
-→ dnc(5, 4, 5, 5)     ← rowLo &gt; rowHi, return
-GetVal calls: 3</pre>
+→ dnc(4, 3, 4, 4)     ← rowLo &gt; rowHi, return
+→ dnc(5, 4, 6, 5)     ← rowLo &gt; rowHi, return
+GetVal calls: 2</pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// REPORT</span>
 answer[1..4] = [1, 2, 3, 5]
@@ -206,8 +206,8 @@ Report(1); Report(2); Report(3); Report(5);</pre>
 5</pre>
 
     <div class="sc-insight">
-      <strong>GetVal 統計</strong>：5 + 2 + 4 + 3 = <strong>14 次</strong>。
-      暴力會是 4 × 5 = 20 次 — 即使在這麼小的樣本，分治都已經省了 30%。
+      <strong>GetVal 統計</strong>：5 + 1 + 3 + 2 = <strong>11 次</strong>。
+      暴力會是 4 × 5 = 20 次 — 即使在這麼小的樣本，分治都已經省了 45%。
       <em>樣本越大，省得越多</em>（N = M = 10⁶ 時從 10¹² 壓到 4 × 10⁷，省了 5 個數量級）。
     </div>
   </section>
@@ -290,15 +290,17 @@ Report(1); Report(2); Report(3); Report(5);</pre>
     <div class="qa qa--answer">
       <span class="qa__id">A3 · 欄位端點</span>
       <p>
-        嚴格意義上 <code>p_i ≤ m − 1</code>，所以傳 <code>[colLo, m − 1]</code> 完全正確。
-        但實作上傳 <code>[colLo, m]</code> 有兩個好處：
+        題目保證列峰嚴格遞增 ⇒ 上半的列峰必滿足 <code>p_i &lt; m</code>、下半必 <code>p_i &gt; m</code>。
+        所以「真正」的搜尋範圍就是 <strong><code>[colLo, m − 1]</code></strong> 和 <strong><code>[m + 1, colHi]</code></strong>。
+        端點 <code>m</code> 是中間 row 的答案，其他 row 不可能再選它，包進來純粹浪費。
       </p>
+      <p>寫嚴格的代價只有 <em>一行</em>：</p>
       <ul>
-        <li><strong>程式對稱</strong>：上半 <code>[colLo, m]</code>、下半 <code>[m, colHi]</code> — 端點都是 <code>m</code>，易讀易維護。</li>
-        <li><strong>退化邊界乾淨</strong>：若 <code>m == colLo</code>（mid 列的峰就在最左），<code>[colLo, m − 1]</code> 會變成空區間 <code>[colLo, colLo − 1]</code>，需要寫保護。<code>[colLo, m]</code> 永遠至少 1 格，不會出錯。</li>
+        <li><strong>多一個空範圍守備</strong>：若 <code>m == colLo</code>，上半 <code>[colLo, m − 1] = [colLo, colLo − 1]</code> 空了；同理 <code>m == colHi</code> 時下半空。dnc 開頭加 <code>if (colLo &gt; colHi) return;</code> 自然吸收。</li>
+        <li><strong>收益</strong>：每層上半都省下「scan 端點 <code>m</code> 那一次」，全程少 <code>O(log N)</code> 次 GetVal。本題樣本 14 → 11，省 21%。</li>
       </ul>
       <p>
-        代價：每層上半最多多看 1 個欄位（端點 <code>m</code> 那格），共 <code>O(log N)</code> 次多餘 GetVal — 對總預算 4 × 10⁷ 完全可忽略。
+        所以嚴格範圍 + 一行守備是「更乾淨且更省」的選擇。包含 <code>m</code> 的寬鬆版省了那一行守備、但每層白 scan 1 格 — 大小事都不對稱地虧。
       </p>
     </div>
 
@@ -328,8 +330,8 @@ N = 10⁴, M = 10⁶: (10⁶ + 10⁴) · 14 ≈ 1.4 × 10⁷  ✓</pre>
         如果條件改成 <code>p_i ≥ p_{i−1}</code>（允許相等），<strong>目前的演算法直接成立</strong>，不需任何修改：
       </p>
       <ul>
-        <li>上半遞迴範圍 <code>[colLo, m]</code> — 端點 <code>m</code> 已經包含進去，所以 <code>p_i = m</code> 的情況也找得到。</li>
-        <li>下半遞迴範圍 <code>[m, colHi]</code> — 同理。</li>
+        <li>上半遞迴範圍 <code>[colLo, m − 1]</code> — 題目保證 <code>p_i &lt; m</code>，端點 <code>m</code> 自己是中間 row 的答案不必再 scan。</li>
+        <li>下半遞迴範圍 <code>[m + 1, colHi]</code> — 同理 <code>p_i &gt; m</code>。</li>
       </ul>
       <p>
         其實本題的程式就是用「<code>≤ m</code> / <code>≥ m</code>」寫的，比題目嚴格保證的「<code>&lt; m</code> / <code>&gt; m</code>」還寬。
@@ -406,7 +408,7 @@ log₂(10^4) ≈ 13.3 (取 14)
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 完整 4×5 trace — GetVal = 14 次，answer = [1, 2, 3, 5]。</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 完整 4×5 trace — GetVal = 11 次（嚴格範圍），answer = [1, 2, 3, 5]。</div>
     <div class="sc-summary-bar__detail">分治的正確性完全建立在「列峰嚴格遞增」這條結構性條件之上。</div>
   </div>
 

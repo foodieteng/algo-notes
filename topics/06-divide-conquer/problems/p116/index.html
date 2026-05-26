@@ -133,8 +133,8 @@
     <ol style="margin-top:6px;">
       <li><strong>挑中間列</strong> · <code>mid = (rowLo + rowHi) / 2</code></li>
       <li><strong>直接掃</strong> · 在欄位範圍 <code>[colLo, colHi]</code> 內 brute force 找 row <code>mid</code> 的峰欄 <code>m</code>，把 <code>answer[mid] = m</code></li>
-      <li><strong>遞迴上半</strong> · <code>dnc(rowLo, mid−1, colLo, m)</code>（上方列峰必在 <code>m</code> 左側或等於 <code>m</code>）</li>
-      <li><strong>遞迴下半</strong> · <code>dnc(mid+1, rowHi, m, colHi)</code>（下方列峰必在 <code>m</code> 右側或等於 <code>m</code>）</li>
+      <li><strong>遞迴上半</strong> · <code>dnc(rowLo, mid−1, colLo, m−1)</code>（上方列峰必嚴格小於 <code>m</code>）</li>
+      <li><strong>遞迴下半</strong> · <code>dnc(mid+1, rowHi, m+1, colHi)</code>（下方列峰必嚴格大於 <code>m</code>）</li>
     </ol>
 
     <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
@@ -234,10 +234,10 @@
       <div class="sc-dark-box__body">
         <ol>
           <li>令 row <code>mid</code> 的峰欄為 <code>m</code>。</li>
-          <li>對任意 <code>i &lt; mid</code>，題目保證 row <code>i</code> 的峰欄 <code>p_i</code> 嚴格小於 row <code>mid</code> 的峰欄 ⇒ <code>p_i ≤ m − 1 &lt; m</code>。
-              所以上半的搜尋範圍可<strong>安全縮為 <code>[colLo, m]</code></strong>（包含端點 <code>m</code> 是為了程式碼一致；實際 <code>p_i ≤ m−1</code>）。</li>
-          <li>對任意 <code>i &gt; mid</code>，題目保證 <code>p_i &gt; m</code> ⇒ 下半搜尋範圍縮為 <strong><code>[m, colHi]</code></strong>。</li>
+          <li>對任意 <code>i &lt; mid</code>，題目保證 <code>p_i &lt; m</code> ⇒ 上半搜尋範圍縮為 <strong><code>[colLo, m−1]</code></strong>（端點 <code>m</code> 已是中間 row 的答案，不可能再是上半的答案）。</li>
+          <li>對任意 <code>i &gt; mid</code>，題目保證 <code>p_i &gt; m</code> ⇒ 下半搜尋範圍縮為 <strong><code>[m+1, colHi]</code></strong>。</li>
           <li>每次遞迴<strong>列數對半切</strong>（mid 切上下兩半），所以深度為 <code>O(log N)</code>。</li>
+          <li>若 <code>m == colLo</code> 上半變空範圍、<code>m == colHi</code> 下半變空範圍 — <code>dnc</code> 開頭的 <code>colLo &gt; colHi</code> 守備自然吸收。</li>
         </ol>
       </div>
     </div>
@@ -256,7 +256,7 @@
       <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
 
-    <p style="font-size:14px;">每一層遞迴的<strong>所有子問題加起來</strong>掃過的欄位總長 ≤ <code>M + (該層子問題數)</code> — 因為相鄰子問題的欄位範圍只在端點 <code>m</code> 重疊 1 格。</p>
+    <p style="font-size:14px;">每一層遞迴的<strong>所有子問題加起來</strong>掃過的欄位總長 ≤ <code>M</code> — 因為相鄰子問題的欄位範圍互不重疊（端點 <code>m</code> 已被中間 row 取走，上下半從 <code>m−1</code> / <code>m+1</code> 起算）。</p>
 
     <div class="sc-formula">
       <div class="sc-formula__main">T(N, M) ≤ 2 · T(N/2, ?) + O(M_layer)</div>
@@ -268,7 +268,7 @@
     <table class="sc-table">
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>O((N + M) log N)</strong></td><td>遞迴每層的欄位總長 ≤ M + 子問題數</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O((N + M) log N)</strong></td><td>遞迴每層的欄位總長 ≤ M（子問題互不重疊）</td></tr>
         <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td><code>answer[1..N]</code> 暫存；遞迴堆疊 O(log N)</td></tr>
         <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
         <tr><td>GetVal Calls</td><td class="mono"><strong>≤ (N + M) log₂ N</strong></td><td>N = M = 10⁶ ⇒ ≈ 2×10⁶ × 20 = <strong>4 × 10⁷</strong>，遠在 10⁸ 上限內</td></tr>
@@ -312,7 +312,7 @@
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">D&amp;C on rows：mid 列直接掃，列峰嚴格遞增 ⇒ 上半搜尋範圍 [colLo, m]、下半 [m, colHi]。</div>
+    <div class="sc-summary-bar__body">D&amp;C on rows：mid 列直接掃，列峰嚴格遞增 ⇒ 上半搜尋範圍 [colLo, m−1]、下半 [m+1, colHi]。</div>
     <div class="sc-summary-bar__detail">O((N+M) log N) · N = M = 10⁶ 約 4 × 10⁷ 次 GetVal，安全壓在 10⁸ 上限內。</div>
   </div>
 
