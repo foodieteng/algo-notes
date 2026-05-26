@@ -60,7 +60,7 @@ PROBLEMS = {
         ('p114', '王老先生',       'main',     'done'),
         ('p115', '逆序數對',       'main',     'done'),
         ('p501', '好的序列',       'main',     'done'),
-        ('p507', '最近點對',       'main',     'todo'),
+        ('p507', '最近點對',       'main',     'done'),
         ('p116', '太陽軍團',       'bonus',    'todo'),
         ('p117', '糟糕陣列',       'bonus',    'todo'),
         ('p500', '好的連續子序列', 'practice', 'todo'),
