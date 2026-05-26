@@ -107,7 +107,7 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = rect.height || 260;
+    const h = rect.height || 200;
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -119,7 +119,7 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     ctx.fillStyle = P501_COLOR.paper;
     ctx.fillRect(0, 0, w, h);
 
-    // headline
+    // headline (tighter)
     ctx.fillStyle = P501_COLOR.ink;
     ctx.font = P501_FONT.head;
     ctx.textAlign = 'center';
@@ -127,34 +127,26 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     const headline = (step === -1)
       ? 'INITIAL · BUILD f(2) FROM TWO f(1)'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 14);
+    ctx.fillText(headline, w / 2, 10);
 
-    // sub-line (formula — kept short to avoid colliding with source labels)
+    // sub-line
     ctx.fillStyle = P501_COLOR.inkDim;
     ctx.font = P501_FONT.sub;
-    ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ]', w / 2, 34);
+    ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ]', w / 2, 28);
 
-    // Two source f(1) cells (top), connector lines, two destination cells (bottom)
-    const sourceCellSize = 36;
-    const destCellSize = 44;
-    const sourceY = 96;          // pushed down to keep clear of sub-line
-    const destY = h - 56;
+    // Compact layout — sources upper, destinations lower, single screen height
+    const sourceCellSize = 30;
+    const destCellSize = 36;
+    const sourceY = 65;          // source cells y=50..80
+    const destY = h - 38;         // dest cells y=130..166 (for h=200)
     const leftX = w * 0.32;
     const rightX = w * 0.68;
 
-    // Source f(1) cells
+    // Source f(1) cells (value 1 inside makes "f(1)" caption redundant)
     p501DrawCell(ctx, leftX - sourceCellSize / 2, sourceY - sourceCellSize / 2,
                  sourceCellSize, 1, { bg: '#fff' });
     p501DrawCell(ctx, rightX - sourceCellSize / 2, sourceY - sourceCellSize / 2,
                  sourceCellSize, 1, { bg: '#fff' });
-
-    // Source labels (above)
-    ctx.fillStyle = P501_COLOR.inkDim;
-    ctx.font = P501_FONT.label;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText('f(1) = [1]', leftX, sourceY - sourceCellSize / 2 - 8);
-    ctx.fillText('f(1) = [1]', rightX, sourceY - sourceCellSize / 2 - 8);
 
     // Edge labels (transform on connectors)
     const edgeY = (sourceY + sourceCellSize / 2 + destY - destCellSize / 2) / 2;
@@ -177,7 +169,7 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     ctx.lineTo(rightX, destY - destCellSize / 2);
     ctx.stroke();
 
-    // Edge labels
+    // Edge labels — pinned right next to each connector
     ctx.font = P501_FONT.tag;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
@@ -194,21 +186,14 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     p501DrawCell(ctx, rightX - destCellSize / 2, destY - destCellSize / 2,
                  destCellSize, rightVal, { bg: P501_COLOR.rightTint });
 
-    // Dest band labels (below)
+    // Dest band labels (below) — small, no headline above to avoid collision
     ctx.font = P501_FONT.tag;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillStyle = '#3a5a7a';
-    ctx.fillText('ODD · [0]', leftX, destY + destCellSize / 2 + 6);
+    ctx.fillText('ODD · [0]', leftX, destY + destCellSize / 2 + 5);
     ctx.fillStyle = '#7a5a3a';
-    ctx.fillText('EVEN · [1]', rightX, destY + destCellSize / 2 + 6);
-
-    // Header tag above destinations
-    ctx.font = P501_FONT.label;
-    ctx.textBaseline = 'bottom';
-    ctx.fillStyle = P501_COLOR.ink;
-    const doneText = step >= 2 ? 'f(2) = [1, 2]  ✓' : 'f(2) = [ _ , _ ]';
-    ctx.fillText(doneText, w / 2, destY - destCellSize / 2 - 8);
+    ctx.fillText('EVEN · [1]', rightX, destY + destCellSize / 2 + 5);
   }
 
   function updateLabel() {
@@ -321,7 +306,7 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = rect.height || 440;
+    const h = rect.height || 340;
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -329,18 +314,18 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
 
   function computeLayout(w, h) {
     const padX = 24;
-    const headTop = 50;   // headline + sub
-    const bottom = 30;
+    const headTop = 44;
+    const bottom = 22;
     const usableW = w - padX * 2;
     const usableH = h - headTop - bottom;
 
     // Vertical: 4 rows for (root, f(4), f(2), leaves), top → bottom
     // Row Ys (centers):
     const rowYs = [
-      headTop + usableH * 0.10,   // root  (f(8))
-      headTop + usableH * 0.38,   // f(4) layer
-      headTop + usableH * 0.66,   // f(2) layer
-      headTop + usableH * 0.94,   // leaves (f(1))
+      headTop + usableH * 0.08,
+      headTop + usableH * 0.36,
+      headTop + usableH * 0.64,
+      headTop + usableH * 0.92,
     ];
 
     // 8 leaf X centers
@@ -537,12 +522,12 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     const headline = (step === -1)
       ? 'INITIAL · RECURSION TREE SKELETON'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 14);
+    ctx.fillText(headline, w / 2, 10);
 
     // Sub-line (formula)
     ctx.fillStyle = P501_COLOR.inkDim;
     ctx.font = P501_FONT.sub;
-    ctx.fillText('f(N) = [ 2·f(⌈N/2⌉) − 1 ]  ∥  [ 2·f(⌊N/2⌋) ]   ·   from leaves up', w / 2, 34);
+    ctx.fillText('f(N) = [ 2·f(⌈N/2⌉) − 1 ]  ∥  [ 2·f(⌊N/2⌋) ]  ·  bottom-up', w / 2, 26);
 
     const L = computeLayout(w, h);
     drawTreeEdges(L, step >= 0);
