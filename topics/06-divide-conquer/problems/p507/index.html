@@ -275,21 +275,89 @@
     </h3>
     <p style="font-size:14px;">每往下切一層，N 變一半，<strong>剛好 <code>log₂ N</code> 層</strong>：</p>
 
-<pre style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-left:4px solid var(--sc-coral);padding:14px 16px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;color:var(--sc-ink);overflow-x:auto;">Level 0  ── 1 個大小 N 的問題  ─→ 合併成本 = N log N
-                  ╱              ╲
-Level 1  ── 2 個大小 N/2 的問題 ─→ 2 × (N/2) log(N/2) ≈ N log N
-                ╱  ╲           ╱  ╲
-Level 2  ── 4 個大小 N/4       ─→ 4 × (N/4) log(N/4) ≈ N log N
-   ⋮
-Level k  ── 2ᵏ 個大小 N/2ᵏ     ─→ 2ᵏ × (N/2ᵏ) log(N/2ᵏ) ≈ N log N
-   ⋮
-Level logN ─ leaves (base case) ─→ ≈ N（最深層只剩 brute）
+    <div style="margin:14px 0;overflow-x:auto;">
+    <svg viewBox="0 0 760 560" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
 
-每層合計都是 ≈ N log N
-共有 log N 層
-─────────────────────────────────
-總成本 = log N 層 × N log N 每層
-       = N log² N</pre>
+      <!-- Title -->
+      <text x="380" y="34" text-anchor="middle" font-family="Noto Serif TC, serif" font-size="17" font-weight="700" fill="#1f1f1f">遞迴樹 — 每層 ≈ N log N，共 log N 層</text>
+
+      <!-- ===== LEFT: Recursion tree ===== -->
+      <!-- Level 0 -->
+      <text x="22" y="90" font-family="Caveat, cursive" font-size="15" fill="#8a847a">L0</text>
+      <line x1="180" y1="108" x2="100" y2="184" stroke="#d96e4e" stroke-width="2" opacity="0.6"/>
+      <line x1="180" y1="108" x2="260" y2="184" stroke="#d96e4e" stroke-width="2" opacity="0.6"/>
+      <circle cx="180" cy="86" r="30" fill="#fff" stroke="#1f1f1f" stroke-width="2.5"/>
+      <text x="180" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="#1f1f1f">N</text>
+
+      <!-- Level 1 -->
+      <text x="22" y="190" font-family="Caveat, cursive" font-size="15" fill="#8a847a">L1</text>
+      <line x1="100" y1="204" x2="50" y2="278" stroke="#d96e4e" stroke-width="1.6" opacity="0.5"/>
+      <line x1="100" y1="204" x2="150" y2="278" stroke="#d96e4e" stroke-width="1.6" opacity="0.5"/>
+      <line x1="260" y1="204" x2="210" y2="278" stroke="#d96e4e" stroke-width="1.6" opacity="0.5"/>
+      <line x1="260" y1="204" x2="310" y2="278" stroke="#d96e4e" stroke-width="1.6" opacity="0.5"/>
+      <circle cx="100" cy="186" r="24" fill="#fff" stroke="#1f1f1f" stroke-width="2"/>
+      <text x="100" y="192" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700" fill="#1f1f1f">N/2</text>
+      <circle cx="260" cy="186" r="24" fill="#fff" stroke="#1f1f1f" stroke-width="2"/>
+      <text x="260" y="192" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700" fill="#1f1f1f">N/2</text>
+
+      <!-- Level 2 -->
+      <text x="22" y="284" font-family="Caveat, cursive" font-size="15" fill="#8a847a">L2</text>
+      <circle cx="50"  cy="278" r="20" fill="#fff" stroke="#1f1f1f" stroke-width="1.5"/>
+      <text x="50"  y="283" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#1f1f1f">N/4</text>
+      <circle cx="150" cy="278" r="20" fill="#fff" stroke="#1f1f1f" stroke-width="1.5"/>
+      <text x="150" y="283" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#1f1f1f">N/4</text>
+      <circle cx="210" cy="278" r="20" fill="#fff" stroke="#1f1f1f" stroke-width="1.5"/>
+      <text x="210" y="283" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#1f1f1f">N/4</text>
+      <circle cx="310" cy="278" r="20" fill="#fff" stroke="#1f1f1f" stroke-width="1.5"/>
+      <text x="310" y="283" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#1f1f1f">N/4</text>
+
+      <!-- Mid-tree dots -->
+      <text x="180" y="340" text-anchor="middle" font-size="22" fill="#8a847a" letter-spacing="14">· · ·</text>
+      <text x="180" y="372" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#8a847a">⋮ 共 log N 層 ⋮</text>
+
+      <!-- Level log N (leaves) -->
+      <text x="22" y="406" font-family="Caveat, cursive" font-size="14" fill="#8a847a">L logN</text>
+      <text x="180" y="408" text-anchor="middle" font-family="Caveat, cursive" font-size="14" fill="#5a5a5a" font-style="italic">基底情況 · n ≤ 3 brute</text>
+
+      <!-- Vertical separator -->
+      <line x1="380" y1="64" x2="380" y2="424" stroke="#ecd9a6" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+      <!-- ===== RIGHT: Per-level work ===== -->
+      <text x="570" y="68" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="18" fill="#d96e4e">每層的工作量</text>
+
+      <!-- L0 -->
+      <rect x="408" y="80" width="320" height="36" fill="#fff" stroke="#d9cdb6" stroke-width="1" rx="3"/>
+      <text x="420" y="100" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#d96e4e">L0</text>
+      <text x="448" y="100" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f1f1f">1 × N · log N</text>
+      <text x="716" y="100" text-anchor="end" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#1f1f1f">N log N</text>
+
+      <!-- L1 -->
+      <rect x="408" y="172" width="320" height="36" fill="#fff" stroke="#d9cdb6" stroke-width="1" rx="3"/>
+      <text x="420" y="192" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#d96e4e">L1</text>
+      <text x="448" y="192" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f1f1f">2 × (N/2) · log(N/2)</text>
+      <text x="716" y="192" text-anchor="end" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#1f1f1f">≈ N log N</text>
+
+      <!-- L2 -->
+      <rect x="408" y="264" width="320" height="36" fill="#fff" stroke="#d9cdb6" stroke-width="1" rx="3"/>
+      <text x="420" y="284" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#d96e4e">L2</text>
+      <text x="448" y="284" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f1f1f">4 × (N/4) · log(N/4)</text>
+      <text x="716" y="284" text-anchor="end" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#1f1f1f">≈ N log N</text>
+
+      <!-- dots -->
+      <text x="570" y="340" text-anchor="middle" font-size="22" fill="#8a847a">⋮</text>
+
+      <!-- Lk -->
+      <rect x="408" y="380" width="320" height="36" fill="#fff" stroke="#d9cdb6" stroke-width="1" rx="3"/>
+      <text x="420" y="400" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#d96e4e">Lk</text>
+      <text x="448" y="400" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f1f1f">2ᵏ × (N/2ᵏ) · log(N/2ᵏ)</text>
+      <text x="716" y="400" text-anchor="end" font-family="Caveat, cursive" font-size="15" font-weight="700" fill="#1f1f1f">≈ N log N</text>
+
+      <!-- Total bar -->
+      <rect x="40" y="448" width="680" height="86" fill="#d96e4e" rx="10"/>
+      <text x="380" y="476" text-anchor="middle" font-family="Caveat, cursive" font-size="19" font-weight="700" fill="#fff3d1">每層 N log N × 共 log N 層</text>
+      <text x="380" y="514" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="#fff">log N · N log N = N log² N</text>
+    </svg>
+    </div>
 
     <div class="sc-formula">
       <div class="sc-formula__main">總複雜度 = <strong>O(N log² N)</strong></div>
