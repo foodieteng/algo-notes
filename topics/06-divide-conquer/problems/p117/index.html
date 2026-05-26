@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P117 · 01 概念 // 糟糕陣列 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P117
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/117/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">糟糕陣列</h1>
+    <p class="sc-mast__subtitle">// Bad Array · 2×2 block 遞迴構造</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 Divide &amp; Conquer · Constructive · N = 2^K ≤ 1024
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>Θ(N²)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; CONCEPT
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給 <code>N = 2^K</code>（N ≤ 1024），請構造一個 <code>N × N</code> 矩陣 <code>A</code>，每格填入
+      <code>1..2N−1</code> 之中的某個整數（可重複），且滿足：
+      <strong>對於每個 <code>i</code>，row <code>i</code> 與 col <code>i</code> 所有元素的<em>聯集</em>恰為 <code>{1, 2, ..., 2N−1}</code></strong>。</p>
+      <p style="margin-top:8px;">互動式：實作 <code>solve(N)</code>，由 judge 提供 <code>void Report(int)</code>。
+      依 row-major 順序輸出 N² 個整數。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      聯集大小是 <code>2N−1</code>；單一 row 或 col 有 <code>N</code> 格 — 所以 row 和 col 的元素之間必然<em>大量重疊</em>（剛好 1 個），這是構造能成立的容量條件。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用分治構造
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用分治構造<span class="sc-section__title-en">// Why D&amp;C</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">暴力枚舉所有矩陣</span>
+            <span class="sc-ko-card__o">O((2N−1)^(N²))</span>
+          </div>
+          <div class="sc-ko-card__body">指數爆。N = 1024 ⇒ <strong>(2047)^(10⁶)</strong> — 完全不可行。</div>
+          <div class="sc-ko-card__verdict">× REJECT · INFEASIBLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">隨機填 + 驗證</span>
+            <span class="sc-ko-card__o">非確定性</span>
+          </div>
+          <div class="sc-ko-card__body">N 大時隨機命中機率趨近 0；無法保證在時限內找到合法解。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · UNRELIABLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">2×2 block 遞迴構造</span>
+          <span class="sc-ko-card__o">Θ(N²)</span>
+        </div>
+        <div class="sc-ko-card__body">把 <code>A(N)</code> 看成 4 個 <code>K × K</code> 子塊（<code>K = N/2</code>），由 <code>A(K)</code> 平移 + 對角線「灑」最大值組裝。每格 O(1) 寫入。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · Θ(N²)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 2×2 block<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">設 <code>K = N/2</code>，<code>shift = 2K − 1 = N − 1</code>。把 <code>A(N)</code> 拆成 4 個 <code>K × K</code> 子塊：</p>
+
+    <table class="sc-table" style="max-width:560px;">
+      <thead><tr><th>子塊</th><th>內容</th><th>值域</th></tr></thead>
+      <tbody>
+        <tr><td><strong>TL</strong> (top-left)</td><td><code>A(K)[i][j]</code></td><td class="mono">{1..2K−1}</td></tr>
+        <tr><td><strong>BR</strong> (bottom-right)</td><td><code>A(K)[i][j]</code>（同 TL）</td><td class="mono">{1..2K−1}</td></tr>
+        <tr><td><strong>BL</strong> (bottom-left)</td><td><code>A(K)[i][j] + shift</code></td><td class="mono">{shift+1..2N−2}</td></tr>
+        <tr><td><strong>TR</strong> (top-right)</td><td><code>i == j</code> 填 <strong>2N − 1</strong>；否則 <code>A(K)[i][j] + shift</code></td><td class="mono">{shift+1..2N−1}</td></tr>
+      </tbody>
+    </table>
+
+    <ol style="margin-top:10px;">
+      <li><strong>遞迴填 TL</strong> · <code>build(K, 0, 0, base)</code></li>
+      <li><strong>遞迴填 BR</strong> · <code>build(K, K, K, base)</code>（與 TL 同值，不平移）</li>
+      <li><strong>掃 TL 推導 BL</strong> · <code>M[K+i][j] = M[i][j] + shift</code></li>
+      <li><strong>掃 TL 推導 TR</strong> · 對角線 (<code>i == j</code>) 填 <code>2N − 1</code>，其餘 <code>M[i][K+j] = M[i][j] + shift</code></li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      所有寫入都是 O(1)，每格只被填一次 ⇒ 總工作量 = N² ⇒ <strong>Θ(N²)</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — Base case 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">Base case 動畫 · build(2) on A(1) = [1]<span class="sc-section__title-en">// Animation A</span></h2>
+    </div>
+
+    <p>最小的非 trivial 構造：<code>K = 1</code>，<code>A(1) = [1]</code>，<code>shift = 2K − 1 = 1</code>，<code>2N − 1 = 3</code>。看 4 個子塊依序被填、最後驗證 row 1 ∪ col 1 = {1, 2, 3}。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ A · BASE CASE · build(2) FROM A(1)</div>
+      <canvas id="viz-base" class="sc-viz__canvas" height="200"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vb-reset">Reset</button>
+        <button class="sc-btn" id="vb-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vb-play">Play</button>
+        <button class="sc-btn" id="vb-next">Next</button>
+        <span class="sc-viz__step" id="vb-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vb-label">
+        <strong>INITIAL</strong> · 2 × 2 空格，準備從 A(1) = [1] 建出 A(2)
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      最終 <code>A(2) = [[1, 3], [2, 1]]</code>，row 1 ∪ col 1 = {1,3} ∪ {1,2} = {1,2,3} ✓、row 2 ∪ col 2 = {2,1} ∪ {3,1} = {1,2,3} ✓。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — General case 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">General case 動畫 · build(4) on A(2)<span class="sc-section__title-en">// Animation B</span></h2>
+    </div>
+
+    <p>從 <code>A(2) = [[1, 3], [2, 1]]</code> 建出 <code>A(4)</code>。<code>K = 2</code>，<code>shift = 2K − 1 = 3</code>，<code>2N − 1 = 7</code>。動畫 5 步：TL → BR → BL → TR（含對角線特別處理）→ 驗證。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ B · GENERAL CASE · build(4) FROM A(2)</div>
+      <canvas id="viz-general" class="sc-viz__canvas" height="320"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vg-reset">Reset</button>
+        <button class="sc-btn" id="vg-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vg-play">Play</button>
+        <button class="sc-btn" id="vg-next">Next</button>
+        <span class="sc-viz__step" id="vg-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vg-label">
+        <strong>INITIAL</strong> · 4 × 4 空格，準備從 A(2) 建出 A(4)
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="background:#e3edf5;padding:1px 6px;">TL · A(K) 原值</span> &nbsp;·&nbsp;
+      <span style="background:#f6ead8;padding:1px 6px;">BR · A(K) 原值（同 TL）</span> &nbsp;·&nbsp;
+      <span style="background:#d9e8c7;padding:1px 6px;">BL · +shift</span> &nbsp;·&nbsp;
+      <span style="background:#fbe2d7;padding:1px 6px;">TR · +shift / 對角線 2N−1</span>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 構造正確性
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">構造正確性<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// CORRECTNESS · 為何 row i ∪ col i = {1..2N−1}</div>
+      <div class="sc-dark-box__body">
+        <p>歸納假設：對 <code>A(K)</code>，每個 <code>i ∈ [1..K]</code> 滿足 row i ∪ col i = <code>{1..2K−1}</code>。</p>
+        <p>看 <code>A(N)</code> 的某一個 <code>i ∈ [1..N]</code>。分兩種情況：</p>
+        <ol>
+          <li><strong>i ∈ [1..K]（上半 / 左半）</strong>
+            <ul>
+              <li>row <code>i</code> = TL[i] ∪ TR[i]。TL[i] 是 A(K) 的 row i。TR[i] 除了對角格 (i, K+i) = <code>2N−1</code>，其餘 = A(K)[i] + shift（剝掉 j = i 那一格）。</li>
+              <li>col <code>i</code> = TL[*][i] ∪ BL[*][i]。TL[*][i] 是 A(K) 的 col i。BL[*][i] = A(K)[*][i] + shift（包含 j = i 那一格 = A(K)[i][i] + shift）。</li>
+              <li>聯集：A(K) 的 row i ∪ col i = <code>{1..2K−1}</code>（歸納假設）。加上 +shift 的版本 = <code>{shift+1 .. shift + 2K−1} = {2K .. 2N−2}</code>。再加上對角的 <code>2N−1</code>。合起來 = <code>{1..2K−1} ∪ {2K..2N−2} ∪ {2N−1} = {1..2N−1}</code>。</li>
+              <li>細節：TR[i] 缺了 j = i 那格的「A(K)[i][i] + shift」，但 BL[*][i] 補回來；對角線塞 <code>2N−1</code> 補上少的那個最大值。</li>
+            </ul>
+          </li>
+          <li><strong>i ∈ [K+1..N]（下半 / 右半）</strong>
+            <ul>
+              <li>令 <code>i' = i − K ∈ [1..K]</code>。row <code>i</code> = BL[i'] ∪ BR[i']。BR[i'] = A(K) 的 row i'。BL[i'] = A(K)[i'] + shift。</li>
+              <li>col <code>i</code> = TR[*][i'] ∪ BR[*][i']。TR[*][i'] 除了對角格 (i', K+i') = <code>2N−1</code>，其餘 = A(K)[*][i'] + shift（缺 j = i' 那一格）。BR[*][i'] = A(K) 的 col i'。</li>
+              <li>同樣聯集 = <code>{1..2K−1} ∪ {2K..2N−2} ∪ {2N−1} = {1..2N−1}</code> ✓。</li>
+            </ul>
+          </li>
+        </ol>
+        <p>所有值都落在 <code>[1, 2N−1]</code> ⇒ 構造合法。Q.E.D.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:10px;font-size:14px;">
+      換句話說：<em>shift = N − 1 把 A(K) 的值域 <code>{1..2K−1}</code> 平移到 <code>{2K..2N−2}</code></em>，
+      兩個值域剛好對接、合起來是 <code>{1..2N−2}</code>；
+      <strong>TR 對角線塞 <code>2N−1</code></strong> 是把最後那個最大值「灑」進每一個 row 和 col，補完最後一格。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每個 <code>build(N)</code> 呼叫：遞迴填 TL、BR 各一次（兩個 <code>K × K</code>），然後掃 TL 推導 BL、TR 共 <code>2 · K²</code> 次寫入。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 2 · T(N/2) + Θ(N²/2) &nbsp;⇒&nbsp; <strong>T(N) = Θ(N²)</strong></div>
+      <div class="sc-formula__hint">
+        每格只寫一次 ⇒ 總工作量 = 格數 = N²。<em>Master Theorem case 3</em>。
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>Θ(N²)</strong></td><td>每格 O(1) 寫入；N = 1024 ⇒ ~10⁶ 次運算</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>Θ(N²)</strong></td><td>全域 <code>int M[1100][1100]</code> ≈ 4.8 MB</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 1024 ⇒ 10 層</td></tr>
+        <tr><td>Report Calls</td><td class="mono">N²</td><td>row-major 順序輸出</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>瓶頸是輸出</strong> — N² 個 Report 呼叫無法再省。建構本身與輸出同階。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 08 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">08</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>TR 對角線塞 <code>2N−1</code> 是把「最大值」灑進每個 row 和 col 的關鍵。</strong><br/>
+      其他三塊（TL、BR、BL）合力撐起 <code>{1..2N−2}</code>，
+      <em>對角的 <code>2N−1</code> 是唯一補上最後那一格的位置 — 每個 row i 都會碰到它一次，每個 col i 也是。</em>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">A(N) = 2×2 blocks of A(K)：TL=BR=A(K)、BL=A(K)+shift、TR=A(K)+shift but 對角線=2N−1。</div>
+    <div class="sc-summary-bar__detail">Θ(N²) · N = 1024 ⇒ 10⁶ 格，每格 O(1) 寫入 + 10⁶ 次 Report。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p117-bad-array.js"></script>
+</body>
+</html>
