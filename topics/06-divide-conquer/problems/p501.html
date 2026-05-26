@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P501 · 好的序列 · STUDY CARD // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P501
+    </span>
+    <span>STUDY CARD · 2026.05.26</span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">好的序列</h1>
+    <p class="sc-mast__subtitle">// Good Sequence · 構造 · 奇偶切</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 Divide &amp; Conquer · Construction
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N log N)</strong>
+    </div>
+  </header>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目摘要
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目摘要<span class="sc-section__title-en">// Problem Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給定正整數 <code>N</code>，輸出一個 <code>1..N</code> 的排列 <code>a[1..N]</code>，使得
+      <strong>不存在</strong>任意三個下標 <code>i &lt; j &lt; k</code> 滿足
+      <code>2·a[j] = a[i] + a[k]</code>（即 a[i], a[j], a[k] 在原順序下構成等差數列，簡稱 <strong>3-AP</strong>）。
+      存在多種合法答案時輸出任一即可。</p>
+    </div>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">下面用 <code>n = 3</code> 的所有排列做暖身（共 6 種）—
+      只有「全升」與「全降」是 3-AP，其他 4 種都合法：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr>
+          <th style="width:25%">排列</th>
+          <th>是否 3-AP?</th>
+          <th style="width:15%; text-align:center;">收錄?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">(1, 2, 3)</td><td>是 — (1,2,3) 等差 d = +1</td><td style="text-align:center;" class="fail">✗</td></tr>
+        <tr><td class="mono">(1, 3, 2)</td><td>無</td>                          <td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(2, 1, 3)</td><td>無</td>                          <td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(2, 3, 1)</td><td>無</td>                          <td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(3, 1, 2)</td><td>無</td>                          <td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(3, 2, 1)</td><td>是 — (3,2,1) 等差 d = −1</td><td style="text-align:center;" class="fail">✗</td></tr>
+      </tbody>
+    </table>
+    <div class="sc-table__caption">n = 3 共 6 排列、4 個合法。本題只要輸出其中一個。</div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼要構造而不是 brute
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼要「構造」 + 切一半<span class="sc-section__title-en">// Why Constructive Split</span></h2>
+    </div>
+
+    <div class="sc-points">
+      <div class="sc-points__card">
+        <div class="sc-points__head"><span class="sc-points__letter">A</span>暴力指數爆炸</div>
+        <div class="sc-points__body">枚舉所有 <code>N!</code> 種排列再驗證，<code>N = 10</code> 就 3,628,800 個，<code>N = 15</code> 就 10¹² 級別 — 完全不可行。</div>
+      </div>
+      <div class="sc-points__card">
+        <div class="sc-points__head"><span class="sc-points__letter">B</span>DP 狀態爆炸</div>
+        <div class="sc-points__body">若用「已選哪幾個」當狀態，<code>O(2ᴺ · N)</code>，<code>N &gt; 24</code> 即超量。本題沒有「最佳解」可被 DP 累積。</div>
+      </div>
+      <div class="sc-points__card">
+        <div class="sc-points__head"><span class="sc-points__letter">C</span>直接「造」</div>
+        <div class="sc-points__body">設計一條<em>保證合法</em>的構造規則 —「奇偶切」+ 遞迴。<code>O(N log N)</code> 直接生出答案，不需要驗證。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略：奇偶切
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 — 奇偶切<span class="sc-section__title-en">// Odd-Even Split</span></h2>
+    </div>
+
+    <p>把全部數字按奇偶分兩組：<strong>所有奇數放前段、所有偶數放後段</strong>。
+    每一段內部再遞迴解一次相同問題即可。下面以 <code>N = 8</code> 為例：</p>
+
+    <div class="sc-cells">
+      <span class="sc-cell sc-cell--odd">1</span>
+      <span class="sc-cell sc-cell--odd">5</span>
+      <span class="sc-cell sc-cell--odd">3</span>
+      <span class="sc-cell sc-cell--odd">7</span>
+      <span class="sc-cell sc-cell--even">2</span>
+      <span class="sc-cell sc-cell--even">6</span>
+      <span class="sc-cell sc-cell--even">4</span>
+      <span class="sc-cell sc-cell--even">8</span>
+    </div>
+    <div class="sc-cells__legend">
+      <span class="swatch" style="background:var(--sc-cell-odd)"></span> 奇 (1,3,5,7)
+      <span class="swatch" style="background:var(--sc-cell-even)"></span> 偶 (2,4,6,8)
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      奇數段內部由 <code>good(⌈N/2⌉)</code> 遞迴決定順序、偶數段由 <code>good(⌊N/2⌋)</code> 遞迴決定。
+      上面是 <code>N=8</code> 的最終結果（與下面 Section 06 的 trace 推導一致）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 為什麼這樣切一定 3-AP free
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">為什麼這樣切就一定 3-AP free?<span class="sc-section__title-en">// Proof Sketch</span></h2>
+    </div>
+
+    <p>假設我們找到一組逆例 <code>(i, j, k)</code>，使得 <code>2·a[j] = a[i] + a[k]</code>。
+    觀察右式 <code>a[i] + a[k]</code> <strong>必為偶數</strong>（因為左式是 2 倍），
+    所以 <code>a[i]</code> 與 <code>a[k]</code> <em>同奇偶</em>。分以下三種情況：</p>
+
+    <div class="sc-case"><strong>假設 ①</strong> <code>a[i]</code>, <code>a[k]</code> 都是奇數 ⇒ 兩者都在前段。
+      因為前段在後段之前，位置上 <code>i &lt; k</code> 都在前段，所以 <code>j</code>（介於兩者）也必在前段
+      ⇒ <code>a[j]</code> 也是奇數。整組 3-AP 都落在前段，回到「對 <code>⌈N/2⌉</code> 個奇數做同一問題」— 由歸納假設不存在。</div>
+
+    <div class="sc-case"><strong>假設 ②</strong> <code>a[i]</code>, <code>a[k]</code> 都是偶數 ⇒ 兩者都在後段。
+      同理 <code>j</code> 也在後段 ⇒ <code>a[j]</code> 也是偶數。整組落在後段，由歸納假設不存在。</div>
+
+    <div class="sc-case"><strong>假設 ③</strong> <code>a[i]</code>, <code>a[k]</code> 一奇一偶 — <strong>違反「同奇偶」的必要條件</strong>，不可能發生。</div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">奇偶律 · PARITY</div>
+      <div class="sc-dark-box__body">
+        <code>奇 + 奇 = 偶</code> &nbsp;·&nbsp; <code>奇 + 偶 = 奇</code> &nbsp;·&nbsp; <code>偶 + 偶 = 偶</code><br/>
+        <span style="font-size:13px;opacity:0.8;">3-AP 中間元素是兩端的平均 ⇒ 兩端同奇偶 ⇒ 跨段不可能。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 遞迴結構公式
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">遞迴結構 · 公式<span class="sc-section__title-en">// Recurrence</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">f(n) = [ 2 · f(⌈n/2⌉) − 1 ] &nbsp;∥&nbsp; [ 2 · f(⌊n/2⌋) ]</div>
+      <div class="sc-formula__hint">∥ 為串接；<code>2x − 1</code> 把長度 ⌈n/2⌉ 的排列映成 <em>奇數</em>段；<code>2x</code> 映成 <em>偶數</em>段</div>
+    </div>
+
+    <p>Base case：<code>f(1) = [1]</code>。當輸入縮到單一元素時直接收尾。</p>
+
+    <div style="margin-top:10px;padding:10px 14px;background:var(--sc-tag);border:1px solid var(--sc-line);font-family:'JetBrains Mono',monospace;font-size:13px;text-align:center;color:var(--sc-ink);">
+      T(n) = 2 · T(n/2) + Θ(n) &nbsp;⇒&nbsp; T(n) = <strong>Θ(n log n)</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 完整 TRACE · f(5)
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">完整 TRACE · f(5)<span class="sc-section__title-en">// Worked Example</span></h2>
+    </div>
+
+    <div class="sc-tree-row">
+      <div>
+        <p style="font-size:13px;color:var(--sc-ink-dim);">遞迴展開先打開所有子節點，base case 從底部往上回傳：</p>
+        <pre class="sc-tree">             f(5)
+           /        \
+        f(3)        f(2)
+        /  \        /  \
+      f(2) f(1)  f(1) f(1)
+       /\
+     f(1) f(1)</pre>
+        <div class="sc-tree__caption">⌈5/2⌉ = 3 → left；⌊5/2⌋ = 2 → right</div>
+      </div>
+
+      <div>
+
+        <div class="sc-step">
+          <div class="sc-step__head">
+            <span class="sc-step__num">STEP 1</span>
+            <span class="sc-step__title">f(1) = [1]</span>
+          </div>
+          <div class="sc-step__body">所有葉節點是 base case，直接回傳。</div>
+          <div class="sc-cells" style="justify-content:flex-start;">
+            <span class="sc-cell sc-cell--odd">1</span>
+          </div>
+        </div>
+
+        <div class="sc-step">
+          <div class="sc-step__head">
+            <span class="sc-step__num">STEP 2</span>
+            <span class="sc-step__title">f(2): half = ⌈2/2⌉ = 1</span>
+          </div>
+          <div class="sc-step__body">left = 2·f(1)−1 = [1]<br/>right = 2·f(1) = [2]<br/>⇒ f(2) = [1, 2]</div>
+          <div class="sc-cells" style="justify-content:flex-start;">
+            <span class="sc-cell sc-cell--odd">1</span>
+            <span class="sc-cell sc-cell--even">2</span>
+          </div>
+        </div>
+
+        <div class="sc-step">
+          <div class="sc-step__head">
+            <span class="sc-step__num">STEP 3</span>
+            <span class="sc-step__title">f(3): half = ⌈3/2⌉ = 2</span>
+          </div>
+          <div class="sc-step__body">left = 2·f(2)−1 = 2·[1,2]−1 = [1, 3]<br/>right = 2·f(1) = [2]<br/>⇒ f(3) = [1, 3, 2]</div>
+          <div class="sc-cells" style="justify-content:flex-start;">
+            <span class="sc-cell sc-cell--odd">1</span>
+            <span class="sc-cell sc-cell--odd">3</span>
+            <span class="sc-cell sc-cell--even">2</span>
+          </div>
+        </div>
+
+        <div class="sc-step">
+          <div class="sc-step__head">
+            <span class="sc-step__num">STEP 4</span>
+            <span class="sc-step__title">f(5): half = ⌈5/2⌉ = 3</span>
+          </div>
+          <div class="sc-step__body">left = 2·f(3)−1 = 2·[1,3,2]−1 = [1, 5, 3]<br/>right = 2·f(2) = 2·[1,2] = [2, 4]<br/>⇒ f(5) = [1, 5, 3, 2, 4]</div>
+          <div class="sc-cells" style="justify-content:flex-start;">
+            <span class="sc-cell sc-cell--odd">1</span>
+            <span class="sc-cell sc-cell--odd">5</span>
+            <span class="sc-cell sc-cell--odd">3</span>
+            <span class="sc-cell sc-cell--even">2</span>
+            <span class="sc-cell sc-cell--even">4</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sc-final">
+      <div class="sc-final__label">FINAL OUTPUT · N = 5</div>
+      <div class="sc-final__seq">
+        <span>1</span><span>5</span><span>3</span><span>2</span><span>4</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 暴力檢查表
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">暴力檢查表 · brute verify<span class="sc-section__title-en">// All 10 triples on f(5)</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr>
+          <th>(i, j, k)</th>
+          <th>(a[i], a[j], a[k])</th>
+          <th>2·a[j] vs a[i] + a[k]</th>
+          <th style="text-align:center;">OK?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">(1, 2, 3)</td><td class="mono">(1, 5, 3)</td><td class="mono">10 ≠ 4</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(1, 2, 4)</td><td class="mono">(1, 5, 2)</td><td class="mono">10 ≠ 3</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(1, 2, 5)</td><td class="mono">(1, 5, 4)</td><td class="mono">10 ≠ 5</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(1, 3, 4)</td><td class="mono">(1, 3, 2)</td><td class="mono">6 ≠ 3</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(1, 3, 5)</td><td class="mono">(1, 3, 4)</td><td class="mono">6 ≠ 5</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(1, 4, 5)</td><td class="mono">(1, 2, 4)</td><td class="mono">4 ≠ 5</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(2, 3, 4)</td><td class="mono">(5, 3, 2)</td><td class="mono">6 ≠ 7</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(2, 3, 5)</td><td class="mono">(5, 3, 4)</td><td class="mono">6 ≠ 9</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(2, 4, 5)</td><td class="mono">(5, 2, 4)</td><td class="mono">4 ≠ 9</td><td style="text-align:center;" class="pass">✓</td></tr>
+        <tr><td class="mono">(3, 4, 5)</td><td class="mono">(3, 2, 4)</td><td class="mono">4 ≠ 7</td><td style="text-align:center;" class="pass">✓</td></tr>
+      </tbody>
+    </table>
+    <div class="sc-table__caption">10 / 10 全部通過驗證</div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 08 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">08</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>奇偶切的真正力量</strong>：3-AP 的中項是兩端的平均 — 而平均要存在於整數空間，
+      <strong>兩端必須同奇偶</strong>。把奇偶物理分離後，任何跨段的 3-AP 中項要不在奇段、要不在偶段，
+      無論如何都會違反「中項位置在兩端之間」的位置條件，所以跨段一定零個 3-AP。
+      只剩同段內部的 3-AP — 而那是規模一半的同一個問題，遞迴解掉。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 09 — 程式碼
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">09</span>
+      <h2 class="sc-section__title">程式碼參考<span class="sc-section__title-en">// C++ reference</span></h2>
+    </div>
+
+<pre class="sc-code"><span class="c">// good(n): 回傳長度 n、不含 3-AP 的 1..n 排列</span>
+<span class="k">#include</span> <span class="s">&lt;iostream&gt;</span>
+<span class="k">#include</span> <span class="s">&lt;vector&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> <span class="f">good</span><span class="p">(</span><span class="t">int</span> n<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>n <span class="p">==</span> <span class="n">1</span><span class="p">)</span> <span class="k">return</span> <span class="p">{</span><span class="n">1</span><span class="p">};</span>    <span class="c">// base case</span>
+
+    <span class="t">int</span> half <span class="p">=</span> <span class="p">(</span>n <span class="p">+</span> <span class="n">1</span><span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> left  <span class="p">=</span> <span class="f">good</span><span class="p">(</span>half<span class="p">);</span>     <span class="c">// 奇數段 (⌈n/2⌉ 個)</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> right <span class="p">=</span> <span class="f">good</span><span class="p">(</span>n <span class="p">-</span> half<span class="p">);</span>  <span class="c">// 偶數段 (⌊n/2⌋ 個)</span>
+
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> res<span class="p">;</span>
+    res<span class="p">.</span><span class="f">reserve</span><span class="p">(</span>n<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> x <span class="p">:</span> left<span class="p">)</span>  res<span class="p">.</span><span class="f">push_back</span><span class="p">(</span><span class="n">2</span> <span class="p">*</span> x <span class="p">-</span> <span class="n">1</span><span class="p">);</span>  <span class="c">// 映成奇數</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> x <span class="p">:</span> right<span class="p">)</span> res<span class="p">.</span><span class="f">push_back</span><span class="p">(</span><span class="n">2</span> <span class="p">*</span> x<span class="p">);</span>      <span class="c">// 映成偶數</span>
+    <span class="k">return</span> res<span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> n<span class="p">;</span> cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+    <span class="k">auto</span> seq <span class="p">=</span> <span class="f">good</span><span class="p">(</span>n<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> <span class="p">(</span><span class="t">int</span><span class="p">)</span>seq<span class="p">.</span><span class="f">size</span><span class="p">();</span> <span class="p">++</span>i<span class="p">)</span>
+        cout <span class="p">&lt;&lt;</span> seq<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="p">(</span>i <span class="p">+</span> <span class="n">1</span> <span class="p">==</span> <span class="p">(</span><span class="t">int</span><span class="p">)</span>seq<span class="p">.</span><span class="f">size</span><span class="p">()</span> <span class="p">?</span> <span class="s">'\n'</span> <span class="p">:</span> <span class="s">' '</span><span class="p">);</span>
+<span class="p">}</span></pre>
+  </section>
+
+  <!-- ============================================================
+       SECTION 10 — 複習 Q&A
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">10</span>
+      <h2 class="sc-section__title">複習 Q&amp;A<span class="sc-section__title-en">// Quick Review</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr>
+          <th style="width:32%;">問題</th>
+          <th>解答 / 重點</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>half 為何用 <code>⌈n/2⌉</code> 而非 <code>⌊n/2⌋</code>？</strong></td>
+          <td>奇數段需要 ⌈n/2⌉ 個元素（1, 3, 5, …），偶數段才是 ⌊n/2⌋ 個。例如 n=5 時奇數有 3 個 (1,3,5)、偶數有 2 個 (2,4)。</td>
+        </tr>
+        <tr>
+          <td><strong>跨段 3-AP 為什麼一定不存在？</strong></td>
+          <td>3-AP 兩端必同奇偶，但同奇偶的元素已被「物理分離」到同一段；跨段就違反兩端同奇偶條件。</td>
+        </tr>
+        <tr>
+          <td><strong>能不能反過來偶數在前？</strong></td>
+          <td>可以。奇偶順序不影響正確性，整段交換對應一個鏡射版本仍合法。題目只要求<em>一個</em>合法答案。</td>
+        </tr>
+        <tr>
+          <td><strong>時間 / 空間複雜度？</strong></td>
+          <td>T(n) = 2·T(n/2) + Θ(n) = <code>O(n log n)</code> 時間（Master Theorem case 2）；遞迴深度 <code>O(log n)</code>、總空間 <code>O(n)</code>（最後一份排列）。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       Summary bar (orange band)
+       ============================================================ -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">奇數放奇數，偶數放偶數，每段內遞迴 — 自動避開所有 3-AP。</div>
+    <div class="sc-summary-bar__detail">f(n) = [ 2·f(⌈n/2⌉) − 1 ]  ∥  [ 2·f(⌊n/2⌋) ] &nbsp;·&nbsp; O(N log N)</div>
+  </div>
+
+</body>
+</html>
