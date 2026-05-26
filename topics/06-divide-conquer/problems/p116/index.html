@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P116 · 01 概念 // 太陽軍團 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P116
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/116/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">太陽軍團</h1>
+    <p class="sc-mast__subtitle">// Row-Max with Monotone Columns · 分治 on rows</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 Divide &amp; Conquer · Interactive · GetVal ≤ 10⁸
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O((N+M) log N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; CONCEPT
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給 <code>N × M</code> 防禦力矩陣（1 &lt; N ≤ M ≤ 10⁶）。對每一列找<strong>重要守護點</strong> — 該列<em>唯一</em>的最大值欄位。
+      題目保證：每列的最大值欄位<strong>嚴格大於</strong>上一列的最大值欄位（i.e. row-peak 欄位嚴格遞增）。</p>
+      <p style="margin-top:8px;">互動式：實作 <code>solve(N, M)</code>，judge 提供
+      <code>int GetVal(row, col)</code> 與 <code>void Report(col)</code>。
+      <strong>GetVal 呼叫上限 10⁸</strong>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      暴力 <code>N · M = 10¹²</code> 完全爆 — 必須利用「列峰嚴格遞增」這條結構性條件，把搜尋範圍逐列縮小。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用分治
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用分治<span class="sc-section__title-en">// Why D&amp;C</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">暴力掃整列</span>
+            <span class="sc-ko-card__o">O(N·M)</span>
+          </div>
+          <div class="sc-ko-card__body">N = M = 10⁶ ⇒ <strong>10¹²</strong> 次 GetVal — 遠超 10⁸ 上限。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">每列二分搜尋</span>
+            <span class="sc-ko-card__o">O(N log M)</span>
+          </div>
+          <div class="sc-ko-card__body">列中<em>沒有單調性</em>，數值是任意排列。binary search 找不到峰 — 結果錯。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">分治 on rows + 欄位範圍縮減</span>
+          <span class="sc-ko-card__o">O((N+M) log N)</span>
+        </div>
+        <div class="sc-ko-card__body">取中間列直接掃 → 利用單調性把上下半的欄位範圍各自縮小 → 遞迴。N = M = 10⁶ 約 <strong>4 × 10⁷</strong> 次 GetVal。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · FITS BUDGET</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 分治 on rows<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>dnc(rowLo, rowHi, colLo, colHi)</code> 做 4 件事：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>挑中間列</strong> · <code>mid = (rowLo + rowHi) / 2</code></li>
+      <li><strong>直接掃</strong> · 在欄位範圍 <code>[colLo, colHi]</code> 內 brute force 找 row <code>mid</code> 的峰欄 <code>m</code>，把 <code>answer[mid] = m</code></li>
+      <li><strong>遞迴上半</strong> · <code>dnc(rowLo, mid−1, colLo, m)</code>（上方列峰必在 <code>m</code> 左側或等於 <code>m</code>）</li>
+      <li><strong>遞迴下半</strong> · <code>dnc(mid+1, rowHi, m, colHi)</code>（下方列峰必在 <code>m</code> 右側或等於 <code>m</code>）</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      遞迴順序不是 row 1..N，所以 Report 要等遞迴結束、依 <code>answer[]</code> 順序輸出。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — Base case 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">Base case 動畫 · N=2 直觀感受範圍縮減<span class="sc-section__title-en">// Animation A</span></h2>
+    </div>
+
+    <p>先看最小的 N = 2 案例：每列各掃一次，但<em>第 2 列的搜尋範圍被第 1 列的答案剪掉</em>。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ A · BASE CASE · COLUMN-RANGE NARROWING</div>
+      <canvas id="viz-base" class="sc-viz__canvas" height="200"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vb-reset">Reset</button>
+        <button class="sc-btn" id="vb-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vb-play">Play</button>
+        <button class="sc-btn" id="vb-next">Next</button>
+        <span class="sc-viz__step" id="vb-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vb-label">
+        <strong>INITIAL</strong> · 2 × 4 矩陣，準備按 row 找峰
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      第 1 列掃完 4 個欄位（4 次 GetVal），第 2 列只掃 3 個（3 次） — 比直接 2×4 = 8 次少了 1 次。
+      列數越多、欄位越多，這種縮減效果越驚人。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — General case 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">General case 動畫 · 4 × 5 完整 D&amp;C<span class="sc-section__title-en">// Animation B</span></h2>
+    </div>
+
+    <p>樣本 4 × 5（題目範例）：</p>
+
+    <table class="sc-table" style="max-width:480px;">
+      <thead><tr><th>row \ col</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+      <tbody>
+        <tr><td>r1</td><td class="mono"><strong>74</strong></td><td class="mono">59</td><td class="mono">36</td><td class="mono">28</td><td class="mono">51</td></tr>
+        <tr><td>r2</td><td class="mono">36</td><td class="mono"><strong>63</strong></td><td class="mono">15</td><td class="mono">25</td><td class="mono">17</td></tr>
+        <tr><td>r3</td><td class="mono">71</td><td class="mono">64</td><td class="mono"><strong>95</strong></td><td class="mono">43</td><td class="mono">56</td></tr>
+        <tr><td>r4</td><td class="mono">72</td><td class="mono">62</td><td class="mono">30</td><td class="mono">24</td><td class="mono"><strong>74</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;">列峰欄位：<strong>1 → 2 → 3 → 5</strong>（嚴格遞增）。動畫從 <code>dnc(1..4, 1..5)</code> 出發，按遞迴順序走 5 步：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ B · GENERAL CASE · DIVIDE &amp; CONQUER</div>
+      <canvas id="viz-general" class="sc-viz__canvas" height="340"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vg-reset">Reset</button>
+        <button class="sc-btn" id="vg-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vg-play">Play</button>
+        <button class="sc-btn" id="vg-next">Next</button>
+        <span class="sc-viz__step" id="vg-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vg-label">
+        <strong>INITIAL</strong> · 4 × 5 矩陣，準備執行 dnc(1..4, 1..5)
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="background:#fbe2d7;padding:1px 6px;">當前列的搜尋範圍</span> &nbsp;·&nbsp;
+      <span style="background:#ebe6da;color:#9a9590;padding:1px 6px;">被範圍排除</span> &nbsp;·&nbsp;
+      <span style="display:inline-block;width:12px;height:12px;border:2px solid #d96e4e;border-radius:50%;vertical-align:middle;"></span> 找到的峰
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 正確性說明
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">為什麼這樣切是對的<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// CORRECTNESS · 列峰嚴格遞增 ⇒ 範圍縮減</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>令 row <code>mid</code> 的峰欄為 <code>m</code>。</li>
+          <li>對任意 <code>i &lt; mid</code>，題目保證 row <code>i</code> 的峰欄 <code>p_i</code> 嚴格小於 row <code>mid</code> 的峰欄 ⇒ <code>p_i ≤ m − 1 &lt; m</code>。
+              所以上半的搜尋範圍可<strong>安全縮為 <code>[colLo, m]</code></strong>（包含端點 <code>m</code> 是為了程式碼一致；實際 <code>p_i ≤ m−1</code>）。</li>
+          <li>對任意 <code>i &gt; mid</code>，題目保證 <code>p_i &gt; m</code> ⇒ 下半搜尋範圍縮為 <strong><code>[m, colHi]</code></strong>。</li>
+          <li>每次遞迴<strong>列數對半切</strong>（mid 切上下兩半），所以深度為 <code>O(log N)</code>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:10px;font-size:14px;">
+      換句話說：<em>「列峰嚴格遞增」就像一條從左上往右下走的階梯</em> — 知道中間那階在哪，就把搜尋範圍切成「不可能在右邊的上半」與「不可能在左邊的下半」。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每一層遞迴的<strong>所有子問題加起來</strong>掃過的欄位總長 ≤ <code>M + (該層子問題數)</code> — 因為相鄰子問題的欄位範圍只在端點 <code>m</code> 重疊 1 格。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N, M) ≤ 2 · T(N/2, ?) + O(M_layer)</div>
+      <div class="sc-formula__hint">
+        每層欄位總長 = O(M)，共 O(log N) 層 ⇒ <strong>Total = O((N + M) log N)</strong>
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O((N + M) log N)</strong></td><td>遞迴每層的欄位總長 ≤ M + 子問題數</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td><code>answer[1..N]</code> 暫存；遞迴堆疊 O(log N)</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
+        <tr><td>GetVal Calls</td><td class="mono"><strong>≤ (N + M) log₂ N</strong></td><td>N = M = 10⁶ ⇒ ≈ 2×10⁶ × 20 = <strong>4 × 10⁷</strong>，遠在 10⁸ 上限內</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>GetVal 預算才是這題的真正限制</strong> — 不是時間複雜度。10⁸ 的限制意味著就算單列 brute O(M) 也只能用 100 次（N ≤ 100 的子任務），全題必須靠遞迴縮減欄位範圍。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 08 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">08</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「列峰嚴格遞增」這條結構性條件，把每層遞迴的欄位總長壓在 O(M)。</strong><br/>
+      所以 D&amp;C on rows 不是「砍列數」，<em>而是用列峰位置把欄位範圍切開</em> — 砍的是欄位，省的是 GetVal。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">D&amp;C on rows：mid 列直接掃，列峰嚴格遞增 ⇒ 上半搜尋範圍 [colLo, m]、下半 [m, colHi]。</div>
+    <div class="sc-summary-bar__detail">O((N+M) log N) · N = M = 10⁶ 約 4 × 10⁷ 次 GetVal，安全壓在 10⁸ 上限內。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p116-rowmax.js"></script>
+</body>
+</html>

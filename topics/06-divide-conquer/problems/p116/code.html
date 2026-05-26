@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P116 · 02 Code // 太陽軍團 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P116
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/116/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">太陽軍團</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · lib0116.h · Interactive
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O((N+M) log N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-bottom:10px;">
+      互動式題目：實作 <code>solve(N, M)</code>，由 judge 提供 <code>GetVal(row, col)</code> 與 <code>Report(col)</code>。不需 <code>main()</code>。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p116.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> N_MAX <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
+<span class="t">int</span> answer<span class="p">[</span>N_MAX<span class="p">];</span>   <span class="c">// answer[row] = 該列峰的欄位 (1-indexed)</span>
+
+<span class="c">// 在 row 中、欄位範圍 [colLo, colHi] 內 brute 找峰，寫入 answer[row]。</span>
+<span class="t">void</span> <span class="f">scan</span><span class="p">(</span><span class="t">int</span> row<span class="p">,</span> <span class="t">int</span> colLo<span class="p">,</span> <span class="t">int</span> colHi<span class="p">)</span> <span class="p">{</span>
+    <span class="t">int</span> bestCol <span class="p">=</span> colLo<span class="p">;</span>
+    <span class="t">long long</span> bestVal <span class="p">=</span> <span class="f">GetVal</span><span class="p">(</span>row<span class="p">,</span> colLo<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> c <span class="p">=</span> colLo <span class="p">+</span> <span class="n">1</span><span class="p">;</span> c <span class="p">&lt;=</span> colHi<span class="p">;</span> <span class="p">++</span>c<span class="p">)</span> <span class="p">{</span>
+        <span class="t">long long</span> v <span class="p">=</span> <span class="f">GetVal</span><span class="p">(</span>row<span class="p">,</span> c<span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span>v <span class="p">&gt;</span> bestVal<span class="p">)</span> <span class="p">{</span> bestVal <span class="p">=</span> v<span class="p">;</span> bestCol <span class="p">=</span> c<span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+    answer<span class="p">[</span>row<span class="p">]</span> <span class="p">=</span> bestCol<span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">// 在列範圍 [rowLo, rowHi]、欄位範圍 [colLo, colHi] 內遞迴找每列峰。</span>
+<span class="t">void</span> <span class="f">dnc</span><span class="p">(</span><span class="t">int</span> rowLo<span class="p">,</span> <span class="t">int</span> rowHi<span class="p">,</span> <span class="t">int</span> colLo<span class="p">,</span> <span class="t">int</span> colHi<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>rowLo <span class="p">&gt;</span> rowHi<span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>rowLo <span class="p">+</span> rowHi<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+
+    <span class="f">scan</span><span class="p">(</span>mid<span class="p">,</span> colLo<span class="p">,</span> colHi<span class="p">);</span>             <span class="c">// 找 row mid 的峰</span>
+    <span class="t">int</span> m <span class="p">=</span> answer<span class="p">[</span>mid<span class="p">];</span>
+
+    <span class="f">dnc</span><span class="p">(</span>rowLo<span class="p">,</span> mid <span class="p">-</span> <span class="n">1</span><span class="p">,</span> colLo<span class="p">,</span> m<span class="p">);</span>      <span class="c">// 上半：列峰必 ≤ m</span>
+    <span class="f">dnc</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> rowHi<span class="p">,</span> m<span class="p">,</span> colHi<span class="p">);</span>      <span class="c">// 下半：列峰必 ≥ m</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> N<span class="p">,</span> <span class="t">int</span> M<span class="p">)</span> <span class="p">{</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="f">dnc</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> N<span class="p">,</span> <span class="n">1</span><span class="p">,</span> M<span class="p">);</span>
+
+    <span class="c">// 遞迴順序不是 row 1..N — 必須依 row 序輸出</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> <span class="f">Report</span><span class="p">(</span>answer<span class="p">[</span>i<span class="p">]);</span>
+<span class="p">}</span></pre>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>把 <code>dnc()</code> 一層的工作量拆開：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>單呼叫成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>取 mid</td><td>整數運算</td><td class="mono">O(1)</td></tr>
+        <tr><td>scan(mid, colLo, colHi)</td><td>brute force 掃過 <code>colHi − colLo + 1</code> 個欄位，每格 1 次 GetVal</td><td class="mono">O(colHi − colLo + 1)</td></tr>
+        <tr><td>遞迴上下</td><td>2 個子問題（列數對半切）</td><td class="mono">2 · T(N/2)</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:14px;"><strong>每層欄位總長</strong>：同一層所有子問題的 <code>[colLo, colHi]</code> 加起來 — 相鄰子問題只在端點 <code>m</code> 重疊 1 格，所以總長 ≤ <code>M + 子問題數</code> ≤ <strong>O(M)</strong>。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(M_layer) &nbsp;且&nbsp; ∑ M_layer ≤ O(M) per level</div>
+      <div class="sc-formula__hint">
+        共 <code>O(log N)</code> 層 ⇒ <strong>Total = O((N + M) log N)</strong>
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O((N + M) log N)</strong></td><td>每層欄位總長 O(M) + 子問題遞迴呼叫 O(N)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td><code>answer[1..N]</code> 全域陣列</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
+        <tr><td><strong>GetVal Calls</strong></td><td class="mono"><strong>≤ (N + M) log₂ N</strong></td><td>N = M = 10⁶ ⇒ 2 × 10⁶ × 20 ≈ <strong>4 × 10⁷</strong> &lt; 10⁸ ✓</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>子任務對照</strong>：
+      <code>N ≤ 10</code> ⇒ 100 次以內；
+      <code>N ≤ 100</code> ⇒ 10⁴ 次以內；
+      <code>N ≤ M ≤ 10⁶</code> 滿分 ⇒ ~4 × 10⁷ 次。三檔都遠在預算內。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>GetVal 呼叫上限 10⁸</strong></td>
+          <td>暴力 <code>O(N·M) = 10¹²</code> 直接爆。分治壓到 <code>(N+M) log N ≈ 4 × 10⁷</code>。<em>不是時間限制，是呼叫次數限制</em>。</td>
+        </tr>
+        <tr>
+          <td><strong>不要在遞迴中 Report</strong></td>
+          <td>遞迴順序是 row 2 → row 1 → row 3 → row 4（mid-first），不是 row 1..N。必須先 <code>answer[i]</code> 全部存好，最後再依 i 順序 Report。</td>
+        </tr>
+        <tr>
+          <td><strong>欄位範圍端點包含 <code>m</code></strong></td>
+          <td>傳給上半的是 <code>[colLo, m]</code>、下半是 <code>[m, colHi]</code>，<em>端點 <code>m</code> 兩邊都包含</em>。題目「嚴格遞增」其實保證 <code>p_i ≤ m − 1</code>，但程式裡寫 <code>m</code> 更乾淨，不會錯（最差情況該欄位被多看 1 次）。</td>
+        </tr>
+        <tr>
+          <td><strong>1-indexed</strong></td>
+          <td><code>GetVal(row, col)</code> 與 <code>Report(col)</code> 都是 1-indexed。<code>answer[]</code> 開到 <code>[1..N]</code>，<code>dnc(1, N, 1, M)</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>用 <code>long long</code> 比較</strong></td>
+          <td>題目數值範圍未明示，保險用 <code>long long bestVal</code>。即使 spec 是 int，也不會吃虧。</td>
+        </tr>
+        <tr>
+          <td><strong>遞迴 base case 不必特判 n=1</strong></td>
+          <td><code>rowLo == rowHi</code> 時 <code>mid = rowLo</code>，scan 一次後上下半皆空 — 自然收斂，不需要寫 <code>if (n == 1)</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>不要包含 <code>lib0116.h</code></strong></td>
+          <td>那是 judge 端的標頭。提交時不寫 include，函式直接呼叫 — judge 會幫忙連結。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① SCAN MID ROW</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// SCAN MID ROW</span>
+mid = (rowLo + rowHi) / 2
+scan(mid, colLo, colHi):
+    bestCol = colLo
+    bestVal = GetVal(mid, colLo)
+    for c in [colLo + 1, colHi]:
+        v = GetVal(mid, c)
+        if v &gt; bestVal:
+            bestVal = v
+            bestCol = c
+    answer[mid] = bestCol
+
+→ 共 (colHi − colLo + 1) 次 GetVal。</pre>
+
+    <p><strong>② RECURSE UPPER (上半列：列峰必 ≤ m)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// RECURSE UPPER</span>
+m = answer[mid]
+dnc(rowLo, mid - 1, colLo, m)
+
+→ 上半列數 = (mid - 1) - rowLo + 1 ≤ ⌈N/2⌉
+→ 上半欄位範圍縮為 [colLo, m]
+→ rowLo &gt; rowHi 即 stop（mid 已是最上時 rowLo = mid, rowHi = mid - 1）</pre>
+
+    <p><strong>③ RECURSE LOWER (下半列：列峰必 ≥ m)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// RECURSE LOWER</span>
+dnc(mid + 1, rowHi, m, colHi)
+
+→ 下半列數 = rowHi - (mid + 1) + 1 ≤ ⌊N/2⌋
+→ 下半欄位範圍縮為 [m, colHi]
+→ 同樣 rowLo &gt; rowHi 即 stop</pre>
+
+    <p><strong>④ REPORT IN ORDER</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// REPORT IN ORDER</span>
+dnc 完成後，answer[1..N] 已全部填好。
+for i in [1, N]:
+    Report(answer[i])
+
+→ 遞迴順序是 mid 先（不是 row 1..N）；
+→ 必須等全部 scan 完，再依 i 順序輸出。</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">dnc(rowLo, rowHi, colLo, colHi) — scan mid 列 → 上半 [colLo, m]、下半 [m, colHi] 各自遞迴，最後依序 Report。</div>
+    <div class="sc-summary-bar__detail">T(N, M) = O((N+M) log N) · GetVal ≈ 4 × 10⁷ &lt; 10⁸ 上限</div>
+  </div>
+
+</body>
+</html>
