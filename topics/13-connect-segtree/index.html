@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>W11 // MST · SHORTEST // ALGO WORKSHOP</title>
+  <title>W13 // CONNECT · SEGTREE // ALGO WORKSHOP</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,25 +24,25 @@
   <div class="top-strip">
     <div class="marquee">
       <span>※ ALGO WORKSHOP ※</span>
-      <span>W11 · MST · SHORTEST</span>
-      <span>拓樸排序、最小生成樹、最短路徑</span>
+      <span>W13 · CONNECT · SEGTREE</span>
+      <span>連通性、線段樹</span>
       <span>⚙ NOTES IN PROGRESS</span>
       <span>※ ALGO WORKSHOP ※</span>
-      <span>W11 · MST · SHORTEST</span>
-      <span>拓樸排序、最小生成樹、最短路徑</span>
+      <span>W13 · CONNECT · SEGTREE</span>
+      <span>連通性、線段樹</span>
       <span>⚙ NOTES IN PROGRESS</span>
     </div>
   </div>
 
   <header class="workshop-header">
     <div class="meta-row">
-      <span><span class="dot"></span>CHAPTER 11</span>
-      <span>WEEK 11</span>
-      <span>07 PROBLEMS</span>
+      <span><span class="dot"></span>CHAPTER 13</span>
+      <span>WEEK 13</span>
+      <span>11 PROBLEMS</span>
     </div>
-    <h1 class="workshop-title">MST · Shortest.</h1>
+    <h1 class="workshop-title">Connect · Segtree.</h1>
     <p class="workshop-subtitle">
-      拓樸排序、最小生成樹、最短路徑
+      連通性、線段樹
     </p>
   </header>
 
@@ -59,13 +59,12 @@
           <li><a href="../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
           <li><a href="../../topics/06-divide-conquer/index.html">W06 · Divide & Conquer <span class="tag">07</span></a></li>
           <li><a href="../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../topics/08-handwritten/index.html">W08 · Handwritten Week <span class="tag">00</span></a></li>
-          <li><a href="../../topics/09-dp2/index.html">W09 · DP 2 <span class="tag">04</span></a></li>
-          <li><a href="../../topics/10-dp3/index.html">W10 · DP 3 <span class="tag">07</span></a></li>
-          <li><a href="../../topics/11-mst-shortest/index.html" class="is-active">W11 · MST · Shortest <span class="tag">07</span></a></li>
-          <li><a href="../../topics/12-string-trie-kmp/index.html">W12 · Trie · KMP <span class="tag">04</span></a></li>
-          <li><a href="../../topics/13-geometry-math-game/index.html">W13 · Geom · Math · Game <span class="tag">10</span></a></li>
-          <li><a href="../../topics/14-connect-segtree/index.html">W14 · Connect · Segtree <span class="tag">11</span></a></li>
+          <li><a href="../../topics/08-dp2/index.html">W08 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../topics/09-dp3/index.html">W09 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../topics/10-mst-shortest/index.html">W10 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../topics/11-string-trie-kmp/index.html">W11 · Trie · KMP <span class="tag">04</span></a></li>
+          <li><a href="../../topics/12-geometry-math-game/index.html">W12 · Geom · Math · Game <span class="tag">10</span></a></li>
+          <li><a href="../../topics/13-connect-segtree/index.html" class="is-active">W13 · Connect · Segtree <span class="tag">11</span></a></li>
         </ul>
       </nav>
 
@@ -83,7 +82,7 @@
       <div class="crumb">
         <a href="../../index.html">Home</a>
         <span class="crumb__sep">/</span>
-        <span>W11 · MST · Shortest</span>
+        <span>W13 · Connect · Segtree</span>
       </div>
 
       <!-- ============================================================
@@ -93,19 +92,19 @@
         <span class="stamp">▼ CHAPTER OUTLINE</span>
         <h2>本章節大綱</h2>
         <div class="article-meta">
-          <span>W11</span>
-          <span>07 PROBLEMS</span>
+          <span>W13</span>
+          <span>11 PROBLEMS</span>
         </div>
 
         <ul class="notes-list">
-          <li><a href="#sec-concept">11.1 · 核心概念</a></li>
-          <li><a href="#sec-problems">11.2 · 題目列表</a></li>
-          <li><a href="#sec-notes">11.3 · 筆記與補充</a></li>
+          <li><a href="#sec-concept">13.1 · 核心概念</a></li>
+          <li><a href="#sec-problems">13.2 · 題目列表</a></li>
+          <li><a href="#sec-notes">13.3 · 筆記與補充</a></li>
         </ul>
       </article>
 
       <article id="sec-concept">
-        <span class="stamp">▼ 11.1</span>
+        <span class="stamp">▼ 13.1</span>
         <h2>核心概念</h2>
         <div class="article-meta">
           <span>OVERVIEW</span>
@@ -114,7 +113,7 @@
       </article>
 
       <article id="sec-problems">
-        <span class="stamp">▼ 11.2</span>
+        <span class="stamp">▼ 13.2</span>
         <h2>題目列表</h2>
         <div class="article-meta">
           <span>PROBLEMS</span>
@@ -125,7 +124,7 @@
       </article>
 
       <article id="sec-notes">
-        <span class="stamp">▼ 11.3</span>
+        <span class="stamp">▼ 13.3</span>
         <h2>筆記與補充</h2>
         <div class="article-meta">
           <span>NOTES</span>
@@ -138,9 +137,9 @@
   </div>
 
   <footer class="workshop-footer">
-    <div>© 2026 // W11 · MST · SHORTEST</div>
+    <div>© 2026 // W13 · CONNECT · SEGTREE</div>
     <div><a href="../../index.html">← BACK TO INDEX</a></div>
-    <div>SERIAL_NO. AW-W11-2026</div>
+    <div>SERIAL_NO. AW-W13-2026</div>
   </footer>
 
 </body>

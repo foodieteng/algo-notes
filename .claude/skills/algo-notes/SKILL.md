@@ -25,7 +25,7 @@ topics/<NN>-<slug>/
 ## Single source of truth
 
 `scripts/generate_chapters.py` holds:
-- `CHAPTERS` — 13 weeks (W08 is intentionally skipped — that was the手寫-only week)
+- `CHAPTERS` — 13 contiguous weeks W01–W13. The original 算法班 had a 手寫-only W08 between DP 1 and DP 2; that week is collapsed away so the displayed numbering shifts: original W09 (DP 2) → W08, W10 (DP 3) → W09, W11 → W10, W12 → W11, W13 → W12, W14 → W13. Folder slugs were renamed to match.
 - `PROBLEMS` — dict of `week → list of (slug, title-zh, category, status)`
 - `CATEGORY_NAMES` / `CATEGORY_ORDER` — 上機作業 (main) / Bonus / 自由練習 (practice) / 手寫作業 (hand)
 

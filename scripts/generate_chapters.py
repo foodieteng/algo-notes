@@ -39,13 +39,12 @@ CHAPTERS = [
     ('05', '05-greedy',             'Greedy',               '貪心策略與正確性論證',                            5),
     ('06', '06-divide-conquer',     'Divide & Conquer',     '分治、倍增、主定理',                              7),
     ('07', '07-dp1',                'DP 1',                 'DP 入門、狀態設計、最佳化',                       6),
-    ('08', '08-handwritten',        'Handwritten Week',     '手寫作業專週 — 無上機題',                          0),
-    ('09', '09-dp2',                'DP 2',                 '區間 DP、樹 DP',                                  4),
-    ('10', '10-dp3',                'DP 3',                 '狀態壓縮、位元 DP、進階技巧',                     7),
-    ('11', '11-mst-shortest',       'MST · Shortest',       '拓樸排序、最小生成樹、最短路徑',                  7),
-    ('12', '12-string-trie-kmp',    'Trie · KMP',           '字串匹配、Trie、KMP',                            4),
-    ('13', '13-geometry-math-game', 'Geom · Math · Game',   '計算幾何、數論、賽局理論',                       10),
-    ('14', '14-connect-segtree',    'Connect · Segtree',    '連通性、線段樹',                                 11),
+    ('08', '08-dp2',                'DP 2',                 '區間 DP、樹 DP',                                  4),
+    ('09', '09-dp3',                'DP 3',                 '狀態壓縮、位元 DP、進階技巧',                     7),
+    ('10', '10-mst-shortest',       'MST · Shortest',       '拓樸排序、最小生成樹、最短路徑',                  7),
+    ('11', '11-string-trie-kmp',    'Trie · KMP',           '字串匹配、Trie、KMP',                            4),
+    ('12', '12-geometry-math-game', 'Geom · Math · Game',   '計算幾何、數論、賽局理論',                       10),
+    ('13', '13-connect-segtree',    'Connect · Segtree',    '連通性、線段樹',                                 11),
 ]
 
 # ============================================================
