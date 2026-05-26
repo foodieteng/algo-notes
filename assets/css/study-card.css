@@ -324,55 +324,145 @@
 .sc-case strong { color: var(--sc-coral); }
 
 /* ============================================================
-   Dark callout (奇偶律)
+   Reasoning callout (e.g. PIGEONHOLE) — light, readable, breathing
    ============================================================ */
 .sc-dark-box {
-  background: var(--sc-navy);
-  color: var(--sc-navy-text);
-  padding: 18px 22px;
-  margin: 14px 0 6px;
-  text-align: center;
-  border: 1px solid var(--sc-navy);
+  background: #fffaf0;
+  color: var(--sc-ink);
+  padding: 22px 28px 24px;
+  margin: 22px 0;
+  text-align: left;
+  border: 1px solid var(--sc-cream-bd);
+  border-left: 4px solid var(--sc-coral);
+  position: relative;
 }
 .sc-dark-box__title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.25em;
-  color: var(--sc-coral-hi);
-  margin-bottom: 8px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  color: var(--sc-coral);
+  margin: 0 0 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.sc-dark-box__title::before {
+  content: '✦ ';
+  color: var(--sc-coral);
+  margin-right: 4px;
+  letter-spacing: 0;
 }
 .sc-dark-box__body {
-  font-size: 15px;
-  color: var(--sc-navy-text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14.5px;
+  line-height: 2;
+  color: var(--sc-ink);
+}
+/* If body is a list, render with numbered "✦ N." style */
+.sc-dark-box__body ol {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 0;
+}
+.sc-dark-box__body ol li {
+  counter-increment: step;
+  padding: 6px 0 6px 36px;
+  margin: 0;
+  position: relative;
+  line-height: 2;
+}
+.sc-dark-box__body ol li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid var(--sc-coral);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sc-coral);
+  background: #fff;
+}
+.sc-dark-box__body ol li + li {
+  border-top: 1px dashed var(--sc-cream-bd);
+  margin-top: 2px;
 }
 .sc-dark-box__body code {
-  background: rgba(255,255,255,0.08);
-  color: #ffd9a0;
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 2px 6px;
+  background: #fff;
+  color: #6a3c2e;
+  border: 1px solid var(--sc-cream-bd);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
 }
+.sc-dark-box__body strong { color: var(--sc-coral); }
 
 /* ============================================================
-   Formula box (recurrence)
+   Formula box (recurrence) — light theme, serif accents
    ============================================================ */
 .sc-formula {
-  background: var(--sc-navy);
-  color: var(--sc-navy-text);
-  padding: 20px 24px;
-  margin: 14px 0 12px;
+  background: #fffaf0;
+  color: var(--sc-ink);
+  padding: 28px 30px 22px;
+  margin: 22px 0;
   text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.04em;
+  border: 1px solid var(--sc-cream-bd);
+  border-top: 3px solid var(--sc-coral);
+  border-bottom: 3px solid var(--sc-coral);
+  position: relative;
+}
+.sc-formula::before {
+  content: '∑';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--sc-paper);
+  color: var(--sc-coral);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 22px;
+  font-weight: 700;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--sc-coral);
+  border-radius: 50%;
 }
 .sc-formula__main {
-  font-size: 18px;
-  margin-bottom: 8px;
-  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--sc-ink);
+  line-height: 1.7;
+  letter-spacing: 0.03em;
+  margin: 6px 0 14px;
+}
+.sc-formula__main strong {
+  background: linear-gradient(transparent 60%, #fff588 60%, #fff588 92%, transparent 92%);
+  color: var(--sc-ink);
+  padding: 0 4px;
 }
 .sc-formula__hint {
-  font-size: 12px;
-  color: var(--sc-muted);
-  letter-spacing: 0.08em;
+  font-family: 'Noto Serif TC', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--sc-ink-dim);
+  line-height: 1.75;
+  letter-spacing: 0;
+  margin: 0;
+}
+.sc-formula__hint strong {
+  font-style: normal;
+  color: var(--sc-coral);
 }
 
 /* ============================================================

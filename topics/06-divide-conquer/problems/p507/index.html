@@ -199,13 +199,15 @@
     考慮在 strip 任意「<code>d</code> 高度視窗」內最多能塞幾個點：</p>
 
     <div class="sc-dark-box">
-      <div class="sc-dark-box__title">PIGEONHOLE</div>
+      <div class="sc-dark-box__title">Pigeonhole · 鴿籠論證</div>
       <div class="sc-dark-box__body">
-        把 <code>2d × d</code> 區域切成 <code>4</code> 個 <code>(d/2) × (d/2)</code> 子格（左 2 個、右 2 個）。<br/>
-        每個子格內兩點對角距離為 <code>d / √2 ≈ 0.71 d &lt; d</code>。<br/>
-        但左半已遞迴出 <code>d_L ≥ d</code> ⇒ 左半任兩點距離 ≥ d ⇒ 左半 2 個子格各最多 1 點 ⇒ 左半最多 2 點。<br/>
-        右半同理最多 2 點 ⇒ 整個 <code>2d × d</code> 區域最多 <strong>4</strong> 點。<br/>
-        擴成 <code>2d × 2d</code> 視窗（兩矩形上下疊）⇒ 最多 8 點（含自己）。
+        <ol>
+          <li>把 <code>2d × d</code> 區域切成 <code>4</code> 個 <code>(d/2) × (d/2)</code> 子格（左 2 個、右 2 個）。</li>
+          <li>每個子格內兩點對角距離為 <code>d / √2 ≈ 0.71 d &lt; d</code>。</li>
+          <li>但左半已遞迴出 <code>d_L ≥ d</code> ⇒ 左半任兩點距離 ≥ d ⇒ 左半 2 個子格各<strong>最多 1 點</strong> ⇒ 左半最多 2 點。</li>
+          <li>右半同理最多 2 點 ⇒ 整個 <code>2d × d</code> 區域<strong>最多 4 點</strong>。</li>
+          <li>擴成 <code>2d × 2d</code> 視窗（兩矩形上下疊）⇒ <strong>最多 8 點</strong>（含自己）。</li>
+        </ol>
       </div>
     </div>
 
@@ -226,7 +228,10 @@
 
     <div class="sc-formula">
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N log N)</div>
-      <div class="sc-formula__hint">合併階段需要對 strip 排序 ⇒ O(N log N)。總複雜度 <strong>O(N log² N)</strong>。</div>
+      <div class="sc-formula__hint">
+        合併階段需要對 strip 排序 ⇒ O(N log N)<br/>
+        總複雜度 = <strong>O(N log² N)</strong>
+      </div>
     </div>
 
     <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
