@@ -127,12 +127,12 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     const headline = (step === -1)
       ? 'INITIAL · BUILD f(2) FROM TWO f(1)'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 10);
+    ctx.fillText(headline, w / 2, 14);
 
     // sub-line
     ctx.fillStyle = P501_COLOR.inkDim;
     ctx.font = P501_FONT.sub;
-    ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ]', w / 2, 28);
+    ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ]', w / 2, 38);
 
     // Compact layout — sources upper, destinations lower, single screen height
     // Push cells further apart and scale them up so the canvas isn't half empty.
@@ -528,12 +528,12 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     const headline = (step === -1)
       ? 'INITIAL · RECURSION TREE SKELETON'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 10);
+    ctx.fillText(headline, w / 2, 14);
 
     // Sub-line (formula)
     ctx.fillStyle = P501_COLOR.inkDim;
     ctx.font = P501_FONT.sub;
-    ctx.fillText('f(N) = [ 2·f(⌈N/2⌉) − 1 ]  ∥  [ 2·f(⌊N/2⌋) ]  ·  bottom-up', w / 2, 26);
+    ctx.fillText('f(N) = [ 2·f(⌈N/2⌉) − 1 ]  ∥  [ 2·f(⌊N/2⌋) ]  ·  bottom-up', w / 2, 38);
 
     const L = computeLayout(w, h);
     drawTreeEdges(L, step >= 0);

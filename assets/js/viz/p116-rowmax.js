@@ -235,11 +235,11 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
     const headline = (step === -1)
       ? 'INITIAL · 2 × 4 MATRIX · find row-max with monotone columns'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 10);
+    ctx.fillText(headline, w / 2, 14);
 
     ctx.fillStyle = P116_COLOR.inkDim;
     ctx.font = P116_FONT.sub;
-    ctx.fillText('row i 的峰欄位必須嚴格大於 row i−1 的峰欄位', w / 2, 28);
+    ctx.fillText('row i 的峰欄位必須嚴格大於 row i−1 的峰欄位', w / 2, 38);
 
     // Matrix — responsive: fill width up to a sensible max
     const cols = MAT[0].length;
@@ -250,7 +250,7 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
     const totalW = cellW * cols;
     const totalH = cellH * rows;
     const originX = (w - totalW) / 2;
-    const originY = 58;
+    const originY = 84;
 
     const cur = (step === -1) ? null : STEPS[step];
     p116DrawMatrix(ctx, MAT, originX, originY, cellW, cellH, cur || {});
@@ -455,11 +455,11 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
     const headline = (step === -1)
       ? 'INITIAL · 4 × 5 sample matrix · solve(N=4, M=5)'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 12);
+    ctx.fillText(headline, w / 2, 14);
 
     ctx.fillStyle = P116_COLOR.inkDim;
     ctx.font = P116_FONT.sub;
-    ctx.fillText('Divide & Conquer on rows · column-range narrows down each recurse', w / 2, 32);
+    ctx.fillText('Divide & Conquer on rows · column-range narrows down each recurse', w / 2, 38);
 
     // Side annotation: current dnc call (top-right)
     if (step >= 0) {
@@ -480,7 +480,7 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
     const totalW = cellW * cols;
     const totalH = cellH * rows;
     const originX = (w - totalW) / 2;
-    const originY = 64;
+    const originY = 84;
 
     const cur = (step === -1) ? null : STEPS[step];
     p116DrawMatrix(ctx, MAT, originX, originY, cellW, cellH, cur || {});

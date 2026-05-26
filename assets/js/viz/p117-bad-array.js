@@ -190,16 +190,16 @@ function p117DrawMatrix(ctx, N, filled, tints, originX, originY, cellSize, opts)
     const headline = step === -1
       ? 'INITIAL · build(2) from A(1) = [1]'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 10);
+    ctx.fillText(headline, w / 2, 14);
 
     // Sub-line
     ctx.fillStyle = P117_COLOR.inkDim;
     ctx.font = P117_FONT.sub;
-    ctx.fillText('K = 1 · shift = 1 · 2N − 1 = 3', w / 2, 28);
+    ctx.fillText('K = 1 · shift = 1 · 2N − 1 = 3', w / 2, 38);
 
     // Matrix layout — center, responsive.
     // Reserve left band for the value-tag legend, bottom band for chips.
-    const matAreaTop = 50;
+    const matAreaTop = 72;          // clears headline + sub with ≥12 px gap
     const matAreaBot = h - 56;     // leaves bottom 56px for chips
     const matAreaH = matAreaBot - matAreaTop;
     const sidePad = 16;
@@ -516,16 +516,16 @@ function p117DrawMatrix(ctx, N, filled, tints, originX, originY, cellSize, opts)
     const headline = step === -1
       ? 'INITIAL · build(4) from A(2) = [[1,3],[2,1]]'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 12);
+    ctx.fillText(headline, w / 2, 14);
 
     // Sub-line
     ctx.fillStyle = P117_COLOR.inkDim;
     ctx.font = P117_FONT.sub;
-    ctx.fillText('K = 2 · shift = 3 · 2N − 1 = 7', w / 2, 30);
+    ctx.fillText('K = 2 · shift = 3 · 2N − 1 = 7', w / 2, 38);
 
     // Matrix layout — center, responsive.
     // Reserve bottom 80px for chips (4 unions).
-    const matAreaTop = 52;
+    const matAreaTop = 72;
     const matAreaBot = h - 86;
     const matAreaH = matAreaBot - matAreaTop;
     const sidePad = 16;
