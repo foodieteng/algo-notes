@@ -135,12 +135,13 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     ctx.fillText('f(2) = [ 2·f(1) − 1 ]  ∥  [ 2·f(1) ]', w / 2, 28);
 
     // Compact layout — sources upper, destinations lower, single screen height
-    const sourceCellSize = 30;
-    const destCellSize = 36;
-    const sourceY = 65;          // source cells y=50..80
-    const destY = h - 38;         // dest cells y=130..166 (for h=200)
-    const leftX = w * 0.32;
-    const rightX = w * 0.68;
+    // Push cells further apart and scale them up so the canvas isn't half empty.
+    const sourceCellSize = Math.min(w * 0.10, 44);
+    const destCellSize = Math.min(w * 0.12, 54);
+    const sourceY = 65;
+    const destY = h - 40;
+    const leftX = w * 0.22;
+    const rightX = w * 0.78;
 
     // Source f(1) cells (value 1 inside makes "f(1)" caption redundant)
     p501DrawCell(ctx, leftX - sourceCellSize / 2, sourceY - sourceCellSize / 2,
@@ -346,14 +347,19 @@ function p501DrawSequence(ctx, cx, cy, cellSize, gap, values, fills) {
     ];
     const f8X = (f4Xs[0] + f4Xs[1]) / 2;
 
-    // Cell sizes per level — smaller at leaves, bigger at root
+    // Cell sizes per level — responsive: fill horizontal space up to a cap.
+    // Leaves: 8 across, each 1 cell. f(8) at root: 8 cells in one block — same width as 8 leaves
+    // would push the root past the canvas, so cap root cells smaller than the leaf spacing.
+    const leafSpacing = usableW / 8;
+    const leafCell = Math.min(leafSpacing * 0.55, 38);  // single cell, plenty of horizontal slack
+    const rootCell = Math.min(leafSpacing * 0.5, 30);   // 8 cells side-by-side, must stay narrower
     const cellSizes = {
-      leaf: 22,   // f(1) · 1 cell · width 22
-      f2:   20,   // f(2) · 2 cells
-      f4:   20,   // f(4) · 4 cells
-      f8:   22,   // f(8) · 8 cells
+      leaf: leafCell,
+      f2:   Math.min(leafCell * 1.1, 36),
+      f4:   Math.min(leafCell * 0.9, 32),
+      f8:   rootCell,
     };
-    const gaps = { leaf: 0, f2: 3, f4: 3, f8: 3 };
+    const gaps = { leaf: 0, f2: 4, f4: 3, f8: 3 };
 
     return { rowYs, leafXs, f2Xs, f4Xs, f8X, cellSizes, gaps };
   }

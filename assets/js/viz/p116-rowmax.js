@@ -241,11 +241,12 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
     ctx.font = P116_FONT.sub;
     ctx.fillText('row i 的峰欄位必須嚴格大於 row i−1 的峰欄位', w / 2, 28);
 
-    // Matrix
-    const cellW = 44;
-    const cellH = 36;
+    // Matrix — responsive: fill width up to a sensible max
     const cols = MAT[0].length;
     const rows = MAT.length;
+    const sidePad = 48;                       // leaves room for r1/r2 row labels
+    const cellW = Math.min((w - sidePad * 2) / cols, 110);
+    const cellH = Math.min((h - 100) / rows, 56);
     const totalW = cellW * cols;
     const totalH = cellH * rows;
     const originX = (w - totalW) / 2;
@@ -470,11 +471,12 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       ctx.fillText(`// CALL: ${s.callTag}`, w - 14, 12);
     }
 
-    // Matrix
-    const cellW = 50;
-    const cellH = 34;
+    // Matrix — responsive: fill width up to a sensible max
     const cols = MAT[0].length;
     const rows = MAT.length;
+    const sidePad = 48;
+    const cellW = Math.min((w - sidePad * 2) / cols, 110);
+    const cellH = Math.min((h - 130) / rows, 56);
     const totalW = cellW * cols;
     const totalH = cellH * rows;
     const originX = (w - totalW) / 2;
