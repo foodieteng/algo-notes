@@ -117,6 +117,27 @@ Pager: PREV → `code.html` / NEXT → `../../index.html` ("↑ 回 W## 章節")
 
 Every problem gets a `.sc-viz` block on PAGE 1, even ones without obvious geometry. If the algorithm is sequence construction (P501) or counting (P115), animate the recursive structure: split → recurse → combine. The JS lives at `assets/js/viz/<slug>-<algo>.js` and follows the step-state-machine pattern in `p114-lboard.js` / `p507-closest.js`.
 
+### Animation rules (these were learned the hard way — follow them)
+
+1. **Base case animation = the algorithm itself on its smallest non-trivial input.** *Never* show "暴力 O(N²) brute force on the full problem" as the "base case" animation. That conveys a *different algorithm*, which contradicts the lesson. P500's first attempt got this wrong (brute on N=5) and was rewritten to "D&C on N=3"; P507 is OK because n≤3 brute *is* the algorithm's own base case behavior. Rule of thumb: if Canvas A shows code the user wouldn't submit, you've drawn the wrong thing.
+
+2. **Fill the canvas — no big dead zones.** Cell sizes are responsive (`Math.min((w − padX*2) / cols, maxCap)`), arrays span most of the canvas width, supplementary panels (maxL/minL tables, running totals, contribution chips) live in the lower half *inside the canvas* rather than below it. If you see vertical whitespace > 80px between content rows, repack.
+
+3. **Don't cram either — center generously.** The previous brittle layouts had labels and cells colliding (the 「不要擋著彼此」 fix). Between any two text/graphics elements leave at least ~12px clear; use `textBaseline` + `textAlign` consistently. Mid markers (coral dashed lines), bracket annotations, and chips need their own band — don't stack them in the same Y range as the array cells.
+
+4. **Show *what changes per step* — not just an end state.** Each animation step should change *something visible* on the canvas (a cell tint, a chip appearing, a count updating, an edge becoming coral). If two consecutive steps would render identical pixels, merge them or add an indicator. The user should be able to click Next and immediately see *what just happened*.
+
+5. **Palette for animation canvases** (in addition to study-card palette):
+   - Paper bg `#faf5e6` (matches the section)
+   - Cell empty/normal `#ffffff` with ink border
+   - Left/upper side tint: pale blue `#e3edf5` + stroke `#8fb3d4` for headers
+   - Right/lower side tint: pale tan `#f6ead8` + stroke `#d4a868`
+   - Active / mid / "the answer" → coral `#d96e4e`
+   - "Good"/"accepted" → pale green `#d9e8c7` + stroke `#5fa866`
+   - "Bad"/"rejected" → pale pink `#f0d4d4`
+   - Inactive/excluded → light gray `#cfcfcf`
+   These are intentionally muted so the coral accents pop. **Don't introduce new tints** without a reason.
+
 ## Required `<head>` includes per page (study-card variant)
 
 ```html

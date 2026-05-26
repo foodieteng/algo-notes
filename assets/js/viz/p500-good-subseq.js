@@ -418,7 +418,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = rect.height || 340;
+    const h = rect.height || 300;
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
