@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P500 · 01 概念 // 好的連續子序列 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P500
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/500/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">好的連續子序列</h1>
+    <p class="sc-mast__subtitle">// Good Contiguous Subsequences · 分治 + max/min 重新框架</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ★</span>
+      核心 Divide &amp; Conquer · 4-Case Crossing
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N log N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給定一個 <code>{1, …, N}</code> 的排列 <code>a[1..N]</code>。對 <code>(L, R)</code> 配對來說，
+      若 <code>a[L], a[L+1], …, a[R]</code> 排序後是連續整數（<code>b[i+1] − b[i] = 1</code>），就稱它為 <strong>good</strong>。
+      問有幾組 <code>(L, R)</code> 滿足條件？</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      <strong>限制</strong>：<code>T</code> ≤ 5 × 10⁵ 組測資、每組 <code>N</code> ≤ 5 × 10⁵、
+      所有 <code>N</code> 加總 <code>S</code> ≤ 5 × 10⁵。子任務分數：S ≤ 5000 (20%)、S ≤ 10⁵ (60%)、無限制 (20%)。
+    </p>
+
+    <p style="font-size:14px;margin-top:10px;">
+      <strong>關鍵觀察</strong>（題目原本的提示）：因為值兩兩相異，
+      <code>a[L..R]</code> 是 good <strong>⟺</strong>
+      <code class="mono"><strong>max(a[L..R]) − min(a[L..R]) = R − L</strong></code>。
+      把「排序後連續」這個結構性問題壓成一個 <em>O(1) 可查的等式</em>，分治才有施力點。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用分治
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用分治<span class="sc-section__title-en">// Why Divide &amp; Conquer</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">暴力枚舉</span>
+            <span class="sc-ko-card__o">O(N²)</span>
+          </div>
+          <div class="sc-ko-card__body">枚舉所有 (L, R) 邊掃邊算 max/min。N = 5 × 10⁵ ⇒ ~2.5 × 10¹¹ 次運算</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">單調隊列每 R 重算</span>
+            <span class="sc-ko-card__o">~ O(N²)</span>
+          </div>
+          <div class="sc-ko-card__body">仍是固定每個 R 掃整個 L 範圍 — 沒解決根本</div>
+          <div class="sc-ko-card__verdict">△ REJECT · NO ASYMPTOTIC GAIN</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">分治 + 跨界 4-case 計數</span>
+          <span class="sc-ko-card__o">O(N log N)</span>
+        </div>
+        <div class="sc-ko-card__body">切半 → 左/右遞迴 → 跨界依「max/min 來自哪半」分 4 種 case 各自 O(N) 累計</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 重新框架 + 4-case<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <ol style="margin-top:6px;">
+      <li><strong>重新框架</strong> · sorted-consecutive ⟺ <code>max − min = R − L</code>（因為 permutation ⇒ 值兩兩不同）</li>
+      <li><strong>切半遞迴</strong> · <code>mid = (lo + hi) / 2</code>，遞迴算 <code>solve(lo, mid)</code> + <code>solve(mid+1, hi)</code></li>
+      <li><strong>跨界 4-case</strong> · 對 <code>L ≤ mid &lt; R</code>，依 max / min 各自來自左還是右半，分 4 種 case 各自 O(N) 計數</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>Base case</strong> · <code>lo == hi</code> 直接回傳 <strong>1</strong>（單一元素自動是 good）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — Base case 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">Base case 動畫 · O(N²) brute<span class="sc-section__title-en">// Animation A</span></h2>
+    </div>
+
+    <p>先看暴力 — 對 <code>[5, 1, 2, 4, 3]</code> 固定每個 <code>L</code> 掃所有 <code>R</code>，
+    用 <code>max − min == R − L</code> 直接判定。N ≤ 5000 (20%) 的子任務可直接通過。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ A · BASE CASE · BRUTE O(N²)</div>
+      <canvas id="viz-base" class="sc-viz__canvas" height="200"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vb-reset">Reset</button>
+        <button class="sc-btn" id="vb-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vb-play">Play</button>
+        <button class="sc-btn" id="vb-next">Next</button>
+        <span class="sc-viz__step" id="vb-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vb-label">
+        <strong>INITIAL</strong> · 序列 [5, 1, 2, 4, 3]，準備 brute O(N²)
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — General case 動畫 · D&C
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">General case 動畫 · D&amp;C on [5,1,2,4,3]<span class="sc-section__title-en">// Animation B</span></h2>
+    </div>
+
+    <p>用同一筆 <code>[5, 1, 2, 4, 3]</code> 看分治：切到 <code>mid = 3</code> →
+    左半 <code>[5,1,2]</code> 遞迴算出 4 個 good、右半 <code>[4,3]</code> 遞迴算出 3 個 good，
+    跨界（<code>L ≤ 3 &lt; R</code>）用 4-case 找到 3 個 good。<strong>合計 4 + 3 + 3 = 10</strong>。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ B · GENERAL CASE · D&amp;C SPLIT + CROSSING</div>
+      <canvas id="viz-general" class="sc-viz__canvas" height="340"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vg-reset">Reset</button>
+        <button class="sc-btn" id="vg-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vg-play">Play</button>
+        <button class="sc-btn" id="vg-next">Next</button>
+        <span class="sc-viz__step" id="vg-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vg-label">
+        <strong>INITIAL</strong> · 序列 [5, 1, 2, 4, 3]，準備分治
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — LEMMA · 重新框架的正確性
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">正確性 · 為什麼 <code>max − min = R − L</code> 等價於 good<span class="sc-section__title-en">// Lemma</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// LEMMA · 連續整數集等價判定（permutation 前提）</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>令 <code>S = {a[L], …, a[R]}</code>，<code>|S| = R − L + 1</code>。
+            因為 <code>a</code> 是排列，元素<strong>兩兩相異</strong> ⇒ <code>|S| = R − L + 1</code> 個不同值。</li>
+          <li>任何 <code>R − L + 1</code> 個不同整數，其
+            <code>max − min ≥ (R − L + 1) − 1 = R − L</code>（pigeonhole 風格的下界）。</li>
+          <li>等號成立 <strong>⟺</strong> <code>S</code> 恰好填滿區間 <code>[min, max]</code> 的所有整數
+            ⟺ 排序後 <code>b[i+1] − b[i] = 1</code> ⟺ <strong>good</strong>。</li>
+          <li>結論：<code>max(a[L..R]) − min(a[L..R]) = R − L</code> ⟺ <code>a[L..R]</code> 是 good。
+            這把「排序後是否連續」化成 <em>O(1) 可查的等式</em>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      ⇒ 分治拆完後，跨界子問題的「good 判定」變成「<code>maxL/minL/maxR/minR</code> 在四種組合下的等式」，
+      每個 case 可用 <strong>two-pointer + count[]</strong> 在 O(N) 內掃完。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每層遞迴 N 個位置，4 個 case 各掃 O(N)，<code>maxL/minL/maxR/minR</code> 預計算也是 O(N)：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N) &nbsp;⇒&nbsp; <strong>Θ(N log N)</strong></div>
+      <div class="sc-formula__hint">
+        Master Theorem case 2：<code>a = 2, b = 2, f(N) = O(N) = O(N<sup>log<sub>b</sub> a</sup>)</code>
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time (單組)</td><td class="mono"><strong>O(N log N)</strong></td><td>N = 5 × 10⁵ ⇒ 約 10⁷ 次運算</td></tr>
+        <tr><td>Time (跨 T 組)</td><td class="mono"><strong>O(S log S)</strong></td><td>S ≤ 5 × 10⁵ ⇒ 約 10⁷ — 遠在時限內</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>maxL/minL/maxR/minR/count[] 五支陣列</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 5 × 10⁵ ⇒ 約 20 層</td></tr>
+        <tr><td>Constant factor</td><td>中</td><td>4 個 case 各掃一次 + count[] 加減維護</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 08 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">08</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>permutation ⇒ distinct ⇒ <code>max − min ≥ size − 1</code>，等號成立才是 good。</strong><br/>
+      把「sorted continuous」轉成 O(1) 可查的算式 <code>max − min == R − L</code>，<br/>
+      跨界部分依 max/min 來自哪半分 4 case，<br/>
+      <em>每個 case 用 two-pointer + count[] 掃 O(N)，整體 O(N log N) 收工。</em>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">good ⟺ max − min == R − L（permutation 才成立）⇒ 分治 + 跨界 4-case 計數 ⇒ O(N log N)。</div>
+    <div class="sc-summary-bar__detail">T(N) = 2·T(N/2) + O(N) = O(N log N) · 答案最大 ~1.25×10¹¹ ⇒ <strong>必用 long long</strong></div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p500-good-subseq.js"></script>
+</body>
+</html>

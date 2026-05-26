@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P500 · 03 Review // 好的連續子序列 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W06 · Divide &amp; Conquer</a>
+      &nbsp;/&nbsp;
+      P500
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/20/problems/500/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">好的連續子序列</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ★</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>重新框架</td>
+            <td>permutation ⇒ 兩兩相異 ⇒ good ⟺ <code>max − min = R − L</code>，把連續性壓成 O(1) 等式。</td></tr>
+        <tr><td>分治結構</td>
+            <td>切半 → 遞迴左右半 → 跨界依 max/min 位置分 4 case 各自 O(N) 計數。</td></tr>
+        <tr><td>4 case 分類</td>
+            <td>(max, min) ∈ {LL, RR, LR, RL}：前兩種「位置已決定 ⇒ 反推 R 或 L」；後兩種「等式 hashing + two-pointer」。</td></tr>
+        <tr><td>嚴格不等式</td>
+            <td>排列保證 maxL[L] ≠ maxR[R]、minL[L] ≠ minR[R]，所以 case 之間嚴格互斥不重複。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>T(N) = 2·T(N/2) + O(N) = Θ(N log N)</code>；跨 T 組為 O(S log S)。</td></tr>
+        <tr><td>型別</td>
+            <td>答案上限 ≈ <code>N(N+1)/2 = 1.25 × 10¹¹</code>，<strong>必用 long long</strong>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">重新框架</span>
+      <h4>為何 <em>distinct integers</em> 的集合 <code>S</code> 可以用 <code>max − min == |S| − 1</code> 判斷是否「排序後連續」？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">分治結構</span>
+      <h4>為什麼跨界部分要再分 4 case？單看 <code>max − min == R − L</code> 不能一次算完嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">等式推導</span>
+      <h4>Case 3（max 在左、min 在右）為何用 <code>L + maxL[L] == R + minR[R]</code> 當 cnt 索引？從 goodness 條件推導一遍。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">monotone</span>
+      <h4>為什麼 maxL[L] 從 mid 往左掃時是 monotone non-decreasing？對 minL[L] 也成立嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">推廣</span>
+      <h4>如果輸入<em>不是 permutation</em>（值可能重複），這個 D&amp;C 還能正確運作嗎？需要怎樣修改？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · <code>[5, 1, 2, 4, 3]</code><span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>把 N = 5、序列 <code>[5, 1, 2, 4, 3]</code> 套進 <code>solve(1, 5)</code> 一路追到底，看每個遞迴 + 跨界都算出什麼。</p>
+
+    <table class="sc-table">
+      <thead><tr><th>idx (1-based)</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">a[]</td><td class="mono">5</td><td class="mono">1</td><td class="mono">2</td><td class="mono">4</td><td class="mono">3</td></tr>
+      </tbody>
+    </table>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>1
+5
+5 1 2 4 3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · solve(1, 5)</span>
+mid = (1 + 5) / 2 = 3
+→ solve(1, 3)           遞迴左半 [5, 1, 2]
+→ solve(4, 5)           遞迴右半 [4, 3]
+→ count_crossing(1, 3, 5)</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · solve(1, 3) = 4</span>
+mid = 2
+solve(1, 2) = 2
+   ↳ solve(1,1)=1 · solve(2,2)=1 · crossing(1,1,2)=0
+solve(3, 3) = 1
+crossing(1, 2, 3) = 1
+   ↳ Case 4 在 L=2 抓到：(L=2, R=3) = [1, 2]，mm=1=R−L=1 ✓
+
+solve(1, 3) = 2 + 1 + 1 = <span class="sc-trace__out">4</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · solve(4, 5) = 3</span>
+mid = 4
+solve(4, 4) = 1
+solve(5, 5) = 1
+crossing(4, 4, 5) = 1
+   ↳ Case 3 在 L=4 抓到：(L=4, R=5) = [4, 3]，mm=1=R−L=1 ✓
+
+solve(4, 5) = 1 + 1 + 1 = <span class="sc-trace__out">3</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · count_crossing(1, 3, 5)  ← 頂層跨界</span>
+mid = 3
+maxL[3]=2, minL[3]=2 · maxL[2]=2, minL[2]=1 · maxL[1]=5, minL[1]=1
+maxR[4]=4, minR[4]=4 · maxR[5]=4, minR[5]=3
+
+[Case 1] 全在左
+   L=1 → R = 1 + 5 − 1 = 5：maxR[5]=4&lt;5 ✓ · minR[5]=3&gt;1 ✓ ⇒ ans+1 → (1,5)=[5,1,2,4,3]
+   L=2,3 → R=mid 或更小，略
+
+[Case 2] 全在右   無命中
+
+[Case 3] max L, min R   無命中（左半的 max=5 太大，右半 min=3 配不上 L+maxL[L] 的值）
+
+[Case 4] max R, min L
+   L=3 → 查 cnt[minL[3] − 3 + N] = cnt[2−3+5] = cnt[4] = 1 → ans+1
+       對應 R=5：minR[5]=3&gt;2=minL[3] ✓ · maxR[5]=4&gt;2=maxL[3] ✓ · (3,5)=[2,4,3] mm=2=R−L=2 ✓
+   L=2 → 查 cnt[1−2+5] = cnt[4] = 1 → ans+1
+       對應 R=5：minR[5]=3&gt;1=minL[2] ✓ · maxR[5]=4&gt;2=maxL[2] ✓ · (2,5)=[1,2,4,3] mm=3=R−L=3 ✓
+   L=1 → maxL[1]=5，qlo 推到 6（max-side 沒人滿足），ans+0
+
+count_crossing(1, 3, 5) = 1 + 0 + 0 + 2 = <span class="sc-trace__out">3</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>
+solve(1, 5) = solve(1, 3) + solve(4, 5) + crossing
+            = 4 + 3 + 3 = <span class="sc-trace__out">10</span></pre>
+
+    <div class="sc-insight">
+      <strong>驗算</strong>：對 <code>[5, 1, 2, 4, 3]</code> 列出所有 good (L, R)：<br/>
+      單元素 5 個：(1,1) (2,2) (3,3) (4,4) (5,5)<br/>
+      長度 2：(2,3)=[1,2] · (4,5)=[4,3] ⇒ 2 個<br/>
+      長度 3：(3,5)=[2,4,3] ⇒ 1 個<br/>
+      長度 4：(2,5)=[1,2,4,3] ⇒ 1 個<br/>
+      長度 5：(1,5)=[5,1,2,4,3] ⇒ 1 個<br/>
+      <strong>合計 5 + 2 + 1 + 1 + 1 = 10 ●</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">已排序</span>
+      <h4>樣本 1 的 <code>[1, 2, 3, 4, 5]</code> 答案是 15，請解釋為什麼，並推廣到任意已排序的長度 N。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">複雜度估計</span>
+      <h4>若 T = 5 × 10⁵、每組 N = 1（最極端的「題目多但每題小」），總時間複雜度多少？跟一組 N = 5 × 10⁵ 比哪邊比較吃緊？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">改題</span>
+      <h4>若改題要「輸出所有 good (L, R)」而非計數，演算法該怎麼改？整體複雜度會變嗎？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 重新框架</span>
+      <p>設 <code>S</code> 是 <code>|S|</code> 個 distinct 整數的集合，記 <code>m = min(S)</code>、<code>M = max(S)</code>。</p>
+      <p><strong>下界</strong>：要塞 <code>|S|</code> 個不同整數進 <code>[m, M]</code> 這個區間，至少需要長度 <code>|S| − 1</code>，即
+        <code>M − m ≥ |S| − 1</code>。這是 pigeonhole 風格的下界 — <em>不同的東西</em>之間至少差 1。</p>
+      <p><strong>等號成立 ⟺ 連續</strong>：<code>M − m = |S| − 1</code> 意味著區間 <code>[m, M]</code> 剛好容納 <code>|S|</code> 個整數，
+        而 <code>S</code> 已經有 <code>|S|</code> 個不同整數塞進去 ⇒ <code>S = {m, m+1, …, M}</code>，排序後就是連續整數。</p>
+      <p>把這個套到 <code>S = {a[L], …, a[R]}</code>：<code>|S| = R − L + 1</code>，所以 good ⟺ <code>max − min = R − L</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 分治結構</span>
+      <p><code>max − min == R − L</code> 是 O(1) 判定，但前提是<strong>我們已經知道 max 與 min</strong>。
+        當 (L, R) 跨界時，max 可能來自左半或右半、min 也可能來自左半或右半 — 4 種組合。</p>
+      <p>分 4 case 的好處：每個 case 內部 <code>max</code> 與 <code>min</code> 的<em>來源固定</em>了，可以寫成關於 <code>L, R</code> 的等式：</p>
+      <ul>
+        <li>Case 1/2：max 與 min 都來自同一半 ⇒ 對 L（或 R）來說 max 與 min 已知 ⇒ R（或 L）反推出來，O(1) 驗證。</li>
+        <li>Case 3/4：max 與 min 分別來自兩半 ⇒ goodness 變成「左半某函數 == 右半某函數」⇒ 用 cnt[] 做等式 hashing。</li>
+      </ul>
+      <p>不分 case 的話 max/min 的位置不明，無法把條件化為等式，回到 O(N²)。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 等式推導</span>
+      <p>Case 3 的設定：<code>max</code> 在左半 ⇒ 跨界區間的 max = <code>maxL[L]</code>；
+        <code>min</code> 在右半 ⇒ 跨界區間的 min = <code>minR[R]</code>。</p>
+      <p>goodness 條件：</p>
+      <pre class="sc-trace"><span class="sc-trace__head">// CASE 3 derivation</span>
+max(a[L..R]) − min(a[L..R]) = R − L
+        maxL[L] − minR[R] = R − L
+        maxL[L] + L       = R + minR[R]
+       └─── 左半函數 ───┘   └── 右半函數 ──┘</pre>
+      <p>所以對每個 L 算出 <code>key = L + maxL[L]</code>，去 cnt[] 查有多少 R 也產出相同 key（且滿足前提條件 maxL&gt;maxR、minR&lt;minL）。</p>
+      <p>cnt[] 用「R + minR[R]」當 index 累積；查詢用「L + maxL[L]」。兩邊的 index 是同一個量（key），等號自動成立。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · monotone</span>
+      <p>maxL[L] 定義為 <code>max(a[L], a[L+1], …, a[mid])</code>。當 L 往左走（L 減小），多納入一個元素 a[L−1]，
+        maxL[L−1] = max(maxL[L], a[L−1])，所以 <strong>maxL[L−1] ≥ maxL[L]</strong> — 是 monotone non-decreasing。</p>
+      <p>同理 minL[L] = min(minL[L+1], a[L])，<strong>minL[L−1] ≤ minL[L]</strong> — monotone non-increasing。</p>
+      <p>這是 two-pointer 能用的關鍵：L 由 mid 往 lo 走時，maxL 與 minL 都單調，所以「哪些 R 滿足 max-side / min-side」
+        是個單調擴張或收縮的集合，pmax / pmin 只往一個方向走 ⇒ 全程 O(N)。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 推廣</span>
+      <p><strong>有重複值時，<code>max − min == R − L</code> 不再等價於 good</strong>。例如 <code>[1, 1, 2]</code>：
+        max=2、min=1、R−L=2，但元素集合是 <code>{1, 1, 2}</code>，<em>不是</em>連續整數（題目改成 sorted &amp; consecutive distinct values 也不行，因為有重複）。</p>
+      <p>更精確：lemma 第 1 步「<code>|S|</code> 個 distinct 整數 ⇒ max − min ≥ |S| − 1」用到了 distinct 前提。若有重複，
+        <code>|distinct(S)| &lt; R − L + 1</code>，<code>max − min</code> 可能比 <code>R − L</code> 小。</p>
+      <p><strong>修改方案</strong>：condition 改成「<code>max − min == #distinct − 1</code> AND <code>#distinct == R − L + 1</code>」。
+        第二個條件等於說「沒有重複值」。<em>這需要額外維護 #distinct，整題就不是這個 D&amp;C 套路了</em> — 更可能用莫隊算法或滑動視窗。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>已排序 <code>[1, 2, 3, 4, 5]</code>：任意連續子陣列 <code>a[L..R]</code> 都是 <code>{L, L+1, …, R}</code>，自然是連續整數 ⇒ <strong>全部都是 good</strong>。</p>
+      <p>good (L, R) 數量 = 所有 <code>1 ≤ L ≤ R ≤ N</code> = <code>C(N+1, 2) = N(N+1)/2</code>。</p>
+      <p>N = 5 ⇒ <code>5·6/2 = 15</code> ✓ 符合輸出。</p>
+      <p>N = 5 × 10⁵ ⇒ <code>5 × 10⁵ × (5 × 10⁵ + 1) / 2 ≈ 1.25 × 10¹¹</code> ⇒ <strong>超出 int 上限，必須 long long</strong>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p><strong>T = 5 × 10⁵, N = 1</strong>：每組 <code>solve(1, 1)</code> 直接回傳 1，沒有遞迴。每組 O(1) ⇒ 總共 <code>O(T) = O(5 × 10⁵)</code>。</p>
+      <p><strong>單組 N = 5 × 10⁵</strong>：<code>O(N log N) ≈ 10⁷</code>。</p>
+      <p>兩種情境的總工時都受限於 <code>S ≤ 5 × 10⁵</code>：</p>
+      <ul>
+        <li>T 多 N 小：總工時 = T × O(1) = O(T) = O(S)</li>
+        <li>T 少 N 大：總工時 = O(N log N) = O(S log S)</li>
+      </ul>
+      <p>結論：「<strong>N 大那邊比較吃緊</strong>」 — O(S log S) 比 O(S) 多了 log 因子。實務上 T 雖然多，但每組 IO 跟 main 迴圈開銷
+        可能比演算法本身還貴 — 所以兩邊都不能忽視 fast IO。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>改為「輸出所有 good (L, R)」：</p>
+      <ul>
+        <li>每個 case 找到 good 時，不只 <code>++ans</code>，還要把 (L, R) <strong>記錄下來</strong>（push 到 vector）。</li>
+        <li>Case 1/2：每個 L (或 R) 找到時直接 emit；O(1) per match。</li>
+        <li>Case 3/4：cnt[] 只能告訴你「有幾個 R 配對」，<em>不能直接 emit 配對細節</em>。需要把 cnt[]
+          換成 <code>vector&lt;int&gt; bucket[2*N+5]</code>，存所有 R；查詢時 iterate bucket，emit 每個 (L, R)。</li>
+      </ul>
+      <p><strong>複雜度</strong>：</p>
+      <ul>
+        <li>找完所有 good 的「工時」變成 <code>O(N log N + K)</code>，K 是 good 區間總數，最壞 <code>K = N(N+1)/2 = O(N²)</code>。</li>
+        <li>所以最壞情形 <strong>輸出本身就 O(N²)</strong>，但這不是演算法的成本 — 是輸出量的下界（你要 print N² 行）。</li>
+      </ul>
+      <p>D&amp;C 的優勢只在<em>計數</em>能輸出 O(N²) 結果只需 O(N log N) 時間；要列舉就無可避免地要付出 O(K) 輸出成本。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W06 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 從 distinct 等價判定推到 4-case D&amp;C 的完整邏輯。</div>
+    <div class="sc-summary-bar__detail">[5,1,2,4,3] 結果：solve(1,5) = 4 + 3 + 3 = 10 ✓</div>
+  </div>
+
+</body>
+</html>
