@@ -160,38 +160,65 @@
   </section>
 
   <!-- ============================================================
-       SECTION 04 — 動畫演示 · 構造 f(8)
+       SECTION 04 — Base case 動畫
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">04</span>
-      <h2 class="sc-section__title">動畫演示 · 構造 f(8)<span class="sc-section__title-en">// Animation</span></h2>
+      <h2 class="sc-section__title">Base case 動畫 · 構造 f(2)<span class="sc-section__title-en">// Animation A</span></h2>
     </div>
 
-    <p>用 N = 8 走過完整流程 — 切半 → 遞迴 f(4) → 左半套 <code>2x − 1</code>、右半套 <code>2x</code> → 串接。</p>
+    <p>遞迴底部 — <code>f(1) = [1]</code> 是平凡的，最小有「構造行為」的是 <code>f(2)</code>：拿兩份 <code>f(1)</code>，左邊套 <code>2x − 1</code> 變奇數、右邊套 <code>2x</code> 變偶數，串接成 <code>[1, 2]</code>。</p>
 
     <div class="sc-viz">
-      <div class="sc-viz__title">// VIZ · BUILD f(8) STEP BY STEP</div>
-      <canvas id="viz-canvas" class="sc-viz__canvas" height="360"></canvas>
+      <div class="sc-viz__title">// VIZ A · BASE CASE · BUILD f(2)</div>
+      <canvas id="viz-base" class="sc-viz__canvas" height="260"></canvas>
       <div class="sc-viz__controls">
-        <button class="sc-btn" id="viz-reset">Reset</button>
-        <button class="sc-btn" id="viz-prev">Prev</button>
-        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
-        <button class="sc-btn" id="viz-next">Next</button>
-        <span class="sc-viz__step" id="viz-step">-- / --</span>
+        <button class="sc-btn" id="vb-reset">Reset</button>
+        <button class="sc-btn" id="vb-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vb-play">Play</button>
+        <button class="sc-btn" id="vb-next">Next</button>
+        <span class="sc-viz__step" id="vb-step">-- / --</span>
       </div>
-      <div class="sc-viz__label" id="viz-label">
-        <strong>INITIAL</strong> · 8 格空位等待填值
+      <div class="sc-viz__label" id="vb-label">
+        <strong>INITIAL</strong> · 兩份 f(1) = [1] 等待組合
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       SECTION 05 — 為什麼這樣切一定 3-AP free
+       SECTION 05 — General case 動畫 · 遞迴樹
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">General case 動畫 · f(8) 遞迴樹<span class="sc-section__title-en">// Animation B</span></h2>
+    </div>
+
+    <p>把 <code>f(8)</code> 整棵遞迴樹攤平 — 從<strong>葉子（f(1)）</strong>由下往上組合 4 層：8 個 f(1) → 4 個 f(2) → 2 個 f(4) → 1 個 f(8)。</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ B · GENERAL CASE · RECURSION TREE f(8)</div>
+      <canvas id="viz-general" class="sc-viz__canvas" height="440"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vg-reset">Reset</button>
+        <button class="sc-btn" id="vg-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vg-play">Play</button>
+        <button class="sc-btn" id="vg-next">Next</button>
+        <span class="sc-viz__step" id="vg-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vg-label">
+        <strong>INITIAL</strong> · 空遞迴樹骨架 · 從葉子開始填值
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 為什麼這樣切一定 3-AP free
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
       <h2 class="sc-section__title">為什麼奇偶切保證 3-AP free<span class="sc-section__title-en">// Proof Sketch</span></h2>
     </div>
 
@@ -217,11 +244,11 @@
   </section>
 
   <!-- ============================================================
-       SECTION 06 — 遞迴結構公式
+       SECTION 07 — 遞迴結構公式
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">06</span>
+      <span class="sc-section__num">07</span>
       <h2 class="sc-section__title">遞迴結構 · 公式<span class="sc-section__title-en">// Recurrence</span></h2>
     </div>
 
@@ -255,11 +282,11 @@
   </section>
 
   <!-- ============================================================
-       SECTION 07 — 一句洞察
+       SECTION 08 — 一句洞察
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">07</span>
+      <span class="sc-section__num">08</span>
       <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
     </div>
 
