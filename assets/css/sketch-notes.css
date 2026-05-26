@@ -1,57 +1,60 @@
 /* ============================================================
-   sketch-notes.css — Hand-drawn illustration theme
-   Palette: warm pastels (pink / yellow / green / blue / cream)
-   Decor:   irregular borders, sketch SVG arrows / stars / dots
-   Layout:  block-based with generous whitespace
-   Body:    clean sans-serif for readability; hand-drawn fonts
-            only for titles and accents
+   sketch-notes.css — Parchment Sketchnote theme
+   Inspired by hand-drawn note illustrations.
+   Key idea: borders look wobbly via SVG filter on ::before,
+   while content stays crisp and readable.
    ============================================================ */
 
 .sketch-notes {
-  /* ---- soft pastel palette ---- */
-  --paper:        #fdf8ee;     /* warm cream background */
-  --paper-soft:   #fbf2e0;
-  --ink:          #3a3531;     /* warm dark grey (not black) */
-  --ink-soft:     #6a625c;
-  --ink-faded:    #a59c91;
+  /* ---- warm parchment palette ---- */
+  --paper:        #fbf3dd;
+  --paper-edge:   #f3e8c1;
+  --paper-deep:   #e7d8a8;
+  --paper-shadow: rgba(139, 96, 56, 0.10);
 
-  --pink:         #ffd5dc;
-  --pink-deep:    #f9a8b4;
-  --yellow:       #fff5b3;
-  --yellow-deep:  #f5d76e;
-  --green:        #d4ebc8;
-  --green-deep:   #8fc480;
-  --blue:         #d4e5f7;
-  --blue-deep:    #7eb2dc;
-  --peach:        #fce0c5;
-  --peach-deep:   #f4b78b;
-  --lilac:        #e7d8f0;
-  --lilac-deep:   #b89cd2;
+  --ink:          #5d3f1c;      /* warm brown ink */
+  --ink-soft:     #7c5836;
+  --ink-faded:    #a48f6c;
 
-  --marker:       rgba(245, 215, 110, 0.55);   /* soft highlighter */
+  --accent:       #b94a30;      /* dusty red */
+  --accent-dim:   #d77968;
+  --gold:         #c89538;
+  --leaf:         #7f9658;
+  --sky:          #5a87a3;
+  --plum:         #a06080;
+
+  --hl:           rgba(200, 149, 56, 0.40);  /* highlighter */
+  --tape:         rgba(212, 167, 48, 0.55);
 
   background: var(--paper);
+  background-image:
+    /* corner blots / aging spots */
+    radial-gradient(circle at 5% 4%,   rgba(139, 96, 56, 0.06) 0, transparent 22%),
+    radial-gradient(circle at 95% 6%,  rgba(139, 96, 56, 0.05) 0, transparent 24%),
+    radial-gradient(circle at 92% 96%, rgba(139, 96, 56, 0.06) 0, transparent 22%),
+    radial-gradient(circle at 4% 94%,  rgba(139, 96, 56, 0.05) 0, transparent 24%),
+    /* faint paper grain */
+    radial-gradient(circle at 30% 50%, rgba(139, 96, 56, 0.02) 0, transparent 30%);
+
   color: var(--ink);
-  font-family: 'Noto Sans TC', 'Patrick Hand', sans-serif;
-  font-size: 16px;
+  font-family: 'Caveat', 'Patrick Hand', 'Noto Sans TC', sans-serif;
+  font-size: 16.5px;
   line-height: 1.85;
   padding: 36px 4vw 60px;
   min-height: 100vh;
   overflow-x: hidden;
-  background-image:
-    radial-gradient(circle at 12% 18%, rgba(249, 168, 180, 0.10) 0, transparent 22%),
-    radial-gradient(circle at 88% 6%,  rgba(143, 196, 128, 0.10) 0, transparent 22%),
-    radial-gradient(circle at 92% 78%, rgba(126, 178, 220, 0.10) 0, transparent 22%),
-    radial-gradient(circle at 8% 88%,  rgba(244, 183, 139, 0.10) 0, transparent 22%);
 }
 
 .sketch-notes * { box-sizing: border-box; }
 
+/* Wobble filter target — defined inline in HTML as <svg><filter id="sn-wobble"></svg>. */
+.sn-wobble { filter: url(#sn-wobble); }
+
 /* ============================================================
-   Top nav
+   Top nav (minimal)
    ============================================================ */
 .sn-topnav {
-  max-width: 980px;
+  max-width: 1000px;
   margin: 0 auto 18px;
   font-family: 'Patrick Hand', 'Noto Sans TC', sans-serif;
   font-size: 14px;
@@ -59,94 +62,83 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 2px dotted var(--ink-faded);
   flex-wrap: wrap;
   gap: 8px;
 }
 .sn-topnav a {
-  color: var(--pink-deep);
+  color: var(--accent);
   text-decoration: none;
-  border-bottom: 1.5px dotted var(--pink-deep);
+  border-bottom: 1.5px dotted var(--accent);
 }
 .sn-topnav a:hover { color: var(--ink); border-bottom-color: var(--ink); }
 
 /* ============================================================
-   Masthead
+   Masthead — banner-style title
    ============================================================ */
 .sn-mast {
-  max-width: 980px;
-  margin: 0 auto 28px;
+  max-width: 1000px;
+  margin: 8px auto 30px;
   text-align: center;
   position: relative;
-  padding: 8px 0;
 }
-.sn-mast::before {
-  content: '✿';
+/* Side decorations */
+.sn-mast::before { content: '✿'; position: absolute; left: 4%;  top: 0;   font-size: 32px; color: var(--accent-dim); transform: rotate(-12deg); }
+.sn-mast::after  { content: '✦'; position: absolute; right: 5%; top: 8px; font-size: 24px; color: var(--gold); transform: rotate(15deg); }
+
+.sn-mast__banner {
+  display: inline-block;
+  position: relative;
+  padding: 14px 56px 16px;
+  margin: 0;
+  color: var(--ink);
+}
+.sn-mast__banner::before {
+  /* Banner ribbon shape behind title */
+  content: '';
   position: absolute;
-  top: -6px;
-  left: 4%;
-  font-size: 26px;
-  color: var(--pink-deep);
-  transform: rotate(-15deg);
-}
-.sn-mast::after {
-  content: '✦';
-  position: absolute;
-  top: -2px;
-  right: 5%;
-  font-size: 22px;
-  color: var(--yellow-deep);
-  transform: rotate(12deg);
-}
-.sn-mast__sub {
-  font-family: 'Caveat', cursive;
-  font-size: 22px;
-  color: var(--ink-soft);
-  letter-spacing: 0.05em;
-  margin: 0 0 6px;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><path d='M0,40 L26,28 L40,12 L100,10 Q200,3 300,10 L360,12 L374,28 L400,40 L376,72 L362,88 L300,90 Q200,97 100,90 L40,88 L26,72 L0,60 Z' fill='%23fbf3dd' stroke='%235d3f1c' stroke-width='2'/><path d='M0,40 L26,28 L40,12 L100,10 Q200,3 300,10 L360,12 L374,28 L400,40' fill='none' stroke='%235d3f1c' stroke-width='2' opacity='0.6'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: -1;
 }
 .sn-mast__title {
   font-family: 'Ma Shan Zheng', 'Caveat', cursive;
-  font-size: clamp(46px, 7vw, 64px);
+  font-size: clamp(40px, 6vw, 56px);
   font-weight: 400;
-  color: var(--ink);
-  margin: 0 0 18px;
   letter-spacing: 0.04em;
-  display: inline-block;
-  position: relative;
-  line-height: 1.1;
+  line-height: 1;
+  margin: 0;
+  color: var(--ink);
 }
-.sn-mast__title::after {
-  content: '';
-  position: absolute;
-  left: -6%;
-  right: -6%;
-  bottom: -12px;
-  height: 12px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'><path d='M2,6 Q40,2 80,7 T160,6 T200,5' stroke='%23f9a8b4' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-.sn-mast__tags {
-  margin-top: 14px;
+.sn-mast__sub {
   font-family: 'Caveat', cursive;
   font-size: 19px;
   color: var(--ink-soft);
+  margin: 12px 0 0;
+  letter-spacing: 0.04em;
 }
-.sn-mast__star { color: var(--yellow-deep); letter-spacing: 0.15em; }
+.sn-mast__tags {
+  margin-top: 10px;
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
+  color: var(--ink-soft);
+}
+.sn-mast__star { color: var(--gold); letter-spacing: 0.15em; }
 .sn-mast__sep::before { content: ' · '; color: var(--ink-faded); margin: 0 8px; }
 
 /* ============================================================
    Page indicator
    ============================================================ */
 .sn-pageind {
-  max-width: 980px;
-  margin: -10px auto 22px;
+  max-width: 1000px;
+  margin: -6px auto 22px;
   text-align: center;
   font-family: 'Caveat', cursive;
   font-size: 18px;
-  color: var(--pink-deep);
+  color: var(--accent);
   letter-spacing: 0.12em;
 }
 .sn-pageind__dot {
@@ -157,60 +149,92 @@
   border-radius: 50%;
   margin: 0 4px;
   vertical-align: middle;
-  background: #fff;
+  background: transparent;
 }
-.sn-pageind__dot.is-active { background: var(--pink-deep); }
+.sn-pageind__dot.is-active { background: var(--accent); }
 
 /* ============================================================
-   Section card — pastel-tinted by accent
+   Section card — wobbly hand-drawn border
    ============================================================ */
 .sn-section {
-  max-width: 980px;
-  margin: 32px auto;
-  padding: 26px 30px 26px;
-  background: #fff;
+  max-width: 1000px;
+  margin: 36px auto;
+  padding: 30px 32px 32px;
+  background: rgba(255, 251, 235, 0.6);
   position: relative;
-  border: 2px solid var(--ink);
-  border-radius: 18px;
-  box-shadow: 4px 4px 0 rgba(58, 53, 49, 0.85);
   overflow: visible;
 }
-.sn-section--pink   { background: #fff5f7; }
-.sn-section--yellow { background: #fffcea; }
-.sn-section--green  { background: #f3f9ef; }
-.sn-section--blue   { background: #f0f6fc; }
-.sn-section--peach  { background: #fef5ec; }
-.sn-section--lilac  { background: #f7f1fb; }
+.sn-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+.sn-section::after {
+  /* second pass — slight offset to simulate drew-over-twice */
+  content: '';
+  position: absolute;
+  top: 3px; left: 4px;
+  width: calc(100% - 7px); height: calc(100% - 6px);
+  border: 1px solid var(--ink);
+  border-radius: 17px;
+  opacity: 0.35;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+
+/* Section icon (emoji) — pinned at top-right corner */
+.sn-section__icon {
+  position: absolute;
+  top: -12px;
+  right: 24px;
+  background: var(--paper);
+  padding: 0 10px;
+  font-size: 28px;
+  line-height: 1;
+  z-index: 2;
+}
 
 .sn-section__num {
   position: absolute;
-  top: -16px;
+  top: -18px;
   left: 22px;
-  background: var(--pink-deep);
-  color: #fff;
+  background: var(--paper);
+  color: var(--ink);
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 20px;
-  padding: 4px 14px;
+  font-size: 22px;
+  padding: 2px 14px;
+  line-height: 1.3;
+  z-index: 2;
+}
+.sn-section__num::before,
+.sn-section__num::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   border: 2px solid var(--ink);
   border-radius: 999px;
-  transform: rotate(-3deg);
-  box-shadow: 2px 2px 0 var(--ink);
-  line-height: 1.2;
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
-.sn-section--yellow .sn-section__num { background: var(--yellow-deep); color: var(--ink); }
-.sn-section--green  .sn-section__num { background: var(--green-deep); }
-.sn-section--blue   .sn-section__num { background: var(--blue-deep); }
-.sn-section--peach  .sn-section__num { background: var(--peach-deep); }
-.sn-section--lilac  .sn-section__num { background: var(--lilac-deep); }
+.sn-section__num::after { top: 2px; left: 3px; width: calc(100% - 6px); height: calc(100% - 4px); opacity: 0.4; }
+.sn-section__num-circle {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
 
 .sn-section__title {
   font-family: 'Ma Shan Zheng', 'Caveat', cursive;
-  font-size: clamp(26px, 3.4vw, 30px);
+  font-size: clamp(24px, 3vw, 28px);
   font-weight: 400;
-  margin: 4px 0 16px;
+  margin: 6px 0 18px;
   color: var(--ink);
-  line-height: 1.25;
+  line-height: 1.3;
   letter-spacing: 0.02em;
   display: flex;
   align-items: baseline;
@@ -219,18 +243,14 @@
 }
 .sn-section__title-en {
   font-family: 'Caveat', cursive;
-  font-size: 18px;
+  font-size: 19px;
   color: var(--ink-faded);
   font-weight: 400;
   letter-spacing: 0.05em;
 }
-.sn-section__title .doodle {
-  font-size: 0.7em;
-  color: var(--pink-deep);
-}
 
 .sn-section p {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Sans TC', 'Patrick Hand', sans-serif;
   font-size: 15.5px;
   line-height: 1.9;
   color: var(--ink);
@@ -238,82 +258,70 @@
 }
 .sn-section code {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.88em;
-  background: var(--paper-soft);
-  padding: 2px 7px;
-  border: 1.5px solid var(--ink);
-  border-radius: 6px;
-  color: #8a4530;
+  font-size: 0.86em;
+  background: rgba(212, 167, 48, 0.16);
+  padding: 1px 7px;
+  border-bottom: 1.5px solid var(--ink-soft);
+  color: #6a3517;
   white-space: nowrap;
 }
 .sn-section ul, .sn-section ol {
-  margin: 8px 0 14px 24px;
+  margin: 8px 0 14px 22px;
   font-size: 15.5px;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 .sn-section li {
   margin-bottom: 6px;
-  line-height: 1.8;
+  line-height: 1.85;
+  position: relative;
 }
-.sn-section li::marker { color: var(--pink-deep); font-weight: 700; }
+.sn-section ul li::marker { content: '✦ '; color: var(--accent); font-size: 0.9em; }
+.sn-section ol li::marker { color: var(--accent); font-weight: 700; font-family: 'Caveat', cursive; font-size: 1.15em; }
 
-/* ============================================================
-   Decorative section divider (between sections)
-   ============================================================ */
-.sn-divider {
-  max-width: 980px;
-  margin: 28px auto 14px;
-  text-align: center;
-  font-size: 20px;
+/* Decorative scatter inside section (top corners) */
+.sn-section__doodle {
+  position: absolute;
+  font-size: 16px;
   color: var(--ink-faded);
-  letter-spacing: 1em;
+  z-index: 1;
 }
-.sn-divider span { color: var(--pink-deep); }
+.sn-section__doodle--tl { top: 12px; right: 90px; transform: rotate(-8deg); }
+.sn-section__doodle--br { bottom: 12px; right: 22px; transform: rotate(12deg); }
 
 /* ============================================================
-   Inline highlight (soft marker)
+   Inline highlight
    ============================================================ */
 .sn-hl {
-  background: linear-gradient(transparent 50%, var(--marker) 50%, var(--marker) 92%, transparent 92%);
+  background: linear-gradient(transparent 50%, var(--hl) 50%, var(--hl) 92%, transparent 92%);
   padding: 0 4px;
 }
-.sn-hl--pink { background: linear-gradient(transparent 50%, rgba(255, 213, 220, 0.78) 50%, rgba(255, 213, 220, 0.78) 92%, transparent 92%); }
-.sn-hl--green { background: linear-gradient(transparent 50%, rgba(212, 235, 200, 0.78) 50%, rgba(212, 235, 200, 0.78) 92%, transparent 92%); }
-.sn-hl--blue { background: linear-gradient(transparent 50%, rgba(212, 229, 247, 0.78) 50%, rgba(212, 229, 247, 0.78) 92%, transparent 92%); }
 
 /* ============================================================
-   Sticky note callout (cute, soft)
+   Sticky note callout (still useful for asides)
    ============================================================ */
 .sn-stickynote {
-  background: var(--yellow);
-  border: 2px solid var(--ink);
-  padding: 18px 22px;
+  background: #fbe6a3;
+  padding: 16px 22px;
   margin: 16px 0;
-  transform: rotate(-0.6deg);
-  box-shadow: 3px 4px 0 rgba(58, 53, 49, 0.4);
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 15.5px;
-  line-height: 1.8;
   position: relative;
-  border-radius: 8px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  transform: rotate(-0.6deg);
+  box-shadow: 3px 5px 0 rgba(93, 63, 28, 0.18);
 }
-.sn-stickynote--pink { background: var(--pink); transform: rotate(0.7deg); }
-.sn-stickynote--blue { background: var(--blue); transform: rotate(-0.4deg); }
-.sn-stickynote--green { background: var(--green); transform: rotate(0.5deg); }
-.sn-stickynote--peach { background: var(--peach); transform: rotate(-0.8deg); }
-.sn-stickynote__head {
-  display: inline-block;
-  font-family: 'Caveat', cursive;
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--pink-deep);
-  margin-bottom: 8px;
-  letter-spacing: 0.04em;
-}
-.sn-stickynote--blue .sn-stickynote__head { color: var(--blue-deep); }
-.sn-stickynote--green .sn-stickynote__head { color: var(--green-deep); }
-.sn-stickynote--peach .sn-stickynote__head { color: var(--peach-deep); }
 .sn-stickynote::before {
-  /* Decorative "tape" at the top */
+  /* Wobbly border */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+.sn-stickynote::after {
+  /* Tape on top */
   content: '';
   position: absolute;
   top: -8px;
@@ -321,120 +329,52 @@
   margin-left: -22px;
   width: 44px;
   height: 14px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(58, 53, 49, 0.25);
+  background: var(--tape);
+  border: 1px solid rgba(93, 63, 28, 0.35);
   transform: rotate(-2deg);
-  border-radius: 2px;
 }
-
-/* ============================================================
-   Plain hand-drawn box (no tilt) — for important content
-   ============================================================ */
-.sn-box {
-  border: 2px solid var(--ink);
-  background: #fff;
-  padding: 22px 22px 16px;
-  margin: 16px 0;
-  border-radius: 14px;
-  position: relative;
-}
-.sn-box__label {
-  position: absolute;
-  top: -14px;
-  left: 18px;
-  background: var(--pink-deep);
-  color: #fff;
-  padding: 2px 14px;
+.sn-stickynote__head {
+  display: inline-block;
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 17px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  transform: rotate(-1.5deg);
-  line-height: 1.3;
-}
-.sn-box--yellow { background: #fffceb; border-color: #8a6e1d; }
-.sn-box--yellow .sn-box__label { background: var(--yellow-deep); color: var(--ink); border-color: #8a6e1d; }
-
-/* ============================================================
-   Chalkboard / formula box  (deeper accent)
-   ============================================================ */
-.sn-chalk {
-  background: #2f3a3e;
-  color: #f4eedd;
-  padding: 26px 28px;
-  margin: 18px 0;
-  border-radius: 12px;
-  text-align: center;
-  border: 3px dashed #b89cd2;
-  box-shadow: 4px 4px 0 var(--ink);
-  position: relative;
-}
-.sn-chalk::before {
-  content: '✦';
-  position: absolute;
-  top: -16px;
-  right: 22px;
-  font-size: 28px;
-  color: var(--yellow-deep);
-  background: var(--paper);
-  padding: 0 6px;
-  transform: rotate(15deg);
-}
-.sn-chalk__main {
-  font-family: 'Caveat', cursive;
-  font-size: 28px;
-  font-weight: 600;
-  color: #fff;
+  font-size: 20px;
+  color: var(--accent);
+  margin-bottom: 8px;
   letter-spacing: 0.04em;
 }
-.sn-chalk__main code {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffe28a;
-  padding: 1px 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.82em;
-  border-radius: 4px;
-}
-.sn-chalk__hint {
-  margin-top: 10px;
-  font-size: 17px;
-  color: rgba(244, 238, 221, 0.7);
-  font-family: 'Caveat', cursive;
-}
 
 /* ============================================================
-   Three-step flow (numbered cards with pastel bg)
+   Three-step flow cards
    ============================================================ */
 .sn-flow {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
+  gap: 22px;
   margin: 18px 0 4px;
 }
 .sn-flow__card {
-  background: #fff;
+  background: rgba(255, 251, 235, 0.7);
+  padding: 14px 18px 16px 60px;
+  position: relative;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.sn-flow__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   border: 2px solid var(--ink);
   border-radius: 14px;
-  padding: 16px 18px 18px 60px;
-  position: relative;
-  box-shadow: 3px 3px 0 var(--ink);
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
-.sn-flow__card--pink   { background: #fff5f7; }
-.sn-flow__card--yellow { background: #fffceb; }
-.sn-flow__card--green  { background: #f3f9ef; }
-.sn-flow__card--blue   { background: #f0f6fc; }
-
 .sn-flow__num {
   position: absolute;
-  left: 14px;
-  top: 16px;
+  left: 12px;
+  top: 14px;
   width: 36px;
   height: 36px;
-  background: var(--pink-deep);
-  color: #fff;
-  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -442,13 +382,17 @@
   font-family: 'Caveat', cursive;
   font-weight: 700;
   font-size: 20px;
-  transform: rotate(-4deg);
-  box-shadow: 2px 2px 0 var(--ink);
+  z-index: 1;
 }
-.sn-flow__card--yellow .sn-flow__num { background: var(--yellow-deep); color: var(--ink); }
-.sn-flow__card--green  .sn-flow__num { background: var(--green-deep); }
-.sn-flow__card--blue   .sn-flow__num { background: var(--blue-deep); }
-
+.sn-flow__num::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
 .sn-flow__head {
   font-family: 'Caveat', cursive;
   font-size: 22px;
@@ -465,17 +409,17 @@
 }
 
 /* ============================================================
-   Thought evolution (vertical timeline with arrows)
+   Thought evolution timeline
    ============================================================ */
 .sn-think {
   margin: 18px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .sn-think__row {
   display: grid;
-  grid-template-columns: 68px 1fr;
+  grid-template-columns: 76px 1fr;
   align-items: stretch;
   gap: 16px;
 }
@@ -483,30 +427,45 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--peach-deep);
+  background: var(--paper);
   color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 14px;
   font-family: 'Caveat', cursive;
   font-weight: 700;
-  font-size: 15px;
-  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 16px;
   text-align: center;
   line-height: 1.15;
-  padding: 8px 6px;
-  transform: rotate(-1.5deg);
+  padding: 10px 6px;
+  position: relative;
 }
-.sn-think__tag--bad  { background: var(--pink-deep); color: #fff; }
-.sn-think__tag--mid  { background: var(--yellow-deep); }
-.sn-think__tag--good { background: var(--green-deep); }
+.sn-think__tag::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+.sn-think__tag--bad  { background: #f2bdb0; }
+.sn-think__tag--mid  { background: #f3d68b; }
+.sn-think__tag--good { background: #c4d9a8; }
+
 .sn-think__body {
-  background: #fff;
+  background: rgba(255, 251, 235, 0.65);
+  padding: 14px 18px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.8;
+  position: relative;
+}
+.sn-think__body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   border: 2px solid var(--ink);
   border-radius: 12px;
-  padding: 14px 18px;
-  font-size: 14.5px;
-  line-height: 1.75;
-  box-shadow: 2px 2px 0 var(--ink);
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
 .sn-think__head {
   font-family: 'Caveat', cursive;
@@ -518,23 +477,31 @@
 }
 .sn-think__arrow {
   text-align: center;
-  font-size: 24px;
-  color: var(--pink-deep);
+  font-size: 22px;
+  color: var(--accent);
   height: 8px;
   line-height: 1;
-  margin: 4px 0 0 6px;
+  margin: 4px 0 0 12px;
 }
 
 /* ============================================================
-   Code window (still VS Code Dark+ for legibility)
+   Code window (VS Code Dark+ for legibility)
    ============================================================ */
 .sn-codewindow {
   background: #1e1e1e;
   margin: 16px 0;
   border-radius: 12px;
-  border: 2px solid var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
+  position: relative;
   overflow: hidden;
+}
+.sn-codewindow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
 .sn-codewindow__chrome {
   background: #2d2d30;
@@ -581,44 +548,110 @@
 .sn-code .p { color: #d4d4d4; }
 
 /* ============================================================
+   Chalkboard formula
+   ============================================================ */
+.sn-chalk {
+  background: #2f3a3e;
+  color: #f4eedd;
+  padding: 22px 26px;
+  margin: 18px 0;
+  text-align: center;
+  position: relative;
+}
+.sn-chalk::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+.sn-chalk::after {
+  content: '✦';
+  position: absolute;
+  top: -16px;
+  right: 22px;
+  font-size: 26px;
+  color: var(--gold);
+  background: var(--paper);
+  padding: 0 6px;
+  transform: rotate(15deg);
+}
+.sn-chalk__main {
+  font-family: 'Caveat', cursive;
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+.sn-chalk__main code {
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  color: #ffe28a;
+  padding: 0 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+}
+.sn-chalk__hint {
+  margin-top: 10px;
+  font-size: 17px;
+  color: rgba(244, 238, 221, 0.7);
+}
+
+/* ============================================================
    Animation block
    ============================================================ */
 .sn-viz {
-  background: #fff;
-  border: 2px solid var(--ink);
-  border-radius: 14px;
+  background: rgba(255, 251, 235, 0.5);
   padding: 16px 16px 14px;
   margin: 18px 0;
-  box-shadow: 4px 4px 0 var(--ink);
   position: relative;
+}
+.sn-viz::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
 .sn-viz__label-top {
   position: absolute;
   top: -14px;
-  right: 20px;
-  background: var(--yellow-deep);
+  right: 22px;
+  background: var(--paper);
   color: var(--ink);
   padding: 2px 14px;
   font-family: 'Caveat', cursive;
   font-weight: 700;
   font-size: 17px;
+  z-index: 1;
+  transform: rotate(2deg);
+}
+.sn-viz__label-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   border: 2px solid var(--ink);
   border-radius: 999px;
-  transform: rotate(2deg);
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
 .sn-viz__canvas {
   width: 100%;
   display: block;
   background: var(--paper);
-  border: 1.5px solid var(--ink-faded);
   border-radius: 8px;
+  position: relative;
 }
 .sn-viz__controls {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1.5px dotted var(--ink-faded);
+  border-top: 2px dotted var(--ink-faded);
   align-items: center;
   flex-wrap: wrap;
 }
@@ -627,79 +660,97 @@
   font-weight: 700;
   font-size: 17px;
   padding: 4px 18px;
-  background: #fff;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  cursor: pointer;
+  background: var(--paper);
   color: var(--ink);
-  box-shadow: 2px 2px 0 var(--ink);
-  transition: transform 0.08s, box-shadow 0.08s;
+  cursor: pointer;
+  position: relative;
+  border: none;
   line-height: 1.3;
 }
-.sn-btn:hover { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
-.sn-btn:active { transform: translate(2px, 2px); box-shadow: none; }
-.sn-btn--primary { background: var(--pink-deep); color: #fff; }
-.sn-btn--primary:hover { background: #e6919e; }
+.sn-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+  transition: transform 0.08s;
+}
+.sn-btn:hover::before { transform: translate(1px, 1px); }
+.sn-btn--primary { background: var(--accent); color: #fff; }
 .sn-viz__step {
   margin-left: auto;
   font-family: 'Caveat', cursive;
   font-size: 19px;
   color: var(--ink-soft);
-  letter-spacing: 0.04em;
 }
 .sn-viz__desc {
   margin-top: 14px;
   padding: 12px 16px;
-  background: #fffceb;
-  border: 2px solid var(--ink);
-  border-radius: 10px;
+  background: rgba(212, 167, 48, 0.10);
   font-family: 'Noto Sans TC', sans-serif;
   font-size: 14.5px;
   line-height: 1.8;
   min-height: 56px;
+  position: relative;
 }
-.sn-viz__desc strong { color: var(--pink-deep); font-weight: 700; }
+.sn-viz__desc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+.sn-viz__desc strong { color: var(--accent); font-weight: 700; }
 .sn-viz__desc code {
-  background: #fff;
-  border: 1px solid var(--ink);
+  background: rgba(255,255,255,0.6);
+  border-bottom: 1px solid var(--ink-soft);
   padding: 1px 5px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9em;
-  border-radius: 4px;
 }
 
 /* ============================================================
    Pager
    ============================================================ */
 .sn-pager {
-  max-width: 980px;
+  max-width: 1000px;
   margin: 36px auto 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 18px;
 }
 .sn-pager__item {
   display: block;
-  background: #fff;
-  border: 2px solid var(--ink);
-  padding: 16px 20px;
+  background: rgba(255, 251, 235, 0.7);
+  padding: 14px 18px;
   color: var(--ink);
   text-decoration: none;
-  border-radius: 14px;
-  box-shadow: 4px 4px 0 var(--ink);
-  transition: transform 0.08s, box-shadow 0.08s;
+  position: relative;
+  transition: transform 0.1s;
 }
-.sn-pager__item:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
-.sn-pager__item--prev { background: var(--blue); }
-.sn-pager__item--next { background: var(--pink); text-align: right; }
-.sn-pager__item.is-disabled { opacity: 0.35; pointer-events: none; background: #f5f0e6; }
+.sn-pager__item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
+}
+.sn-pager__item:hover { transform: translate(2px, 2px); }
+.sn-pager__item--next { text-align: right; }
+.sn-pager__item.is-disabled { opacity: 0.4; pointer-events: none; }
 .sn-pager__label {
   display: block;
   font-family: 'Caveat', cursive;
   font-weight: 700;
   font-size: 18px;
-  color: var(--ink);
-  letter-spacing: 0.05em;
+  color: var(--accent);
+  letter-spacing: 0.04em;
 }
 .sn-pager__title {
   display: block;
@@ -712,72 +763,55 @@
    Summary bar
    ============================================================ */
 .sn-summary {
-  max-width: 980px;
-  margin: 26px auto 0;
-  background: var(--pink-deep);
+  max-width: 1000px;
+  margin: 28px auto 0;
+  background: var(--accent);
   color: #fff;
   padding: 22px 28px;
-  border: 2px solid var(--ink);
-  border-radius: 18px;
   text-align: center;
-  box-shadow: 4px 4px 0 var(--ink);
   position: relative;
 }
 .sn-summary::before {
-  content: '✦';
+  content: '';
   position: absolute;
-  left: 22px;
-  top: 50%;
-  margin-top: -14px;
-  font-size: 24px;
-  color: #fff;
-  opacity: 0.7;
-}
-.sn-summary::after {
-  content: '✦';
-  position: absolute;
-  right: 22px;
-  top: 50%;
-  margin-top: -14px;
-  font-size: 24px;
-  color: #fff;
-  opacity: 0.7;
+  inset: 0;
+  border: 2.5px solid var(--ink);
+  border-radius: 18px;
+  pointer-events: none;
+  filter: url(#sn-wobble);
 }
 .sn-summary__label {
   font-family: 'Caveat', cursive;
   font-size: 19px;
   letter-spacing: 0.1em;
   margin-bottom: 6px;
-  color: #fff3d1;
+  color: rgba(255, 240, 220, 0.95);
 }
 .sn-summary__body {
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15.5px;
   line-height: 1.65;
 }
 .sn-summary__detail {
   margin-top: 8px;
   font-family: 'Caveat', cursive;
   font-size: 17px;
-  color: #fff3d1;
+  color: rgba(255, 240, 220, 0.9);
 }
 
 /* ============================================================
-   Tables (rounded corners, soft borders)
+   Table (parchment style)
    ============================================================ */
 .sn-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   margin: 14px 0;
-  background: #fff;
-  border: 2px solid var(--ink);
-  border-radius: 12px;
-  overflow: hidden;
+  font-family: 'Noto Sans TC', sans-serif;
+  background: transparent;
 }
 .sn-table th, .sn-table td {
-  border-bottom: 1px solid var(--ink-faded);
+  border-bottom: 1.5px solid var(--ink-faded);
   padding: 8px 14px;
   font-size: 14px;
   text-align: left;
@@ -785,23 +819,21 @@
 }
 .sn-table tr:last-child td { border-bottom: none; }
 .sn-table th {
-  background: var(--yellow);
   font-family: 'Caveat', cursive;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   border-bottom: 2px solid var(--ink);
+  color: var(--ink);
 }
-.sn-table td.mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-.sn-table .pass { color: var(--green-deep); font-weight: 700; }
-.sn-table .fail { color: var(--pink-deep); font-weight: 700; }
 
 /* ============================================================
    Responsive
    ============================================================ */
 @media (max-width: 640px) {
-  .sketch-notes { padding: 24px 16px 50px; }
-  .sn-section { padding: 22px 18px; box-shadow: 3px 3px 0 var(--ink); }
-  .sn-section__num { transform: none; top: -12px; left: 14px; }
+  .sketch-notes { padding: 24px 14px 50px; }
+  .sn-section { padding: 24px 18px; margin: 24px auto; }
+  .sn-section__num { top: -14px; left: 14px; font-size: 18px; padding: 1px 10px; }
+  .sn-section__icon { top: -10px; right: 16px; font-size: 22px; }
   .sn-flow__card { padding: 14px 14px 14px 56px; }
   .sn-stickynote { transform: none; }
   .sn-chalk__main { font-size: 22px; }

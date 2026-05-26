@@ -13,6 +13,16 @@
 </head>
 <body class="sketch-notes">
 
+  <!-- SVG wobble filter — used by .sn-section::before, sticky notes, buttons, etc. -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <filter id="sn-wobble">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="3"/>
+        <feDisplacementMap in="SourceGraphic" scale="2.2"/>
+      </filter>
+    </defs>
+  </svg>
+
   <!-- Top nav -->
   <div class="sn-topnav">
     <span>
@@ -30,12 +40,14 @@
 
   <!-- Masthead -->
   <header class="sn-mast">
-    <p class="sn-mast__sub">Study Notes · Hand-drawn</p>
-    <h1 class="sn-mast__title">最近點對</h1>
+    <div class="sn-mast__banner">
+      <h1 class="sn-mast__title">最近點對</h1>
+    </div>
+    <p class="sn-mast__sub">// Closest Pair of Points · 平面分治經典</p>
     <div class="sn-mast__tags">
       <span class="sn-mast__star">★ ★ ★ ★ ★</span>
       <span class="sn-mast__sep"></span>
-      Closest Pair of Points
+      Divide &amp; Conquer · Strip Trick
       <span class="sn-mast__sep"></span>
       <strong>O(N log² N)</strong>
     </div>
@@ -52,15 +64,16 @@
   <!-- ============================================================
        SECTION 01 — 題目簡介
        ============================================================ -->
-  <section class="sn-section sn-section--pink">
-    <span class="sn-section__num">01</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">01</span></span>
+    <span class="sn-section__icon">📝</span>
     <h2 class="sn-section__title">
       題目在問什麼
       <span class="sn-section__title-en">// What's the question?</span>
     </h2>
 
-    <div class="sn-stickynote sn-stickynote--peach">
-      <span class="sn-stickynote__head">QUESTION ✨</span>
+    <div class="sn-stickynote">
+      <span class="sn-stickynote__head">QUESTION ✦</span>
       <p style="margin:0;">
         平面上有 <code>N</code> 個整數座標點 (<code>N ≤ 2×10⁵</code>, <code>|x|, |y| ≤ 10⁹</code>)，
         請找出<span class="sn-hl">距離最近的兩個點</span>，輸出它們的<strong>距離平方</strong> <code>d²</code>。
@@ -68,26 +81,27 @@
     </div>
 
     <p>
-      為什麼輸出「距離平方」而不是距離本身？<br/>
-      因為 <code>a &lt; b</code> 蘊含 <code>a² &lt; b²</code>（兩數都非負時），
-      <span class="sn-hl">比大小用平方一樣準</span>，可以省下開根號 + 浮點誤差的痛苦。整題能用純整數 (<code>long long</code>) 跑完。
+      為什麼輸出「距離平方」而不是距離本身？因為 <code>a &lt; b</code> 蘊含 <code>a² &lt; b²</code>（兩數都非負時），
+      <span class="sn-hl">比大小用平方一樣準</span>，可以省下開根號 + 浮點誤差的痛苦。
+      整題能用純整數（<code>long long</code>）跑完。
     </p>
   </section>
 
   <!-- ============================================================
        SECTION 02 — 為什麼用分治
        ============================================================ -->
-  <section class="sn-section sn-section--yellow">
-    <span class="sn-section__num">02</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">02</span></span>
+    <span class="sn-section__icon">🤔</span>
     <h2 class="sn-section__title">
       為什麼選分治
-      <span class="sn-section__title-en">// Why Divide & Conquer?</span>
+      <span class="sn-section__title-en">// Why Divide &amp; Conquer?</span>
     </h2>
 
-    <p>把「所有點兩兩比」拆掉之前，先想看看其他做法的缺點：</p>
+    <p>動手寫之前先想想其他做法的缺點：</p>
 
     <div class="sn-flow">
-      <div class="sn-flow__card sn-flow__card--pink">
+      <div class="sn-flow__card">
         <span class="sn-flow__num">A</span>
         <div class="sn-flow__head">暴力 O(N²)</div>
         <div class="sn-flow__body">
@@ -96,21 +110,21 @@
         </div>
       </div>
 
-      <div class="sn-flow__card sn-flow__card--yellow">
+      <div class="sn-flow__card">
         <span class="sn-flow__num">B</span>
         <div class="sn-flow__head">Hash 格子法</div>
         <div class="sn-flow__body">
-          把平面切 <code>d×d</code> 格、每點只查鄰格。
-          期望 O(N) 但<strong>最壞退化</strong>（點全擠一起）；浮點精度也要 care。
+          把平面切 <code>d×d</code> 格，每點只查鄰格。
+          期望 O(N) 但<strong>最壞退化</strong>；浮點精度也要 care。
         </div>
       </div>
 
-      <div class="sn-flow__card sn-flow__card--green">
+      <div class="sn-flow__card">
         <span class="sn-flow__num">C</span>
         <div class="sn-flow__head">分治 O(N log² N) ✓</div>
         <div class="sn-flow__body">
           按 x 切一半 → 各自遞迴 → 合併時只看中線附近的「跨界候選」strip。
-          <span class="sn-hl sn-hl--green">穩定且純整數</span>。
+          <span class="sn-hl">穩定且純整數</span>。
         </div>
       </div>
     </div>
@@ -119,14 +133,15 @@
   <!-- ============================================================
        SECTION 03 — 想法演化
        ============================================================ -->
-  <section class="sn-section sn-section--green">
-    <span class="sn-section__num">03</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">03</span></span>
+    <span class="sn-section__icon">💡</span>
     <h2 class="sn-section__title">
       想法是怎麼演化來的
       <span class="sn-section__title-en">// Thought Evolution</span>
     </h2>
 
-    <p>分治不是憑空想到的，是「<span class="sn-hl">想要避開全部比，但又不能漏掉答案</span>」一步步演化出來：</p>
+    <p>分治不是憑空想到的 — 是「<span class="sn-hl">想要避開全部比，但又不能漏掉答案</span>」一步步演化：</p>
 
     <div class="sn-think">
 
@@ -135,7 +150,7 @@
         <div class="sn-think__body">
           <span class="sn-think__head">直接比所有 pair</span>
           兩個 for-loop。對 <code>N = 2×10⁵</code> 是 <code>4×10¹⁰</code> 次運算，秒爆。
-          <br/><strong style="color:var(--pink-deep);">→ 必須避開「全部比」。</strong>
+          <br/><strong style="color:var(--accent);">→ 必須避開「全部比」。</strong>
         </div>
       </div>
       <div class="sn-think__arrow">↓</div>
@@ -145,7 +160,7 @@
         <div class="sn-think__body">
           <span class="sn-think__head">切一半 → 各自遞迴</span>
           按 x 切兩半，左半遞迴算最小 d_L、右半算最小 d_R。
-          <br/>但問題：<strong style="color:var(--pink-deep);">如果最近 pair 一個在左一個在右？</strong>
+          <br/>但問題：<strong style="color:var(--accent);">如果最近 pair 一個在左一個在右？</strong>
           直接切丟掉這個情況，會錯。
         </div>
       </div>
@@ -168,7 +183,7 @@
           <span class="sn-think__head">strip 按 y 排序 + 每點只看 7 個鄰居</span>
           <strong>幾何 + Pigeonhole</strong>：strip 內任意 d-高度視窗最多 8 個點。
           所以按 y 排序後，每點只需跟後面 7 個比 — 合併 O(N)！
-          <br/><strong style="color:var(--green-deep);">→ 總 T(N) = 2·T(N/2) + O(N log N) = O(N log² N) ✓</strong>
+          <br/><strong style="color:var(--leaf);">→ 總 T(N) = 2·T(N/2) + O(N) = O(N log² N) ✓</strong>
         </div>
       </div>
     </div>
@@ -177,8 +192,9 @@
   <!-- ============================================================
        SECTION 04 — 三步驟
        ============================================================ -->
-  <section class="sn-section sn-section--peach">
-    <span class="sn-section__num">04</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">04</span></span>
+    <span class="sn-section__icon">⚙️</span>
     <h2 class="sn-section__title">
       演算法 · 三步驟
       <span class="sn-section__title-en">// The Algorithm in 3 Steps</span>
@@ -187,7 +203,7 @@
     <p>對<strong>先按 x 排好序</strong>的點陣列，遞迴函式 <code>closest(lo, hi)</code> 做：</p>
 
     <div class="sn-flow">
-      <div class="sn-flow__card sn-flow__card--blue">
+      <div class="sn-flow__card">
         <span class="sn-flow__num">1</span>
         <div class="sn-flow__head">切一半</div>
         <div class="sn-flow__body">
@@ -196,7 +212,7 @@
         </div>
       </div>
 
-      <div class="sn-flow__card sn-flow__card--yellow">
+      <div class="sn-flow__card">
         <span class="sn-flow__num">2</span>
         <div class="sn-flow__head">遞迴左右</div>
         <div class="sn-flow__body">
@@ -206,7 +222,7 @@
         </div>
       </div>
 
-      <div class="sn-flow__card sn-flow__card--green">
+      <div class="sn-flow__card">
         <span class="sn-flow__num">3</span>
         <div class="sn-flow__head">合併 strip</div>
         <div class="sn-flow__body">
@@ -215,11 +231,11 @@
       </div>
     </div>
 
-    <div class="sn-stickynote sn-stickynote--blue" style="margin-top:18px;">
+    <div class="sn-stickynote" style="margin-top:20px;">
       <span class="sn-stickynote__head">Base case 🌱</span>
       <p style="margin:0;">
         <code>n ≤ 3</code> 時直接 brute force（最多 3 對）— 遞迴最深處沒有任何巧思，
-        所有<strong>聰明都在第 3 步合併</strong>。
+        所有 <strong>聰明都在第 3 步合併</strong>。
       </p>
     </div>
   </section>
@@ -228,15 +244,14 @@
        SECTION 05 — Base case 動畫
        ============================================================ -->
   <section class="sn-section">
-    <span class="sn-section__num">05</span>
+    <span class="sn-section__num"><span class="sn-section__num-circle">05</span></span>
+    <span class="sn-section__icon">🎬</span>
     <h2 class="sn-section__title">
       Base case 動畫
       <span class="sn-section__title-en">// n = 3 brute force</span>
     </h2>
 
-    <p>
-      3 個點直接互比 — 用範例 P1(1,1)、P2(2,4)、P3(5,2)：
-    </p>
+    <p>3 個點直接互比 — 用範例 P1(1,1)、P2(2,4)、P3(5,2)：</p>
 
     <div class="sn-viz">
       <span class="sn-viz__label-top">VIZ A · base case</span>
@@ -258,10 +273,11 @@
        SECTION 06 — General case 動畫
        ============================================================ -->
   <section class="sn-section">
-    <span class="sn-section__num">06</span>
+    <span class="sn-section__num"><span class="sn-section__num-circle">06</span></span>
+    <span class="sn-section__icon">🎞️</span>
     <h2 class="sn-section__title">
       General case 動畫
-      <span class="sn-section__title-en">// Full D&C trace</span>
+      <span class="sn-section__title-en">// Full D&amp;C trace</span>
     </h2>
 
     <p>
@@ -284,20 +300,21 @@
       </div>
     </div>
 
-    <p style="margin-top:16px;font-size:13.5px;color:var(--ink-soft);">
+    <p style="margin-top:14px;font-size:13.5px;color:var(--ink-soft);">
       <strong>顏色說明</strong> &nbsp;·&nbsp;
-      <span style="color:var(--blue-deep)">●</span> 普通點 &nbsp;·&nbsp;
-      <span style="color:var(--pink-deep)">●</span> 焦點 &nbsp;·&nbsp;
-      <span style="color:var(--yellow-deep)">●</span> strip 候選 &nbsp;·&nbsp;
-      <span style="color:var(--green-deep)">●</span> 最佳 pair
+      <span style="color:var(--sky)">●</span> 普通點 &nbsp;·&nbsp;
+      <span style="color:var(--accent)">●</span> 焦點 &nbsp;·&nbsp;
+      <span style="color:var(--gold)">●</span> strip 候選 &nbsp;·&nbsp;
+      <span style="color:var(--leaf)">●</span> 最佳 pair
     </p>
   </section>
 
   <!-- ============================================================
-       SECTION 07 — 為什麼 7 個就夠
+       SECTION 07 — Pigeonhole 證明
        ============================================================ -->
-  <section class="sn-section sn-section--lilac">
-    <span class="sn-section__num">07</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">07</span></span>
+    <span class="sn-section__icon">🔍</span>
     <h2 class="sn-section__title">
       為什麼 strip 內每點只看 7 個鄰居？
       <span class="sn-section__title-en">// Pigeonhole Proof</span>
@@ -312,7 +329,7 @@
       <li>擴成 <code>2d × 2d</code> 視窗（上下兩個矩形疊）⇒ 最多 <strong>8 點</strong>（含自己）</li>
     </ul>
 
-    <div class="sn-stickynote sn-stickynote--pink">
+    <div class="sn-stickynote">
       <span class="sn-stickynote__head">關鍵推論</span>
       <p style="margin:0;">
         所以按 y 排序的 strip 中，每點之後至多 <strong>7 個</strong> 鄰居可能 &lt; d。
@@ -324,8 +341,9 @@
   <!-- ============================================================
        SECTION 08 — 複雜度
        ============================================================ -->
-  <section class="sn-section sn-section--blue">
-    <span class="sn-section__num">08</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">08</span></span>
+    <span class="sn-section__icon">📊</span>
     <h2 class="sn-section__title">
       複雜度
       <span class="sn-section__title-en">// Complexity</span>
@@ -350,17 +368,18 @@
   <!-- ============================================================
        SECTION 09 — 一句洞察
        ============================================================ -->
-  <section class="sn-section sn-section--peach">
-    <span class="sn-section__num">09</span>
+  <section class="sn-section">
+    <span class="sn-section__num"><span class="sn-section__num-circle">09</span></span>
+    <span class="sn-section__icon">✨</span>
     <h2 class="sn-section__title">
       一句洞察
       <span class="sn-section__title-en">// Key Insight</span>
     </h2>
 
-    <div class="sn-stickynote sn-stickynote--green">
+    <div class="sn-stickynote">
       <span class="sn-stickynote__head">記住這一點 ✦</span>
       <p style="margin:0;">
-        D&amp;C 解這題的<strong>價值不在「切半」，而在「合併」</strong> —
+        D&amp;C 解這題的<strong>價值不在「切半」，而在「合併」</strong>：
         左右遞迴得到 d 後，畫一條寬 <code>2d</code> 的 strip 就把跨界候選縮到 O(N)；
         strip 按 y 排序 + 每點看 7 個鄰居又把比對縮到 O(N)。
         整題的關鍵是 <span class="sn-hl">幾何 + pigeonhole</span>，不是遞迴本身。
