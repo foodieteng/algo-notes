@@ -223,21 +223,96 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">07</span>
-      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity (step by step)</span></h2>
     </div>
+
+    <p style="font-size:14px;">不要被 <code>O(N log² N)</code> 嚇到，三步驟拆給你看：</p>
+
+    <!-- STEP 1 -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:18px 0 8px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 1</span>
+      算「一次 closest() 呼叫」做多少工
+    </h3>
+    <table class="sc-table">
+      <thead>
+        <tr><th style="width:36%;">事情</th><th>說明</th><th style="width:20%;text-align:right;">成本</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>① 切半 + 遞迴左右</td>
+          <td>呼叫兩個 N/2 的子問題</td>
+          <td class="mono" style="text-align:right;">2 · T(N/2)</td>
+        </tr>
+        <tr>
+          <td>② 收集 strip</td>
+          <td>掃過所有 N 個點，挑 <code>|x − mid_x|² &lt; d</code> 的</td>
+          <td class="mono" style="text-align:right;">O(N)</td>
+        </tr>
+        <tr>
+          <td>③ <strong>strip 排序 by y</strong></td>
+          <td><span style="color:var(--sc-coral);">這就是多出來的那個 log！</span> strip 最壞含 N 點，<code>sort()</code> 要 N log N。</td>
+          <td class="mono" style="text-align:right;"><strong>O(N log N)</strong></td>
+        </tr>
+        <tr>
+          <td>④ strip 內 7 鄰居比</td>
+          <td>每點 O(1)，總共 O(N)</td>
+          <td class="mono" style="text-align:right;">O(N)</td>
+        </tr>
+      </tbody>
+    </table>
 
     <div class="sc-formula">
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N log N)</div>
       <div class="sc-formula__hint">
-        合併階段需要對 strip 排序 ⇒ O(N log N)<br/>
-        總複雜度 = <strong>O(N log² N)</strong>
+        遞迴成本 + 一次合併成本（其中最貴的是 strip 排序）
       </div>
     </div>
 
-    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
-      若改用 merge sort 在遞迴中同步維護「y 已排序」的副本，可降到 <strong>O(N log N)</strong>。
-      多數教學版採 O(N log² N) — 程式更直觀，N = 2 × 10⁵ 仍秒過。
-    </p>
+    <!-- STEP 2 -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:24px 0 8px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 2</span>
+      畫遞迴樹，每層算一次總工
+    </h3>
+    <p style="font-size:14px;">每往下切一層，N 變一半，<strong>剛好 <code>log₂ N</code> 層</strong>：</p>
+
+<pre style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-left:4px solid var(--sc-coral);padding:14px 16px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;color:var(--sc-ink);overflow-x:auto;">Level 0  ── 1 個大小 N 的問題  ─→ 合併成本 = N log N
+                  ╱              ╲
+Level 1  ── 2 個大小 N/2 的問題 ─→ 2 × (N/2) log(N/2) ≈ N log N
+                ╱  ╲           ╱  ╲
+Level 2  ── 4 個大小 N/4       ─→ 4 × (N/4) log(N/4) ≈ N log N
+   ⋮
+Level k  ── 2ᵏ 個大小 N/2ᵏ     ─→ 2ᵏ × (N/2ᵏ) log(N/2ᵏ) ≈ N log N
+   ⋮
+Level logN ─ leaves (base case) ─→ ≈ N（最深層只剩 brute）
+
+每層合計都是 ≈ N log N
+共有 log N 層
+─────────────────────────────────
+總成本 = log N 層 × N log N 每層
+       = N log² N</pre>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">總複雜度 = <strong>O(N log² N)</strong></div>
+      <div class="sc-formula__hint">
+        對 N = 2 × 10⁵ ⇒ 約 2 × 10⁵ × 18² ≈ <strong>6 × 10⁷</strong> 次運算，秒過
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:24px 0 8px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 3</span>
+      能不能更快？
+    </h3>
+    <p style="font-size:14px;">瓶頸是 <span class="sc-em" style="font-family:'Caveat',cursive;font-size:1.1em;color:var(--sc-coral);font-weight:700;">每層都對 strip 重新排序</span>，貢獻一個 log。
+      若改用 <strong>merge sort 技巧</strong>在遞迴中順便維護「y 已排序」的副本，
+      merge 兩個已 y-排序的子集合是 O(N) — 整個合併只要 O(N)：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N) = <strong>O(N log N)</strong></div>
+      <div class="sc-formula__hint">
+        程式較複雜，但少一個 log；本題 N = 2×10⁵ 不需要，O(N log² N) 已秒過
+      </div>
+    </div>
   </section>
 
   <!-- ============================================================
