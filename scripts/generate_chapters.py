@@ -163,10 +163,64 @@ def group_problems(probs):
     return out
 
 
+def chapter_quick_index(week, week_slug, probs):
+    """Flat quick-reference table of every problem in the chapter."""
+    if not probs:
+        return ''
+    rows = []
+    for slug, title, cat, status in probs:
+        cat_name = CATEGORY_NAMES.get(cat, cat)
+        pid = slug.upper()
+        href = resolve_problem_link(week_slug, slug)
+        source = tioj_url(slug)
+
+        if status == 'done':
+            status_html = '<span style="color:#6ba368">✓ done</span>'
+        elif status == 'demo':
+            status_html = '<span class="chip chip--warning" style="font-size:9px;">DEMO</span>'
+        else:
+            status_html = '<span style="color:var(--concrete)">○ todo</span>'
+
+        if status in ('done', 'demo'):
+            title_cell = f'<a href="{href}">{title}</a>'
+        else:
+            title_cell = f'<span style="color:var(--concrete)">{title}</span>'
+
+        rows.append(
+            f'            <tr>'
+            f'<td><span class="chip">{cat_name}</span></td>'
+            f'<td style="font-family:var(--font-mono);">{pid}</td>'
+            f'<td>{title_cell}</td>'
+            f'<td><a href="{source}" target="_blank" rel="noopener" '
+            f'style="color:var(--rust-bright);border:none;">原題 ↗</a></td>'
+            f'<td>{status_html}</td>'
+            f'</tr>'
+        )
+    rows_html = '\n'.join(rows)
+    return f'''      <article id="sec-quick-index">
+        <span class="stamp">▼ QUICK INDEX</span>
+        <h2>題目快速索引</h2>
+        <div class="article-meta">
+          <span>SUMMARY</span>
+          <span>{len(probs)} PROBLEMS</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>類別</th><th>題號</th><th>題目</th><th>原題</th><th>狀態</th></tr>
+          </thead>
+          <tbody>
+{rows_html}
+          </tbody>
+        </table>
+      </article>'''
+
+
 def chapter_outline(week, week_slug, probs):
     """Build the chapter TOC at the top of the chapter page."""
     by_cat = group_problems(probs)
     items = []
+    if probs:
+        items.append(f'          <li><a href="#sec-quick-index">⚡ 快速索引</a></li>')
     items.append(f'          <li><a href="#sec-concept">{week}.1 · 核心概念</a></li>')
 
     idx = 2
@@ -195,10 +249,16 @@ def chapter_outline(week, week_slug, probs):
 
 
 def chapter_sections(week, week_slug, probs):
-    """Build the main content sections of the chapter page (concept + per-category + notes)."""
+    """Build the main content sections of the chapter page (quick index + concept + per-category + notes)."""
     by_cat = group_problems(probs)
 
     out = []
+
+    # Quick reference table at the top (only if there are problems)
+    qi = chapter_quick_index(week, week_slug, probs)
+    if qi:
+        out.append(qi)
+
     out.append(f'''      <article id="sec-concept">
         <span class="stamp">▼ {week}.1</span>
         <h2>核心概念</h2>
