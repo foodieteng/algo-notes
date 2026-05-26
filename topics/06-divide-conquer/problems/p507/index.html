@@ -72,14 +72,12 @@
 
     <div class="sc-question">
       <span class="sc-question__label">QUESTION</span>
-      <p>平面上 <code>N</code> ≤ 2 × 10⁵ 個整數座標的點 (|x|, |y| ≤ 10⁹)。
-      請找出距離最近的兩個點，輸出最小<strong>距離平方</strong> <code>d²</code>。
-      用平方避開浮點誤差。</p>
+      <p>平面 <code>N</code> ≤ 2 × 10⁵ 個整數座標點（|x|, |y| ≤ 10⁹）。
+      找<strong>最近兩點的距離平方</strong> <code>d²</code>。</p>
     </div>
 
-    <p style="font-size:13px;color:var(--sc-ink-dim);margin-top:8px;">
-      之所以採距離平方，是因為兩個距離 a &lt; b 的點，也滿足 a² &lt; b²，<strong>大小關係不變</strong>，
-      不必開根號即可比較。整題能用純整數運算 (<code>long long</code>) 完成。
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      用平方比就好 — <code>a &lt; b ⇔ a² &lt; b²</code>，<strong>免開根號、整題純 <code>long long</code></strong>。
     </p>
   </section>
 
@@ -94,16 +92,16 @@
 
     <div class="sc-points">
       <div class="sc-points__card">
-        <div class="sc-points__head"><span class="sc-points__letter">A</span>暴力 O(N²)</div>
-        <div class="sc-points__body">枚舉所有 C(N, 2) 對 + O(1) 算距離。N = 2 × 10⁵ ⇒ ~2 × 10¹⁰ 運算，TLE。</div>
+        <div class="sc-points__head"><span class="sc-points__letter">A</span>暴力 O(N²) ❌</div>
+        <div class="sc-points__body">N = 2 × 10⁵ ⇒ <strong>~2 × 10¹⁰ 運算</strong>，TLE。</div>
       </div>
       <div class="sc-points__card">
-        <div class="sc-points__head"><span class="sc-points__letter">B</span>Hash / 格子</div>
-        <div class="sc-points__body">期望 O(N) 但 worst-case 退化；浮點切格子又有精度風險，需動態調整。工程麻煩。</div>
+        <div class="sc-points__head"><span class="sc-points__letter">B</span>Hash 格子 ⚠️</div>
+        <div class="sc-points__body">期望 O(N) 但<strong>最壞退化</strong>，浮點切格子有精度風險。</div>
       </div>
       <div class="sc-points__card">
-        <div class="sc-points__head"><span class="sc-points__letter">C</span>分治 O(N log² N)</div>
-        <div class="sc-points__body">按 x 切半 → 遞迴左右 → 合併時只看「中線附近 strip」內每點下 7 個鄰居。穩定且純整數。</div>
+        <div class="sc-points__head"><span class="sc-points__letter">C</span>分治 O(N log² N) ✓</div>
+        <div class="sc-points__body">切半 → 遞迴 → strip 補抓跨界 pair。<strong>穩定純整數</strong>。</div>
       </div>
     </div>
   </section>
@@ -117,16 +115,16 @@
       <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
     </div>
 
-    <p>對所有點先按 x 預排序。遞迴函式 <code>closest(lo, hi)</code> 做這 3 件事：</p>
+    <p style="font-size:14px;">先把點按 x 排序，<code>closest(lo, hi)</code> 做 3 件事：</p>
 
-    <ol style="margin-top:8px;">
-      <li><strong>切一半</strong>：取中位索引 <code>mid = (lo + hi) / 2</code>，記下中線 <code>mid_x = pts[mid].x</code>。</li>
-      <li><strong>遞迴左右</strong>：<code>d_L = closest(lo, mid)</code>、<code>d_R = closest(mid+1, hi)</code>，取 <code>d = min(d_L, d_R)</code>。</li>
-      <li><strong>合併 strip</strong>：收集所有 <code>|x − mid_x| &lt; √d</code> 的點，按 y 排序後每點只跟後續 7 個比，更新 d。</li>
+    <ol style="margin-top:6px;">
+      <li><strong>切半</strong> · <code>mid_x = pts[(lo+hi)/2].x</code></li>
+      <li><strong>遞迴</strong> · <code>d = min(closest 左, closest 右)</code></li>
+      <li><strong>合併 strip</strong> · 收 <code>|x − mid_x| &lt; √d</code> → 按 y 排序 → 每點看下 7 個鄰居 → 更新 d</li>
     </ol>
 
-    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      Base case：<code>n ≤ 3</code> 時直接暴力。最多比 3 對，遞迴下去 mid 也會落在唯一一點上、不便切。
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>Base case</strong> · <code>n ≤ 3</code> 直接 brute（3 對以內）。
     </p>
   </section>
 
@@ -205,8 +203,7 @@
       <h2 class="sc-section__title">為什麼只比 7 個鄰居就夠<span class="sc-section__title-en">// Pigeonhole Bound</span></h2>
     </div>
 
-    <p>令 <code>d</code> 為遞迴左右後的最小距離。strip 內任兩點若要 &lt; d，那它們的 y 軸差也必 &lt; d。
-    考慮在 strip 任意「<code>d</code> 高度視窗」內最多能塞幾個點：</p>
+    <p style="font-size:14px;">兩點距離 &lt; d ⇒ y 差也 &lt; d。問：<strong>strip 任意 <code>d</code> 高度視窗最多塞幾個點？</strong></p>
 
     <div class="sc-dark-box">
       <div class="sc-dark-box__title">Pigeonhole · 鴿籠論證</div>
@@ -221,9 +218,8 @@
       </div>
     </div>
 
-    <p style="margin-top:12px;">
-      所以按 y 排序的 strip 中，每點之後至多有 <strong>7 個</strong> 鄰居會跟它構成 &lt; d 的距離 —
-      檢查這 7 個即可。實作多半再加 <code>if (Δy² ≥ d) break;</code> 提前終止。
+    <p style="margin-top:12px;font-size:14px;">
+      ⇒ strip 按 y 排序後，每點只跟<strong>後 7 個</strong>比即可。實作再加 <code>if (Δy² ≥ d) break;</code> 提早終止。
     </p>
   </section>
 
@@ -236,7 +232,7 @@
       <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity (step by step)</span></h2>
     </div>
 
-    <p style="font-size:14px;">不要被 <code>O(N log² N)</code> 嚇到，三步驟拆給你看：</p>
+    <p style="font-size:14px;"><strong>三步驟拆解 <code>O(N log² N)</code>：</strong></p>
 
     <!-- STEP 1 -->
     <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:18px 0 8px;color:var(--sc-ink);">
@@ -381,14 +377,12 @@
       <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 3</span>
       能不能更快？
     </h3>
-    <p style="font-size:14px;">瓶頸是 <span class="sc-em" style="font-family:'Caveat',cursive;font-size:1.1em;color:var(--sc-coral);font-weight:700;">每層都對 strip 重新排序</span>，貢獻一個 log。
-      若改用 <strong>merge sort 技巧</strong>在遞迴中順便維護「y 已排序」的副本，
-      merge 兩個已 y-排序的子集合是 O(N) — 整個合併只要 O(N)：</p>
+    <p style="font-size:14px;">瓶頸：<strong>每層 strip 重排序</strong>多一個 log。改用 <strong>merge sort</strong> 維護 y-sorted 副本 → 合併 O(N)：</p>
 
     <div class="sc-formula">
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + O(N) = <strong>O(N log N)</strong></div>
       <div class="sc-formula__hint">
-        程式較複雜，但少一個 log；本題 N = 2×10⁵ 不需要，O(N log² N) 已秒過
+        程式較複雜；本題 N = 2×10⁵，O(N log² N) 已秒過、不必硬上
       </div>
     </div>
   </section>
@@ -403,10 +397,10 @@
     </div>
 
     <div class="sc-insight">
-      <strong>D&amp;C 解這題的價值不在「切半」，而在「合併」</strong>：
-      左右遞迴得到 d 後，畫一條寬 <code>2d</code> 的 strip 就把「可能更近的跨界 pair」候選縮到 O(N)；
-      strip 按 y 排序、每點只看 7 個鄰居又把比對縮到 O(N)。
-      整題的關鍵是<em>幾何 + pigeonhole</em>，而不是遞迴本身。
+      <strong>價值不在「切半」，而在「合併」。</strong><br/>
+      寬 <code>2d</code> 的 strip 把跨界候選縮到 O(N)，<br/>
+      按 y 排序 + 7 鄰居 再把比對縮到 O(N)。<br/>
+      <em>關鍵是幾何 + pigeonhole，不是遞迴。</em>
     </div>
   </section>
 
