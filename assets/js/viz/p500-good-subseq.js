@@ -168,7 +168,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = rect.height || 200;
+    const h = rect.height || 240;
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -180,7 +180,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     ctx.fillStyle = P500_COLOR.paper;
     ctx.fillRect(0, 0, w, h);
 
-    // Headline
+    // Headline — top band
     ctx.fillStyle = P500_COLOR.ink;
     ctx.font = P500_FONT.head;
     ctx.textAlign = 'center';
@@ -188,20 +188,20 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     const headline = step === -1
       ? 'INITIAL · solve(1, 3) on [2, 1, 3]'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 10);
+    ctx.fillText(headline, w / 2, 14);
 
-    // Sub-line
+    // Sub-line — separated band (gap ≥ 12 from headline)
     ctx.fillStyle = P500_COLOR.inkDim;
     ctx.font = P500_FONT.sub;
-    ctx.fillText('GOOD ⇔ max − min = R − L', w / 2, 28);
+    ctx.fillText('GOOD ⇔ max − min = R − L', w / 2, 38);
 
     // Array row (responsive)
     const sidePad = 32;
     const gap = 6;
-    const cellSize = Math.min((w - sidePad * 2 - gap * (ARR.length - 1)) / ARR.length, 56);
+    const cellSize = Math.min((w - sidePad * 2 - gap * (ARR.length - 1)) / ARR.length, 52);
     const totalW = cellSize * ARR.length + gap * (ARR.length - 1);
     const originX = (w - totalW) / 2;
-    const originY = 60;
+    const originY = 84;   // 38 (sub) + 11 (sub h) + 11 (index labels) + 8 (gutter) + 16 (cell padding) ≈ 84
 
     // Cell states depending on phase
     const states = new Array(ARR.length).fill(undefined);
@@ -219,17 +219,17 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     }
     p500DrawArray(ctx, ARR, originX, originY, cellSize, gap, states);
 
-    // Index labels above
+    // Index labels above — sit 10px above the cell top (clear of sub-line)
     ctx.fillStyle = P500_COLOR.inkDim;
     ctx.font = P500_FONT.tagSm;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     for (let i = 0; i < ARR.length; i++) {
-      ctx.fillText(String(i + 1), originX + i * (cellSize + gap) + cellSize / 2, originY - 4);
+      ctx.fillText(String(i + 1), originX + i * (cellSize + gap) + cellSize / 2, originY - 10);
     }
 
-    // Brackets + range info below
-    const bracketY = originY + cellSize + 6;
+    // Brackets + range info below (gap 12 from cell bottom)
+    const bracketY = originY + cellSize + 12;
     if (phase === 'split' || phase === 'cross') {
       p500DrawBracket(ctx, originX, cellSize, gap, 0, 1, bracketY,
                       phase === 'split' ? 'LEFT  L=1..2' : 'LEFT (L picks from)',
@@ -418,7 +418,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = rect.height || 300;
+    const h = rect.height || 360;
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -430,7 +430,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     ctx.fillStyle = P500_COLOR.paper;
     ctx.fillRect(0, 0, w, h);
 
-    // Headline
+    // Headline — top band
     ctx.fillStyle = P500_COLOR.ink;
     ctx.font = P500_FONT.head;
     ctx.textAlign = 'center';
@@ -438,20 +438,20 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     const headline = step === -1
       ? 'INITIAL · solve(1, 5) on [5, 1, 2, 4, 3]'
       : STEPS[step].title;
-    ctx.fillText(headline, w / 2, 10);
+    ctx.fillText(headline, w / 2, 14);
 
-    // Sub-line
+    // Sub-line — separated band (gap ≥ 12 from headline)
     ctx.fillStyle = P500_COLOR.inkDim;
     ctx.font = P500_FONT.sub;
-    ctx.fillText('count(lo, hi) = count(lo, mid) + count(mid+1, hi) + count_crossing(...)', w / 2, 28);
+    ctx.fillText('count(lo, hi) = count(lo, mid) + count(mid+1, hi) + count_crossing(...)', w / 2, 38);
 
     // Array row (centered, responsive)
     const sidePad = 32;
     const gap = 8;
-    const cellSize = Math.min((w - sidePad * 2 - gap * (ARR.length - 1)) / ARR.length, 64);
+    const cellSize = Math.min((w - sidePad * 2 - gap * (ARR.length - 1)) / ARR.length, 56);
     const totalW = cellSize * ARR.length + gap * (ARR.length - 1);
     const originX = (w - totalW) / 2;
-    const originY = 60;
+    const originY = 84;   // matches base case — clears sub-line + index labels with breathing room
 
     const phase = step >= 0 ? STEPS[step].phase : null;
 
@@ -477,29 +477,29 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     for (let i = 0; i < ARR.length; i++) {
-      ctx.fillText(String(i + 1), originX + i * (cellSize + gap) + cellSize / 2, originY - 4);
+      ctx.fillText(String(i + 1), originX + i * (cellSize + gap) + cellSize / 2, originY - 10);
     }
 
-    // Mid marker line
+    // Mid marker line — coral dashed; label sits ABOVE the index numbers
     if (phase && phase !== 'done') {
       const midX = originX + 3 * (cellSize + gap) - gap / 2;
       ctx.strokeStyle = P500_COLOR.coral;
       ctx.lineWidth = 1.4;
       ctx.setLineDash([4, 3]);
       ctx.beginPath();
-      ctx.moveTo(midX, originY - 14);
+      ctx.moveTo(midX, originY - 6);
       ctx.lineTo(midX, originY + cellSize + 10);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = P500_COLOR.coral;
       ctx.font = P500_FONT.tagSm;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText('mid = 3', midX, originY - 16);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(' mid = 3', midX, originY - 22);
     }
 
-    // Brackets below array
-    const bracketY = originY + cellSize + 8;
+    // Brackets below array (gap 14 from cell bottom)
+    const bracketY = originY + cellSize + 14;
     if (phase === 'split' || phase === 'cross-prep' || phase === 'cross-check') {
       p500DrawBracket(ctx, originX, cellSize, gap, 0, 2, bracketY,
                       'LEFT  [1, 3]',  P500_COLOR.leftStrong);
@@ -513,9 +513,9 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
                       'solve(4, 5) → 3', P500_COLOR.rightStrong);
     }
 
-    // Max/min table — only when in cross phases
+    // Max/min table — only when in cross phases (gap 40 from bracket so labels don't crowd)
     if (phase === 'cross-prep' || phase === 'cross-check') {
-      const tableY = bracketY + 32;
+      const tableY = bracketY + 40;
       drawMaxMinTable(ctx, w, tableY, originX, cellSize, gap, phase === 'cross-check');
     }
 
