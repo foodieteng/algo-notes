@@ -125,22 +125,34 @@ def resolve_problem_link(week_slug, prob_slug):
     return f'problems/{prob_slug}/index.html'
 
 
+def tioj_url(slug):
+    """Build TIOJ source URL from a problem slug like 'p114' → .../problems/114/."""
+    digits = ''.join(ch for ch in slug if ch.isdigit())
+    return f'https://tioj.sprout.tw/contests/20/problems/{digits}/'
+
+
 def render_problem_item(week, week_slug, slug, title, status, *, indent=''):
     """Render a single <li> for a problem (used in both chapter outline and section list)."""
     pid = slug.upper()
+    source = (
+        f' <a href="{tioj_url(slug)}" target="_blank" rel="noopener" '
+        f'style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">'
+        f'原題 ↗</a>'
+    )
     if status == 'todo':
         return (
             f'{indent}<li><span style="color:var(--concrete)">{pid} · {title} '
-            f'<em style="font-style:normal;color:var(--line-bright)">(待補)</em></span></li>'
+            f'<em style="font-style:normal;color:var(--line-bright)">(待補)</em></span>{source}</li>'
         )
     href = resolve_problem_link(week_slug, slug)
     if status == 'demo':
         return (
             f'{indent}<li><a href="{href}">{pid} · {title}</a>'
-            f'<span class="chip chip--warning" style="margin-left:8px;font-size:9px;">DEMO</span></li>'
+            f'<span class="chip chip--warning" style="margin-left:8px;font-size:9px;">DEMO</span>'
+            f'{source}</li>'
         )
     # 'done' or anything else
-    return f'{indent}<li><a href="{href}">{pid} · {title}</a></li>'
+    return f'{indent}<li><a href="{href}">{pid} · {title}</a>{source}</li>'
 
 
 def group_problems(probs):
