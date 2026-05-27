@@ -73,64 +73,92 @@
 <pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
 
-<span class="k">struct</span> <span class="t">Point</span> <span class="p">{</span> <span class="t">long long</span> x<span class="p">,</span> y<span class="p">;</span> <span class="p">};</span>
+<span class="k">struct</span> <span class="t">Point</span> <span class="p">{</span>
+    <span class="t">long long</span> x<span class="p">,</span> y<span class="p">;</span>                                 <span class="c">// 座標 ≤ 10⁹ ⇒ 用 long long 防 dx² 溢位</span>
+<span class="p">};</span>
 
-<span class="c">// 距離平方 — 純整數，避開浮點</span>
-<span class="t">long long</span> <span class="f">dist2</span><span class="p">(</span><span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> a<span class="p">,</span> <span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> b<span class="p">)</span> <span class="p">{</span>
-    <span class="t">long long</span> dx <span class="p">=</span> a<span class="p">.</span>x <span class="p">-</span> b<span class="p">.</span>x<span class="p">,</span> dy <span class="p">=</span> a<span class="p">.</span>y <span class="p">-</span> b<span class="p">.</span>y<span class="p">;</span>
+<span class="c">// 距離平方：純整數，避開 sqrt 浮點誤差</span>
+<span class="t">long long</span> <span class="f">dist2</span><span class="p">(</span><span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> p1<span class="p">,</span> <span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> p2<span class="p">)</span> <span class="p">{</span>
+    <span class="t">long long</span> dx <span class="p">=</span> p1<span class="p">.</span>x <span class="p">-</span> p2<span class="p">.</span>x<span class="p">;</span>
+    <span class="t">long long</span> dy <span class="p">=</span> p1<span class="p">.</span>y <span class="p">-</span> p2<span class="p">.</span>y<span class="p">;</span>
     <span class="k">return</span> dx <span class="p">*</span> dx <span class="p">+</span> dy <span class="p">*</span> dy<span class="p">;</span>
 <span class="p">}</span>
 
-<span class="t">bool</span> <span class="f">by_y</span><span class="p">(</span><span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> a<span class="p">,</span> <span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> b<span class="p">)</span> <span class="p">{</span> <span class="k">return</span> a<span class="p">.</span>y <span class="p">&lt;</span> b<span class="p">.</span>y<span class="p">;</span> <span class="p">}</span>
-
+<span class="c">// 回傳 pts[lo..hi] 內最近兩點的距離平方</span>
 <span class="t">long long</span> <span class="f">closest</span><span class="p">(</span><span class="t">vector</span><span class="p">&lt;</span><span class="t">Point</span><span class="p">&gt;&amp;</span> pts<span class="p">,</span> <span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
     <span class="t">int</span> n <span class="p">=</span> hi <span class="p">-</span> lo <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span>n <span class="p">&lt;=</span> <span class="n">3</span><span class="p">)</span> <span class="p">{</span>                            <span class="c">// base case: brute</span>
+
+    <span class="c">// ── BASE: ≤ 3 點直接 brute（最多 C(3,2) = 3 對）</span>
+    <span class="k">if</span> <span class="p">(</span>n <span class="p">&lt;=</span> <span class="n">3</span><span class="p">)</span> <span class="p">{</span>
         <span class="t">long long</span> d <span class="p">=</span> LLONG_MAX<span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> lo<span class="p">;</span> i <span class="p">&lt;</span> hi<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
-            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> hi<span class="p">;</span> <span class="p">++</span>j<span class="p">)</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> lo<span class="p">;</span> i <span class="p">&lt;=</span> hi<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> hi<span class="p">;</span> j<span class="p">++)</span> <span class="p">{</span>
                 d <span class="p">=</span> <span class="f">min</span><span class="p">(</span>d<span class="p">,</span> <span class="f">dist2</span><span class="p">(</span>pts<span class="p">[</span>i<span class="p">],</span> pts<span class="p">[</span>j<span class="p">]));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
         <span class="k">return</span> d<span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>lo <span class="p">+</span> hi<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
-    <span class="t">long long</span> mid_x <span class="p">=</span> pts<span class="p">[</span>mid<span class="p">].</span>x<span class="p">;</span>
+    <span class="c">// ── 切半（pts 已按 x 排序，中位數即 pts[mid].x）</span>
+    <span class="t">int</span> mid <span class="p">=</span> lo <span class="p">+</span> <span class="p">(</span>hi <span class="p">-</span> lo<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>                   <span class="c">// overflow-safe</span>
+    <span class="t">long long</span> midX <span class="p">=</span> pts<span class="p">[</span>mid<span class="p">].</span>x<span class="p">;</span>
 
+    <span class="c">// ── 左右各遞迴，取較小者當門檻 d</span>
     <span class="t">long long</span> dL <span class="p">=</span> <span class="f">closest</span><span class="p">(</span>pts<span class="p">,</span> lo<span class="p">,</span> mid<span class="p">);</span>
     <span class="t">long long</span> dR <span class="p">=</span> <span class="f">closest</span><span class="p">(</span>pts<span class="p">,</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> hi<span class="p">);</span>
-    <span class="t">long long</span> d  <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dL<span class="p">,</span> dR<span class="p">);</span>
+    <span class="t">long long</span> d <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dL<span class="p">,</span> dR<span class="p">);</span>
 
-    <span class="c">// 收集 strip：水平距中線平方 &lt; d</span>
+    <span class="c">// ── STRIP: 只收 |x − midX| &lt; √d 的點 (其餘不可能成跨界對)</span>
     <span class="t">vector</span><span class="p">&lt;</span><span class="t">Point</span><span class="p">&gt;</span> strip<span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> lo<span class="p">;</span> i <span class="p">&lt;=</span> hi<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> <span class="p">{</span>
-        <span class="t">long long</span> dx <span class="p">=</span> pts<span class="p">[</span>i<span class="p">].</span>x <span class="p">-</span> mid_x<span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span>dx <span class="p">*</span> dx <span class="p">&lt;</span> d<span class="p">)</span> strip<span class="p">.</span><span class="f">push_back</span><span class="p">(</span>pts<span class="p">[</span>i<span class="p">]);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> lo<span class="p">;</span> i <span class="p">&lt;=</span> hi<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">long long</span> dx <span class="p">=</span> pts<span class="p">[</span>i<span class="p">].</span>x <span class="p">-</span> midX<span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span>dx <span class="p">*</span> dx <span class="p">&gt;=</span> d<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>                 <span class="c">// 平方比，免 sqrt</span>
+
+        strip<span class="p">.</span><span class="f">push_back</span><span class="p">(</span>pts<span class="p">[</span>i<span class="p">]);</span>
     <span class="p">}</span>
 
-    <span class="c">// strip 按 y 排序，每點只看下 7 個 (pigeonhole)</span>
-    <span class="f">sort</span><span class="p">(</span>strip<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> strip<span class="p">.</span><span class="f">end</span><span class="p">(),</span> by_y<span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> <span class="p">(</span><span class="t">int</span><span class="p">)</span>strip<span class="p">.</span><span class="f">size</span><span class="p">();</span> <span class="p">++</span>i<span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;</span> <span class="p">(</span><span class="t">int</span><span class="p">)</span>strip<span class="p">.</span><span class="f">size</span><span class="p">()</span> <span class="p">&amp;&amp;</span> j <span class="p">-</span> i <span class="p">&lt;</span> <span class="n">8</span><span class="p">;</span> <span class="p">++</span>j<span class="p">)</span> <span class="p">{</span>
+    <span class="c">// ── strip 按 y 排序，每點只比後 7 個（pigeonhole 上界）</span>
+    <span class="f">sort</span><span class="p">(</span>strip<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> strip<span class="p">.</span><span class="f">end</span><span class="p">(),</span> <span class="p">[](</span><span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> p1<span class="p">,</span> <span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> p2<span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> p1<span class="p">.</span>y <span class="p">&lt;</span> p2<span class="p">.</span>y<span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> <span class="p">(</span><span class="t">int</span><span class="p">)</span>strip<span class="p">.</span><span class="f">size</span><span class="p">();</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;</span> <span class="p">(</span><span class="t">int</span><span class="p">)</span>strip<span class="p">.</span><span class="f">size</span><span class="p">()</span> <span class="p">&amp;&amp;</span> j <span class="p">-</span> i <span class="p">&lt;</span> <span class="n">8</span><span class="p">;</span> j<span class="p">++)</span> <span class="p">{</span>
             <span class="t">long long</span> dy <span class="p">=</span> strip<span class="p">[</span>j<span class="p">].</span>y <span class="p">-</span> strip<span class="p">[</span>i<span class="p">].</span>y<span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span>dy <span class="p">*</span> dy <span class="p">&gt;=</span> d<span class="p">)</span> <span class="k">break</span><span class="p">;</span>      <span class="c">// 提前終止</span>
+            <span class="k">if</span> <span class="p">(</span>dy <span class="p">*</span> dy <span class="p">&gt;=</span> d<span class="p">)</span> <span class="k">break</span><span class="p">;</span>                <span class="c">// y 已超過 √d ⇒ 後面也都超，提早終止</span>
+
             d <span class="p">=</span> <span class="f">min</span><span class="p">(</span>d<span class="p">,</span> <span class="f">dist2</span><span class="p">(</span>strip<span class="p">[</span>i<span class="p">],</span> strip<span class="p">[</span>j<span class="p">]));</span>
         <span class="p">}</span>
     <span class="p">}</span>
+
     <span class="k">return</span> d<span class="p">;</span>
 <span class="p">}</span>
 
 <span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
-    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
 
-    <span class="t">int</span> n<span class="p">;</span> cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+    <span class="t">int</span> n<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+
     <span class="t">vector</span><span class="p">&lt;</span><span class="t">Point</span><span class="p">&gt;</span> pts<span class="p">(</span>n<span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> cin <span class="p">&gt;&gt;</span> pts<span class="p">[</span>i<span class="p">].</span>x <span class="p">&gt;&gt;</span> pts<span class="p">[</span>i<span class="p">].</span>y<span class="p">;</span>
 
-    <span class="f">sort</span><span class="p">(</span>pts<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> pts<span class="p">.</span><span class="f">end</span><span class="p">(),</span> <span class="p">[](</span><span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> a<span class="p">,</span> <span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> b<span class="p">){</span>
-        <span class="k">return</span> a<span class="p">.</span>x <span class="p">&lt;</span> b<span class="p">.</span>x<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        cin <span class="p">&gt;&gt;</span> pts<span class="p">[</span>i<span class="p">].</span>x <span class="p">&gt;&gt;</span> pts<span class="p">[</span>i<span class="p">].</span>y<span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c">// 先按 x 排序一次（x 同就比 y）— 整個遞迴沿用</span>
+    <span class="f">sort</span><span class="p">(</span>pts<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> pts<span class="p">.</span><span class="f">end</span><span class="p">(),</span> <span class="p">[](</span><span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> p1<span class="p">,</span> <span class="k">const</span> <span class="t">Point</span><span class="p">&amp;</span> p2<span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span>p1<span class="p">.</span>x <span class="p">!=</span> p2<span class="p">.</span>x<span class="p">)</span> <span class="k">return</span> p1<span class="p">.</span>x <span class="p">&lt;</span> p2<span class="p">.</span>x<span class="p">;</span>
+        <span class="k">return</span> p1<span class="p">.</span>y <span class="p">&lt;</span> p2<span class="p">.</span>y<span class="p">;</span>
     <span class="p">});</span>
 
     cout <span class="p">&lt;&lt;</span> <span class="f">closest</span><span class="p">(</span>pts<span class="p">,</span> <span class="n">0</span><span class="p">,</span> n <span class="p">-</span> <span class="n">1</span><span class="p">)</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
 <span class="p">}</span></pre>
     </div>
   </section>
@@ -152,7 +180,7 @@
       </thead>
       <tbody>
         <tr><td>遞迴左右</td><td>兩個 N/2 子問題</td><td class="mono">2 · T(N/2)</td></tr>
-        <tr><td>收集 strip</td><td>掃過 N 個點檢查 |x − mid_x|² &lt; d</td><td class="mono">O(N)</td></tr>
+        <tr><td>收集 strip</td><td>掃過 N 個點檢查 |x − midX|² &lt; d</td><td class="mono">O(N)</td></tr>
         <tr><td>strip 排序</td><td><code>sort by y</code> 於 strip 內</td><td class="mono">O(N log N)</td></tr>
         <tr><td>strip 比對</td><td>每點看至多 7 個鄰居（pigeonhole）</td><td class="mono">O(N)</td></tr>
       </tbody>
@@ -235,8 +263,8 @@ double for-loop 比所有 C(n, 2) 對 ⇒ 最多 3 次 dist2() 呼叫。
 
     <p><strong>② 切半 & 遞迴</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// split</span>
-mid     = (lo + hi) / 2
-mid_x   = pts[mid].x       ← 沿用 x 排序好的中位數
+mid  = lo + (hi - lo) / 2  ← overflow-safe 寫法
+midX = pts[mid].x          ← 沿用 x 排序好的中位數
 dL = closest(lo,    mid)
 dR = closest(mid+1, hi)
 d  = min(dL, dR)</pre>
@@ -244,9 +272,9 @@ d  = min(dL, dR)</pre>
     <p><strong>③ 收集 strip</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// strip collect</span>
 for i in [lo, hi]:
-    dx = pts[i].x - mid_x
-    if dx * dx &lt; d:           ← 平方比，純整數
-        strip.push_back(pts[i])</pre>
+    dx = pts[i].x - midX
+    if dx * dx &gt;= d: continue   ← 太遠 ⇒ 跳過（平方比，純整數）
+    strip.push_back(pts[i])</pre>
 
     <p style="font-size:13px;color:var(--sc-ink-dim);">strip 大小最壞 O(N)，但平均遠小於此 — 越往上層 d 越大，strip 越窄反而越快。</p>
 

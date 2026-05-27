@@ -70,7 +70,7 @@
         <tr><td>分治架構</td>
             <td>按 x 切半 → 各自遞迴 → merge 時用 strip 補抓跨界 pair。</td></tr>
         <tr><td>Strip 條件</td>
-            <td><code>|x − mid_x|² &lt; d</code> — 純整數比平方，避開 sqrt。</td></tr>
+            <td><code>|x − midX|² &lt; d</code> — 純整數比平方，避開 sqrt。</td></tr>
         <tr><td>7 鄰居上限</td>
             <td>strip 按 y 排序後，pigeonhole 保證每點至多 7 個鄰居可能 &lt; d。</td></tr>
         <tr><td>Base case</td>
@@ -155,7 +155,7 @@
     <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · closest(pts, 0, 3)</span>
 n = 4 &gt; 3 → 不是 base case
 mid = (0 + 3) / 2 = 1
-mid_x = pts[1].x = 2
+midX = pts[1].x = 2
 
 → 遞迴左半 closest(pts, 0, 1)
 → 遞迴右半 closest(pts, 2, 3)</pre>
@@ -320,7 +320,7 @@ long long: dx * dx = 4 × 10¹⁸  ✓ (long long 最大 ~9.2 × 10¹⁸)</pre>
     <div class="qa qa--answer">
       <span class="qa__id">A · App 1</span>
       <p>
-        所有點 x 相同（極端 case）時，strip 條件 <code>|x − mid_x|² = 0 &lt; d</code> 對所有點都成立 ⇒ <strong>strip = 全體 N 點</strong>。
+        所有點 x 相同（極端 case）時，strip 條件 <code>|x − midX|² = 0 &lt; d</code> 對所有點都成立 ⇒ <strong>strip = 全體 N 點</strong>。
       </p>
       <p>
         看起來像爆炸，但實際還是 OK：strip 按 y 排序後，每點只看 7 個鄰居 ⇒ 仍是 O(N) merge。

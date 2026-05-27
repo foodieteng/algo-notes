@@ -138,9 +138,9 @@
     <p style="font-size:14px;">先把點按 x 排序，<code>closest(lo, hi)</code> 做 3 件事：</p>
 
     <ol style="margin-top:6px;">
-      <li><strong>切半</strong> · <code>mid_x = pts[(lo+hi)/2].x</code></li>
+      <li><strong>切半</strong> · <code>midX = pts[(lo+hi)/2].x</code></li>
       <li><strong>遞迴</strong> · <code>d = min(closest 左, closest 右)</code></li>
-      <li><strong>合併 strip</strong> · 收 <code>|x − mid_x| &lt; √d</code> → 按 y 排序 → 每點看下 7 個鄰居 → 更新 d</li>
+      <li><strong>合併 strip</strong> · 收 <code>|x − midX| &lt; √d</code> → 按 y 排序 → 每點看下 7 個鄰居 → 更新 d</li>
     </ol>
 
     <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
@@ -228,17 +228,17 @@
     <strong>怎麼把候選縮到 O(N)？</strong></p>
 
     <div class="sc-dark-box">
-      <div class="sc-dark-box__title">關鍵觀察 · 距 mid_x 太遠的點直接出局</div>
+      <div class="sc-dark-box__title">關鍵觀察 · 距 midX 太遠的點直接出局</div>
       <div class="sc-dark-box__body">
         <p>設當前最佳距離為 <code>√d</code>（程式裡 <code>d</code> 存的是距離平方）。對左半任一點 <code>p</code>：</p>
         <ol>
-          <li>右半任何點 <code>q</code> 都滿足 <code>x_q ≥ mid_x</code>。
-            ⇒ <code>x_q − x_p ≥ mid_x − x_p</code>。</li>
-          <li>所以 <code>p</code> 跟右半任何 <code>q</code> 的<strong>水平距離至少</strong> <code>mid_x − x_p</code>。</li>
-          <li>若 <code>mid_x − x_p ≥ √d</code>（即 p 離中線 ≥ √d）⇒ 任何 <code>|pq| ≥ √d</code> ⇒
+          <li>右半任何點 <code>q</code> 都滿足 <code>x_q ≥ midX</code>。
+            ⇒ <code>x_q − x_p ≥ midX − x_p</code>。</li>
+          <li>所以 <code>p</code> 跟右半任何 <code>q</code> 的<strong>水平距離至少</strong> <code>midX − x_p</code>。</li>
+          <li>若 <code>midX − x_p ≥ √d</code>（即 p 離中線 ≥ √d）⇒ 任何 <code>|pq| ≥ √d</code> ⇒
             <strong>p 不可能改善 d，可以丟掉</strong>。</li>
-          <li>對右半 <code>q</code> 同理 — 只有 <code>|x_q − mid_x| &lt; √d</code> 的點才有資格。</li>
-          <li>⇒ 跨界候選都落在 <code>|x − mid_x| &lt; √d</code> 的<strong>寬 2√d 垂直條帶（strip）</strong>內。</li>
+          <li>對右半 <code>q</code> 同理 — 只有 <code>|x_q − midX| &lt; √d</code> 的點才有資格。</li>
+          <li>⇒ 跨界候選都落在 <code>|x − midX| &lt; √d</code> 的<strong>寬 2√d 垂直條帶（strip）</strong>內。</li>
         </ol>
       </div>
     </div>
@@ -263,13 +263,13 @@
 
       <!-- Midline -->
       <line x1="400" y1="90" x2="400" y2="312" stroke="#d96e4e" stroke-width="2"/>
-      <text x="400" y="328" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" fill="#d96e4e">mid_x</text>
+      <text x="400" y="328" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" fill="#d96e4e">midX</text>
 
       <!-- Left / Right band labels -->
       <text x="155" y="92" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="12" font-weight="500" fill="#a09060">left half</text>
       <text x="645" y="92" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="12" font-weight="500" fill="#a09060">right half</text>
 
-      <!-- ===== Case 1: p1 FAR from mid_x (gray, ✗) ===== -->
+      <!-- ===== Case 1: p1 FAR from midX (gray, ✗) ===== -->
       <!-- Search circle around p1: r=100 (= √d in visual scale) -->
       <circle cx="170" cy="220" r="100" fill="none" stroke="#8a847a" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.55"/>
 
@@ -277,7 +277,7 @@
       <circle cx="170" cy="220" r="8" fill="#8a847a" stroke="#1f1f1f" stroke-width="2"/>
       <text x="170" y="244" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="#1f1f1f">p₁</text>
 
-      <!-- Distance bracket from p1 to mid_x at y=180 -->
+      <!-- Distance bracket from p1 to midX at y=180 -->
       <line x1="170" y1="180" x2="400" y2="180" stroke="#5a5a5a" stroke-width="1"/>
       <line x1="170" y1="176" x2="170" y2="184" stroke="#5a5a5a" stroke-width="1"/>
       <line x1="400" y1="176" x2="400" y2="184" stroke="#5a5a5a" stroke-width="1"/>
@@ -286,9 +286,9 @@
 
       <!-- ✗ mark below -->
       <text x="170" y="280" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700" fill="#a05550">✗</text>
-      <text x="170" y="298" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="11" fill="#1f1f1f">搜尋圈構不到 mid_x</text>
+      <text x="170" y="298" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="11" fill="#1f1f1f">搜尋圈構不到 midX</text>
 
-      <!-- ===== Case 2: p2 CLOSE to mid_x — inside strip (blue, ✓) ===== -->
+      <!-- ===== Case 2: p2 CLOSE to midX — inside strip (blue, ✓) ===== -->
       <!-- Search circle around p2: r=100 -->
       <circle cx="350" cy="220" r="100" fill="none" stroke="#1f5a99" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>
 
@@ -303,7 +303,7 @@
       <!-- Pair line p2 - q -->
       <line x1="350" y1="220" x2="430" y2="205" stroke="#d96e4e" stroke-width="1.8"/>
 
-      <!-- Distance bracket from p2 to mid_x at y=180 -->
+      <!-- Distance bracket from p2 to midX at y=180 -->
       <line x1="350" y1="180" x2="400" y2="180" stroke="#1f5a99" stroke-width="1"/>
       <line x1="350" y1="176" x2="350" y2="184" stroke="#1f5a99" stroke-width="1"/>
       <line x1="400" y1="176" x2="400" y2="184" stroke="#1f5a99" stroke-width="1"/>
@@ -312,28 +312,28 @@
 
       <!-- ✓ mark below -->
       <text x="390" y="280" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700" fill="#2f8a5a">✓</text>
-      <text x="390" y="298" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="11" fill="#1f1f1f">搜尋圈跨過 mid_x，q 在範圍內</text>
+      <text x="390" y="298" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="11" fill="#1f1f1f">搜尋圈跨過 midX，q 在範圍內</text>
 
       <!-- ============ Conclusion bar ============ -->
       <rect x="30" y="346" width="740" height="62" fill="#1f1f1f" rx="5"/>
 
       <text x="400" y="370" text-anchor="middle" font-family="'Noto Serif TC', serif" font-size="14" font-weight="700" fill="#fef8e8">
-        若 <tspan font-family="'JetBrains Mono', monospace" fill="#d96e4e">|x − mid_x| ≥ √d</tspan>
+        若 <tspan font-family="'JetBrains Mono', monospace" fill="#d96e4e">|x − midX| ≥ √d</tspan>
         ⇒ 跟對面任何點水平距離 ≥ √d ⇒ 不可能改善 d
       </text>
       <text x="400" y="388" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="12" fill="#ecd9a6">
-        所以只收 <tspan font-family="'JetBrains Mono', monospace" font-weight="700" fill="#d96e4e">|x − mid_x| &lt; √d</tspan> 的點
+        所以只收 <tspan font-family="'JetBrains Mono', monospace" font-weight="700" fill="#d96e4e">|x − midX| &lt; √d</tspan> 的點
         ⇒ 跨界候選縮在寬 2√d 的 strip 內
       </text>
       <text x="400" y="404" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#bba56b">
-        程式碼: (x_p − mid_x) * (x_p − mid_x) &lt; d   // d 存的是平方，不開根號
+        程式碼: (x_p − midX) * (x_p − midX) &lt; d   // d 存的是平方，不開根號
       </text>
 
     </svg>
     </div>
 
     <p style="margin-top:12px;font-size:14px;">
-      <strong>關鍵 trick</strong>：寫成 <code>(x − mid_x)² &lt; d</code> 直接整數比較，
+      <strong>關鍵 trick</strong>：寫成 <code>(x − midX)² &lt; d</code> 直接整數比較，
       <strong>整題不必動 sqrt</strong>，long long 走到底。<br/>
       下一節接著問：<strong>strip 內最壞還是 O(N) 點，要怎麼避免每點都跟全 strip 比？</strong>
     </p>
@@ -393,7 +393,7 @@
       <!-- Solid midline + label (white bg inside grid top) -->
       <line x1="370" y1="138" x2="370" y2="338" stroke="#d96e4e" stroke-width="1.8"/>
       <rect x="349" y="145" width="42" height="16" fill="#fff" opacity="0.95"/>
-      <text x="370" y="157" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#d96e4e">mid_x</text>
+      <text x="370" y="157" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#d96e4e">midX</text>
 
       <!-- ===== 8 points at cell centers · labels uniformly BELOW circle =====
            Column centers: 182, 307, 432, 557 · Row centers: 188, 288 -->
@@ -554,7 +554,7 @@
         </tr>
         <tr>
           <td>② 收集 strip</td>
-          <td>掃過所有 N 個點，挑 <code>|x − mid_x|² &lt; d</code> 的</td>
+          <td>掃過所有 N 個點，挑 <code>|x − midX|² &lt; d</code> 的</td>
           <td class="mono" style="text-align:right;">O(N)</td>
         </tr>
         <tr>
