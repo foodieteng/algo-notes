@@ -153,37 +153,32 @@
 
     <p>由葉節點往上回傳（每一層都用映射公式 <code>2x − 1</code> 接 <code>2x</code>）：</p>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · build(_, 1)</span>
-out[0] = 1
-return → <span class="sc-trace__out">[1]</span></pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · build(1)</span>
+return <span class="sc-trace__out">{1}</span></pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · build(_, 2)</span>
-leftLen = 1, rightLen = 1
-build(buf, 1)              → buf = [1]
-out[0] = 2·1 − 1 = 1       ← 左映成奇
-build(buf, 1)              → buf = [1]
-out[1] = 2·1     = 2       ← 右映成偶
-return → <span class="sc-trace__out">[1, 2]</span></pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · build(2)</span>
+oddSize = 1, evenSize = 1
+odd  = build(1) = [1]
+even = build(1) = [1]
+ans ← [2·1 − 1]        = [1]      ← 左映成奇
+ans ← [1, 2·1]         = [1, 2]   ← 右映成偶
+return <span class="sc-trace__out">[1, 2]</span></pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · build(_, 3)</span>
-leftLen = 2, rightLen = 1
-build(buf, 2)              → buf = [1, 2]
-out[0] = 2·1 − 1 = 1
-out[1] = 2·2 − 1 = 3
-build(buf, 1)              → buf = [1]
-out[2] = 2·1     = 2
-return → <span class="sc-trace__out">[1, 3, 2]</span></pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · build(3)</span>
+oddSize = 2, evenSize = 1
+odd  = build(2) = [1, 2]
+even = build(1) = [1]
+ans ← [2·1−1, 2·2−1]   = [1, 3]
+ans ← [1, 3, 2·1]      = [1, 3, 2]
+return <span class="sc-trace__out">[1, 3, 2]</span></pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 4 · build(_, 5) — 主呼叫</span>
-leftLen = 3, rightLen = 2
-build(buf, 3)              → buf = [1, 3, 2]
-out[0] = 2·1 − 1 = 1
-out[1] = 2·3 − 1 = 5
-out[2] = 2·2 − 1 = 3
-build(buf, 2)              → buf = [1, 2]
-out[3] = 2·1     = 2
-out[4] = 2·2     = 4
-return → <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL 4 · build(5) — 主呼叫</span>
+oddSize = 3, evenSize = 2
+odd  = build(3) = [1, 3, 2]
+even = build(2) = [1, 2]
+ans ← [2·1−1, 2·3−1, 2·2−1]      = [1, 5, 3]
+ans ← [1, 5, 3, 2·1, 2·2]        = [1, 5, 3, 2, 4]
+return <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>1 5 3 2 4</pre>
 
@@ -237,7 +232,7 @@ return → <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
     <div class="qa">
       <span class="qa__id">App 2</span>
       <span class="qa__tag">記憶體配置</span>
-      <h4>為什麼 code 用兩個全域陣列 <code>seq[]</code>、<code>buf[]</code>，而不是在 <code>build()</code> 內部開區域陣列或 <code>vector</code>？</h4>
+      <h4><code>build()</code> 用 <code>vector&lt;int&gt;</code> 回傳 vs 用全域陣列 + 指標傳遞，兩種寫法各自取捨在哪？</h4>
     </div>
 
     <div class="qa">
@@ -285,7 +280,7 @@ return → <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
         <li><strong>N 奇</strong>（如 N = 5）：奇數 {1, 3, 5} 有 3 個、偶數 {2, 4} 有 2 個。
           若把左段寫成 <code>⌊N/2⌋ = 2</code>，左段只裝得下兩個奇數，第三個奇數沒地方放、第二個偶數位置也錯亂 — 結果不是 1..N 的排列。</li>
       </ul>
-      <p>正確寫法：<code>leftLen = (len + 1) / 2;</code> 即 <code>⌈len/2⌉</code>。</p>
+      <p>正確寫法：<code>oddSize = (n + 1) / 2;</code> 即 <code>⌈n/2⌉</code>。</p>
     </div>
 
     <div class="qa qa--answer">
@@ -321,13 +316,13 @@ return → <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
       <span class="qa__id">A5 · 複雜度</span>
       <ul>
         <li><strong>Time</strong> · <code>T(N) = T(⌈N/2⌉) + T(⌊N/2⌋) + O(N) = O(N log N)</code>。Master Theorem case 2。</li>
-        <li><strong>Space</strong> · <code>O(N)</strong> — 兩支固定大小的全域陣列；遞迴 stack <code>O(log N)</code>。</li>
+        <li><strong>Space</strong> · <code>O(N)</strong> — 遞迴展開時同層活著的子 vector 加總 O(N)；最終 ans 也是 O(N)。</li>
         <li><strong>Recursion depth</strong> · <code>O(log N)</code>。</li>
       </ul>
       <p>
         合併工作每層 <strong>O(N)</strong>（而非 O(1)）的原因：
-        每一層都要把 <code>buf</code> 內的子問題答案 for-loop 映射 (<code>2x − 1</code> / <code>2x</code>) 並複製到 <code>out</code> 的對應段。
-        左段 ⌈len/2⌉ 個元素、右段 ⌊len/2⌋ 個元素，合起來 = len 個元素的線性 work。
+        每一層都要對 <code>odd</code> / <code>even</code> 子 vector 用 range-for 映射 (<code>2x − 1</code> / <code>2x</code>) 推進 <code>ans</code>。
+        左段 ⌈n/2⌉ 個元素、右段 ⌊n/2⌋ 個元素，合起來 = n 個元素的線性 work。
       </p>
     </div>
 
@@ -344,14 +339,15 @@ return → <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">App 2 · 記憶體配置</span>
-      <p>幾個原因：</p>
+      <span class="qa__id">App 2 · 兩種寫法取捨</span>
+      <p><strong>本筆記採用 vector 回傳版</strong>，原因：</p>
       <ul>
-        <li><strong>避免動態配置 overhead</strong> — N = 10⁶ 時若每層 new/delete 或建 vector，常數變大且可能爆 fragmentation。</li>
-        <li><strong>共用緩衝</strong> — <code>buf[]</code> 在「解左→映左」與「解右→映右」之間可以被覆蓋，因為左段答案已寫到 <code>out</code>。整個遞迴只需<em>一支</em> buf。</li>
-        <li><strong>避免 stack 上開大陣列</strong> — 局部變數 <code>int local[len]</code> 在 len 大時直接爆 stack。全域陣列在 BSS 段、無此問題。</li>
+        <li><strong>可讀性高</strong> — <code>build(n) → vector&lt;int&gt;</code> 一眼看完語意，沒有「out 指標 + 共用 buf」這種需要繞一圈才能理解的副作用。</li>
+        <li><strong>無共享狀態</strong> — 每次呼叫獨立、不靠 buf 寫入順序的隱式約束，沒有「先映左、後解右」這種 trap。</li>
+        <li><strong>常數可接受</strong> — N = 10⁶ 時遞迴僅 20 層，每層 vector 配置不會壓爆 allocator；用 <code>reserve(n)</code> 也能除掉 push_back 重配開銷。</li>
       </ul>
-      <p>這是構造類遞迴題的標準寫法 — 全域陣列 + 指標傳遞 + 共用 scratch buffer。</p>
+      <p><strong>全域陣列版（<code>seq[]</code> + <code>buf[]</code> + <code>out</code> 指標）</strong>的優勢在常數因子更小、無 heap 分配 — 競賽追求極致時用，但本題不需要那種速度。</p>
+      <p>還有一種折衷：<code>build()</code> 內 <code>vector&lt;int&gt; ans(n); ...; return ans;</code> 配合 NRVO/move，效能跟全域版差距很小。</p>
     </div>
 
     <div class="qa qa--answer">

@@ -70,55 +70,62 @@
         <span class="sc-codewindow__tab">p501.cpp</span>
         <span class="sc-codewindow__lang">C++17</span>
       </div>
-<pre class="sc-code"><span class="c">// P501 · 好的序列 — 奇偶切構造</span>
-<span class="c">// f(N) = [ 2·f(⌈N/2⌉) − 1 ]  ∥  [ 2·f(⌊N/2⌋) ]</span>
-<span class="k">#include</span> <span class="s">&lt;iostream&gt;</span>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
 
-<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
-<span class="t">int</span> seq<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// 主答案緩衝區，最後印出 seq[0..N-1]</span>
-<span class="t">int</span> buf<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// 暫存遞迴子結果，避免額外配置</span>
-
-<span class="c">// 把長度 len 的「1..len 的合法排列」build 到 out[0..len-1]</span>
-<span class="k">void</span> <span class="f">build</span><span class="p">(</span><span class="t">int</span> <span class="p">*</span>out<span class="p">,</span> <span class="t">int</span> len<span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span>len <span class="p">==</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span>                  <span class="c">// base case</span>
-        out<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>
-        <span class="k">return</span><span class="p">;</span>
+<span class="c">// 回傳長度 n 的 good sequence (1..n 的合法排列)</span>
+<span class="c">// 規則：⌈n/2⌉ 個奇數值在前段、⌊n/2⌋ 個偶數值在後段</span>
+<span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> <span class="f">build</span><span class="p">(</span><span class="t">int</span> n<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>n <span class="p">==</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">1</span><span class="p">};</span>                            <span class="c">// base case</span>
     <span class="p">}</span>
 
-    <span class="t">int</span> leftLen  <span class="p">=</span> <span class="p">(</span>len <span class="p">+</span> <span class="n">1</span><span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>      <span class="c">// ⌈len/2⌉ — 奇數段長度</span>
-    <span class="t">int</span> rightLen <span class="p">=</span> len <span class="p">-</span> leftLen<span class="p">;</span>      <span class="c">// ⌊len/2⌋ — 偶數段長度</span>
+    <span class="t">int</span> oddSize  <span class="p">=</span> <span class="p">(</span>n <span class="p">+</span> <span class="n">1</span><span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>                <span class="c">// ⌈n/2⌉ — 奇數段長度</span>
+    <span class="t">int</span> evenSize <span class="p">=</span> n <span class="p">/</span> <span class="n">2</span><span class="p">;</span>                      <span class="c">// ⌊n/2⌋ — 偶數段長度</span>
 
-    <span class="c">// 先用 buf 解出長 leftLen 的子問題，再就地映成 2x − 1（奇）</span>
-    <span class="f">build</span><span class="p">(</span>buf<span class="p">,</span> leftLen<span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> leftLen<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
-        out<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> buf<span class="p">[</span>i<span class="p">]</span> <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
+    <span class="c">// 兩半各自遞迴解出 1..k 的合法排列</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> odd  <span class="p">=</span> <span class="f">build</span><span class="p">(</span>oddSize<span class="p">);</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> even <span class="p">=</span> <span class="f">build</span><span class="p">(</span>evenSize<span class="p">);</span>
 
-    <span class="k">if</span> <span class="p">(</span>rightLen <span class="p">==</span> <span class="n">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>           <span class="c">// len == 1 已 return；此處保險</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> ans<span class="p">;</span>
+    ans<span class="p">.</span><span class="f">reserve</span><span class="p">(</span>n<span class="p">);</span>                              <span class="c">// 預配空間，免 push_back 重配</span>
 
-    <span class="c">// 再用 buf 解長 rightLen 的子問題，映成 2x（偶），接在 out[leftLen..]</span>
-    <span class="f">build</span><span class="p">(</span>buf<span class="p">,</span> rightLen<span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> rightLen<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
-        out<span class="p">[</span>leftLen <span class="p">+</span> i<span class="p">]</span> <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> buf<span class="p">[</span>i<span class="p">];</span>
+    <span class="c">// 左段映射：x → 2x − 1   (1..k 變成 1, 3, 5, ...)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> x <span class="p">:</span> odd<span class="p">)</span> <span class="p">{</span>
+        ans<span class="p">.</span><span class="f">push_back</span><span class="p">(</span><span class="n">2</span> <span class="p">*</span> x <span class="p">-</span> <span class="n">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c">// 右段映射：x → 2x        (1..k 變成 2, 4, 6, ...)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> x <span class="p">:</span> even<span class="p">)</span> <span class="p">{</span>
+        ans<span class="p">.</span><span class="f">push_back</span><span class="p">(</span><span class="n">2</span> <span class="p">*</span> x<span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> ans<span class="p">;</span>
 <span class="p">}</span>
 
 <span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
-    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
 
-    <span class="t">int</span> n<span class="p">;</span> cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
-    <span class="f">build</span><span class="p">(</span>seq<span class="p">,</span> n<span class="p">);</span>
+    <span class="t">int</span> n<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span>
-        cout <span class="p">&lt;&lt;</span> seq<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="p">(</span>i <span class="p">+</span> <span class="n">1</span> <span class="p">==</span> n <span class="p">?</span> <span class="s">'\n'</span> <span class="p">:</span> <span class="s">' '</span><span class="p">);</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> ans <span class="p">=</span> <span class="f">build</span><span class="p">(</span>n<span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        cout <span class="p">&lt;&lt;</span> ans<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="p">(</span>i <span class="p">+</span> <span class="n">1</span> <span class="p">==</span> n <span class="p">?</span> <span class="s">'\n'</span> <span class="p">:</span> <span class="s">' '</span><span class="p">);</span>
+    <span class="p">}</span>
+
     <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
 <span class="p">}</span></pre>
     </div>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>實作要點</strong>：用兩個全域 int 陣列 <code>seq[]</code> 與 <code>buf[]</code>，
-      <code>build()</code> 把長 <code>len</code> 的子問題直接寫到傳進來的 <code>out</code> 指標。
-      <code>buf</code> 在遞迴前後即用即覆蓋 — 因為每層先「解左」再「映射複製到 out 左半」，
-      接著「解右」再「映射複製到 out 右半」，左右兩次解的中間 <code>buf</code> 內容不需保留。
+      <strong>實作要點</strong>：<code>build(n)</code> 回傳 <code>vector&lt;int&gt;</code>，
+      兩半各自遞迴拿到子排列 <code>odd</code> / <code>even</code>，再用 range-for
+      逐個映射 <code>2x − 1</code>、<code>2x</code> 推進 <code>ans</code>。<code>ans.reserve(n)</code>
+      預先配好容量、避免 push_back 過程多次 realloc。
+      整支程式沒有全域 buffer，邏輯一眼看完。
     </p>
   </section>
 
@@ -131,17 +138,17 @@
       <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
     </div>
 
-    <p>把 <code>build(out, len)</code> 一層的工作量拆三段：</p>
+    <p>把 <code>build(n)</code> 一層的工作量拆四段：</p>
 
     <table class="sc-table">
       <thead>
         <tr><th>步驟</th><th>內容</th><th>單層成本</th></tr>
       </thead>
       <tbody>
-        <tr><td>遞迴左半</td><td>解一個 ⌈len/2⌉ 的子問題</td><td class="mono">T(⌈len/2⌉)</td></tr>
-        <tr><td>映射並寫入左段</td><td>for-loop 把 buf[i] 映成 2x − 1 寫到 out[0..]</td><td class="mono">O(⌈len/2⌉)</td></tr>
-        <tr><td>遞迴右半</td><td>解一個 ⌊len/2⌋ 的子問題</td><td class="mono">T(⌊len/2⌋)</td></tr>
-        <tr><td>映射並寫入右段</td><td>for-loop 把 buf[i] 映成 2x 寫到 out[leftLen..]</td><td class="mono">O(⌊len/2⌋)</td></tr>
+        <tr><td>遞迴左半</td><td>解一個 ⌈n/2⌉ 的子問題，回傳 <code>odd</code> vector</td><td class="mono">T(⌈n/2⌉)</td></tr>
+        <tr><td>遞迴右半</td><td>解一個 ⌊n/2⌋ 的子問題，回傳 <code>even</code> vector</td><td class="mono">T(⌊n/2⌋)</td></tr>
+        <tr><td>映射寫入左段</td><td>range-for 把 odd 的 x 映成 2x − 1 推進 ans</td><td class="mono">O(⌈n/2⌉)</td></tr>
+        <tr><td>映射寫入右段</td><td>range-for 把 even 的 x 映成 2x 推進 ans</td><td class="mono">O(⌊n/2⌋)</td></tr>
       </tbody>
     </table>
 
@@ -154,9 +161,9 @@
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
         <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>每層 O(N) 映射，共 log N 層</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>seq[] + buf[] 兩支陣列；無動態配置</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N log N)</strong></td><td>遞迴堆疊中同時存活 O(log N) 個子 vector，加總 O(N)；最終 ans 還是 O(N)</td></tr>
         <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層，遠在 stack 安全範圍</td></tr>
-        <tr><td>Constant factor</td><td>極低</td><td>純加減乘、無比較、無排序、無 STL container</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>vector 配置 vs. 全域陣列略慢一點，但程式碼可讀性顯著提升</td></tr>
       </tbody>
     </table>
   </section>
@@ -175,23 +182,23 @@
       <tbody>
         <tr>
           <td><strong>N = 1 直接收尾</strong></td>
-          <td>遞迴 base 寫 <code>if (len == 1) { out[0] = 1; return; }</code>。若忘了寫，<code>leftLen = 1, rightLen = 0</code> 雖然不爆，但右段 for-loop 跑 0 次 ⇒ 仍能正確 return — 不過建議保留顯式 base，可讀性高。</td>
+          <td>遞迴 base 寫 <code>if (n == 1) return {1};</code>。若漏掉，<code>build(1)</code> 會繼續切成 oddSize = 1, evenSize = 0 ⇒ <code>build(0)</code> 又再切 oddSize = 0... 無窮遞迴。顯式 base 必加。</td>
         </tr>
         <tr>
-          <td><strong>leftLen 用 <code>⌈N/2⌉</code> 不是 <code>⌊N/2⌋</code></strong></td>
-          <td>奇數段 1..N 有 ⌈N/2⌉ 個（N=5 時奇數 1,3,5 有 3 個）；偶數段才是 ⌊N/2⌋ 個。寫反會在 N 為奇數時越界或漏元素。</td>
+          <td><strong>oddSize 用 <code>⌈N/2⌉</code> 不是 <code>⌊N/2⌋</code></strong></td>
+          <td>1..N 中奇數有 ⌈N/2⌉ 個（N = 5 時奇數 1, 3, 5 共 3 個）；偶數才是 ⌊N/2⌋ 個。寫反會在 N 為奇數時漏一格。</td>
         </tr>
         <tr>
-          <td><strong>映射順序：先映左、再解右</strong></td>
-          <td><code>buf</code> 是共用緩衝。先 <code>build(buf, leftLen)</code> 然後立刻把 buf 內容映射複製到 out 左段；再 <code>build(buf, rightLen)</code> 覆蓋 buf，這時左段已寫入 out 不會被破壞。</td>
+          <td><strong>vector 傳回 vs 全域陣列</strong></td>
+          <td>vector 版每層各自配置，遞迴展開時最壞同時存活 O(log N) 個子 vector。N = 10⁶ ⇒ 約 20 層、加總仍 O(N)，配置成本可接受。極致追求速度才需要改全域 buffer。</td>
+        </tr>
+        <tr>
+          <td><strong>記得 <code>ans.reserve(n)</code></strong></td>
+          <td>沒 reserve 也對，但 push_back 過程會觸發多次容量加倍 + 搬移 ⇒ 常數變慢。預先 reserve 一行直接除掉這個開銷。</td>
         </tr>
         <tr>
           <td><strong>輸出格式 — 空白與換行</strong></td>
-          <td>題目要求數字之間以空白分隔、結尾換行。用 <code>cout &lt;&lt; seq[i] &lt;&lt; (i + 1 == n ? '\n' : ' ')</code> 一行搞定。<code>endl</code> 會 flush，慢。</td>
-        </tr>
-        <tr>
-          <td><strong>0-indexed vs 1-indexed</strong></td>
-          <td>數值 1..N 與下標 0..N−1 是兩件事 — code 用 0-indexed 跑陣列，輸出本身就是值 1..N，不需 +1。</td>
+          <td>題目要求數字之間以空白分隔、結尾換行。<code>cout &lt;&lt; ans[i] &lt;&lt; (i + 1 == n ? '\n' : ' ')</code> 一行搞定。<code>endl</code> 會 flush，慢。</td>
         </tr>
         <tr>
           <td><strong>I/O 速度</strong></td>
@@ -210,38 +217,42 @@
       <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
     </div>
 
-    <p><strong>① base case (len = 1)</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// len == 1</span>
-out[0] = 1
-直接 return — 沒有遞迴往下，stack 在這停。
+    <p><strong>① base case (n = 1)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// n == 1</span>
+return {1}
+直接回傳長度 1 的 vector — 沒有遞迴往下，stack 在這停。
 所有遞迴展開後，葉節點都會走到這裡。</pre>
 
     <p><strong>② 切半：奇數段 / 偶數段</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// split</span>
-leftLen  = (len + 1) / 2     ← ⌈len/2⌉  奇數段
-rightLen = len - leftLen     ← ⌊len/2⌋  偶數段
+oddSize  = (n + 1) / 2     ← ⌈n/2⌉  奇數段長度
+evenSize = n / 2           ← ⌊n/2⌋  偶數段長度
 
-例：len = 5 ⇒ leftLen = 3, rightLen = 2
-    len = 4 ⇒ leftLen = 2, rightLen = 2
-    len = 3 ⇒ leftLen = 2, rightLen = 1</pre>
+例：n = 5 ⇒ oddSize = 3, evenSize = 2
+    n = 4 ⇒ oddSize = 2, evenSize = 2
+    n = 3 ⇒ oddSize = 2, evenSize = 1</pre>
 
-    <p><strong>③ 遞迴解左半並映射成奇數</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// build left half (奇數段)</span>
-build(buf, leftLen)            ← 解出 1..leftLen 的合法排列到 buf[0..leftLen-1]
-for i in [0, leftLen):
-    out[i] = 2 * buf[i] - 1    ← 把 1..leftLen 映成 1, 3, 5, ...</pre>
+    <p><strong>③ 兩半各自遞迴</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// recurse</span>
+vector&lt;int&gt; odd  = build(oddSize)   ← 1..oddSize 的合法排列
+vector&lt;int&gt; even = build(evenSize)  ← 1..evenSize 的合法排列</pre>
 
-    <p style="font-size:13px;color:var(--sc-ink-dim);">映射 <code>2x − 1</code> 把整數 1..⌈N/2⌉ 雙射到奇數 1, 3, …, 2·⌈N/2⌉−1，保序且唯一。</p>
+    <p><strong>④ 映射：左段奇、右段偶，依序推進 ans</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// map &amp; concat</span>
+ans.reserve(n)             ← 一次配好空間
 
-    <p><strong>④ 遞迴解右半並映射成偶數，接在後段</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// build right half (偶數段)</span>
-build(buf, rightLen)           ← 重新解出 1..rightLen 的排列，覆蓋 buf
-for i in [0, rightLen):
-    out[leftLen + i] = 2 * buf[i]   ← 映成 2, 4, 6, ... 接到 out 後段</pre>
+for x in odd:
+    ans.push_back(2 * x - 1)   ← 1..oddSize  → 1, 3, 5, ...
+
+for x in even:
+    ans.push_back(2 * x)       ← 1..evenSize → 2, 4, 6, ...
+
+return ans</pre>
 
     <p style="font-size:13px;color:var(--sc-ink-dim);">
-      <code>buf</code> 在「解左→映左」與「解右→映右」之間可以被覆蓋，因為左段已寫入 <code>out</code>。
-      這就是用<em>單支共用緩衝</em>即可、不需要遞迴內配置記憶體的關鍵。
+      <strong>為何 2x − 1 / 2x 雙射成立</strong>：1..k 是連續整數，
+      <code>2x − 1</code> 把它映到 {1, 3, …, 2k−1} 全部奇數，
+      <code>2x</code> 映到 {2, 4, …, 2k} 全部偶數 — 保序、唯一、值域剛好對齊。
     </p>
   </section>
 
