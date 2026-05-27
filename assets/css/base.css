@@ -82,7 +82,7 @@ a:hover {
 }
 
 strong, b { color: var(--ink); font-weight: var(--fw-bold); }
-em, i { font-style: italic; color: var(--ink-dim); }
+em, i { font-style: normal; font-weight: var(--fw-bold); color: var(--ink); }
 
 ul, ol {
   margin: 0 0 var(--sp-4) var(--sp-5);
@@ -148,7 +148,6 @@ blockquote {
   background: var(--bg-2);
   padding: var(--sp-4) var(--sp-5);
   margin: var(--sp-5) 0;
-  font-style: italic;
   color: var(--ink-dim);
   position: relative;
 }

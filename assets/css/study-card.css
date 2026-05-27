@@ -669,7 +669,6 @@
 }
 .sc-formula__hint {
   font-family: 'Noto Serif TC', serif;
-  font-style: italic;
   font-size: 14px;
   color: var(--sc-ink-dim);
   line-height: 1.75;
@@ -828,7 +827,7 @@
 .sc-code .f { color: #dcdcaa; }
 .sc-code .s { color: #ce9178; }
 .sc-code .n { color: #b5ceA8; }
-.sc-code .c { color: #6a9955; font-style: italic; }
+.sc-code .c { color: #6a9955; }
 .sc-code .p { color: #d4d4d4; }
 
 /* ============================================================
@@ -1111,4 +1110,4 @@
   font-weight: 700;
 }
 .sc-trace__out { color: #2f8a5a; }
-.sc-trace__comment { color: #8a847a; font-style: italic; }
+.sc-trace__comment { color: #8a847a; }

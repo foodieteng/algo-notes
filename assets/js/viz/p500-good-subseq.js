@@ -266,11 +266,11 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     ctx.fillStyle = crossDone ? P500_COLOR.coral : P500_COLOR.inactive;
     ctx.fillText(`CROSS = ${crossDone ? '1' : '?'}`, originX + 200, panelY);
 
-    // Total chip
+    // Total chip — right-align to canvas edge so it never overlaps CROSS
     ctx.fillStyle = phase === 'done' ? P500_COLOR.coral : P500_COLOR.inkDim;
     ctx.font = P500_FONT.callout;
     ctx.textAlign = 'right';
-    ctx.fillText(phase === 'done' ? 'TOTAL = 5' : 'TOTAL = ?', originX + totalW, panelY);
+    ctx.fillText(phase === 'done' ? 'TOTAL = 5' : 'TOTAL = ?', w - sidePad, panelY);
   }
 
   function updateLabel() {
@@ -538,7 +538,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     ctx.fillStyle = phase === 'done' ? P500_COLOR.coral : P500_COLOR.inkDim;
     ctx.font = P500_FONT.callout;
     ctx.textAlign = 'right';
-    ctx.fillText(phase === 'done' ? 'TOTAL = 10' : 'TOTAL = ?', originX + totalW, panelY);
+    ctx.fillText(phase === 'done' ? 'TOTAL = 10' : 'TOTAL = ?', w - sidePad, panelY);
   }
 
   function drawMaxMinTable(ctx, w, y, originX, cellSize, gap, highlightGoods) {
