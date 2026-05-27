@@ -74,59 +74,74 @@
         <span class="sc-codewindow__tab">p114.cpp</span>
         <span class="sc-codewindow__lang">C++17</span>
       </div>
-<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;iostream&gt;</span>
-<span class="k">#include</span> <span class="s">"lib0114.h"</span>
-<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">"lib0114.h"</span>
 
-<span class="c">// 鋪滿左上角為 (top, left)、邊長 n 的子板；</span>
-<span class="c">// (blockedX, blockedY) 是已被佔用、不能再放 L 的格子。</span>
-<span class="t">void</span> <span class="f">tile</span><span class="p">(</span><span class="t">int</span> top<span class="p">,</span> <span class="t">int</span> left<span class="p">,</span> <span class="t">int</span> n<span class="p">,</span> <span class="t">int</span> blockedX<span class="p">,</span> <span class="t">int</span> blockedY<span class="p">)</span> <span class="p">{</span>
+<span class="c">// 把 3 格 (lx[0..2], ly[0..2]) 串成一塊 L 回報給 judge</span>
+<span class="t">void</span> <span class="f">put</span><span class="p">(</span><span class="t">int</span> lx<span class="p">[</span><span class="n">3</span><span class="p">],</span> <span class="t">int</span> ly<span class="p">[</span><span class="n">3</span><span class="p">])</span> <span class="p">{</span>
+    <span class="f">Report</span><span class="p">(</span>lx<span class="p">[</span><span class="n">0</span><span class="p">],</span> ly<span class="p">[</span><span class="n">0</span><span class="p">],</span> lx<span class="p">[</span><span class="n">1</span><span class="p">],</span> ly<span class="p">[</span><span class="n">1</span><span class="p">],</span> lx<span class="p">[</span><span class="n">2</span><span class="p">],</span> ly<span class="p">[</span><span class="n">2</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="c">// 鋪 n×n 子板，左上角 (x0, y0)，已被佔的格子 = (bx, by)</span>
+<span class="t">void</span> <span class="f">tile</span><span class="p">(</span><span class="t">int</span> x0<span class="p">,</span> <span class="t">int</span> y0<span class="p">,</span> <span class="t">int</span> n<span class="p">,</span> <span class="t">int</span> bx<span class="p">,</span> <span class="t">int</span> by<span class="p">)</span> <span class="p">{</span>
+    <span class="c">// ── BASE: 2×2 扣掉 blocked 剩 3 格本身就是 L</span>
     <span class="k">if</span> <span class="p">(</span>n <span class="p">==</span> <span class="n">2</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c">// 4 格扣掉 blocked 後剩 3 格本身就是 L</span>
-        <span class="t">int</span> xs<span class="p">[</span><span class="n">3</span><span class="p">],</span> ys<span class="p">[</span><span class="n">3</span><span class="p">],</span> k <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> dx <span class="p">=</span> <span class="n">0</span><span class="p">;</span> dx <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> <span class="p">++</span>dx<span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> dy <span class="p">=</span> <span class="n">0</span><span class="p">;</span> dy <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> <span class="p">++</span>dy<span class="p">)</span> <span class="p">{</span>
-                <span class="t">int</span> x <span class="p">=</span> top <span class="p">+</span> dx<span class="p">,</span> y <span class="p">=</span> left <span class="p">+</span> dy<span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span>x <span class="p">==</span> blockedX <span class="p">&amp;&amp;</span> y <span class="p">==</span> blockedY<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
-                xs<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> x<span class="p">;</span> ys<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> y<span class="p">;</span> <span class="p">++</span>k<span class="p">;</span>
+        <span class="t">int</span> lx<span class="p">[</span><span class="n">3</span><span class="p">],</span> ly<span class="p">[</span><span class="n">3</span><span class="p">],</span> cnt <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> dx <span class="p">=</span> <span class="n">0</span><span class="p">;</span> dx <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> dx<span class="p">++)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> dy <span class="p">=</span> <span class="n">0</span><span class="p">;</span> dy <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> dy<span class="p">++)</span> <span class="p">{</span>
+                <span class="t">int</span> x <span class="p">=</span> x0 <span class="p">+</span> dx<span class="p">;</span>
+                <span class="t">int</span> y <span class="p">=</span> y0 <span class="p">+</span> dy<span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span>x <span class="p">==</span> bx <span class="p">&amp;&amp;</span> y <span class="p">==</span> by<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+
+                lx<span class="p">[</span>cnt<span class="p">]</span> <span class="p">=</span> x<span class="p">;</span>
+                ly<span class="p">[</span>cnt<span class="p">]</span> <span class="p">=</span> y<span class="p">;</span>
+                cnt<span class="p">++;</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="f">Report</span><span class="p">(</span>xs<span class="p">[</span><span class="n">0</span><span class="p">],</span> ys<span class="p">[</span><span class="n">0</span><span class="p">],</span> xs<span class="p">[</span><span class="n">1</span><span class="p">],</span> ys<span class="p">[</span><span class="n">1</span><span class="p">],</span> xs<span class="p">[</span><span class="n">2</span><span class="p">],</span> ys<span class="p">[</span><span class="n">2</span><span class="p">]);</span>
+
+        <span class="f">put</span><span class="p">(</span>lx<span class="p">,</span> ly<span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">const</span> <span class="t">int</span> half <span class="p">=</span> n <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
-    <span class="k">const</span> <span class="t">int</span> midX <span class="p">=</span> top  <span class="p">+</span> half <span class="p">-</span> <span class="n">1</span><span class="p">;</span>   <span class="c">// 上半最後一列</span>
-    <span class="k">const</span> <span class="t">int</span> midY <span class="p">=</span> left <span class="p">+</span> half <span class="p">-</span> <span class="n">1</span><span class="p">;</span>   <span class="c">// 左半最後一行</span>
+    <span class="c">// ── 切 4 象限：mx, my 是上半／左半的最後一行 (列)</span>
+    <span class="t">int</span> h  <span class="p">=</span> n <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+    <span class="t">int</span> mx <span class="p">=</span> x0 <span class="p">+</span> h <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
+    <span class="t">int</span> my <span class="p">=</span> y0 <span class="p">+</span> h <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
 
-    <span class="c">// 4 個象限「最靠近中心」的格子 (TL, TR, BL, BR)</span>
-    <span class="t">int</span> cx<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> midX<span class="p">,</span>     midX<span class="p">,</span>     midX <span class="p">+</span> <span class="n">1</span><span class="p">,</span> midX <span class="p">+</span> <span class="n">1</span> <span class="p">};</span>
-    <span class="t">int</span> cy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> midY<span class="p">,</span>     midY <span class="p">+</span> <span class="n">1</span><span class="p">,</span> midY<span class="p">,</span>     midY <span class="p">+</span> <span class="n">1</span> <span class="p">};</span>
+    <span class="c">// 4 象限「最靠近中心」的格子 (TL, TR, BL, BR)</span>
+    <span class="t">int</span> cx<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span>mx<span class="p">,</span>     mx<span class="p">,</span>     mx <span class="p">+</span> <span class="n">1</span><span class="p">,</span> mx <span class="p">+</span> <span class="n">1</span><span class="p">};</span>
+    <span class="t">int</span> cy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span>my<span class="p">,</span>     my <span class="p">+</span> <span class="n">1</span><span class="p">,</span> my<span class="p">,</span>     my <span class="p">+</span> <span class="n">1</span><span class="p">};</span>
 
-    <span class="c">// blocked 在哪個象限？  0 = TL, 1 = TR, 2 = BL, 3 = BR</span>
-    <span class="k">const</span> <span class="t">int</span> bq <span class="p">=</span> <span class="p">(</span>blockedX <span class="p">&gt;</span> midX<span class="p">)</span> <span class="p">*</span> <span class="n">2</span> <span class="p">+</span> <span class="p">(</span>blockedY <span class="p">&gt;</span> midY<span class="p">);</span>
+    <span class="c">// blocked 落在哪個象限？  0=TL, 1=TR, 2=BL, 3=BR</span>
+    <span class="t">int</span> bq <span class="p">=</span> <span class="p">(</span>bx <span class="p">&gt;</span> mx<span class="p">)</span> <span class="p">*</span> <span class="n">2</span> <span class="p">+</span> <span class="p">(</span>by <span class="p">&gt;</span> my<span class="p">);</span>
 
-    <span class="c">// 中央 L：不含 blocked 的 3 個象限的最角落</span>
-    <span class="t">int</span> lx<span class="p">[</span><span class="n">3</span><span class="p">],</span> ly<span class="p">[</span><span class="n">3</span><span class="p">],</span> k <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> q <span class="p">=</span> <span class="n">0</span><span class="p">;</span> q <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> <span class="p">++</span>q<span class="p">)</span> <span class="p">{</span>
+    <span class="c">// ── 中央 L：放在「不含 blocked 的 3 個象限」最靠近中心的角</span>
+    <span class="t">int</span> lx<span class="p">[</span><span class="n">3</span><span class="p">],</span> ly<span class="p">[</span><span class="n">3</span><span class="p">],</span> cnt <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> q <span class="p">=</span> <span class="n">0</span><span class="p">;</span> q <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> q<span class="p">++)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
-        lx<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> cx<span class="p">[</span>q<span class="p">];</span> ly<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> cy<span class="p">[</span>q<span class="p">];</span> <span class="p">++</span>k<span class="p">;</span>
-    <span class="p">}</span>
-    <span class="f">Report</span><span class="p">(</span>lx<span class="p">[</span><span class="n">0</span><span class="p">],</span> ly<span class="p">[</span><span class="n">0</span><span class="p">],</span> lx<span class="p">[</span><span class="n">1</span><span class="p">],</span> ly<span class="p">[</span><span class="n">1</span><span class="p">],</span> lx<span class="p">[</span><span class="n">2</span><span class="p">],</span> ly<span class="p">[</span><span class="n">2</span><span class="p">]);</span>
 
-    <span class="c">// 對 4 個象限分別遞迴；blocked 不在的象限以「剛種的角」當新 blocked</span>
-    <span class="t">int</span> ox<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> top<span class="p">,</span>  top<span class="p">,</span>         top <span class="p">+</span> half<span class="p">,</span> top <span class="p">+</span> half <span class="p">};</span>
-    <span class="t">int</span> oy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> left<span class="p">,</span> left <span class="p">+</span> half<span class="p">,</span> left<span class="p">,</span>       left <span class="p">+</span> half <span class="p">};</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> q <span class="p">=</span> <span class="n">0</span><span class="p">;</span> q <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> <span class="p">++</span>q<span class="p">)</span> <span class="p">{</span>
-        <span class="t">int</span> nx <span class="p">=</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="p">?</span> blockedX <span class="p">:</span> cx<span class="p">[</span>q<span class="p">];</span>
-        <span class="t">int</span> ny <span class="p">=</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="p">?</span> blockedY <span class="p">:</span> cy<span class="p">[</span>q<span class="p">];</span>
-        <span class="f">tile</span><span class="p">(</span>ox<span class="p">[</span>q<span class="p">],</span> oy<span class="p">[</span>q<span class="p">],</span> half<span class="p">,</span> nx<span class="p">,</span> ny<span class="p">);</span>
+        lx<span class="p">[</span>cnt<span class="p">]</span> <span class="p">=</span> cx<span class="p">[</span>q<span class="p">];</span>
+        ly<span class="p">[</span>cnt<span class="p">]</span> <span class="p">=</span> cy<span class="p">[</span>q<span class="p">];</span>
+        cnt<span class="p">++;</span>
+    <span class="p">}</span>
+
+    <span class="f">put</span><span class="p">(</span>lx<span class="p">,</span> ly<span class="p">);</span>
+
+    <span class="c">// ── 對 4 個子象限遞迴；blocked 不在的象限以「剛種的角」當新 blocked</span>
+    <span class="t">int</span> sx<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span>x0<span class="p">,</span> x0<span class="p">,</span>     x0 <span class="p">+</span> h<span class="p">,</span> x0 <span class="p">+</span> h<span class="p">};</span>
+    <span class="t">int</span> sy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span>y0<span class="p">,</span> y0 <span class="p">+</span> h<span class="p">,</span> y0<span class="p">,</span>     y0 <span class="p">+</span> h<span class="p">};</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> q <span class="p">=</span> <span class="n">0</span><span class="p">;</span> q <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> q<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">int</span> nbx <span class="p">=</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="p">?</span> bx <span class="p">:</span> cx<span class="p">[</span>q<span class="p">];</span>
+        <span class="t">int</span> nby <span class="p">=</span> <span class="p">(</span>q <span class="p">==</span> bq<span class="p">)</span> <span class="p">?</span> by <span class="p">:</span> cy<span class="p">[</span>q<span class="p">];</span>
+
+        <span class="f">tile</span><span class="p">(</span>sx<span class="p">[</span>q<span class="p">],</span> sy<span class="p">[</span>q<span class="p">],</span> h<span class="p">,</span> nbx<span class="p">,</span> nby<span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="t">void</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> N<span class="p">,</span> <span class="t">int</span> X<span class="p">,</span> <span class="t">int</span> Y<span class="p">)</span> <span class="p">{</span>
-    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span>
-    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
     <span class="f">tile</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> <span class="n">1</span><span class="p">,</span> N<span class="p">,</span> X<span class="p">,</span> Y<span class="p">);</span>
 <span class="p">}</span></pre>
     </div>
@@ -149,7 +164,7 @@
       </thead>
       <tbody>
         <tr><td>base case 判斷</td><td><code>n == 2</code> 時掃 4 格</td><td class="mono">O(1)</td></tr>
-        <tr><td>算 midX / midY / bq</td><td>4 個位元運算 + 比較</td><td class="mono">O(1)</td></tr>
+        <tr><td>算 mx / my / bq</td><td>4 個位元運算 + 比較</td><td class="mono">O(1)</td></tr>
         <tr><td>列舉 4 角 + Report</td><td>固定 4 次迴圈，1 次 <code>Report</code></td><td class="mono">O(1)</td></tr>
         <tr><td>遞迴 4 子板</td><td>4 個 n/2 大小的子問題</td><td class="mono">4 · T(N/2)</td></tr>
       </tbody>
@@ -194,28 +209,28 @@
           <td>題目給的 <code>(X, Y)</code> 從 1 開始，最外層呼叫必須是 <code>tile(1, 1, N, X, Y)</code>，不是 <code>(0, 0, ...)</code>。</td>
         </tr>
         <tr>
-          <td><strong><code>midX</code> 是上半最後一列</strong></td>
-          <td><code>midX = top + half − 1</code>，<em>不是中線</em>。下半從 <code>midX + 1</code> 開始；4 個角是 <code>{midX, midX+1} × {midY, midY+1}</code>。</td>
+          <td><strong><code>mx</code> 是上半最後一列</strong></td>
+          <td><code>mx = x0 + h − 1</code>，<em>不是中線</em>。下半從 <code>mx + 1</code> 開始；4 個角是 <code>{mx, mx+1} × {my, my+1}</code>。</td>
         </tr>
         <tr>
           <td><strong>bq 編號用比較</strong></td>
-          <td><code>bq = (blockedX &gt; midX) * 2 + (blockedY &gt; midY)</code> — 高位是 X、低位是 Y，剛好 TL=0, TR=1, BL=2, BR=3。注意是 <code>&gt; midX</code>（嚴格大於）。</td>
+          <td><code>bq = (bx &gt; mx) * 2 + (by &gt; my)</code> — 高位是 X、低位是 Y，剛好 TL=0, TR=1, BL=2, BR=3。注意是 <code>&gt; mx</code>（嚴格大於）。</td>
         </tr>
         <tr>
           <td><strong>base case 不需算 bq</strong></td>
-          <td><code>n = 2</code> 時不切象限；雙重 for 跳過 blocked 即可。提早判斷 <code>n == 2</code> 是必須的，否則 half = 1、midX = top、會繼續往下遞迴變成無限迴圈。</td>
+          <td><code>n = 2</code> 時不切象限；雙重 for 跳過 blocked 即可。提早判斷 <code>n == 2</code> 是必須的，否則 <code>h = 1</code>、<code>mx = x0</code>、會繼續往下遞迴變成無限迴圈。</td>
         </tr>
         <tr>
           <td><strong>中央 L 必須先 Report</strong></td>
           <td>放完中央 L 才能讓其他 3 個象限「有 blocked」可遞迴；順序顛倒會導致子象限沒有 blocked 而行為未定義。</td>
         </tr>
         <tr>
-          <td><strong>不用 <code>std::array</code></strong></td>
-          <td>用原始 <code>int cx[4]</code> 等平行陣列，<em>讓索引 0..3 直接對應 TL..BR</em> — 比 struct 清楚。</td>
+          <td><strong>用 <code>put()</code> 包 Report</strong></td>
+          <td><code>put(lx, ly)</code> 把 3 格寫成「<code>Report(lx[0], ly[0], lx[1], ly[1], lx[2], ly[2])</code>」— 中央 L、base case 都共用一個出口，少寫一次 Report 列舉，可讀性高。</td>
         </tr>
         <tr>
-          <td><strong>不需 <code>cin / cout</code></strong></td>
-          <td>互動式 — 全靠 <code>Report</code>，但 <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 仍習慣加上（無害）。</td>
+          <td><strong>不用 <code>std::array</code></strong></td>
+          <td>用原始 <code>int cx[4]</code> 等平行陣列，索引 0..3 直接對應 TL..BR — 比 struct 清楚。</td>
         </tr>
       </tbody>
     </table>
@@ -232,29 +247,28 @@
 
     <p><strong>① base case (n == 2)</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// n == 2</span>
-double for-loop 掃 4 格 (top..top+1) × (left..left+1)
-跳過 blocked，把剩 3 格塞進 xs / ys
-一次 Report(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2])
-return — stack 在這停。</pre>
+double for-loop 掃 4 格 (x0..x0+1) × (y0..y0+1)
+跳過 (bx, by)，把剩 3 格塞進 lx / ly
+put(lx, ly) 一次回報 ─ stack 在這停。</pre>
 
-    <p><strong>② 算 midX / midY (子板的中心邊界)</strong></p>
+    <p><strong>② 算 mx / my (子板的中心邊界)</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// split</span>
-half = n / 2
-midX = top  + half - 1   ← 上半最後一列
-midY = left + half - 1   ← 左半最後一行
+h  = n / 2
+mx = x0 + h - 1   ← 上半最後一列
+my = y0 + h - 1   ← 左半最後一行
 
 4 個「最靠近中心」的角 (TL, TR, BL, BR)：
-  cx = { midX,   midX,   midX+1, midX+1 }
-  cy = { midY,   midY+1, midY,   midY+1 }</pre>
+  cx = { mx,   mx,   mx+1, mx+1 }
+  cy = { my,   my+1, my,   my+1 }</pre>
 
     <p><strong>③ 判定 blocked 在哪個象限</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// bq</span>
-bq = (blockedX &gt; midX) * 2 + (blockedY &gt; midY)
+bq = (bx &gt; mx) * 2 + (by &gt; my)
 
-  TL = 0 :  blockedX ≤ midX  且  blockedY ≤ midY
-  TR = 1 :  blockedX ≤ midX  且  blockedY &gt; midY
-  BL = 2 :  blockedX &gt; midX  且  blockedY ≤ midY
-  BR = 3 :  blockedX &gt; midX  且  blockedY &gt; midY</pre>
+  TL = 0 :  bx ≤ mx  且  by ≤ my
+  TR = 1 :  bx ≤ mx  且  by &gt; my
+  BL = 2 :  bx &gt; mx  且  by ≤ my
+  BR = 3 :  bx &gt; mx  且  by &gt; my</pre>
 
     <p><strong>④ 放中央 L</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// place center L</span>
@@ -262,21 +276,21 @@ for q in 0..3:
     if q == bq: skip
     else: 把 (cx[q], cy[q]) 收進 lx / ly
 
-Report(lx[0], ly[0], lx[1], ly[1], lx[2], ly[2])
+put(lx, ly)
 
 → 這 3 格從此被「占用」 ─ 在各自象限的遞迴裡會當新 blocked。</pre>
 
     <p><strong>⑤ 遞迴 4 個子象限</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// recurse 4 quadrants</span>
-ox = { top,  top,       top+half, top+half }   ← 子板左上 X
-oy = { left, left+half, left,     left+half }  ← 子板左上 Y
+sx = { x0, x0,     x0 + h, x0 + h }   ← 子板左上 X
+sy = { y0, y0 + h, y0,     y0 + h }   ← 子板左上 Y
 
 for q in 0..3:
     if q == bq:
-        nx, ny = blockedX, blockedY      ← 用原 blocked
+        nbx, nby = bx, by             ← 用原 blocked
     else:
-        nx, ny = cx[q], cy[q]            ← 用剛種的角
-    tile(ox[q], oy[q], half, nx, ny)
+        nbx, nby = cx[q], cy[q]       ← 用剛種的角
+    tile(sx[q], sy[q], h, nbx, nby)
 
 → 每個子板都是「n/2 × n/2 + 1 個 blocked」 ─ 與原問題同形。</pre>
   </section>
@@ -298,7 +312,7 @@ for q in 0..3:
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">tile(top, left, n, bX, bY) ─ base case n=2 直接 Report，否則切象限算 bq、放中央 L、4 子遞迴。</div>
+    <div class="sc-summary-bar__body">tile(x0, y0, n, bx, by) ─ base case n=2 直接 put，否則切象限算 bq、放中央 L、4 子遞迴。</div>
     <div class="sc-summary-bar__detail">T(N) = 4·T(N/2) + O(1) ⇒ Θ(N²) &nbsp;·&nbsp; 空間 O(log N)</div>
   </div>
 
