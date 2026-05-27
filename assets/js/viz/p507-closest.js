@@ -362,7 +362,8 @@
       label:
         '<strong>STEP 04 · 合併取 d = min(d_L, d_R) = 8</strong>' +
         '<br/>√8 ≈ 2.83 — 畫一條<strong>寬 2·√d ≈ 5.66</strong> 的 strip 跨在中線兩側。' +
-        '<br/>跨界 pair 只可能落在這個 strip 內，外面的點不必看。'
+        '<br/><strong>為何？</strong> 若 <code>|x − mid_x| ≥ √d</code>，跟對面任何點水平距離已 ≥ √d，不可能改善 d ⇒ 直接出局。' +
+        '<br/>所以跨界候選都在這條 strip 裡，外面的點不必看。'
     },
     {
       kind: 'strip-collect',

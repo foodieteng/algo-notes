@@ -215,11 +215,136 @@
   </section>
 
   <!-- ============================================================
-       SECTION 06 — Pigeonhole 證明
+       SECTION 06 — 為何只看 strip 就夠
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">為何只看寬 2√d 的 strip 就夠<span class="sc-section__title-en">// Why the Strip is Enough</span></h2>
+    </div>
+
+    <p style="font-size:14px;">回到本層時手上有 <code>d = min(d_L, d_R)</code>（兩半各自最佳的<strong>距離平方</strong>）。
+    接下來想找跨界 pair（左右各一點）有沒有打敗 <code>d</code>。但跨界對最壞有 <code>N²/4</code> 種 —
+    <strong>怎麼把候選縮到 O(N)？</strong></p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">關鍵觀察 · 距 mid_x 太遠的點直接出局</div>
+      <div class="sc-dark-box__body">
+        <p>設當前最佳距離為 <code>√d</code>（程式裡 <code>d</code> 存的是距離平方）。對左半任一點 <code>p</code>：</p>
+        <ol>
+          <li>右半任何點 <code>q</code> 都滿足 <code>x_q ≥ mid_x</code>。
+            ⇒ <code>x_q − x_p ≥ mid_x − x_p</code>。</li>
+          <li>所以 <code>p</code> 跟右半任何 <code>q</code> 的<strong>水平距離至少</strong> <code>mid_x − x_p</code>。</li>
+          <li>若 <code>mid_x − x_p ≥ √d</code>（即 p 離中線 ≥ √d）⇒ 任何 <code>|pq| ≥ √d</code> ⇒
+            <strong>p 不可能改善 d，可以丟掉</strong>。</li>
+          <li>對右半 <code>q</code> 同理 — 只有 <code>|x_q − mid_x| &lt; √d</code> 的點才有資格。</li>
+          <li>⇒ 跨界候選都落在 <code>|x − mid_x| &lt; √d</code> 的<strong>寬 2√d 垂直條帶（strip）</strong>內。</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         Why-strip 視覺化 — 兩個情境對比
+         ============================================================ -->
+    <div style="margin:18px 0;overflow-x:auto;">
+    <svg viewBox="0 0 800 420" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:700px;" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Title -->
+      <text x="400" y="32" text-anchor="middle" font-family="'Noto Serif TC', serif" font-size="17" font-weight="700" fill="#1f1f1f">兩個左半點 p · 跟右半 q 比距離</text>
+      <text x="400" y="56" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="#5a5a5a">畫一個半徑 √d 的搜尋圈 — 搆不到中線就直接出局</text>
+
+      <line x1="40" y1="74" x2="760" y2="74" stroke="#ecd9a6" stroke-width="1"/>
+
+      <!-- Strip band (highlighted yellow) -->
+      <rect x="300" y="90" width="200" height="220" fill="#d4a017" fill-opacity="0.10" stroke="#d4a017" stroke-width="1.2" stroke-dasharray="6,4"/>
+
+      <!-- Strip top label -->
+      <text x="400" y="108" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" fill="#a08010">strip · 寬 2√d</text>
+
+      <!-- Midline -->
+      <line x1="400" y1="90" x2="400" y2="312" stroke="#d96e4e" stroke-width="2"/>
+      <text x="400" y="328" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" fill="#d96e4e">mid_x</text>
+
+      <!-- Left / Right band labels -->
+      <text x="155" y="92" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="12" font-weight="500" fill="#a09060">left half</text>
+      <text x="645" y="92" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="12" font-weight="500" fill="#a09060">right half</text>
+
+      <!-- ===== Case 1: p1 FAR from mid_x (gray, ✗) ===== -->
+      <!-- Search circle around p1: r=100 (= √d in visual scale) -->
+      <circle cx="170" cy="220" r="100" fill="none" stroke="#8a847a" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.55"/>
+
+      <!-- p1 point -->
+      <circle cx="170" cy="220" r="8" fill="#8a847a" stroke="#1f1f1f" stroke-width="2"/>
+      <text x="170" y="244" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="#1f1f1f">p₁</text>
+
+      <!-- Distance bracket from p1 to mid_x at y=180 -->
+      <line x1="170" y1="180" x2="400" y2="180" stroke="#5a5a5a" stroke-width="1"/>
+      <line x1="170" y1="176" x2="170" y2="184" stroke="#5a5a5a" stroke-width="1"/>
+      <line x1="400" y1="176" x2="400" y2="184" stroke="#5a5a5a" stroke-width="1"/>
+      <rect x="240" y="168" width="92" height="14" fill="#fffaf0" opacity="0.9"/>
+      <text x="285" y="178" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#5a5a5a">≥ √d (太遠)</text>
+
+      <!-- ✗ mark below -->
+      <text x="170" y="280" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700" fill="#a05550">✗</text>
+      <text x="170" y="298" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="11" fill="#1f1f1f">搜尋圈構不到 mid_x</text>
+
+      <!-- ===== Case 2: p2 CLOSE to mid_x — inside strip (blue, ✓) ===== -->
+      <!-- Search circle around p2: r=100 -->
+      <circle cx="350" cy="220" r="100" fill="none" stroke="#1f5a99" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>
+
+      <!-- p2 point -->
+      <circle cx="350" cy="220" r="8" fill="#1f5a99" stroke="#1f1f1f" stroke-width="2"/>
+      <text x="350" y="244" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="#1f1f1f">p₂</text>
+
+      <!-- q on right side, inside p2's circle -->
+      <circle cx="430" cy="205" r="7" fill="#d96e4e" stroke="#1f1f1f" stroke-width="2"/>
+      <text x="430" y="190" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="#1f1f1f">q</text>
+
+      <!-- Pair line p2 - q -->
+      <line x1="350" y1="220" x2="430" y2="205" stroke="#d96e4e" stroke-width="1.8"/>
+
+      <!-- Distance bracket from p2 to mid_x at y=180 -->
+      <line x1="350" y1="180" x2="400" y2="180" stroke="#1f5a99" stroke-width="1"/>
+      <line x1="350" y1="176" x2="350" y2="184" stroke="#1f5a99" stroke-width="1"/>
+      <line x1="400" y1="176" x2="400" y2="184" stroke="#1f5a99" stroke-width="1"/>
+      <rect x="358" y="168" width="34" height="14" fill="#fffaf0" opacity="0.9"/>
+      <text x="375" y="178" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" fill="#1f5a99">&lt; √d</text>
+
+      <!-- ✓ mark below -->
+      <text x="390" y="280" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700" fill="#2f8a5a">✓</text>
+      <text x="390" y="298" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="11" fill="#1f1f1f">搜尋圈跨過 mid_x，q 在範圍內</text>
+
+      <!-- ============ Conclusion bar ============ -->
+      <rect x="30" y="346" width="740" height="62" fill="#1f1f1f" rx="5"/>
+
+      <text x="400" y="370" text-anchor="middle" font-family="'Noto Serif TC', serif" font-size="14" font-weight="700" fill="#fef8e8">
+        若 <tspan font-family="'JetBrains Mono', monospace" fill="#d96e4e">|x − mid_x| ≥ √d</tspan>
+        ⇒ 跟對面任何點水平距離 ≥ √d ⇒ 不可能改善 d
+      </text>
+      <text x="400" y="388" text-anchor="middle" font-family="'Noto Sans TC', sans-serif" font-size="12" fill="#ecd9a6">
+        所以只收 <tspan font-family="'JetBrains Mono', monospace" font-weight="700" fill="#d96e4e">|x − mid_x| &lt; √d</tspan> 的點
+        ⇒ 跨界候選縮在寬 2√d 的 strip 內
+      </text>
+      <text x="400" y="404" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="11" fill="#bba56b">
+        程式碼: (x_p − mid_x) * (x_p − mid_x) &lt; d   // d 存的是平方，不開根號
+      </text>
+
+    </svg>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      <strong>關鍵 trick</strong>：寫成 <code>(x − mid_x)² &lt; d</code> 直接整數比較，
+      <strong>整題不必動 sqrt</strong>，long long 走到底。<br/>
+      下一節接著問：<strong>strip 內最壞還是 O(N) 點，要怎麼避免每點都跟全 strip 比？</strong>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — Pigeonhole 證明
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
       <h2 class="sc-section__title">為什麼只比 7 個鄰居就夠<span class="sc-section__title-en">// Pigeonhole Bound</span></h2>
     </div>
 
@@ -406,7 +531,7 @@
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">07</span>
+      <span class="sc-section__num">08</span>
       <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity (step by step)</span></h2>
     </div>
 
@@ -570,7 +695,7 @@
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">08</span>
+      <span class="sc-section__num">09</span>
       <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
     </div>
 
