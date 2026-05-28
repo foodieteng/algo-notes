@@ -129,28 +129,40 @@
     </div>
 
     <p style="font-size:14px;">
-      想像一下：每一列都有一位<strong>太陽軍團隊長</strong>（該列的最大值），題目保證隊長們的位置從上到下排成<strong>一條嚴格往右下走的階梯</strong>（第 i 列的隊長一定比第 i−1 列的隊長更靠右）。
+      <strong>場景比喻。</strong>把矩陣想成一片戰場，每一列駐紮一隊太陽軍團，每隊都有一位<strong>隊長</strong>（= 該列的最大值）。題目保證：<strong>越下面的隊伍，隊長站得越靠右</strong>。所以把所有隊長的位置由上到下連起來，會看到<strong>一條從左上往右下走的階梯</strong>。
     </p>
 
-    <p style="font-size:14px;margin-top:8px;">
-      暴力法每列都掃整排 M 個格子才能找出隊長，N 列就要 N · M 次 GetVal — 一定爆。但「隊長階梯」這個結構給了我們一個免費資訊：<strong>只要知道中間那位隊長站在哪一欄，就能立刻砍掉上下半的搜尋範圍。</strong>
+    <p style="font-size:14px;margin-top:10px;">
+      <strong>暴力為什麼爆？</strong>沒有任何結構假設，每列都要從第 1 格掃到第 M 格才能挖出隊長 — N · M 次 GetVal。N = M = 10⁶ ⇒ 10¹² 次，遠超 10⁸ 上限。
     </p>
 
-    <p style="font-size:14px;margin-top:8px;">具體做法（當前要處理 <code>rowLo..rowHi</code> 列、欄位範圍 <code>colLo..colHi</code>）：</p>
+    <p style="font-size:14px;margin-top:10px;">
+      <strong>關鍵剪枝。</strong>「隊長階梯」這條約束，給了我們一個免費資訊：
+    </p>
+
+    <div style="border-left:3px solid var(--sc-coral);background:var(--sc-paper);padding:10px 14px;margin-top:8px;font-size:14px;">
+      只要先在<strong>正中間那列</strong>（<code>mid</code>）把隊長挖出來、記它的欄位為 <code>m</code>，那麼：<br/>
+      ① <strong>所有上半列的隊長一定全在 <code>m</code> 左邊</strong>（嚴格 &lt;）<br/>
+      ② <strong>所有下半列的隊長一定全在 <code>m</code> 右邊</strong>（嚴格 &gt;）<br/>
+      ⇒ 上半之後只需搜 <code>cols [colLo, m−1]</code>、下半只需搜 <code>cols [m+1, colHi]</code> — 範圍立刻變窄，<strong>且兩段欄位互不重疊</strong>。
+    </div>
+
+    <p style="font-size:14px;margin-top:12px;">
+      <strong>怎麼遞迴？</strong>上下半各自就是「N/2 列、更窄欄位範圍」的同形子問題 — 對它們繼續同一招：挑中間列、掃出隊長、切上下半。每往下一層列數對半切，<strong>最多切 log₂ N 層</strong>就到底。
+    </p>
+
+    <p style="font-size:14px;margin-top:12px;"><strong>整理成 4 步驟</strong>（當前處理 <code>rowLo..rowHi</code> 列、欄位範圍 <code>colLo..colHi</code>）：</p>
 
     <ol style="margin-top:6px;">
-      <li><strong>挑正中間那列</strong>：<code>mid = (rowLo + rowHi) / 2</code></li>
-      <li><strong>派偵察兵掃一次找出 mid 列的隊長</strong>：在 <code>cols [colLo, colHi]</code> 內逐格比大小，找到峰欄 <code>m</code>，記下 <code>answer[mid] = m</code></li>
-      <li><strong>上半的隊長一定在 m 左邊</strong>（階梯往右下走）⇒ 之後上半只需在 <code>cols [colLo, m−1]</code> 裡找。遞迴呼叫 <code>dnc(rowLo, mid−1, colLo, m−1)</code></li>
-      <li><strong>下半的隊長一定在 m 右邊</strong> ⇒ 之後下半只需在 <code>cols [m+1, colHi]</code> 裡找。遞迴呼叫 <code>dnc(mid+1, rowHi, m+1, colHi)</code></li>
+      <li><strong>挑中間列</strong>：<code>mid = (rowLo + rowHi) / 2</code>。</li>
+      <li><strong>掃出 mid 列的隊長</strong>：在 <code>cols [colLo, colHi]</code> 內逐格比大小，找到峰欄 <code>m</code>，記下 <code>answer[mid] = m</code>。</li>
+      <li><strong>遞迴上半</strong>：<code>dnc(rowLo, mid−1, colLo, m−1)</code> — 上半隊長必 &lt; m，所以欄位上界縮到 <code>m−1</code>。</li>
+      <li><strong>遞迴下半</strong>：<code>dnc(mid+1, rowHi, m+1, colHi)</code> — 下半隊長必 &gt; m，所以欄位下界縮到 <code>m+1</code>。</li>
     </ol>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>一句話：</strong>掃中間列找隊長 → 上下半各自的搜尋區間被砍成更窄的兩塊 → 對上下半遞迴繼續砍。階梯結構讓「找上半隊長」與「找下半隊長」這兩個子問題的欄位範圍<strong>互不重疊</strong>，所以每層遞迴所有子問題加起來掃的總欄位數不超過 M。
-    </p>
-
-    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>Base case：</strong><code>rowLo &gt; rowHi</code> 直接 return（沒有列要處理）。因為遞迴是「中間 → 上半 → 下半」的順序，而不是 row 1..N，所以 <code>Report</code> 要等遞迴全部結束，再依 <code>answer[]</code> 順序輸出。
+      <strong>Base case：</strong>當 <code>rowLo &gt; rowHi</code> 或 <code>colLo &gt; colHi</code> 就 return（沒有列要處理、或欄位範圍空了）。<br/>
+      <strong>Report 時機：</strong>遞迴順序是「中間 → 上半 → 下半」，不是 row 1..N，所以結果先存進 <code>answer[]</code>，等整個遞迴跑完，再依 row 順序 <code>Report(answer[1..N])</code>。
     </p>
   </section>
 
@@ -268,27 +280,54 @@
       <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
 
-    <p style="font-size:14px;">每一層遞迴的<strong>所有子問題加起來</strong>掃過的欄位總長 ≤ <code>M</code> — 因為相鄰子問題的欄位範圍互不重疊（端點 <code>m</code> 已被中間 row 取走，上下半從 <code>m−1</code> / <code>m+1</code> 起算）。</p>
+    <p style="font-size:14px;">
+      這題的真正限制是 <strong>GetVal 呼叫次數 ≤ 10⁸</strong>（不是時間）。所以我們直接<strong>數每次呼叫 GetVal 的次數</strong>，看會不會超預算。
+    </p>
+
+    <p style="font-size:14px;margin-top:10px;">
+      <strong>觀察一：</strong>整支遞迴最多切 <strong>log₂ N 層</strong>就到底（每往下一層列數對半切）。N = 10⁶ ⇒ 約 <strong>20 層</strong>。
+    </p>
+
+    <p style="font-size:14px;margin-top:10px;">
+      <strong>觀察二（關鍵）：</strong>把<strong>同一層</strong>所有子問題的 GetVal 加起來，總和不超過 <strong>M + (該層子問題數)</strong>。為什麼？
+    </p>
+
+    <div style="border-left:3px solid var(--sc-coral);background:var(--sc-paper);padding:10px 14px;margin-top:8px;font-size:13.5px;">
+      <p style="margin:0 0 6px 0;">
+        想像把同一層所有子問題的「欄位搜尋區間」並排畫出來：<br/>
+        <code>[colLo₁, colHi₁]</code>，<code>[colLo₂, colHi₂]</code>，<code>[colLo₃, colHi₃]</code>...
+      </p>
+      <p style="margin:0 0 6px 0;">
+        因為上下半切割是 <code>[..., m−1]</code> 和 <code>[m+1, ...]</code>，相鄰兩個子問題<strong>完全不重疊</strong>（中間還少一格 <code>m</code>）。
+      </p>
+      <p style="margin:0;">
+        把它們攤平在「欄位 1 到 M」這條線上，<strong>總長度加起來 ≤ M</strong>。所以該層所有 GetVal 加起來 ≤ M。
+      </p>
+    </div>
+
+    <p style="font-size:14px;margin-top:12px;">
+      <strong>結論：</strong>每層 ≤ M 次 GetVal × log₂ N 層 = <strong>M · log₂ N</strong> 次。加上掃過每列至少 1 次的成本（共 N 次），總 GetVal ≤ <strong>(N + M) · log₂ N</strong>。
+    </p>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">T(N, M) ≤ 2 · T(N/2, ?) + O(M_layer)</div>
+      <div class="sc-formula__main">GetVal 次數 ≤ (N + M) · log₂ N</div>
       <div class="sc-formula__hint">
-        每層欄位總長 = O(M)，共 O(log N) 層 ⇒ <strong>Total = O((N + M) log N)</strong>
+        N = M = 10⁶ ⇒ <code>2 × 10⁶ × 20 = 4 × 10⁷</code> 次 ⇒ <strong>遠在 10⁸ 上限內 ●</strong>
       </div>
     </div>
 
     <table class="sc-table">
-      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <thead><tr><th>項目</th><th>數量</th><th>白話備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>O((N + M) log N)</strong></td><td>遞迴每層的欄位總長 ≤ M（子問題互不重疊）</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td><code>answer[1..N]</code> 暫存；遞迴堆疊 O(log N)</td></tr>
-        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
-        <tr><td>GetVal Calls</td><td class="mono"><strong>≤ (N + M) log₂ N</strong></td><td>N = M = 10⁶ ⇒ ≈ 2×10⁶ × 20 = <strong>4 × 10⁷</strong>，遠在 10⁸ 上限內</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O((N + M) log N)</strong></td><td>同上面 GetVal 推導，每次 GetVal 是 O(1)</td></tr>
+        <tr><td>GetVal 次數</td><td class="mono"><strong>≤ (N + M) log₂ N</strong></td><td>N = M = 10⁶ ⇒ <strong>≈ 4 × 10⁷</strong>，安全</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td><code>answer[1..N]</code> 存每列峰欄；遞迴堆疊 O(log N)</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 <strong>20 層</strong></td></tr>
       </tbody>
     </table>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>GetVal 預算才是這題的真正限制</strong> — 不是時間複雜度。10⁸ 的限制意味著就算單列 brute O(M) 也只能用 100 次（N ≤ 100 的子任務），全題必須靠遞迴縮減欄位範圍。
+      <strong>數字直覺：</strong>如果不用分治、每列都掃整排 M 格 ⇒ N × M = 10¹² 次（暴力 1 兆），絕對爆。分治版本壓到 4 千萬次，<strong>差距 5 個數量級</strong>。
     </p>
   </section>
 
