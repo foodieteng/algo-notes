@@ -68,17 +68,17 @@
       </thead>
       <tbody>
         <tr><td>分治結構</td>
-            <td>切半 → 各自遞迴排序 → merge 時順便算<em>跨界</em>逆序對的兩數和。</td></tr>
+            <td>切半 → 各自遞迴排序 → merge 時順便算「跨界」逆序對的兩數和。</td></tr>
         <tr><td>跨界對的數法</td>
-            <td>merge 取右半 <code>a[j]</code> 時，左半剩 <code>count = mid − i + 1</code> 個全部 &gt; <code>a[j]</code>，全部成對。</td></tr>
+            <td>merge 取右半 <code>arr[j]</code> 時，左半剩 <code>cnt = m − i + 1</code> 個全部 &gt; <code>arr[j]</code>，全部成對。</td></tr>
         <tr><td>貢獻公式</td>
-            <td><code>contrib = remaining + a[j] × count</code> — 左半剩餘和 + a[j] 乘上左半剩餘個數。</td></tr>
-        <tr><td>remaining 維護</td>
-            <td>merge 開始算一次左半總和；左半游標前進就 <code>remaining −= a[i]</code>，O(1) 取用。</td></tr>
+            <td><code>add = remain + arr[j] × cnt</code> — 左半剩餘和 + arr[j] 乘上左半剩餘個數。</td></tr>
+        <tr><td>remain 維護</td>
+            <td>merge 開始算一次左半總和；左半游標前進就 <code>remain −= arr[i]</code>，O(1) 取用。</td></tr>
         <tr><td>複雜度</td>
             <td><code>T(N) = 2·T(N/2) + O(N) = Θ(N log N)</code>（Master Theorem case 2）。</td></tr>
         <tr><td>Mod 規則</td>
-            <td>累加進 <code>inv_sum</code>、<code>remaining</code> 都 mod；<strong>比較永遠用原始值</strong>。</td></tr>
+            <td>累加進 <code>invSum</code>、<code>remain</code> 都 mod；<strong>比較永遠用原始值</strong>。</td></tr>
       </tbody>
     </table>
   </section>
@@ -95,7 +95,7 @@
     <div class="qa">
       <span class="qa__id">Q1</span>
       <span class="qa__tag">跨界數法</span>
-      <h4>merge 中取右半 <code>a[j]</code> 出來時，為什麼左半剩餘的 <code>a[i..mid]</code> <em>全部</em>跟 <code>a[j]</code> 形成逆序對？</h4>
+      <h4>merge 中取右半 <code>arr[j]</code> 出來時，為什麼左半剩餘的 <code>arr[i..m]</code> <strong>全部</strong>跟 <code>arr[j]</code> 形成逆序對？</h4>
     </div>
 
     <div class="qa">
@@ -113,13 +113,13 @@
     <div class="qa">
       <span class="qa__id">Q4</span>
       <span class="qa__tag">Mod 陷阱</span>
-      <h4>為什麼比較大小不能用 <code>a[i] % MOD</code> 後的值？舉一個會出錯的具體例子。</h4>
+      <h4>為什麼比較大小不能用 <code>arr[i] % MOD</code> 後的值？舉一個會出錯的具體例子。</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q5</span>
       <span class="qa__tag">型別</span>
-      <h4><code>remaining</code>、<code>contrib</code> 為什麼要宣告成 <code>long long</code>？用 <code>int</code> 會在哪裡爆掉？</h4>
+      <h4><code>remain</code>、<code>add</code> 為什麼要宣告成 <code>long long</code>？用 <code>int</code> 會在哪裡爆掉？</h4>
     </div>
   </section>
 
@@ -137,7 +137,7 @@
     <table class="sc-table">
       <thead><tr><th>idx</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
       <tbody>
-        <tr><td class="mono">a[]</td><td class="mono">4</td><td class="mono">2</td><td class="mono">3</td><td class="mono">1</td></tr>
+        <tr><td class="mono">arr</td><td class="mono">4</td><td class="mono">2</td><td class="mono">3</td><td class="mono">1</td></tr>
       </tbody>
     </table>
 
@@ -145,59 +145,59 @@
     <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>4
 4 2 3 1</pre>
 
-    <p>呼叫 <code>merge_sort(0, 3)</code>：</p>
+    <p>呼叫 <code>mergeSort(0, 3)</code>：</p>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_sort(0, 3)</span>
-mid = (0 + 3) / 2 = 1
-→ merge_sort(0, 1)    遞迴左半 [4, 2]
-→ merge_sort(2, 3)    遞迴右半 [3, 1]
-→ merge_range(0, 1, 3)</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · mergeSort(0, 3)</span>
+m = 0 + (3 - 0) / 2 = 1
+→ mergeSort(0, 1)     遞迴左半 [4, 2]
+→ mergeSort(2, 3)     遞迴右半 [3, 1]
+→ merge(0, 1, 3)</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_sort(0, 1) → merge_range(0, 0, 1)</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · mergeSort(0, 1) → merge(0, 0, 1)</span>
 左半 = [4]、右半 = [2]
-remaining = 4
+remain = 4
 i = 0, j = 1
-a[0] = 4, a[1] = 2
-4 &gt; 2 ⇒ count = 1
-contrib = 4 + 2 × 1 = 6
-inv_sum = <span class="sc-trace__out">6</span>
-取右：tmp[0] = 2、++j（j 出界）
-左半剩餘：tmp[1] = 4
-copy back ⇒ a = [2, 4, 3, 1]</pre>
+arr[0] = 4, arr[1] = 2
+4 &gt; 2 ⇒ cnt = 1
+add = 4 + 2 × 1 = 6
+invSum = <span class="sc-trace__out">6</span>
+取右：buf[0] = 2、j++（j 出界）
+左半剩餘：buf[1] = 4
+copy back ⇒ arr = [2, 4, 3, 1]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_sort(2, 3) → merge_range(2, 2, 3)</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · mergeSort(2, 3) → merge(2, 2, 3)</span>
 左半 = [3]、右半 = [1]
-remaining = 3
+remain = 3
 i = 2, j = 3
-a[2] = 3, a[3] = 1
-3 &gt; 1 ⇒ count = 1
-contrib = 3 + 1 × 1 = 4
-inv_sum = 6 + 4 = <span class="sc-trace__out">10</span>
-取右：tmp[2] = 1、++j（j 出界）
-左半剩餘：tmp[3] = 3
-copy back ⇒ a = [2, 4, 1, 3]</pre>
+arr[2] = 3, arr[3] = 1
+3 &gt; 1 ⇒ cnt = 1
+add = 3 + 1 × 1 = 4
+invSum = 6 + 4 = <span class="sc-trace__out">10</span>
+取右：buf[2] = 1、j++（j 出界）
+左半剩餘：buf[3] = 3
+copy back ⇒ arr = [2, 4, 1, 3]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge_range(0, 1, 3)  ← 頂層合併</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// CALL · merge(0, 1, 3)  ← 頂層合併</span>
 左半 = [2, 4]、右半 = [1, 3]
-remaining = 2 + 4 = 6
+remain = 2 + 4 = 6
 
-i=0, j=2: a[0]=2, a[2]=1 → 2 &gt; 1
-   count = mid - i + 1 = 1 - 0 + 1 = 2
-   contrib = 6 + 1 × 2 = 8
-   inv_sum = 10 + 8 = <span class="sc-trace__out">18</span>
-   tmp[0] = 1、++j
+i=0, j=2: arr[0]=2, arr[2]=1 → 2 &gt; 1
+   cnt = m - i + 1 = 1 - 0 + 1 = 2
+   add = 6 + 1 × 2 = 8
+   invSum = 10 + 8 = <span class="sc-trace__out">18</span>
+   buf[0] = 1、j++
 
-i=0, j=3: a[0]=2, a[3]=3 → 2 ≤ 3
-   tmp[1] = 2、remaining = 6 - 2 = 4、++i
+i=0, j=3: arr[0]=2, arr[3]=3 → 2 ≤ 3
+   buf[1] = 2、remain = 6 - 2 = 4、i++
 
-i=1, j=3: a[1]=4, a[3]=3 → 4 &gt; 3
-   count = mid - i + 1 = 1 - 1 + 1 = 1
-   contrib = 4 + 3 × 1 = 7
-   inv_sum = 18 + 7 = <span class="sc-trace__out">25</span>
-   tmp[2] = 3、++j（j 出界）
+i=1, j=3: arr[1]=4, arr[3]=3 → 4 &gt; 3
+   cnt = m - i + 1 = 1 - 1 + 1 = 1
+   add = 4 + 3 × 1 = 7
+   invSum = 18 + 7 = <span class="sc-trace__out">25</span>
+   buf[2] = 3、j++（j 出界）
 
-左半剩餘：tmp[3] = 4
-copy back ⇒ a = [1, 2, 3, 4]</pre>
+左半剩餘：buf[3] = 4
+copy back ⇒ arr = [1, 2, 3, 4]</pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>25</pre>
 
@@ -220,19 +220,19 @@ copy back ⇒ a = [1, 2, 3, 4]</pre>
     <div class="qa">
       <span class="qa__id">A1</span>
       <span class="qa__tag">最壞情況</span>
-      <h4>N = 10⁶ 全降序時，<em>逆序對數量</em>有多少？這也是為什麼不能 O(N²)。</h4>
+      <h4>N = 10⁶ 全降序時，<strong>逆序對數量</strong>有多少？這也是為什麼不能 O(N²)。</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">A2</span>
       <span class="qa__tag">特例</span>
-      <h4>對已遞增的序列 <code>[1, 2, 3, 4, 5]</code> 跑 code，<code>inv_sum</code> 是多少？code 還需要跑完整 merge sort 嗎？</h4>
+      <h4>對已遞增的序列 <code>[1, 2, 3, 4, 5]</code> 跑 code，<code>invSum</code> 是多少？code 還需要跑完整 merge sort 嗎？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">A3</span>
       <span class="qa__tag">相關題</span>
-      <h4>若把題目改為「對每組逆序對輸出 <code>a[i] − a[j]</code> 之和」，code 要改哪幾行？</h4>
+      <h4>若把題目改為「對每組逆序對輸出 <code>arr[i] − arr[j]</code> 之和」，code 要改哪幾行？</h4>
     </div>
   </section>
 
@@ -253,29 +253,29 @@ copy back ⇒ a = [1, 2, 3, 4]</pre>
     <div class="qa qa--answer">
       <span class="qa__id">A1 · 跨界數法</span>
       <p>
-        因為左半在 merge 之前已經<em>排序</em>過，所以 <code>a[i] ≤ a[i+1] ≤ … ≤ a[mid]</code>。
-        既然 <code>a[i] &gt; a[j]</code>（觸發取右），那 <code>a[i..mid]</code> 全部 &gt; <code>a[j]</code>。
+        因為左半在 merge 之前已經<strong>排序</strong>過，所以 <code>arr[i] ≤ arr[i+1] ≤ … ≤ arr[m]</code>。
+        既然 <code>arr[i] &gt; arr[j]</code>（觸發取右），那 <code>arr[i..m]</code> 全部 &gt; <code>arr[j]</code>。
       </p>
       <p>
         再者左半的「原始下標」全部 &lt; 右半（合併時保留左在前），
-        所以每組 <code>(a[p], a[j])</code>（<code>p ∈ [i, mid]</code>）都滿足
+        所以每組 <code>(arr[p], arr[j])</code>（<code>p ∈ [i, m]</code>）都滿足
         「下標小者 &gt; 下標大者」⇒ 都是逆序對。
       </p>
-      <p>共 <code>mid − i + 1</code> 個元素，每個都跟 a[j] 配成一對 ⇒ count 個逆序對一次算完。</p>
+      <p>共 <code>m − i + 1</code> 個元素，每個都跟 arr[j] 配成一對 ⇒ cnt 個逆序對一次算完。</p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A2 · 不重不漏</span>
       <p>
-        任一逆序對 <code>(p, q)</code> 滿足 <code>p &lt; q</code> 且 <code>a[p] &gt; a[q]</code>。
+        任一逆序對 <code>(p, q)</code> 滿足 <code>p &lt; q</code> 且 <code>arr[p] &gt; arr[q]</code>。
         把它按下標歸類到三種情境：
       </p>
       <ul>
-        <li>若 p、q <em>都</em>在左半 ⇒ 在左半遞迴時算到。</li>
-        <li>若 p、q <em>都</em>在右半 ⇒ 在右半遞迴時算到。</li>
-        <li>若 p 在左、q 在右 ⇒ 在「這層」的 merge_range 中算到。</li>
+        <li>若 p、q <strong>都</strong>在左半 ⇒ 在左半遞迴時算到。</li>
+        <li>若 p、q <strong>都</strong>在右半 ⇒ 在右半遞迴時算到。</li>
+        <li>若 p 在左、q 在右 ⇒ 在「這層」的 merge 中算到。</li>
       </ul>
-      <p>三種情境<strong>互不相交</strong>且每對<em>恰好</em>在一處被算進 ⇒ 三者相加即為總和，無重複也無遺漏。</p>
+      <p>三種情境<strong>互不相交</strong>且每對「恰好」在一處被算進 ⇒ 三者相加即為總和，無重複也無遺漏。</p>
     </div>
 
     <div class="qa qa--answer">
@@ -304,25 +304,25 @@ copy back ⇒ a = [1, 2, 3, 4]</pre>
 mod 後  ：9 % 7 = 2, 2 % 7 = 2
          2 &gt; 2 為 false  → 誤判為非逆序對 ×</pre>
       <p>
-        排序與比較必須用<em>原始值</em>。<code>mod</code> 只作用在「累加進 <code>inv_sum</code>」與「<code>remaining</code> 的維護」這兩處。
+        排序與比較必須用「原始值」。<code>mod</code> 只作用在「累加進 <code>invSum</code>」與「<code>remain</code> 的維護」這兩處。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A5 · 型別</span>
       <p>
-        <code>remaining</code> 雖然 mod 後 &lt; 10⁷ 可用 int，但中間運算
-        <code>(remaining + (a[j] % MOD) × (count % MOD))</code> 的乘法
+        <code>remain</code> 雖然 mod 後 &lt; 10⁷ 可用 int，但中間運算
+        <code>(remain + (arr[j] % MOD) × (cnt % MOD))</code> 的乘法
         <code>10⁷ × 10⁶ ≈ 10¹³</code>，<strong>遠超 32-bit int</strong>（≤ 2.1 × 10⁹）。
       </p>
       <pre class="sc-trace"><span class="sc-trace__head">// INT OVERFLOW EXAMPLE</span>
-a[j] % MOD = 9_999_999 (≈ 10⁷)
-count      = 1_000_000 (= 10⁶)
+arr[j] % MOD = 9_999_999 (≈ 10⁷)
+cnt          = 1_000_000 (= 10⁶)
 
 int:       9_999_999 × 1_000_000  ⇒ 溢位 (int 最大 ≈ 2.1 × 10⁹)
 long long: 9_999_999 × 1_000_000 = 9.999... × 10¹²  ● 安全</pre>
       <p>
-        <code>a[i]</code> 本身 ≤ 10⁹ 也逼近 int 上限。一律宣告 <code>long long</code> 最保險。
+        <code>arr[i]</code> 本身 ≤ 10⁹ 也逼近 int 上限。一律宣告 <code>long long</code> 最保險。
       </p>
     </div>
 
@@ -343,30 +343,30 @@ long long: 9_999_999 × 1_000_000 = 9.999... × 10¹²  ● 安全</pre>
     <div class="qa qa--answer">
       <span class="qa__id">A · App 2</span>
       <p>
-        <code>[1, 2, 3, 4, 5]</code> 已嚴格遞增 ⇒ <em>沒有任何逆序對</em> ⇒ <code>inv_sum = 0</code>。
+        <code>[1, 2, 3, 4, 5]</code> 已嚴格遞增 ⇒ 沒有任何逆序對 ⇒ <code>invSum = 0</code>。
       </p>
       <p>
         但 code 仍會跑完整的 O(N log N) merge sort — 每個 merge step 都進「取左、無貢獻」分支，
-        <code>inv_sum</code> 從頭到尾維持 0。我們<em>沒有</em>用「是否已排序」做提前終止，因為這需要額外檢查。
+        <code>invSum</code> 從頭到尾維持 0。我們沒有用「是否已排序」做提前終止，因為這需要額外檢查。
       </p>
       <p>
-        若想加速，可以在 <code>merge_range</code> 開頭加 <code>if (a[mid] &lt;= a[mid+1]) { 直接 copy 兩半到 tmp 並 return; }</code> —
+        若想加速，可以在 <code>merge</code> 開頭加 <code>if (arr[m] &lt;= arr[m+1]) { 直接 copy 兩半到 buf 並 return; }</code> —
         但這個常數優化在隨機資料上沒什麼幫助。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A · App 3</span>
-      <p>把 <code>a[i] + a[j]</code> 改為 <code>a[i] − a[j]</code>：左半剩 count 個都 &gt; a[j]，每個都貢獻 <code>a[i] − a[j]</code>。</p>
-      <p>合起來的貢獻 = <code>(a[i] + a[i+1] + … + a[mid]) − a[j] × count = remaining − a[j] × count</code>。</p>
+      <p>把 <code>arr[i] + arr[j]</code> 改為 <code>arr[i] − arr[j]</code>：左半剩 cnt 個都 &gt; arr[j]，每個都貢獻 <code>arr[i] − arr[j]</code>。</p>
+      <p>合起來的貢獻 = <code>(arr[i] + arr[i+1] + … + arr[m]) − arr[j] × cnt = remain − arr[j] × cnt</code>。</p>
       <p>code 改動：</p>
       <ul>
-        <li><code>contrib = remaining − a[j] × count</code>（原本是 <code>+</code>）。</li>
-        <li>因為 <code>remaining − a[j]×count</code> 可能是負數（mod 後也可能負），要寫成
-          <code>(remaining − (a[j] % MOD) × (count % MOD) % MOD + MOD) % MOD</code> 才安全。</li>
-        <li>其他結構（雙指針、remaining 維護、copy back）<em>完全不變</em>。</li>
+        <li><code>add = remain − arr[j] × cnt</code>（原本是 <code>+</code>）。</li>
+        <li>因為 <code>remain − arr[j]×cnt</code> 可能是負數（mod 後也可能負），要寫成
+          <code>(remain − (arr[j] % MOD) × (cnt % MOD) % MOD + MOD) % MOD</code> 才安全。</li>
+        <li>其他結構（雙指針、remain 維護、copy back）完全不變。</li>
       </ul>
-      <p>核心觀念依然是「取右半 a[j] 時，左半剩 count 個全部跟它配對」，只是貢獻公式換了。</p>
+      <p>核心觀念依然是「取右半 arr[j] 時，左半剩 cnt 個全部跟它配對」，只是貢獻公式換了。</p>
     </div>
 
   </section>
@@ -389,7 +389,7 @@ long long: 9_999_999 × 1_000_000 = 9.999... × 10¹²  ● 安全</pre>
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
     <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會驗證 code 跑什麼。</div>
-    <div class="sc-summary-bar__detail">[4, 2, 3, 1] 結果：inv_sum = 25（5 組逆序對：6+7+5+3+4）</div>
+    <div class="sc-summary-bar__detail">[4, 2, 3, 1] 結果：invSum = 25（5 組逆序對：6+7+5+3+4）</div>
   </div>
 
 </body>

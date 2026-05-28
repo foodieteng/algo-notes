@@ -126,16 +126,16 @@
       <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
     </div>
 
-    <p style="font-size:14px;"><code>merge_sort(left, right)</code> 做 3 件事：</p>
+    <p style="font-size:14px;"><code>mergeSort(l, r)</code> 做 3 件事：</p>
 
     <ol style="margin-top:6px;">
-      <li><strong>切半</strong> · <code>mid = (left + right) / 2</code></li>
+      <li><strong>切半</strong> · <code>m = l + (r − l) / 2</code></li>
       <li><strong>遞迴左右</strong> · 各自排序 + 各自算內部逆序對和</li>
-      <li><strong>合併 merge</strong> · 兩半已排序 → 雙指針合併時順便算<em>跨界</em>逆序對和</li>
+      <li><strong>合併 merge</strong> · 兩半已排序 → 雙指針合併時順便算「<strong>跨界</strong>」逆序對和</li>
     </ol>
 
     <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>Base case</strong> · <code>left ≥ right</code> 直接 return（單一元素，無逆序對）。
+      <strong>Base case</strong> · <code>l ≥ r</code> 直接 return（單一元素，無逆序對）。
     </p>
   </section>
 
@@ -167,8 +167,8 @@
     </div>
 
     <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
-      <strong>關鍵畫面</strong>：每次 <code>a[i] &gt; a[j]</code> 取右半 <code>a[j]</code> 時，
-      左半剩下 <code>mid − i + 1</code> 個元素，全部與 <code>a[j]</code> 構成逆序對 — 一次累進 <code>remaining + a[j] × count</code>。
+      <strong>關鍵畫面</strong>：每次 <code>arr[i] &gt; arr[j]</code> 取右半 <code>arr[j]</code> 時，
+      左半剩下 <code>m − i + 1</code> 個元素，全部與 <code>arr[j]</code> 構成逆序對 — 一次累進 <code>remain + arr[j] × cnt</code>。
     </p>
   </section>
 
@@ -182,17 +182,17 @@
     </div>
 
     <p style="font-size:14px;">假設 merge 進行到某一步，左半游標 <code>i</code>、右半游標 <code>j</code>，
-    且 <code>a[i] &gt; a[j]</code>，要取右半的 <code>a[j]</code>。為什麼這一動可以一次算完一群逆序對？</p>
+    且 <code>arr[i] &gt; arr[j]</code>，要取右半的 <code>arr[j]</code>。為什麼這一動可以一次算完一群逆序對？</p>
 
     <div class="sc-dark-box">
       <div class="sc-dark-box__title">// MERGE STEP · 跨界對的數法</div>
       <div class="sc-dark-box__body">
         <ol>
-          <li>左半在 merge 前<strong>已排序</strong>，所以 <code>a[i] ≤ a[i+1] ≤ … ≤ a[mid]</code>。</li>
-          <li>既然 <code>a[i] &gt; a[j]</code>，那 <code>a[i+1], …, a[mid]</code> 也<strong>全部 &gt; a[j]</strong>。</li>
-          <li>左半下標<em>全部 &lt;</em> 右半下標 ⇒ 這 <code>mid − i + 1</code> 個元素都跟 <code>a[j]</code> 形成逆序對。</li>
-          <li>本步貢獻 = <code>(a[i] + a[i+1] + … + a[mid]) + a[j] × (mid − i + 1)</code>。</li>
-          <li>用 <code>remaining</code> 滾動維護左半剩餘和：merge 開始算一次，取左半時就 <code>remaining −= a[i]</code> ⇒ O(1) 取用。</li>
+          <li>左半在 merge 前<strong>已排序</strong>，所以 <code>arr[i] ≤ arr[i+1] ≤ … ≤ arr[m]</code>。</li>
+          <li>既然 <code>arr[i] &gt; arr[j]</code>，那 <code>arr[i+1], …, arr[m]</code> 也<strong>全部 &gt; arr[j]</strong>。</li>
+          <li>左半下標<strong>全部 &lt;</strong> 右半下標 ⇒ 這 <code>m − i + 1</code> 個元素都跟 <code>arr[j]</code> 形成逆序對。</li>
+          <li>本步貢獻 = <code>(arr[i] + arr[i+1] + … + arr[m]) + arr[j] × (m − i + 1)</code>。</li>
+          <li>用 <code>remain</code> 滾動維護左半剩餘和：merge 開始算一次，取左半時就 <code>remain −= arr[i]</code> ⇒ O(1) 取用。</li>
         </ol>
       </div>
     </div>
@@ -224,7 +224,7 @@
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
         <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>N = 10⁶ ⇒ ~2 × 10⁷ 次運算</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>全域 <code>buf[]</code> 暫存陣列</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>全域 <code>buf</code> 暫存陣列</td></tr>
         <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
         <tr><td>Constant factor</td><td>低</td><td>純整數比較、無浮點、無 sqrt</td></tr>
       </tbody>
@@ -241,10 +241,10 @@
     </div>
 
     <div class="sc-insight">
-      <strong>利用排序過程<em>順便數</em>，不需要額外資料結構。</strong><br/>
+      <strong>利用排序過程「順便數」，不需要額外資料結構。</strong><br/>
       Merge 的「取右半」這一動本來就要做，<br/>
-      我們只是在那一瞬間把「左半剩 <code>k</code> 個元素」這群逆序對一次性算進貢獻。<br/>
-      <em>排序與計貢獻共用一條 O(N log N) 流水線。</em>
+      我們只是在那一瞬間把「左半剩 <code>cnt</code> 個元素」這群逆序對一次性算進貢獻。<br/>
+      <strong>排序與計貢獻共用一條 O(N log N) 流水線。</strong>
     </div>
   </section>
 
@@ -265,7 +265,7 @@
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">Merge sort 取右半時，左半剩 k 個全部與它構成逆序對 ⇒ 一次累進 remaining + a[j]×k。</div>
+    <div class="sc-summary-bar__body">Merge sort 取右半時，左半剩 cnt 個全部與它構成逆序對 ⇒ 一次累進 remain + arr[j]×cnt。</div>
     <div class="sc-summary-bar__detail">T(N) = 2·T(N/2) + O(N) = Θ(N log N) · 純整數 · 全程 mod 10000019</div>
   </div>
 

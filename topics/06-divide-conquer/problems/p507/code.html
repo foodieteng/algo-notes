@@ -202,7 +202,7 @@
     </table>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      若把 strip 排序也做進主遞迴 (像 merge sort 那樣<em>邊遞迴邊維護 y 排序的副本</em>)，
+      若把 strip 排序也做進主遞迴 (像 merge sort 那樣<strong>邊遞迴邊維護 y 排序的副本</strong>)，
       可消掉一個 log 變 <strong>O(N log N)</strong>。但 code 變複雜，本問題 N = 2 × 10⁵ 不需要那麼極致。
     </p>
   </section>
@@ -237,7 +237,7 @@
         </tr>
         <tr>
           <td><strong>避免重複排序</strong></td>
-          <td>原 <code>pts</code> 按 x 排序<em>一次</em>後就不再動；strip 每層自己排自己（只含 strip 內的點，不是整批）。</td>
+          <td>原 <code>pts</code> 按 x 排序<strong>一次</strong>後就不再動；strip 每層自己排自己（只含 strip 內的點，不是整批）。</td>
         </tr>
         <tr>
           <td><strong>I/O 速度</strong></td>

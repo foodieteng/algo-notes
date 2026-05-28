@@ -95,7 +95,7 @@
     <div class="qa">
       <span class="qa__id">Q1</span>
       <span class="qa__tag">為何不能 binary search</span>
-      <h4>為什麼不能直接在每列做<em>二分搜尋</em>找最大值？跟 P115、P507 都用了某種 binary tree-of-thought 比起來，差在哪？</h4>
+      <h4>為什麼不能直接在每列做<strong>二分搜尋</strong>找最大值？跟 P115、P507 都用了某種 binary tree-of-thought 比起來，差在哪？</h4>
     </div>
 
     <div class="qa">
@@ -208,7 +208,7 @@ Report(1); Report(2); Report(3); Report(5);</pre>
     <div class="sc-insight">
       <strong>GetVal 統計</strong>：5 + 1 + 3 + 2 = <strong>11 次</strong>。
       暴力會是 4 × 5 = 20 次 — 即使在這麼小的樣本，分治都已經省了 45%。
-      <em>樣本越大，省得越多</em>（N = M = 10⁶ 時從 10¹² 壓到 4 × 10⁷，省了 5 個數量級）。
+      <strong>樣本越大，省得越多</strong>（N = M = 10⁶ 時從 10¹² 壓到 4 × 10⁷，省了 5 個數量級）。
     </div>
   </section>
 
@@ -236,7 +236,7 @@ Report(1); Report(2); Report(3); Report(5);</pre>
     <div class="qa">
       <span class="qa__id">App 3</span>
       <span class="qa__tag">違反保證</span>
-      <h4>如果 judge 給的測資<em>違反</em>「列峰嚴格遞增」（譬如 row 2 的峰在 col 1，row 1 的峰在 col 3），程式會輸出什麼？會 crash 嗎？</h4>
+      <h4>如果 judge 給的測資<strong>違反</strong>「列峰嚴格遞增」（譬如 row 2 的峰在 col 1，row 1 的峰在 col 3），程式會輸出什麼？會 crash 嗎？</h4>
     </div>
   </section>
 
@@ -257,12 +257,12 @@ Report(1); Report(2); Report(3); Report(5);</pre>
     <div class="qa qa--answer">
       <span class="qa__id">A1 · 為何不能 binary search</span>
       <p>
-        Binary search 要求被搜尋的序列<em>單調</em>（or 至少 unimodal）。但題目沒保證每列的值有任何排序性質 —
+        Binary search 要求被搜尋的序列<strong>單調</strong>（or 至少 unimodal）。但題目沒保證每列的值有任何排序性質 —
         <code>74 59 36 28 51</code> 既不單調也不 unimodal（先降後升）。盲目 binary 不會收斂到峰。
       </p>
       <p>
         本題的<strong>單調性是「跨列」的</strong>（列峰欄位嚴格遞增），不是「列內」的。
-        分治利用的就是這條跨列性質：scan 完 mid 後切上下半，<em>欄位範圍</em>被一刀切兩段，這才是有效的縮減。
+        分治利用的就是這條跨列性質：scan 完 mid 後切上下半，<strong>欄位範圍</strong>被一刀切兩段，這才是有效的縮減。
       </p>
       <p>
         對照 P507（最近點對）：那題用 D&amp;C 切的是「點集」按 x 軸切半 — 也是跨元素的切割，不是某個值內部的 binary search。
@@ -294,7 +294,7 @@ Report(1); Report(2); Report(3); Report(5);</pre>
         所以「真正」的搜尋範圍就是 <strong><code>[colLo, m − 1]</code></strong> 和 <strong><code>[m + 1, colHi]</code></strong>。
         端點 <code>m</code> 是中間 row 的答案，其他 row 不可能再選它，包進來純粹浪費。
       </p>
-      <p>寫嚴格的代價只有 <em>一行</em>：</p>
+      <p>寫嚴格的代價只有 <strong>一行</strong>：</p>
       <ul>
         <li><strong>多一個空範圍守備</strong>：若 <code>m == colLo</code>，上半 <code>[colLo, m − 1] = [colLo, colLo − 1]</code> 空了；同理 <code>m == colHi</code> 時下半空。dnc 開頭加 <code>if (colLo &gt; colHi) return;</code> 自然吸收。</li>
         <li><strong>收益</strong>：每層上半都省下「scan 端點 <code>m</code> 那一次」，全程少 <code>O(log N)</code> 次 GetVal。本題樣本 14 → 11，省 21%。</li>
@@ -335,10 +335,10 @@ N = 10⁴, M = 10⁶: (10⁶ + 10⁴) · 14 ≈ 1.4 × 10⁷  ✓</pre>
       </ul>
       <p>
         其實本題的程式就是用「<code>≤ m</code> / <code>≥ m</code>」寫的，比題目嚴格保證的「<code>&lt; m</code> / <code>&gt; m</code>」還寬。
-        嚴格遞增只是讓<em>正確性的推導</em>更乾淨；演算法本身對「不嚴格遞增」一樣對。
+        嚴格遞增只是讓<strong>正確性的推導</strong>更乾淨；演算法本身對「不嚴格遞增」一樣對。
       </p>
       <p>
-        <strong>反過來</strong>：若條件是「列峰<em>任意</em>分布」（無單調性），分治就垮了 — 沒有任何根據可以縮減上下半的欄位範圍。那種情況只能退化回 O(N·M) 暴力。
+        <strong>反過來</strong>：若條件是「列峰<strong>任意</strong>分布」（無單調性），分治就垮了 — 沒有任何根據可以縮減上下半的欄位範圍。那種情況只能退化回 O(N·M) 暴力。
       </p>
     </div>
 
@@ -351,7 +351,7 @@ N = 10⁴, M = 10⁶: (10⁶ + 10⁴) · 14 ≈ 1.4 × 10⁷  ✓</pre>
 log₂(10^4) ≈ 13.3 (取 14)
 (10^4 + 10^6) · 14 ≈ 10^6 · 14 = 1.4 × 10^7</pre>
       <p>
-        比 N = M = 10⁶ 的 4 × 10⁷ 還<em>小</em>。原因：log₂ N 從 20 降到 14，而 M 沒變、N 又遠小於 M。
+        比 N = M = 10⁶ 的 4 × 10⁷ 還<strong>小</strong>。原因：log₂ N 從 20 降到 14，而 M 沒變、N 又遠小於 M。
         所以 N 小不等於慢 — 真正的瓶頸是 M。
       </p>
     </div>
@@ -367,7 +367,7 @@ log₂(10^4) ≈ 13.3 (取 14)
         <li>最後 <code>Report(answer[1])</code>。</li>
       </ul>
       <p>
-        正常運作，不需特判。<em>遞迴的 base case 本來就是 <code>rowLo &gt; rowHi</code> 自然 return</em>，不依賴 N 的大小。
+        正常運作，不需特判。<strong>遞迴的 base case 本來就是 <code>rowLo &gt; rowHi</code> 自然 return</strong>，不依賴 N 的大小。
       </p>
       <p>題目雖然保證 N ≥ 2，但程式對 N = 1 也是對的 — 加分項。</p>
     </div>
@@ -376,7 +376,7 @@ log₂(10^4) ≈ 13.3 (取 14)
       <span class="qa__id">A · App 3</span>
       <p>
         程式<strong>不會 crash</strong> — 它每列都會掃出該列在「縮減後欄位範圍內」的最大值，並寫進 <code>answer[]</code>。
-        但結果<em>不一定對</em>：
+        但結果<strong>不一定對</strong>：
       </p>
       <ul>
         <li>若實際 row 1 的峰在 col 3、row 2 的峰在 col 1（違反嚴格遞增）：</li>
@@ -385,7 +385,7 @@ log₂(10^4) ≈ 13.3 (取 14)
       </ul>
       <p>
         所以輸出會是「行為未定義的錯誤答案」（WA）。
-        <em>演算法的正確性完全依賴「列峰嚴格遞增」這條題目保證</em>，judge 若違反它就出題出錯，不是 user 的責任。
+        <strong>演算法的正確性完全依賴「列峰嚴格遞增」這條題目保證</strong>，judge 若違反它就出題出錯，不是 user 的責任。
       </p>
     </div>
 

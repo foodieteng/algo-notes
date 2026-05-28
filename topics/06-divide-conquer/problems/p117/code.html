@@ -153,7 +153,7 @@
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + Θ(N²) &nbsp;⇒&nbsp; <strong>T(N) = Θ(N²)</strong></div>
       <div class="sc-formula__hint">
         Master Theorem case 3：<code>f(N) = Θ(N²)</code> 主宰 <code>N^(log₂ 2) = N</code> ⇒ T(N) = Θ(f(N)) = Θ(N²)。
-        更直觀：<em>每格只寫一次 ⇒ 總工作量 = 格數 = N²</em>。
+        更直觀：<strong>每格只寫一次 ⇒ 總工作量 = 格數 = N²</strong>。
       </div>
     </div>
 
@@ -171,7 +171,7 @@
       <strong>子任務對照</strong>：
       <code>N ≤ 8</code> ⇒ 64 個格、64 次 Report；
       <code>N ≤ 64</code> ⇒ 4096；
-      <code>N ≤ 1024</code> 滿分 ⇒ 約 10⁶ — 全部都遠在時限內，<em>瓶頸不是時間而是「正確構造」</em>。
+      <code>N ≤ 1024</code> 滿分 ⇒ 約 10⁶ — 全部都遠在時限內，<strong>瓶頸不是時間而是「正確構造」</strong>。
     </p>
   </section>
 
@@ -205,11 +205,11 @@
         </tr>
         <tr>
           <td><strong>全域矩陣 ≈ 4.8 MB</strong></td>
-          <td><code>int M[1100][1100]</code> = 4 × 1100² B ≈ 4.6 MB；放函數內會爆 stack，<em>必須全域</em>。N_MAX = 1100 比 1024 略大留餘量。</td>
+          <td><code>int M[1100][1100]</code> = 4 × 1100² B ≈ 4.6 MB；放函數內會爆 stack，<strong>必須全域</strong>。N_MAX = 1100 比 1024 略大留餘量。</td>
         </tr>
         <tr>
           <td><strong>BR 不能加 shift</strong></td>
-          <td>很容易直覺地把四塊都「平移到不同值域」，但 BR 必須與 TL <em>同值</em>。若 BR 加 shift，row N ∪ col N 會多 BR 高值、少 TL 低值，<em>不再覆蓋 {1..2K−1}</em> ⇒ 構造錯。</td>
+          <td>很容易直覺地把四塊都「平移到不同值域」，但 BR 必須與 TL <strong>同值</strong>。若 BR 加 shift，row N ∪ col N 會多 BR 高值、少 TL 低值，<strong>不再覆蓋 {1..2K−1}</strong> ⇒ 構造錯。</td>
         </tr>
         <tr>
           <td><strong>TR 必須是「對角 = 2N−1，其餘 = +shift」</strong></td>
@@ -217,7 +217,7 @@
         </tr>
         <tr>
           <td><strong>base 參數保持 0</strong></td>
-          <td>遞迴呼叫 <code>build(K, ...)</code> 時，TL 與 BR 都傳 <code>base</code>（同值），<em>不傳 <code>base + shift</code></em>。BL 與 TR 的 +shift 是在外層直接加到 TL 值上，<em>不是</em>遞迴內部處理的。</td>
+          <td>遞迴呼叫 <code>build(K, ...)</code> 時，TL 與 BR 都傳 <code>base</code>（同值），<strong>不傳 <code>base + shift</code></strong>。BL 與 TR 的 +shift 是在外層直接加到 TL 值上，<strong>不是</strong>遞迴內部處理的。</td>
         </tr>
       </tbody>
     </table>

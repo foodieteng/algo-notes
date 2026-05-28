@@ -68,7 +68,7 @@
       </thead>
       <tbody>
         <tr><td>構造而非搜尋</td>
-            <td>不枚舉、不 DP，<em>直接造</em>一條保證合法的排列。</td></tr>
+            <td>不枚舉、不 DP，<strong>直接造</strong>一條保證合法的排列。</td></tr>
         <tr><td>奇偶切原則</td>
             <td>所有奇數放前段、所有偶數放後段；段內遞迴。</td></tr>
         <tr><td>跨段零 3-AP</td>
@@ -209,7 +209,7 @@ return <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
 
     <div class="sc-insight">
       <strong>觀察</strong>：10 / 10 全通過 — 證明跟程式輸出一致。
-      注意每組 <code>(a[i], a[k])</code> 都是<em>同奇偶</em>或<em>異奇偶</em>，但 <code>a[j]</code>
+      注意每組 <code>(a[i], a[k])</code> 都是<strong>同奇偶</strong>或<strong>異奇偶</strong>，但 <code>a[j]</code>
       偏偏沒站在「平均」的位置上 — 這就是奇偶切的力量。
     </div>
   </section>
@@ -263,7 +263,7 @@ return <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
         ⇒ <code>a[i]</code> 與 <code>a[k]</code> <strong>同奇偶</strong>（奇+奇=偶、偶+偶=偶；奇+偶=奇排除）。
       </p>
       <p>
-        奇偶切把 1..N 按奇偶<em>物理分離</em>到前段與後段。要找跨段 3-AP，必有 i 在前段、k 在後段
+        奇偶切把 1..N 按奇偶<strong>物理分離</strong>到前段與後段。要找跨段 3-AP，必有 i 在前段、k 在後段
         ⇒ <code>a[i]</code> 是奇數、<code>a[k]</code> 是偶數 ⇒ 違反「同奇偶」必要條件 ⇒ 跨段不存在 3-AP。
         只剩同段內部的 3-AP — 而段內就是規模一半的同一個問題，由歸納假設仍 3-AP free。
       </p>
@@ -294,8 +294,8 @@ return <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
         </tbody>
       </table>
       <p>
-        前兩者本質是<em>搜尋空間</em>—「N! 種排列裡找一個合法的」、或「2ᴺ 個子集記憶哪些前綴可行」；
-        構造法則是<em>直接給出公式</em>，不必探索 — 這就是構造類題的標誌：
+        前兩者本質是<strong>搜尋空間</strong>—「N! 種排列裡找一個合法的」、或「2ᴺ 個子集記憶哪些前綴可行」；
+        構造法則是<strong>直接給出公式</strong>，不必探索 — 這就是構造類題的標誌：
         <strong>有合法結構可被精確描述時，造出來比找出來快得多。</strong>
       </p>
     </div>
@@ -308,7 +308,7 @@ return <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
       </p>
       <p>
         實際上合法答案非常多 — 例如 N = 5 時 <code>[1, 5, 3, 2, 4]</code>、<code>[5, 1, 3, 4, 2]</code>、
-        <code>[2, 4, 1, 5, 3]</code> 等等都合法。題目只要求<em>一個</em>合法答案。
+        <code>[2, 4, 1, 5, 3]</code> 等等都合法。題目只要求<strong>一個</strong>合法答案。
       </p>
     </div>
 
@@ -358,7 +358,7 @@ return <span class="sc-trace__out">[1, 5, 3, 2, 4]</span></pre>
         — 例如 <code>(1, 3, 5, 7)</code> 全奇但仍是 4-AP。奇偶切只能阻擋「兩端同奇偶」這條 3-AP 必要條件，對 4-AP 沒效。
       </p>
       <p>
-        正確思路要改：4-AP free 問題與 <em>Behrend 構造</em>（在 ℤ/Nℤ 中找大的 3-AP free 集合，再 lift 到整數）有關，
+        正確思路要改：4-AP free 問題與 <strong>Behrend 構造</strong>（在 ℤ/Nℤ 中找大的 3-AP free 集合，再 lift 到整數）有關，
         建構更困難 — 目前已知最大 4-AP free 集合大小是 N^(1 − ε(N))，沒有像奇偶切這麼乾淨的遞迴公式。
       </p>
       <p style="font-size:13px;color:var(--sc-ink-dim);">

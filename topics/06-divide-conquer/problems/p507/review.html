@@ -107,7 +107,7 @@
     <div class="qa">
       <span class="qa__id">Q3</span>
       <span class="qa__tag">排序方向</span>
-      <h4>strip 內為什麼要<em>按 y 排序</em>後再檢查鄰居？換成按 x 排序行不行？</h4>
+      <h4>strip 內為什麼要<strong>按 y 排序</strong>後再檢查鄰居？換成按 x 排序行不行？</h4>
     </div>
 
     <div class="qa">
@@ -201,7 +201,7 @@ return <span class="sc-trace__out">5</span></pre>
 
     <div class="sc-insight">
       <strong>觀察</strong>：本範例右半的 P3-P4 就是最佳 pair，strip 沒有抓到更近的。
-      不過 strip 仍然<em>檢查了 P1-P3</em>（dist²=13）— 這是必要的代價，
+      不過 strip 仍然<strong>檢查了 P1-P3</strong>（dist²=13）— 這是必要的代價，
       因為若 P1 比 P3 更近的鄰居在另一邊，strip 就會找出來。
     </div>
   </section>
@@ -279,7 +279,7 @@ return <span class="sc-trace__out">5</span></pre>
     <div class="qa qa--answer">
       <span class="qa__id">A3 · 排序方向</span>
       <p>
-        要按 <em>y</em> 排序。因為跨界候選 pair 必滿足
+        要按 <strong>y</strong> 排序。因為跨界候選 pair 必滿足
         「<code>|Δx| &lt; d</code> 且 <code>|Δy| &lt; d</code>」。
         x 軸由 strip 條件保證；y 軸用排序+只看下幾個保證。
       </p>

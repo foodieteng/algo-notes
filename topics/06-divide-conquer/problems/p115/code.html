@@ -74,62 +74,88 @@
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
 
 <span class="k">const</span> <span class="t">long long</span> MOD <span class="p">=</span> <span class="n">10000019</span><span class="p">;</span>
-<span class="k">const</span> <span class="t">int</span>       N_MAX <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
 
-<span class="t">long long</span> a<span class="p">[</span>N_MAX<span class="p">];</span>      <span class="c">// 原序列 (排序時就地更新)</span>
-<span class="t">long long</span> tmp<span class="p">[</span>N_MAX<span class="p">];</span>    <span class="c">// merge 用的暫存陣列</span>
-<span class="t">long long</span> inv_sum <span class="p">=</span> <span class="n">0</span><span class="p">;</span>  <span class="c">// 累積的逆序對「兩數和」(已 mod)</span>
+<span class="t">long long</span> invSum <span class="p">=</span> <span class="n">0</span><span class="p">;</span>            <span class="c">// 累積的逆序對「兩數和」(已 mod)</span>
+<span class="t">vector</span><span class="p">&lt;</span><span class="t">long long</span><span class="p">&gt;</span> arr<span class="p">,</span> buf<span class="p">;</span>      <span class="c">// arr 就地排序、buf 為 merge 暫存</span>
 
-<span class="c">// 合併 a[left..mid] 與 a[mid+1..right]，</span>
-<span class="c">// 同時把跨界逆序對的兩數和累進 inv_sum。</span>
-<span class="t">void</span> <span class="f">merge_range</span><span class="p">(</span><span class="t">int</span> left<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> right<span class="p">)</span> <span class="p">{</span>
-    <span class="c">// remaining = a[left..mid] 之和 (mod MOD)，左半游標前進時遞減</span>
-    <span class="t">long long</span> remaining <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> p <span class="p">=</span> left<span class="p">;</span> p <span class="p">&lt;=</span> mid<span class="p">;</span> <span class="p">++</span>p<span class="p">)</span>
-        remaining <span class="p">=</span> <span class="p">(</span>remaining <span class="p">+</span> a<span class="p">[</span>p<span class="p">]</span> <span class="p">%</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+<span class="c">// 合併 arr[l..m] 與 arr[m+1..r]，同時累積跨界逆序對的兩數和到 invSum</span>
+<span class="t">void</span> <span class="f">merge</span><span class="p">(</span><span class="t">int</span> l<span class="p">,</span> <span class="t">int</span> m<span class="p">,</span> <span class="t">int</span> r<span class="p">)</span> <span class="p">{</span>
+    <span class="c">// remain = arr[l..m] 之和 (mod MOD)，左半游標前進時遞減</span>
+    <span class="t">long long</span> remain <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
 
-    <span class="t">int</span> i <span class="p">=</span> left<span class="p">;</span>          <span class="c">// 左半游標</span>
-    <span class="t">int</span> j <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span>       <span class="c">// 右半游標</span>
-    <span class="t">int</span> k <span class="p">=</span> left<span class="p">;</span>          <span class="c">// 寫入 tmp 的位置</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> l<span class="p">;</span> i <span class="p">&lt;=</span> m<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        remain <span class="p">=</span> <span class="p">(</span>remain <span class="p">+</span> arr<span class="p">[</span>i<span class="p">]</span> <span class="p">%</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+    <span class="p">}</span>
 
-    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;=</span> mid <span class="p">&amp;&amp;</span> j <span class="p">&lt;=</span> right<span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span>a<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;=</span> a<span class="p">[</span>j<span class="p">])</span> <span class="p">{</span>
-            <span class="c">// 取左半：無新逆序對；remaining 扣掉 a[i]</span>
-            tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>i<span class="p">];</span>
-            remaining <span class="p">=</span> <span class="p">(</span>remaining <span class="p">-</span> a<span class="p">[</span>i<span class="p">]</span> <span class="p">%</span> MOD <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
-            <span class="p">++</span>i<span class="p">;</span>
+    <span class="t">int</span> i <span class="p">=</span> l<span class="p">;</span>
+    <span class="t">int</span> j <span class="p">=</span> m <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
+    <span class="t">int</span> k <span class="p">=</span> l<span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;=</span> m <span class="p">&amp;&amp;</span> j <span class="p">&lt;=</span> r<span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span>arr<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;=</span> arr<span class="p">[</span>j<span class="p">])</span> <span class="p">{</span>
+            <span class="c">// 取左半：無新逆序對；remain 扣掉 arr[i]</span>
+            buf<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> arr<span class="p">[</span>i<span class="p">];</span>
+            remain <span class="p">=</span> <span class="p">(</span>remain <span class="p">-</span> arr<span class="p">[</span>i<span class="p">]</span> <span class="p">%</span> MOD <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+            i<span class="p">++;</span>
+            k<span class="p">++;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="c">// a[i] &gt; a[j]：左半剩 count 個全 &gt; a[j]，全部跟它配成逆序對</span>
-            <span class="t">long long</span> count   <span class="p">=</span> mid <span class="p">-</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
-            <span class="t">long long</span> contrib <span class="p">=</span> <span class="p">(</span>remaining <span class="p">+</span> <span class="p">(</span>a<span class="p">[</span>j<span class="p">]</span> <span class="p">%</span> MOD<span class="p">)</span> <span class="p">*</span> <span class="p">(</span>count <span class="p">%</span> MOD<span class="p">))</span> <span class="p">%</span> MOD<span class="p">;</span>
-            inv_sum <span class="p">=</span> <span class="p">(</span>inv_sum <span class="p">+</span> contrib<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
-            tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>j<span class="p">];</span>
-            <span class="p">++</span>j<span class="p">;</span>
+            <span class="c">// arr[i] &gt; arr[j]：左半剩 cnt 個全 &gt; arr[j]，全部跟它配成逆序對</span>
+            <span class="t">long long</span> cnt <span class="p">=</span> m <span class="p">-</span> i <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
+            <span class="t">long long</span> add <span class="p">=</span> <span class="p">(</span>remain <span class="p">+</span> arr<span class="p">[</span>j<span class="p">]</span> <span class="p">%</span> MOD <span class="p">*</span> cnt <span class="p">%</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+
+            invSum <span class="p">=</span> <span class="p">(</span>invSum <span class="p">+</span> add<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+
+            buf<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> arr<span class="p">[</span>j<span class="p">];</span>
+            j<span class="p">++;</span>
+            k<span class="p">++;</span>
         <span class="p">}</span>
     <span class="p">}</span>
-    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;=</span> mid<span class="p">)</span>   tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>i<span class="p">++];</span>
-    <span class="k">while</span> <span class="p">(</span>j <span class="p">&lt;=</span> right<span class="p">)</span> tmp<span class="p">[</span>k<span class="p">++]</span> <span class="p">=</span> a<span class="p">[</span>j<span class="p">++];</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> p <span class="p">=</span> left<span class="p">;</span> p <span class="p">&lt;=</span> right<span class="p">;</span> <span class="p">++</span>p<span class="p">)</span> a<span class="p">[</span>p<span class="p">]</span> <span class="p">=</span> tmp<span class="p">[</span>p<span class="p">];</span>
+    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;=</span> m<span class="p">)</span> <span class="p">{</span>
+        buf<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> arr<span class="p">[</span>i<span class="p">];</span>
+        i<span class="p">++;</span>
+        k<span class="p">++;</span>
+    <span class="p">}</span>
+
+    <span class="k">while</span> <span class="p">(</span>j <span class="p">&lt;=</span> r<span class="p">)</span> <span class="p">{</span>
+        buf<span class="p">[</span>k<span class="p">]</span> <span class="p">=</span> arr<span class="p">[</span>j<span class="p">];</span>
+        j<span class="p">++;</span>
+        k<span class="p">++;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> p <span class="p">=</span> l<span class="p">;</span> p <span class="p">&lt;=</span> r<span class="p">;</span> p<span class="p">++)</span> <span class="p">{</span>
+        arr<span class="p">[</span>p<span class="p">]</span> <span class="p">=</span> buf<span class="p">[</span>p<span class="p">];</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="t">void</span> <span class="f">merge_sort</span><span class="p">(</span><span class="t">int</span> left<span class="p">,</span> <span class="t">int</span> right<span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span>left <span class="p">&gt;=</span> right<span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>left <span class="p">+</span> right<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
-    <span class="f">merge_sort</span><span class="p">(</span>left<span class="p">,</span>     mid<span class="p">);</span>
-    <span class="f">merge_sort</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> right<span class="p">);</span>
-    <span class="f">merge_range</span><span class="p">(</span>left<span class="p">,</span> mid<span class="p">,</span> right<span class="p">);</span>
+<span class="t">void</span> <span class="f">mergeSort</span><span class="p">(</span><span class="t">int</span> l<span class="p">,</span> <span class="t">int</span> r<span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span>l <span class="p">&gt;=</span> r<span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="t">int</span> m <span class="p">=</span> l <span class="p">+</span> <span class="p">(</span>r <span class="p">-</span> l<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+
+    <span class="f">mergeSort</span><span class="p">(</span>l<span class="p">,</span> m<span class="p">);</span>
+    <span class="f">mergeSort</span><span class="p">(</span>m <span class="p">+</span> <span class="n">1</span><span class="p">,</span> r<span class="p">);</span>
+    <span class="f">merge</span><span class="p">(</span>l<span class="p">,</span> m<span class="p">,</span> r<span class="p">);</span>
 <span class="p">}</span>
 
 <span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
-    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
 
-    <span class="t">int</span> n<span class="p">;</span> cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
+    <span class="t">int</span> n<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
 
-    <span class="f">merge_sort</span><span class="p">(</span><span class="n">0</span><span class="p">,</span> n <span class="p">-</span> <span class="n">1</span><span class="p">);</span>
+    arr<span class="p">.</span><span class="f">assign</span><span class="p">(</span>n<span class="p">,</span> <span class="n">0</span><span class="p">);</span>
+    buf<span class="p">.</span><span class="f">assign</span><span class="p">(</span>n<span class="p">,</span> <span class="n">0</span><span class="p">);</span>
 
-    cout <span class="p">&lt;&lt;</span> inv_sum <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        cin <span class="p">&gt;&gt;</span> arr<span class="p">[</span>i<span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="f">mergeSort</span><span class="p">(</span><span class="n">0</span><span class="p">,</span> n <span class="p">-</span> <span class="n">1</span><span class="p">);</span>
+
+    cout <span class="p">&lt;&lt;</span> invSum <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+
     <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
 <span class="p">}</span></pre>
     </div>
@@ -144,7 +170,7 @@
       <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
     </div>
 
-    <p>把 <code>merge_sort(left, right)</code> 一層的工作量分成三段：</p>
+    <p>把 <code>mergeSort(l, r)</code> 一層的工作量分成三段：</p>
 
     <table class="sc-table">
       <thead>
@@ -152,7 +178,7 @@
       </thead>
       <tbody>
         <tr><td>遞迴左右</td><td>兩個 N/2 子問題</td><td class="mono">2 · T(N/2)</td></tr>
-        <tr><td>算 remaining</td><td>掃左半 N/2 個元素一次求和</td><td class="mono">O(N)</td></tr>
+        <tr><td>算 remain</td><td>掃左半 N/2 個元素一次求和</td><td class="mono">O(N)</td></tr>
         <tr><td>雙指針 merge</td><td>i、j 各走過所有元素一遍</td><td class="mono">O(N)</td></tr>
         <tr><td>跨界貢獻累加</td><td>每次取右半 O(1)，最多取 N 次</td><td class="mono">O(N)</td></tr>
       </tbody>
@@ -167,14 +193,14 @@
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
         <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>N = 10⁶ ⇒ 約 2 × 10⁷ 次運算</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>全域 <code>tmp[]</code> 暫存；遞迴堆疊 O(log N)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>全域 <code>buf</code> 暫存；遞迴堆疊 O(log N)</td></tr>
         <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 10⁶ ⇒ 約 20 層</td></tr>
         <tr><td>Constant factor</td><td>低</td><td>純整數比較、無浮點、無 sqrt</td></tr>
       </tbody>
     </table>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      與單純的 <em>計逆序對數量</em> 比起來，多算的只是「每次取右時加一筆 <code>remaining + a[j]×count</code>」— 仍是 O(1)，總複雜度不變。
+      與單純的「計逆序對數量」相比，多算的只是「每次取右時加一筆 <code>remain + arr[j] × cnt</code>」— 仍是 O(1)，總複雜度不變。
     </p>
   </section>
 
@@ -192,27 +218,31 @@
       <tbody>
         <tr>
           <td><strong>比較永遠用原始值</strong></td>
-          <td><code>mod</code> 會破壞順序 — 不同的大數可能對映到同一餘數。<code>a[i] &lt;= a[j]</code> 必須用<em>未 mod</em> 的原始值。</td>
+          <td><code>mod</code> 會破壞順序 — 不同的大數可能對映到同一餘數。<code>arr[i] &lt;= arr[j]</code> 必須用<strong>未 mod</strong> 的原始值。</td>
         </tr>
         <tr>
           <td><strong>全程 <code>long long</code></strong></td>
-          <td><code>(a[j] % MOD) × (count % MOD) ≤ 10⁷ × 10⁶ = 10¹³</code> — 遠超 int 上限 (2.1 × 10⁹)。<code>remaining</code>、<code>contrib</code>、<code>inv_sum</code>、陣列 a/tmp 都用 <code>long long</code>。</td>
+          <td><code>(arr[j] % MOD) × (cnt % MOD) ≤ 10⁷ × 10⁶ = 10¹³</code> — 遠超 int 上限 (2.1 × 10⁹)。<code>remain</code>、<code>add</code>、<code>invSum</code>、<code>arr</code> / <code>buf</code> 都用 <code>long long</code>。</td>
         </tr>
         <tr>
           <td><strong>減法要 <code>+ MOD</code></strong></td>
-          <td><code>(remaining - a[i] % MOD + MOD) % MOD</code> — 不加 MOD 結果會變負，導致下一步累加錯誤。</td>
+          <td><code>(remain - arr[i] % MOD + MOD) % MOD</code> — 不加 MOD 結果會變負，導致下一步累加錯誤。</td>
         </tr>
         <tr>
-          <td><strong><code>tmp</code> 用全域</strong></td>
-          <td>10⁶ × log(10⁶) ≈ 2 × 10⁷ 次 malloc/free 開銷太大。<code>static long long tmp[N_MAX]</code> 一次配置永久使用。</td>
+          <td><strong>中位數用安全寫法</strong></td>
+          <td><code>m = l + (r − l) / 2</code> 而不是 <code>(l + r) / 2</code> — 避免 <code>l + r</code> 在大 N 下溢位（本題雖 n ≤ 10⁶ 不會炸，但養成習慣）。</td>
+        </tr>
+        <tr>
+          <td><strong><code>buf</code> 用全域 vector + assign</strong></td>
+          <td>把 <code>arr</code> / <code>buf</code> 宣告為全域 <code>vector&lt;long long&gt;</code>，<code>main</code> 一次 <code>assign(n, 0)</code> 預配；merge 內部不要 <code>vector&lt;…&gt; tmp(size)</code> 否則每層配 / 拋一次。</td>
         </tr>
         <tr>
           <td><strong>copy back 別忘</strong></td>
-          <td>merge 完後 <code>for (p = left..right) a[p] = tmp[p]</code> — 不寫回的話下一層 merge 還是讀到舊資料。</td>
+          <td>merge 完後 <code>for (p = l..r) arr[p] = buf[p]</code> — 不寫回的話下一層 merge 還是讀到舊資料。</td>
         </tr>
         <tr>
           <td><strong>剩餘單邊不算貢獻</strong></td>
-          <td>主迴圈結束時，若左半還有剩，那些元素全部小於右半被吃光的所有元素 — 不會再產生新跨界逆序對，<em>不要更新 inv_sum</em>。</td>
+          <td>主迴圈結束時，若左半還有剩，那些元素全部小於右半被吃光的所有元素 — 不會再產生新跨界逆序對，<strong>不要更新 invSum</strong>。</td>
         </tr>
         <tr>
           <td><strong>I/O 速度</strong></td>
@@ -233,51 +263,51 @@
 
     <p><strong>① 切半遞迴</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// split + recurse</span>
-if (left &gt;= right) return;          ← base：單一元素，無逆序對
-mid = (left + right) / 2;
-merge_sort(left,     mid);          ← 左半排好、左半內部逆序對計完
-merge_sort(mid + 1, right);         ← 右半排好、右半內部逆序對計完
-merge_range(left, mid, right);      ← 兩半合併 + 算「跨界」逆序對</pre>
+if (l &gt;= r) return;             ← base：單一元素，無逆序對
+m = l + (r - l) / 2;
+mergeSort(l,     m);            ← 左半排好、左半內部逆序對計完
+mergeSort(m + 1, r);            ← 右半排好、右半內部逆序對計完
+merge(l, m, r);                 ← 兩半合併 + 算「跨界」逆序對</pre>
 
-    <p><strong>② 初始化 remaining (左半剩餘和)</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// remaining init</span>
-remaining = 0
-for p in [left, mid]:
-    remaining = (remaining + a[p] % MOD) % MOD
+    <p><strong>② 初始化 remain (左半剩餘和)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// remain init</span>
+remain = 0
+for i in [l, m]:
+    remain = (remain + arr[i] % MOD) % MOD
 
 意義：左半當前剩餘元素之和 (mod MOD)。
-之後每從左半取出一個 a[i]，就 remaining -= a[i]。
-這樣 contrib 計算可以 O(1) 取得「左半剩餘和」。</pre>
+之後每從左半取出一個 arr[i]，就 remain -= arr[i]。
+這樣 add 計算可以 O(1) 取得「左半剩餘和」。</pre>
 
     <p><strong>③ 雙指針 merge — 取左 vs 取右</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// two-pointer merge</span>
-i = left, j = mid+1, k = left
-while i &lt;= mid AND j &lt;= right:
-    if a[i] &lt;= a[j]:               ← 比較用原始值！
-        tmp[k++] = a[i]
-        remaining -= a[i] (mod)    ← 別忘了扣
-        ++i
-    else:                          ← a[i] &gt; a[j]，是逆序對群
-        count   = mid - i + 1       ← 左半剩餘個數
-        contrib = remaining + a[j] × count   ← 一次累積
-        inv_sum += contrib (mod)
-        tmp[k++] = a[j]
-        ++j</pre>
+i = l, j = m+1, k = l
+while i &lt;= m AND j &lt;= r:
+    if arr[i] &lt;= arr[j]:             ← 比較用原始值！
+        buf[k] = arr[i]
+        remain -= arr[i] (mod)       ← 別忘了扣
+        i++; k++
+    else:                            ← arr[i] &gt; arr[j]，是逆序對群
+        cnt = m - i + 1              ← 左半剩餘個數
+        add = remain + arr[j] × cnt  ← 一次累積
+        invSum += add (mod)
+        buf[k] = arr[j]
+        j++; k++</pre>
 
-    <p style="font-size:13px;color:var(--sc-ink-dim);">關鍵公式：<code>contrib = remaining + a[j] × count</code> — 左半剩 count 個元素，每個跟 a[j] 配成逆序對，那些元素的和就是 remaining，
-    a[j] 出現 count 次貢獻 a[j] × count。</p>
+    <p style="font-size:13px;color:var(--sc-ink-dim);">關鍵公式：<code>add = remain + arr[j] × cnt</code> — 左半剩 cnt 個元素，每個跟 arr[j] 配成逆序對，那些元素的和就是 remain，
+    arr[j] 出現 cnt 次貢獻 arr[j] × cnt。</p>
 
     <p><strong>④ 收尾 + 寫回原陣列</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// drain + copy back</span>
-while i &lt;= mid:   tmp[k++] = a[i++]   ← 左半剩餘倒進 tmp
-while j &lt;= right: tmp[k++] = a[j++]   ← 右半剩餘倒進 tmp
+while i &lt;= m:   buf[k++] = arr[i++]   ← 左半剩餘倒進 buf
+while j &lt;= r:   buf[k++] = arr[j++]   ← 右半剩餘倒進 buf
 
-for p in [left, right]:
-    a[p] = tmp[p]                      ← 寫回，上層 merge 才能讀到</pre>
+for p in [l, r]:
+    arr[p] = buf[p]                    ← 寫回，上層 merge 才能讀到</pre>
 
     <p style="font-size:13px;color:var(--sc-ink-dim);">
       <strong>為什麼收尾不算貢獻？</strong>若主迴圈結束時左半還有剩，代表右半被吃完了。那些右半元素都已比左半剩的還小（不然不會被先取出），
-      所以左半剩的元素跟<em>已吃光的右半</em>沒有逆序對關係 — 在前面 if 分支已經處理過了。
+      所以左半剩的元素跟「已吃光的右半」沒有逆序對關係 — 在前面 if 分支已經處理過了。
     </p>
   </section>
 
@@ -298,7 +328,7 @@ for p in [left, right]:
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">merge_range 中 a[i] &gt; a[j] 時，一次累積 contrib = remaining + a[j] × count。</div>
+    <div class="sc-summary-bar__body">merge 中 arr[i] &gt; arr[j] 時，一次累積 add = remain + arr[j] × cnt。</div>
     <div class="sc-summary-bar__detail">T(N) = 2·T(N/2) + O(N) ⇒ O(N log N) &nbsp;·&nbsp; 空間 O(N) · 全程 long long + mod</div>
   </div>
 

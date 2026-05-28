@@ -142,7 +142,7 @@ def render_problem_item(week, week_slug, slug, title, status, *, indent=''):
     if status == 'todo':
         return (
             f'{indent}<li><span style="color:var(--concrete)">{pid} · {title} '
-            f'<em style="font-style:normal;color:var(--line-bright)">(待補)</em></span>{source}</li>'
+            f'<span style="color:var(--line-bright)">(待補)</span></span>{source}</li>'
         )
     href = resolve_problem_link(week_slug, slug)
     if status == 'demo':
@@ -277,7 +277,7 @@ def chapter_sections(week, week_slug, probs):
           <span>PROBLEMS</span>
         </div>
         <ul class="notes-list">
-          <li><em style="color:var(--concrete)">—— 待新增題目 ——</em></li>
+          <li><span style="color:var(--concrete)">—— 待新增題目 ——</span></li>
         </ul>
       </article>''')
         idx += 1

@@ -173,7 +173,7 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
 
   const STEPS = [
     {
-      title: 'STEP 01 · SCAN ROW 1 · cols 1..4',
+      title: 'STEP 01 · scan row 1',
       detail:
         '第一列搜尋範圍是全部欄位 <code>cols [1..4]</code>。<br/>' +
         '掃過 7, 3, 5, 2 ⇒ <strong>max = 7 在 col 1</strong>。',
@@ -184,9 +184,9 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       fixedPeaks: [],
     },
     {
-      title: 'STEP 02 · SCAN ROW 2 · cols 2..4 (col 1 排除)',
+      title: 'STEP 02 · scan row 2',
       detail:
-        '<strong>關鍵限制</strong>：第 2 列的峰<em>必須嚴格在第 1 列峰的右邊</em>。' +
+        '<strong>關鍵限制</strong>：第 2 列的峰<strong>必須嚴格在第 1 列峰的右邊</strong>。' +
         '<br/>第 1 列峰在 col 1 ⇒ 第 2 列搜尋範圍縮為 <code>cols [2..4]</code>。' +
         '<br/>掃過 8, 6, 4 ⇒ <strong>max = 8 在 col 2</strong>。',
       activeRow: 1,
@@ -196,7 +196,7 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       fixedPeaks: [{ row: 0, col: 0 }],
     },
     {
-      title: 'STEP 03 · DONE · peaks = [1, 2]',
+      title: 'STEP 03 · DONE',
       detail:
         '兩列的峰欄分別是 <strong>1, 2</strong>（嚴格遞增 ✓）。' +
         '<br/><span style="color:#6b6b6b">這就是「列峰嚴格遞增」對搜尋範圍的縮減效果。</span>',
@@ -237,20 +237,16 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       : STEPS[step].title;
     ctx.fillText(headline, w / 2, 14);
 
-    ctx.fillStyle = P116_COLOR.inkDim;
-    ctx.font = P116_FONT.sub;
-    ctx.fillText('row i 的峰欄位必須嚴格大於 row i−1 的峰欄位', w / 2, 38);
-
     // Matrix — responsive: fill width up to a sensible max
     const cols = MAT[0].length;
     const rows = MAT.length;
     const sidePad = 48;                       // leaves room for r1/r2 row labels
     const cellW = Math.min((w - sidePad * 2) / cols, 110);
-    const cellH = Math.min((h - 100) / rows, 56);
+    const cellH = Math.min((h - 80) / rows, 56);
     const totalW = cellW * cols;
     const totalH = cellH * rows;
     const originX = (w - totalW) / 2;
-    const originY = 84;
+    const originY = 56;
 
     const cur = (step === -1) ? null : STEPS[step];
     p116DrawMatrix(ctx, MAT, originX, originY, cellW, cellH, cur || {});
@@ -356,12 +352,11 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
   //           lower: solve(4..4, 3..5) → scan row 4 cols 3..5, peak col 5
   const STEPS = [
     {
-      title: 'STEP 01 · dnc(rows 1..4, cols 1..5) · scan mid row 2',
+      title: 'STEP 01 · scan row 2 (mid)',
       detail:
         '<code>mid = (1 + 4) / 2 = 2</code>。掃 row 2 的 cols 1..5：' +
         '36, <strong>63</strong>, 15, 25, 17 ⇒ <strong>peak at col 2</strong>。' +
         '<br/>切割欄位範圍：upper 用 [1..2]，lower 用 [2..5]。',
-      callTag: 'dnc(1..4, 1..5)',
       activeRow: 1,
       colLo: 0,
       colHi: 4,
@@ -369,11 +364,10 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       fixedPeaks: [],
     },
     {
-      title: 'STEP 02 · dnc(rows 1..1, cols 1..2) · scan mid row 1',
+      title: 'STEP 02 · scan row 1',
       detail:
         '上半遞迴：<code>rowLo = 1, rowHi = 1, mid = 1</code>，欄位範圍 <code>[1..2]</code>。' +
         '<br/>掃 row 1 cols 1..2：<strong>74</strong>, 59 ⇒ <strong>peak at col 1</strong>。',
-      callTag: 'dnc(1..1, 1..2)',
       activeRow: 0,
       colLo: 0,
       colHi: 1,
@@ -381,11 +375,10 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       fixedPeaks: [{ row: 1, col: 1 }],
     },
     {
-      title: 'STEP 03 · dnc(rows 3..4, cols 2..5) · scan mid row 3',
+      title: 'STEP 03 · scan row 3 (mid)',
       detail:
         '回到下半遞迴：<code>rowLo = 3, rowHi = 4, mid = 3</code>，欄位範圍 <code>[2..5]</code>。' +
         '<br/>掃 row 3 cols 2..5：64, <strong>95</strong>, 43, 56 ⇒ <strong>peak at col 3</strong>。',
-      callTag: 'dnc(3..4, 2..5)',
       activeRow: 2,
       colLo: 1,
       colHi: 4,
@@ -393,11 +386,10 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       fixedPeaks: [{ row: 1, col: 1 }, { row: 0, col: 0 }],
     },
     {
-      title: 'STEP 04 · dnc(rows 4..4, cols 3..5) · scan row 4',
+      title: 'STEP 04 · scan row 4',
       detail:
         '下下半遞迴：<code>rowLo = 4, rowHi = 4, mid = 4</code>，欄位範圍 <code>[3..5]</code>。' +
         '<br/>掃 row 4 cols 3..5：30, 24, <strong>74</strong> ⇒ <strong>peak at col 5</strong>。',
-      callTag: 'dnc(4..4, 3..5)',
       activeRow: 3,
       colLo: 2,
       colHi: 4,
@@ -409,12 +401,11 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       ],
     },
     {
-      title: 'STEP 05 · DONE · peaks = [1, 2, 3, 5]',
+      title: 'STEP 05 · DONE',
       detail:
         '4 列的峰欄分別是 <strong>1, 2, 3, 5</strong>（嚴格遞增 ✓）。' +
         '<br/>最後依序 <code>Report(1); Report(2); Report(3); Report(5);</code>。' +
         '<br/><span style="color:#6b6b6b">GetVal 次數：5 + 2 + 4 + 3 = 14（單純掃會 4×5 = 20）。</span>',
-      callTag: 'OUTPUT',
       activeRow: undefined,
       colLo: undefined,
       colHi: undefined,
@@ -457,30 +448,16 @@ function p116DrawMatrix(ctx, matrix, originX, originY, cellW, cellH, opts) {
       : STEPS[step].title;
     ctx.fillText(headline, w / 2, 14);
 
-    ctx.fillStyle = P116_COLOR.inkDim;
-    ctx.font = P116_FONT.sub;
-    ctx.fillText('Divide & Conquer on rows · column-range narrows down each recurse', w / 2, 38);
-
-    // Side annotation: current dnc call (top-right)
-    if (step >= 0) {
-      const s = STEPS[step];
-      ctx.fillStyle = P116_COLOR.coral;
-      ctx.font = P116_FONT.label;
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'top';
-      ctx.fillText(`// CALL: ${s.callTag}`, w - 14, 12);
-    }
-
     // Matrix — responsive: fill width up to a sensible max
     const cols = MAT[0].length;
     const rows = MAT.length;
     const sidePad = 48;
     const cellW = Math.min((w - sidePad * 2) / cols, 110);
-    const cellH = Math.min((h - 130) / rows, 56);
+    const cellH = Math.min((h - 110) / rows, 56);
     const totalW = cellW * cols;
     const totalH = cellH * rows;
     const originX = (w - totalW) / 2;
-    const originY = 84;
+    const originY = 56;
 
     const cur = (step === -1) ? null : STEPS[step];
     p116DrawMatrix(ctx, MAT, originX, originY, cellW, cellH, cur || {});

@@ -196,7 +196,7 @@ Report(4); Report(6); Report(1); Report(3);
 Report(5); Report(4); Report(2); Report(1);</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：四個 row ∪ col 都恰好是 <code>{1..7}</code>，沒有任何一個被漏掉、也沒有任何超出 <code>2N−1 = 7</code> 的值。<em>對角線的 7 出現在 (1,3), (2,4), (3,1)... 不，等一下：</em>
+      <strong>觀察</strong>：四個 row ∪ col 都恰好是 <code>{1..7}</code>，沒有任何一個被漏掉、也沒有任何超出 <code>2N−1 = 7</code> 的值。<strong>對角線的 7 出現在 (1,3), (2,4), (3,1)... 不，等一下：</strong>
       <br/>實際上 <code>7</code> 出現在 <strong>(1,3) 和 (2,4)</strong>（TR 對角）。BR 那一塊沒有 7，但 row 3、row 4 的 7 來自 col 3、col 4 中的 TR 對角格 (1,3) 與 (2,4) — 透過 col 的聯集補上。
     </div>
   </section>
@@ -249,7 +249,7 @@ Report(5); Report(4); Report(2); Report(1);</pre>
         構造的核心是 <strong>2×2 block 切割</strong>：把 <code>A(N)</code> 拆成 4 個大小相同的 <code>K × K</code> 子塊。要每一層都能對稱地切，就要 <code>N</code> 一路除 2 都還是整數 ⇒ <code>N = 2^K</code>。
       </p>
       <p>
-        若 <code>N = 6</code>，<code>K = 3</code>，<code>2K = 6</code> 一切都對稱；但下一層要切 <code>A(3)</code> 就<em>切不開了</em>（3 不是 2 的次方）。<code>N = 12</code> 同樣會在 <code>A(3)</code> 卡死。
+        若 <code>N = 6</code>，<code>K = 3</code>，<code>2K = 6</code> 一切都對稱；但下一層要切 <code>A(3)</code> 就<strong>切不開了</strong>（3 不是 2 的次方）。<code>N = 12</code> 同樣會在 <code>A(3)</code> 卡死。
       </p>
       <p>
         所以本構造<strong>只適用於 <code>N = 2^K</code></strong>。對任意 N 是否存在 Bad Array 是另一個問題（其實有 — 但需要不同的構造），題目刻意限制 <code>N = 2^K</code> 讓分治成立。
@@ -259,7 +259,7 @@ Report(5); Report(4); Report(2); Report(1);</pre>
     <div class="qa qa--answer">
       <span class="qa__id">A2 · 對角線特殊處理</span>
       <p>
-        <strong>每個 row 和每個 col 都需要 <code>2N−1</code>。</strong>對角線 (i, K+i) 剛好是「row <code>i</code> 與 col <code>K+i</code>」的共同位置 — 同一格<em>同時</em>替兩條線塞入 <code>2N−1</code>。
+        <strong>每個 row 和每個 col 都需要 <code>2N−1</code>。</strong>對角線 (i, K+i) 剛好是「row <code>i</code> 與 col <code>K+i</code>」的共同位置 — 同一格<strong>同時</strong>替兩條線塞入 <code>2N−1</code>。
       </p>
       <ul>
         <li>row <code>i</code>（<code>i ∈ [1..K]</code>）會看到 (i, K+i) = <code>2N−1</code> ✓</li>
@@ -270,7 +270,7 @@ Report(5); Report(4); Report(2); Report(1);</pre>
         如果把 <code>2N−1</code> 放到 TR 的非對角位置（譬如反對角 (i, K+K+1−i)）：
       </p>
       <ul>
-        <li>那一格只服務 row i 和 col (K+K+1−i)，<em>不是</em> col (K+i)。</li>
+        <li>那一格只服務 row i 和 col (K+K+1−i)，<strong>不是</strong> col (K+i)。</li>
         <li>row 還是有 <code>2N−1</code>，但 col 的覆蓋會錯位 — 對角的 i ↔ K+i 對應斷掉。</li>
         <li>必須再額外補別的格才能覆蓋所有 col，TR 的結構就不再是「對角 + 其餘 +shift」這麼乾淨。</li>
       </ul>
@@ -318,10 +318,10 @@ value 4: 出現 2 次  (BL[1][1], BL[2][2])
 ...
 value 7: 出現 2 次  (TR 對角 = (1,3), (2,4))</pre>
       <p>
-        但題目<strong>允許重複</strong>。題目要求的只是「每個 row ∪ col 的<em>集合</em>是 <code>{1..2N−1}</code>」，集合會自動去重 — 同樣的值出現多次不影響集合內容。
+        但題目<strong>允許重複</strong>。題目要求的只是「每個 row ∪ col 的<strong>集合</strong>是 <code>{1..2N−1}</code>」，集合會自動去重 — 同樣的值出現多次不影響集合內容。
       </p>
       <p>
-        實際上「重複」是構造能成功的<em>必要條件</em>：N × N = N² 個格，只有 2N−1 種值 ⇒ 平均每個值出現 <code>N²/(2N−1) ≈ N/2</code> 次。沒有重複根本塞不滿矩陣。
+        實際上「重複」是構造能成功的<strong>必要條件</strong>：N × N = N² 個格，只有 2N−1 種值 ⇒ 平均每個值出現 <code>N²/(2N−1) ≈ N/2</code> 次。沒有重複根本塞不滿矩陣。
       </p>
     </div>
 
@@ -331,12 +331,12 @@ value 7: 出現 2 次  (TR 對角 = (1,3), (2,4))</pre>
         若 BR 改成 <code>A(K) + shift</code>，<strong>構造會壞掉</strong>。具體看下半的 <code>i ∈ [K+1..N]</code>：
       </p>
       <ul>
-        <li>row <code>i</code> = BL[i'][*] ∪ BR[i'][*]，兩塊都 +shift ⇒ <em>整個 row 的值域 ⊆ {2K..2N−2}</em>，<strong>少了 {1..2K−1}</strong>。</li>
-        <li>col <code>i</code> = TR[*][i'] ∪ BR[*][i']。TR 對角貢獻 <code>2N−1</code>，TR 其餘 +shift，BR 也 +shift ⇒ <em>col 值域 ⊆ {2K..2N−1}</em>，同樣<strong>少了 {1..2K−1}</strong>。</li>
-        <li>row ∪ col ⊆ <code>{2K..2N−1}</code>，<em>無法覆蓋 <code>{1..2K−1}</code></em> ⇒ 違反 row i ∪ col i = <code>{1..2N−1}</code>。</li>
+        <li>row <code>i</code> = BL[i'][*] ∪ BR[i'][*]，兩塊都 +shift ⇒ <strong>整個 row 的值域 ⊆ {2K..2N−2}</strong>，<strong>少了 {1..2K−1}</strong>。</li>
+        <li>col <code>i</code> = TR[*][i'] ∪ BR[*][i']。TR 對角貢獻 <code>2N−1</code>，TR 其餘 +shift，BR 也 +shift ⇒ <strong>col 值域 ⊆ {2K..2N−1}</strong>，同樣<strong>少了 {1..2K−1}</strong>。</li>
+        <li>row ∪ col ⊆ <code>{2K..2N−1}</code>，<strong>無法覆蓋 <code>{1..2K−1}</code></strong> ⇒ 違反 row i ∪ col i = <code>{1..2N−1}</code>。</li>
       </ul>
       <p>
-        BR 必須與 TL 同值，<em>不能</em>平移。直覺是：BR 是下半 row 與右半 col 「拿回低值（<code>{1..2K−1}</code>）」的唯一來源；BL 平移、TR 平移（含對角），三塊都跟「高值」站隊，BR 必須留守低值。
+        BR 必須與 TL 同值，<strong>不能</strong>平移。直覺是：BR 是下半 row 與右半 col 「拿回低值（<code>{1..2K−1}</code>）」的唯一來源；BL 平移、TR 平移（含對角），三塊都跟「高值」站隊，BR 必須留守低值。
       </p>
     </div>
 
@@ -356,7 +356,7 @@ value 7: 出現 2 次  (TR 對角 = (1,3), (2,4))</pre>
 → TR 子塊 local (1, 1)
 → i == j 對角 ⇒ 2N - 1 = 15</pre>
       <p>
-        不需要展開 64 個格，<em>直接看「落在哪個子塊」與「是不是對角」</em>就能 O(log N) 查任意格的值。
+        不需要展開 64 個格，<strong>直接看「落在哪個子塊」與「是不是對角」</strong>就能 O(log N) 查任意格的值。
       </p>
     </div>
 
@@ -373,7 +373,7 @@ Report 次數 = N² = 1024² = 1,048,576 ≈ 10⁶
 
 兩者同階：Θ(N²) = 約 10⁶。</pre>
       <p>
-        <em>瓶頸不是建構也不是輸出，是「兩者加起來 = 2 × 10⁶」</em> — 對現代 CPU 仍然輕鬆秒過。
+        <strong>瓶頸不是建構也不是輸出，是「兩者加起來 = 2 × 10⁶」</strong> — 對現代 CPU 仍然輕鬆秒過。
       </p>
     </div>
 
@@ -383,12 +383,12 @@ Report 次數 = N² = 1024² = 1,048,576 ≈ 10⁶
         若值域縮到 <code>{1..N}</code>，要求 <strong>row i ∪ col i = {1..N}</strong>：
       </p>
       <ul>
-        <li>row i 有 N 格、col i 有 N 格、扣掉重疊格 (i, i)，共 <code>2N − 1</code> 個位置。要塞滿 <code>{1..N}</code>（N 種值），<em>必然有 <code>2N−1 − N = N−1</code> 格是重複</em>。</li>
+        <li>row i 有 N 格、col i 有 N 格、扣掉重疊格 (i, i)，共 <code>2N − 1</code> 個位置。要塞滿 <code>{1..N}</code>（N 種值），<strong>必然有 <code>2N−1 − N = N−1</code> 格是重複</strong>。</li>
         <li>更強的解：<strong>Latin square</strong>（拉丁方陣） — 每 row 都是 <code>{1..N}</code> 的排列、每 col 也是。對任何 N ≥ 1 都存在（譬如 <code>A[i][j] = ((i + j − 2) mod N) + 1</code>）。</li>
         <li>本構造完全不能用 — 我們依賴 <code>{1..2K−1}</code> ∪ <code>{2K..2N−2}</code> ∪ <code>{2N−1}</code> 的拼接，那是「為 <code>2N−1</code> 量身打造的容量規劃」，縮到 <code>N</code> 後拼接邏輯整個垮掉。</li>
       </ul>
       <p>
-        所以 <code>{1..N}</code> 版的問題<em>是另一類問題</em>（Latin square / quasigroup），跟本題的 <code>{1..2N−1}</code> Bad Array 屬於不同分類。
+        所以 <code>{1..N}</code> 版的問題<strong>是另一類問題</strong>（Latin square / quasigroup），跟本題的 <code>{1..2N−1}</code> Bad Array 屬於不同分類。
         <strong>本題的「2N−1」是構造能用 D&amp;C 拼接的唯一容量點</strong>。
       </p>
     </div>

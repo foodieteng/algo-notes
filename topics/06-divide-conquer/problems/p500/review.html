@@ -95,7 +95,7 @@
     <div class="qa">
       <span class="qa__id">Q1</span>
       <span class="qa__tag">重新框架</span>
-      <h4>為何 <em>distinct integers</em> 的集合 <code>S</code> 可以用 <code>max − min == |S| − 1</code> 判斷是否「排序後連續」？</h4>
+      <h4>為何 <strong>distinct integers</strong> 的集合 <code>S</code> 可以用 <code>max − min == |S| − 1</code> 判斷是否「排序後連續」？</h4>
     </div>
 
     <div class="qa">
@@ -119,7 +119,7 @@
     <div class="qa">
       <span class="qa__id">Q5</span>
       <span class="qa__tag">推廣</span>
-      <h4>如果輸入<em>不是 permutation</em>（值可能重複），這個 D&amp;C 還能正確運作嗎？需要怎樣修改？</h4>
+      <h4>如果輸入<strong>不是 permutation</strong>（值可能重複），這個 D&amp;C 還能正確運作嗎？需要怎樣修改？</h4>
     </div>
   </section>
 
@@ -253,7 +253,7 @@ solve(1, 5) = solve(1, 3) + solve(4, 5) + crossing
       <span class="qa__id">A1 · 重新框架</span>
       <p>設 <code>S</code> 是 <code>|S|</code> 個 distinct 整數的集合，記 <code>m = min(S)</code>、<code>M = max(S)</code>。</p>
       <p><strong>下界</strong>：要塞 <code>|S|</code> 個不同整數進 <code>[m, M]</code> 這個區間，至少需要長度 <code>|S| − 1</code>，即
-        <code>M − m ≥ |S| − 1</code>。這是 pigeonhole 風格的下界 — <em>不同的東西</em>之間至少差 1。</p>
+        <code>M − m ≥ |S| − 1</code>。這是 pigeonhole 風格的下界 — <strong>不同的東西</strong>之間至少差 1。</p>
       <p><strong>等號成立 ⟺ 連續</strong>：<code>M − m = |S| − 1</code> 意味著區間 <code>[m, M]</code> 剛好容納 <code>|S|</code> 個整數，
         而 <code>S</code> 已經有 <code>|S|</code> 個不同整數塞進去 ⇒ <code>S = {m, m+1, …, M}</code>，排序後就是連續整數。</p>
       <p>把這個套到 <code>S = {a[L], …, a[R]}</code>：<code>|S| = R − L + 1</code>，所以 good ⟺ <code>max − min = R − L</code>。</p>
@@ -263,7 +263,7 @@ solve(1, 5) = solve(1, 3) + solve(4, 5) + crossing
       <span class="qa__id">A2 · 分治結構</span>
       <p><code>max − min == R − L</code> 是 O(1) 判定，但前提是<strong>我們已經知道 max 與 min</strong>。
         當 (L, R) 跨界時，max 可能來自左半或右半、min 也可能來自左半或右半 — 4 種組合。</p>
-      <p>分 4 case 的好處：每個 case 內部 <code>max</code> 與 <code>min</code> 的<em>來源固定</em>了，可以寫成關於 <code>L, R</code> 的等式：</p>
+      <p>分 4 case 的好處：每個 case 內部 <code>max</code> 與 <code>min</code> 的<strong>來源固定</strong>了，可以寫成關於 <code>L, R</code> 的等式：</p>
       <ul>
         <li>Case 1/2：max 與 min 都來自同一半 ⇒ 對 L（或 R）來說 max 與 min 已知 ⇒ R（或 L）反推出來，O(1) 驗證。</li>
         <li>Case 3/4：max 與 min 分別來自兩半 ⇒ goodness 變成「左半某函數 == 右半某函數」⇒ 用 cnt[] 做等式 hashing。</li>
@@ -297,11 +297,11 @@ max(a[L..R]) − min(a[L..R]) = R − L
     <div class="qa qa--answer">
       <span class="qa__id">A5 · 推廣</span>
       <p><strong>有重複值時，<code>max − min == R − L</code> 不再等價於 good</strong>。例如 <code>[1, 1, 2]</code>：
-        max=2、min=1、R−L=2，但元素集合是 <code>{1, 1, 2}</code>，<em>不是</em>連續整數（題目改成 sorted &amp; consecutive distinct values 也不行，因為有重複）。</p>
+        max=2、min=1、R−L=2，但元素集合是 <code>{1, 1, 2}</code>，<strong>不是</strong>連續整數（題目改成 sorted &amp; consecutive distinct values 也不行，因為有重複）。</p>
       <p>更精確：lemma 第 1 步「<code>|S|</code> 個 distinct 整數 ⇒ max − min ≥ |S| − 1」用到了 distinct 前提。若有重複，
         <code>|distinct(S)| &lt; R − L + 1</code>，<code>max − min</code> 可能比 <code>R − L</code> 小。</p>
       <p><strong>修改方案</strong>：condition 改成「<code>max − min == #distinct − 1</code> AND <code>#distinct == R − L + 1</code>」。
-        第二個條件等於說「沒有重複值」。<em>這需要額外維護 #distinct，整題就不是這個 D&amp;C 套路了</em> — 更可能用莫隊算法或滑動視窗。</p>
+        第二個條件等於說「沒有重複值」。<strong>這需要額外維護 #distinct，整題就不是這個 D&amp;C 套路了</strong> — 更可能用莫隊算法或滑動視窗。</p>
     </div>
 
     <div class="qa qa--answer">
@@ -331,7 +331,7 @@ max(a[L..R]) − min(a[L..R]) = R − L
       <ul>
         <li>每個 case 找到 good 時，不只 <code>++ans</code>，還要把 (L, R) <strong>記錄下來</strong>（push 到 vector）。</li>
         <li>Case 1/2：每個 L (或 R) 找到時直接 emit；O(1) per match。</li>
-        <li>Case 3/4：cnt[] 只能告訴你「有幾個 R 配對」，<em>不能直接 emit 配對細節</em>。需要把 cnt[]
+        <li>Case 3/4：cnt[] 只能告訴你「有幾個 R 配對」，<strong>不能直接 emit 配對細節</strong>。需要把 cnt[]
           換成 <code>vector&lt;int&gt; bucket[2*N+5]</code>，存所有 R；查詢時 iterate bucket，emit 每個 (L, R)。</li>
       </ul>
       <p><strong>複雜度</strong>：</p>
@@ -339,7 +339,7 @@ max(a[L..R]) − min(a[L..R]) = R − L
         <li>找完所有 good 的「工時」變成 <code>O(N log N + K)</code>，K 是 good 區間總數，最壞 <code>K = N(N+1)/2 = O(N²)</code>。</li>
         <li>所以最壞情形 <strong>輸出本身就 O(N²)</strong>，但這不是演算法的成本 — 是輸出量的下界（你要 print N² 行）。</li>
       </ul>
-      <p>D&amp;C 的優勢只在<em>計數</em>能輸出 O(N²) 結果只需 O(N log N) 時間；要列舉就無可避免地要付出 O(K) 輸出成本。</p>
+      <p>D&amp;C 的優勢只在<strong>計數</strong>能輸出 O(N²) 結果只需 O(N log N) 時間；要列舉就無可避免地要付出 O(K) 輸出成本。</p>
     </div>
 
   </section>

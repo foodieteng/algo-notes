@@ -101,19 +101,19 @@
     <div class="qa">
       <span class="qa__id">Q2</span>
       <span class="qa__tag">分治</span>
-      <h4>中央 L 的 3 個 cell 為什麼一定不會跟<em>原 blocked</em>所在象限重疊？</h4>
+      <h4>中央 L 的 3 個 cell 為什麼一定不會跟<strong>原 blocked</strong>所在象限重疊？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q3</span>
       <span class="qa__tag">構造</span>
-      <h4>放完中央 L 後，為什麼<em>每個</em>子象限都剛好變成「<code>N/2 × N/2</code> 板 + 1 個 blocked」的同類問題？</h4>
+      <h4>放完中央 L 後，為什麼<strong>每個</strong>子象限都剛好變成「<code>N/2 × N/2</code> 板 + 1 個 blocked」的同類問題？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q4</span>
       <span class="qa__tag">Base case</span>
-      <h4>2×2 板扣 1 格剩 3 格，為什麼這 3 格<em>必為 L 型</em>，不可能是 1×3 直線？</h4>
+      <h4>2×2 板扣 1 格剩 3 格，為什麼這 3 格<strong>必為 L 型</strong>，不可能是 1×3 直線？</h4>
     </div>
 
     <div class="qa">
@@ -182,7 +182,7 @@ Report(3, 1,  4, 1,  4, 2)
 Report(3, 4,  4, 3,  4, 4)</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：DFS 走訪下，<em>中央 L 永遠最先 Report</em>（因為它在遞迴前印出）；
+      <strong>觀察</strong>：DFS 走訪下，<strong>中央 L 永遠最先 Report</strong>（因為它在遞迴前印出）；
       接著是 TL → TR → BL → BR 順序的子板。每個子板在自己呼叫裡也是先 Report 中央 L
       再遞迴更深層 — 直到 n = 2 base case。
     </div>
@@ -236,7 +236,7 @@ Report(3, 4,  4, 3,  4, 4)</pre>
         <code>4 ≡ 1 (mod 3)</code>，所以 <code>4ᴷ ≡ 1ᴷ ≡ 1 (mod 3)</code>，
         因此 <code>4ᴷ − 1 ≡ 0 (mod 3)</code>，即 <code>(N² − 1) / 3</code> 必為整數。
       </p>
-      <p>這保證 L 數量是「乾淨的整數」，分配方案<em>有可能</em>存在 — 接下來用構造法直接寫出來。</p>
+      <p>這保證 L 數量是「乾淨的整數」，分配方案<strong>有可能</strong>存在 — 接下來用構造法直接寫出來。</p>
     </div>
 
     <div class="qa qa--answer">
@@ -244,7 +244,7 @@ Report(3, 4,  4, 3,  4, 4)</pre>
       <p>
         程式用 <code>bq</code> 把 blocked 所在象限編號出來，
         放中央 L 時用 <code>if (q == bq) continue;</code> 主動跳過它。
-        因此中央 L 的 3 個 cell 必然落在<em>不含 blocked 的 3 個象限</em>—
+        因此中央 L 的 3 個 cell 必然落在<strong>不含 blocked 的 3 個象限</strong>—
         與原 blocked 所在象限完全不交集。
       </p>
     </div>
@@ -257,14 +257,14 @@ Report(3, 4,  4, 3,  4, 4)</pre>
         <li><strong>其他 3 個象限</strong>：被中央 L 在最角落各種了 1 個 cell — 那一格就成為該象限的「新 blocked」。</li>
       </ul>
       <p>
-        每個子象限都是「<code>N/2 × N/2</code> 板 + <em>恰好 1 個</em> blocked」，與原問題同形。
+        每個子象限都是「<code>N/2 × N/2</code> 板 + <strong>恰好 1 個</strong> blocked」，與原問題同形。
         ⇒ 可以安全遞迴。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A4 · Base case</span>
-      <p>2×2 中任意 3 個格子<em>不可能</em>共線，因為：</p>
+      <p>2×2 中任意 3 個格子<strong>不可能</strong>共線，因為：</p>
       <ul>
         <li>同一列只有 2 格（c 從 1 到 2）。</li>
         <li>同一行只有 2 格。</li>

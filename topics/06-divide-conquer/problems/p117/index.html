@@ -64,13 +64,13 @@
       <span class="sc-question__label">QUESTION</span>
       <p>給 <code>N = 2^K</code>（N ≤ 1024），請構造一個 <code>N × N</code> 矩陣 <code>A</code>，每格填入
       <code>1..2N−1</code> 之中的某個整數（可重複），且滿足：
-      <strong>對於每個 <code>i</code>，row <code>i</code> 與 col <code>i</code> 所有元素的<em>聯集</em>恰為 <code>{1, 2, ..., 2N−1}</code></strong>。</p>
+      <strong>對於每個 <code>i</code>，row <code>i</code> 與 col <code>i</code> 所有元素的<strong>聯集</strong>恰為 <code>{1, 2, ..., 2N−1}</code></strong>。</p>
       <p style="margin-top:8px;">互動式：實作 <code>solve(N)</code>，由 judge 提供 <code>void Report(int)</code>。
       依 row-major 順序輸出 N² 個整數。</p>
     </div>
 
     <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
-      聯集大小是 <code>2N−1</code>；單一 row 或 col 有 <code>N</code> 格 — 所以 row 和 col 的元素之間必然<em>大量重疊</em>（剛好 1 個），這是構造能成立的容量條件。
+      聯集大小是 <code>2N−1</code>；單一 row 或 col 有 <code>N</code> 格 — 所以 row 和 col 的元素之間必然<strong>大量重疊</strong>（剛好 1 個），這是構造能成立的容量條件。
     </p>
   </section>
 
@@ -254,7 +254,7 @@
     </div>
 
     <p style="margin-top:10px;font-size:14px;">
-      換句話說：<em>shift = N − 1 把 A(K) 的值域 <code>{1..2K−1}</code> 平移到 <code>{2K..2N−2}</code></em>，
+      換句話說：<strong>shift = N − 1 把 A(K) 的值域 <code>{1..2K−1}</code> 平移到 <code>{2K..2N−2}</code></strong>，
       兩個值域剛好對接、合起來是 <code>{1..2N−2}</code>；
       <strong>TR 對角線塞 <code>2N−1</code></strong> 是把最後那個最大值「灑」進每一個 row 和 col，補完最後一格。
     </p>
@@ -274,7 +274,7 @@
     <div class="sc-formula">
       <div class="sc-formula__main">T(N) = 2 · T(N/2) + Θ(N²/2) &nbsp;⇒&nbsp; <strong>T(N) = Θ(N²)</strong></div>
       <div class="sc-formula__hint">
-        每格只寫一次 ⇒ 總工作量 = 格數 = N²。<em>Master Theorem case 3</em>。
+        每格只寫一次 ⇒ 總工作量 = 格數 = N²。<strong>Master Theorem case 3</strong>。
       </div>
     </div>
 
@@ -305,7 +305,7 @@
     <div class="sc-insight">
       <strong>TR 對角線塞 <code>2N−1</code> 是把「最大值」灑進每個 row 和 col 的關鍵。</strong><br/>
       其他三塊（TL、BR、BL）合力撐起 <code>{1..2N−2}</code>，
-      <em>對角的 <code>2N−1</code> 是唯一補上最後那一格的位置 — 每個 row i 都會碰到它一次，每個 col i 也是。</em>
+      <strong>對角的 <code>2N−1</code> 是唯一補上最後那一格的位置 — 每個 row i 都會碰到它一次，每個 col i 也是。</strong>
     </div>
   </section>
 

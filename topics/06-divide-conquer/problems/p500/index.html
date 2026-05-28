@@ -76,7 +76,7 @@
       <strong>關鍵觀察</strong>（題目原本的提示）：因為值兩兩相異，
       <code>a[L..R]</code> 是 good <strong>⟺</strong>
       <code class="mono"><strong>max(a[L..R]) − min(a[L..R]) = R − L</strong></code>。
-      把「排序後連續」這個結構性問題壓成一個 <em>O(1) 可查的等式</em>，分治才有施力點。
+      把「排序後連續」這個結構性問題壓成一個 <strong>O(1) 可查的等式</strong>，分治才有施力點。
     </p>
   </section>
 
@@ -155,7 +155,7 @@
     </div>
 
     <p>先用小範例 <code>[2, 1, 3]</code> 走過分治骨架：<code>SPLIT → LEFT → RIGHT → CROSS → TOTAL</code>。
-    這是<em>同一個演算法</em>在最小有趣輸入下的展開 — 不是 brute，就是 D&amp;C 自己。</p>
+    這是<strong>同一個演算法</strong>在最小有趣輸入下的展開 — 不是 brute，就是 D&amp;C 自己。</p>
 
     <div class="sc-viz">
       <div class="sc-viz__title">// VIZ A · BASE CASE · D&amp;C on [2, 1, 3]</div>
@@ -222,7 +222,7 @@
           <li>等號成立 <strong>⟺</strong> <code>S</code> 恰好填滿區間 <code>[min, max]</code> 的所有整數
             ⟺ 排序後 <code>b[i+1] − b[i] = 1</code> ⟺ <strong>good</strong>。</li>
           <li>結論：<code>max(a[L..R]) − min(a[L..R]) = R − L</code> ⟺ <code>a[L..R]</code> 是 good。
-            這把「排序後是否連續」化成 <em>O(1) 可查的等式</em>。</li>
+            這把「排序後是否連續」化成 <strong>O(1) 可查的等式</strong>。</li>
         </ol>
       </div>
     </div>
@@ -276,7 +276,7 @@
       <strong>permutation ⇒ distinct ⇒ <code>max − min ≥ size − 1</code>，等號成立才是 good。</strong><br/>
       把「sorted continuous」轉成 O(1) 可查的算式 <code>max − min == R − L</code>，<br/>
       跨界部分依 max/min 來自哪半分 4 case，<br/>
-      <em>每個 case 用 two-pointer + count[] 掃 O(N)，整體 O(N log N) 收工。</em>
+      <strong>每個 case 用 two-pointer + count[] 掃 O(N)，整體 O(N log N) 收工。</strong>
     </div>
   </section>
 
