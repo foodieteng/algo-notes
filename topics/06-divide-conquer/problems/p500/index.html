@@ -154,7 +154,42 @@
       <h2 class="sc-section__title">Base case 動畫 · 分治 on N=3<span class="sc-section__title-en">// Animation A</span></h2>
     </div>
 
-    <p>先用小範例 <code>[2, 1, 3]</code> 走過分治骨架：<code>SPLIT → LEFT → RIGHT → CROSS → TOTAL</code>。
+    <!-- 就地說明：good 是什麼、動畫在數什麼 -->
+    <div class="sc-dark-box" style="margin-bottom:16px;">
+      <div class="sc-dark-box__title">// 先搞懂：動畫在數什麼</div>
+      <div class="sc-dark-box__body">
+        <p><strong>什麼算 good？</strong>一段連續區間 <code>a[L..R]</code>，把裡面的值<strong>拿出來排序</strong>，
+        如果剛好是一串<strong>連續整數、中間不缺號</strong>，就叫 good。單一元素一定是 good。</p>
+
+        <p style="margin-top:8px;"><strong>怎麼 O(1) 判定？</strong>因為 <code>a</code> 是排列、值兩兩不同，可以不用排序，直接查一個等式：</p>
+
+        <div class="sc-formula" style="margin:10px 0;">
+          <div class="sc-formula__main"><code>a[L..R]</code> 是 good &nbsp;⟺&nbsp; <strong>max − min = R − L</strong></div>
+          <div class="sc-formula__hint">
+            區間有 <code>R−L+1</code> 個相異值；最大減最小至少是 <code>R−L</code>，
+            <strong>剛好等於 <code>R−L</code> 才代表沒缺號</strong>（填滿 [min, max]）。
+          </div>
+        </div>
+
+        <p>用動畫的 <code>[2, 1, 3]</code> 試三個區間：</p>
+        <pre class="sc-trace"><span class="sc-trace__head">// good 判定 on [2, 1, 3]  (1-indexed)</span>
+[2]      L=1,R=1: max=2 min=2 → max-min=0, R-L=0 → 0=0 ✓ good
+[2,1]    L=1,R=2: max=2 min=1 → max-min=1, R-L=1 → 1=1 ✓ good
+[2,1,3]  L=1,R=3: max=3 min=1 → max-min=2, R-L=2 → 2=2 ✓ good
+[1,3]    L=2,R=3: max=3 min=1 → max-min=2, R-L=1 → 2≠1 ✗ 不是（缺 2）</pre>
+
+        <p style="margin-top:10px;"><strong>動畫在數什麼？</strong>數「這個區間裡有<strong>幾段</strong> good 子區間」。
+        分治把答案拆成三塊相加：</p>
+        <ol style="margin-top:6px;">
+          <li><strong>LEFT</strong> — 完全落在左半的 good 段數（遞迴算）</li>
+          <li><strong>RIGHT</strong> — 完全落在右半的 good 段數（遞迴算）</li>
+          <li><strong>CROSS</strong> — <strong>跨過中線</strong>的 good 段數（<code>L ≤ mid &lt; R</code>，4-case 計數）</li>
+          <li><strong>TOTAL</strong> — 三者相加 = 這個區間的答案</li>
+        </ol>
+      </div>
+    </div>
+
+    <p>了解定義後，先用小範例 <code>[2, 1, 3]</code> 走過分治骨架：<code>SPLIT → LEFT → RIGHT → CROSS → TOTAL</code>。
     這是<strong>同一個演算法</strong>在最小有趣輸入下的展開 — 不是 brute，就是 D&amp;C 自己。</p>
 
     <div class="sc-viz">
