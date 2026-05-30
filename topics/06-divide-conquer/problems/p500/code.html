@@ -73,122 +73,110 @@
 <pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
 
-<span class="k">const</span> <span class="t">int</span> N_MAX <span class="p">=</span> <span class="n">500005</span><span class="p">;</span>
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">500005</span><span class="p">;</span>
 
-<span class="t">int</span> N<span class="p">;</span>
-<span class="t">int</span> a<span class="p">[</span>N_MAX<span class="p">];</span>
-<span class="t">int</span> maxL<span class="p">[</span>N_MAX<span class="p">],</span> minL<span class="p">[</span>N_MAX<span class="p">];</span>   <span class="c">// 由 mid 往左累積</span>
-<span class="t">int</span> maxR<span class="p">[</span>N_MAX<span class="p">],</span> minR<span class="p">[</span>N_MAX<span class="p">];</span>   <span class="c">// 由 mid+1 往右累積</span>
+<span class="t">int</span> n<span class="p">;</span>
+<span class="t">int</span> a<span class="p">[</span>MAXN<span class="p">];</span>                 <span class="c">// 1-indexed 排列</span>
+<span class="t">int</span> lMax<span class="p">[</span>MAXN<span class="p">],</span> lMin<span class="p">[</span>MAXN<span class="p">];</span>  <span class="c">// a[l..mid] 的 max/min，以 l 為索引</span>
+<span class="t">int</span> rMax<span class="p">[</span>MAXN<span class="p">],</span> rMin<span class="p">[</span>MAXN<span class="p">];</span>  <span class="c">// a[mid+1..r] 的 max/min，以 r 為索引</span>
+<span class="t">int</span> bucket<span class="p">[</span><span class="n">2</span> <span class="p">*</span> MAXN<span class="p">];</span>        <span class="c">// case 3、4 共用的計數桶（用完清乾淨，跨測資沿用）</span>
 
-<span class="c">// 計 cases 3/4 的等式用 count[]，index 範圍 [0, 2N+5]。</span>
-<span class="c">// case 3: index = R + minR[R]    ∈ [2, 2N]</span>
-<span class="c">// case 4: index = maxR[R] − R + N（shifted），原值範圍 [−(N−1), N−1]</span>
-<span class="t">int</span> cnt<span class="p">[</span><span class="n">2</span> <span class="p">*</span> N_MAX <span class="p">+</span> <span class="n">10</span><span class="p">];</span>
-
-<span class="c">// 計算跨界 (L ≤ mid &lt; R) 的 good (L, R) 數量</span>
-<span class="t">long long</span> <span class="f">count_crossing</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
-    <span class="c">// --- prefix max/min ---</span>
-    maxL<span class="p">[</span>mid<span class="p">]</span> <span class="p">=</span> minL<span class="p">[</span>mid<span class="p">]</span> <span class="p">=</span> a<span class="p">[</span>mid<span class="p">];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> L <span class="p">=</span> mid <span class="p">-</span> <span class="n">1</span><span class="p">;</span> L <span class="p">&gt;=</span> lo<span class="p">;</span> <span class="p">--</span>L<span class="p">)</span> <span class="p">{</span>
-        maxL<span class="p">[</span>L<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>maxL<span class="p">[</span>L<span class="p">+</span><span class="n">1</span><span class="p">],</span> a<span class="p">[</span>L<span class="p">]);</span>
-        minL<span class="p">[</span>L<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>minL<span class="p">[</span>L<span class="p">+</span><span class="n">1</span><span class="p">],</span> a<span class="p">[</span>L<span class="p">]);</span>
+<span class="t">void</span> <span class="f">buildPrefix</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
+    lMax<span class="p">[</span>mid<span class="p">]</span> <span class="p">=</span> lMin<span class="p">[</span>mid<span class="p">]</span> <span class="p">=</span> a<span class="p">[</span>mid<span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> l <span class="p">=</span> mid <span class="p">-</span> <span class="n">1</span><span class="p">;</span> l <span class="p">&gt;=</span> lo<span class="p">;</span> <span class="p">--</span>l<span class="p">)</span> <span class="p">{</span>
+        lMax<span class="p">[</span>l<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>lMax<span class="p">[</span>l <span class="p">+</span> <span class="n">1</span><span class="p">],</span> a<span class="p">[</span>l<span class="p">]);</span>
+        lMin<span class="p">[</span>l<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>lMin<span class="p">[</span>l <span class="p">+</span> <span class="n">1</span><span class="p">],</span> a<span class="p">[</span>l<span class="p">]);</span>
     <span class="p">}</span>
-    maxR<span class="p">[</span>mid<span class="p">+</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> minR<span class="p">[</span>mid<span class="p">+</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> a<span class="p">[</span>mid<span class="p">+</span><span class="n">1</span><span class="p">];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> R <span class="p">=</span> mid <span class="p">+</span> <span class="n">2</span><span class="p">;</span> R <span class="p">&lt;=</span> hi<span class="p">;</span> <span class="p">++</span>R<span class="p">)</span> <span class="p">{</span>
-        maxR<span class="p">[</span>R<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>maxR<span class="p">[</span>R<span class="p">-</span><span class="n">1</span><span class="p">],</span> a<span class="p">[</span>R<span class="p">]);</span>
-        minR<span class="p">[</span>R<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>minR<span class="p">[</span>R<span class="p">-</span><span class="n">1</span><span class="p">],</span> a<span class="p">[</span>R<span class="p">]);</span>
+    rMax<span class="p">[</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">=</span> rMin<span class="p">[</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">=</span> a<span class="p">[</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> r <span class="p">=</span> mid <span class="p">+</span> <span class="n">2</span><span class="p">;</span> r <span class="p">&lt;=</span> hi<span class="p">;</span> <span class="p">++</span>r<span class="p">)</span> <span class="p">{</span>
+        rMax<span class="p">[</span>r<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>rMax<span class="p">[</span>r <span class="p">-</span> <span class="n">1</span><span class="p">],</span> a<span class="p">[</span>r<span class="p">]);</span>
+        rMin<span class="p">[</span>r<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>rMin<span class="p">[</span>r <span class="p">-</span> <span class="n">1</span><span class="p">],</span> a<span class="p">[</span>r<span class="p">]);</span>
     <span class="p">}</span>
+<span class="p">}</span>
 
-    <span class="t">long long</span> ans <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+<span class="c">// Case 1：max、min 都在左 → good ⟺ r = l + (lMax[l] − lMin[l])</span>
+<span class="t">long long</span> <span class="f">maxLminL</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
+    <span class="t">long long</span> good <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> l <span class="p">=</span> lo<span class="p">;</span> l <span class="p">&lt;=</span> mid<span class="p">;</span> <span class="p">++</span>l<span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> r <span class="p">=</span> l <span class="p">+</span> lMax<span class="p">[</span>l<span class="p">]</span> <span class="p">-</span> lMin<span class="p">[</span>l<span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span>r <span class="p">&gt;</span> mid <span class="p">&amp;&amp;</span> r <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> rMax<span class="p">[</span>r<span class="p">]</span> <span class="p">&lt;</span> lMax<span class="p">[</span>l<span class="p">]</span> <span class="p">&amp;&amp;</span> rMin<span class="p">[</span>r<span class="p">]</span> <span class="p">&gt;</span> lMin<span class="p">[</span>l<span class="p">])</span> <span class="p">++</span>good<span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> good<span class="p">;</span>
+<span class="p">}</span>
 
-    <span class="c">// === CASE 1 · max + min 都在左 ===</span>
-    <span class="c">// good ⟺ R = L + maxL[L] − minL[L]，且 R 落在 (mid, hi]，</span>
-    <span class="c">// 且右側 max/min 不破壞：maxR[R] &lt; maxL[L]、minR[R] &gt; minL[L]</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> L <span class="p">=</span> lo<span class="p">;</span> L <span class="p">&lt;=</span> mid<span class="p">;</span> <span class="p">++</span>L<span class="p">)</span> <span class="p">{</span>
-        <span class="t">int</span> R <span class="p">=</span> L <span class="p">+</span> maxL<span class="p">[</span>L<span class="p">]</span> <span class="p">-</span> minL<span class="p">[</span>L<span class="p">];</span>
-        <span class="k">if</span> <span class="p">(</span>R <span class="p">&gt;</span> mid <span class="p">&amp;&amp;</span> R <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span>
-            maxR<span class="p">[</span>R<span class="p">]</span> <span class="p">&lt;</span> maxL<span class="p">[</span>L<span class="p">]</span> <span class="p">&amp;&amp;</span> minR<span class="p">[</span>R<span class="p">]</span> <span class="p">&gt;</span> minL<span class="p">[</span>L<span class="p">])</span> <span class="p">{</span>
-            <span class="p">++</span>ans<span class="p">;</span>
+<span class="c">// Case 2：max、min 都在右 → good ⟺ l = r − (rMax[r] − rMin[r])</span>
+<span class="t">long long</span> <span class="f">maxRminR</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
+    <span class="t">long long</span> good <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> r <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span> r <span class="p">&lt;=</span> hi<span class="p">;</span> <span class="p">++</span>r<span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> l <span class="p">=</span> r <span class="p">-</span> <span class="p">(</span>rMax<span class="p">[</span>r<span class="p">]</span> <span class="p">-</span> rMin<span class="p">[</span>r<span class="p">]);</span>
+        <span class="k">if</span> <span class="p">(</span>l <span class="p">&gt;=</span> lo <span class="p">&amp;&amp;</span> l <span class="p">&lt;=</span> mid <span class="p">&amp;&amp;</span> lMax<span class="p">[</span>l<span class="p">]</span> <span class="p">&lt;</span> rMax<span class="p">[</span>r<span class="p">]</span> <span class="p">&amp;&amp;</span> lMin<span class="p">[</span>l<span class="p">]</span> <span class="p">&gt;</span> rMin<span class="p">[</span>r<span class="p">])</span> <span class="p">++</span>good<span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> good<span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">// Case 3：max 在左、min 在右 → good ⟺ l + lMax[l] == r + rMin[r]</span>
+<span class="c">// maxPtr 維護 rMax[r] &lt; lMax[l] 的前綴 (mid, maxPtr]；minPtr 維護 rMin[r] &lt; lMin[l] 的後綴 [minPtr, hi]</span>
+<span class="t">long long</span> <span class="f">maxLminR</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
+    <span class="t">long long</span> good <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="t">int</span> maxPtr <span class="p">=</span> mid<span class="p">,</span> minPtr <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> l <span class="p">=</span> mid<span class="p">;</span> l <span class="p">&gt;=</span> lo<span class="p">;</span> <span class="p">--</span>l<span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span>maxPtr <span class="p">+</span> <span class="n">1</span> <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> rMax<span class="p">[</span>maxPtr <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">&lt;</span> lMax<span class="p">[</span>l<span class="p">])</span> <span class="p">{</span>
+            <span class="p">++</span>maxPtr<span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span>maxPtr <span class="p">&gt;=</span> minPtr<span class="p">)</span> <span class="p">++</span>bucket<span class="p">[</span>maxPtr <span class="p">+</span> rMin<span class="p">[</span>maxPtr<span class="p">]];</span>
         <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="c">// === CASE 2 · max + min 都在右 ===</span>
-    <span class="c">// good ⟺ L = R − (maxR[R] − minR[R])，L 必須落在 [lo, mid]</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> R <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span> R <span class="p">&lt;=</span> hi<span class="p">;</span> <span class="p">++</span>R<span class="p">)</span> <span class="p">{</span>
-        <span class="t">int</span> L <span class="p">=</span> R <span class="p">-</span> <span class="p">(</span>maxR<span class="p">[</span>R<span class="p">]</span> <span class="p">-</span> minR<span class="p">[</span>R<span class="p">]);</span>
-        <span class="k">if</span> <span class="p">(</span>L <span class="p">&gt;=</span> lo <span class="p">&amp;&amp;</span> L <span class="p">&lt;=</span> mid <span class="p">&amp;&amp;</span>
-            maxL<span class="p">[</span>L<span class="p">]</span> <span class="p">&lt;</span> maxR<span class="p">[</span>R<span class="p">]</span> <span class="p">&amp;&amp;</span> minL<span class="p">[</span>L<span class="p">]</span> <span class="p">&gt;</span> minR<span class="p">[</span>R<span class="p">])</span> <span class="p">{</span>
-            <span class="p">++</span>ans<span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span>minPtr <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> rMin<span class="p">[</span>minPtr<span class="p">]</span> <span class="p">&gt;=</span> lMin<span class="p">[</span>l<span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span>minPtr <span class="p">&lt;=</span> maxPtr<span class="p">)</span> <span class="p">--</span>bucket<span class="p">[</span>minPtr <span class="p">+</span> rMin<span class="p">[</span>minPtr<span class="p">]];</span>
+            <span class="p">++</span>minPtr<span class="p">;</span>
         <span class="p">}</span>
+        good <span class="p">+=</span> bucket<span class="p">[</span>l <span class="p">+</span> lMax<span class="p">[</span>l<span class="p">]];</span>
     <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> r <span class="p">=</span> minPtr<span class="p">;</span> r <span class="p">&lt;=</span> maxPtr<span class="p">;</span> <span class="p">++</span>r<span class="p">)</span> bucket<span class="p">[</span>r <span class="p">+</span> rMin<span class="p">[</span>r<span class="p">]]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">return</span> good<span class="p">;</span>
+<span class="p">}</span>
 
-    <span class="c">// === CASE 3 · max 在左、min 在右 ===</span>
-    <span class="c">// 條件：maxL[L] &gt; maxR[R]、minR[R] &lt; minL[L]</span>
-    <span class="c">// good ⟺ L + maxL[L] == R + minR[R]</span>
-    <span class="c">// 兩個指針 pmax/pmin 都單調右移 (L 由 mid 往下時 maxL[L] 不減、minL[L] 不增)</span>
-    <span class="p">{</span>
-        <span class="t">int</span> pmax <span class="p">=</span> mid<span class="p">;</span>      <span class="c">// 已加入 (max-side qualifies)：(mid, pmax]</span>
-        <span class="t">int</span> pmin <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span>  <span class="c">// 仍不滿足 min-side 的 R：(mid, pmin); 滿足者：[pmin, hi]</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> L <span class="p">=</span> mid<span class="p">;</span> L <span class="p">&gt;=</span> lo<span class="p">;</span> <span class="p">--</span>L<span class="p">)</span> <span class="p">{</span>
-            <span class="c">// 推進 pmax：maxR[pmax+1] &lt; maxL[L] 時，pmax++，若該 R 也滿足 min-side 則加入 cnt</span>
-            <span class="k">while</span> <span class="p">(</span>pmax <span class="p">+</span> <span class="n">1</span> <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> maxR<span class="p">[</span>pmax <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">&lt;</span> maxL<span class="p">[</span>L<span class="p">])</span> <span class="p">{</span>
-                <span class="p">++</span>pmax<span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span>pmax <span class="p">&gt;=</span> pmin<span class="p">)</span> <span class="p">++</span>cnt<span class="p">[</span>pmax <span class="p">+</span> minR<span class="p">[</span>pmax<span class="p">]];</span>
-            <span class="p">}</span>
-            <span class="c">// 推進 pmin：minR[pmin] &gt;= minL[L] 表示 R=pmin 不滿足 min-side，若之前在 cnt 內就移除</span>
-            <span class="k">while</span> <span class="p">(</span>pmin <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> minR<span class="p">[</span>pmin<span class="p">]</span> <span class="p">&gt;=</span> minL<span class="p">[</span>L<span class="p">])</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span>pmin <span class="p">&lt;=</span> pmax<span class="p">)</span> <span class="p">--</span>cnt<span class="p">[</span>pmin <span class="p">+</span> minR<span class="p">[</span>pmin<span class="p">]];</span>
-                <span class="p">++</span>pmin<span class="p">;</span>
-            <span class="p">}</span>
-            ans <span class="p">+=</span> cnt<span class="p">[</span>L <span class="p">+</span> maxL<span class="p">[</span>L<span class="p">]];</span>
+<span class="c">// Case 4：max 在右、min 在左（與 case 3 對稱）→ good ⟺ rMax[r] − r == lMin[l] − l</span>
+<span class="c">// key 加 n 以避免負索引</span>
+<span class="t">long long</span> <span class="f">maxRminL</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
+    <span class="t">long long</span> good <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="t">int</span> maxPtr <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> minPtr <span class="p">=</span> mid<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> l <span class="p">=</span> mid<span class="p">;</span> l <span class="p">&gt;=</span> lo<span class="p">;</span> <span class="p">--</span>l<span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span>minPtr <span class="p">+</span> <span class="n">1</span> <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> rMin<span class="p">[</span>minPtr <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">&gt;</span> lMin<span class="p">[</span>l<span class="p">])</span> <span class="p">{</span>
+            <span class="p">++</span>minPtr<span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span>minPtr <span class="p">&gt;=</span> maxPtr<span class="p">)</span> <span class="p">++</span>bucket<span class="p">[</span>rMax<span class="p">[</span>minPtr<span class="p">]</span> <span class="p">-</span> minPtr <span class="p">+</span> n<span class="p">];</span>
         <span class="p">}</span>
-        <span class="c">// 清掉這次留下的 cnt 痕跡 (active set 是 [pmin, pmax])</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> R <span class="p">=</span> pmin<span class="p">;</span> R <span class="p">&lt;=</span> pmax<span class="p">;</span> <span class="p">++</span>R<span class="p">)</span> cnt<span class="p">[</span>R <span class="p">+</span> minR<span class="p">[</span>R<span class="p">]]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="c">// === CASE 4 · max 在右、min 在左 ===</span>
-    <span class="c">// 條件：maxR[R] &gt; maxL[L]、minR[R] &gt; minL[L]</span>
-    <span class="c">// good ⟺ maxR[R] − R == minL[L] − L</span>
-    <span class="c">// cnt index 用 (maxR[R] − R + N)，避免負數</span>
-    <span class="p">{</span>
-        <span class="t">int</span> qlo <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span>  <span class="c">// max-side 滿足者：[qlo, hi]；qlo 由 mid+1 往右單調推進</span>
-        <span class="t">int</span> qhi <span class="p">=</span> mid<span class="p">;</span>      <span class="c">// min-side 滿足者：(mid, qhi]；qhi 由 mid 往右單調推進</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> L <span class="p">=</span> mid<span class="p">;</span> L <span class="p">&gt;=</span> lo<span class="p">;</span> <span class="p">--</span>L<span class="p">)</span> <span class="p">{</span>
-            <span class="c">// 推進 qhi：minR[qhi+1] &gt; minL[L] 時，加入 R=qhi+1 (若 max-side 也滿足)</span>
-            <span class="k">while</span> <span class="p">(</span>qhi <span class="p">+</span> <span class="n">1</span> <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> minR<span class="p">[</span>qhi <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">&gt;</span> minL<span class="p">[</span>L<span class="p">])</span> <span class="p">{</span>
-                <span class="p">++</span>qhi<span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span>qhi <span class="p">&gt;=</span> qlo<span class="p">)</span> <span class="p">++</span>cnt<span class="p">[</span>maxR<span class="p">[</span>qhi<span class="p">]</span> <span class="p">-</span> qhi <span class="p">+</span> N<span class="p">];</span>
-            <span class="p">}</span>
-            <span class="c">// 推進 qlo：maxR[qlo] &lt;= maxL[L] 表示 R=qlo 不滿足 max-side，移除</span>
-            <span class="k">while</span> <span class="p">(</span>qlo <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> maxR<span class="p">[</span>qlo<span class="p">]</span> <span class="p">&lt;=</span> maxL<span class="p">[</span>L<span class="p">])</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span>qlo <span class="p">&lt;=</span> qhi<span class="p">)</span> <span class="p">--</span>cnt<span class="p">[</span>maxR<span class="p">[</span>qlo<span class="p">]</span> <span class="p">-</span> qlo <span class="p">+</span> N<span class="p">];</span>
-                <span class="p">++</span>qlo<span class="p">;</span>
-            <span class="p">}</span>
-            ans <span class="p">+=</span> cnt<span class="p">[</span>minL<span class="p">[</span>L<span class="p">]</span> <span class="p">-</span> L <span class="p">+</span> N<span class="p">];</span>
+        <span class="k">while</span> <span class="p">(</span>maxPtr <span class="p">&lt;=</span> hi <span class="p">&amp;&amp;</span> rMax<span class="p">[</span>maxPtr<span class="p">]</span> <span class="p">&lt;=</span> lMax<span class="p">[</span>l<span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span>maxPtr <span class="p">&lt;=</span> minPtr<span class="p">)</span> <span class="p">--</span>bucket<span class="p">[</span>rMax<span class="p">[</span>maxPtr<span class="p">]</span> <span class="p">-</span> maxPtr <span class="p">+</span> n<span class="p">];</span>
+            <span class="p">++</span>maxPtr<span class="p">;</span>
         <span class="p">}</span>
-        <span class="c">// 清掉 cnt 殘留</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> R <span class="p">=</span> qlo<span class="p">;</span> R <span class="p">&lt;=</span> qhi<span class="p">;</span> <span class="p">++</span>R<span class="p">)</span> cnt<span class="p">[</span>maxR<span class="p">[</span>R<span class="p">]</span> <span class="p">-</span> R <span class="p">+</span> N<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        good <span class="p">+=</span> bucket<span class="p">[</span>lMin<span class="p">[</span>l<span class="p">]</span> <span class="p">-</span> l <span class="p">+</span> n<span class="p">];</span>
     <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> r <span class="p">=</span> maxPtr<span class="p">;</span> r <span class="p">&lt;=</span> minPtr<span class="p">;</span> <span class="p">++</span>r<span class="p">)</span> bucket<span class="p">[</span>rMax<span class="p">[</span>r<span class="p">]</span> <span class="p">-</span> r <span class="p">+</span> n<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">return</span> good<span class="p">;</span>
+<span class="p">}</span>
 
-    <span class="k">return</span> ans<span class="p">;</span>
+<span class="c">// 所有 l ≤ mid &lt; r 的 good (l, r)</span>
+<span class="t">long long</span> <span class="f">countCrossing</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> mid<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
+    <span class="f">buildPrefix</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">);</span>
+    <span class="k">return</span> <span class="f">maxLminL</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">)</span> <span class="p">+</span> <span class="f">maxRminR</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">)</span>   <span class="c">// 同側</span>
+         <span class="p">+</span> <span class="f">maxLminR</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">)</span> <span class="p">+</span> <span class="f">maxRminL</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">);</span>  <span class="c">// 異側</span>
 <span class="p">}</span>
 
 <span class="t">long long</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> lo<span class="p">,</span> <span class="t">int</span> hi<span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span>lo <span class="p">==</span> hi<span class="p">)</span> <span class="k">return</span> <span class="n">1</span><span class="p">;</span>           <span class="c">// 單一元素 = 1 個 good</span>
+    <span class="k">if</span> <span class="p">(</span>lo <span class="p">==</span> hi<span class="p">)</span> <span class="k">return</span> <span class="n">1</span><span class="p">;</span>          <span class="c">// 單一元素必 good</span>
     <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>lo <span class="p">+</span> hi<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
-    <span class="k">return</span> <span class="f">solve</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">)</span>
-         <span class="p">+</span> <span class="f">solve</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> hi<span class="p">)</span>
-         <span class="p">+</span> <span class="f">count_crossing</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">);</span>
+    <span class="k">return</span> <span class="f">solve</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">)</span> <span class="p">+</span> <span class="f">solve</span><span class="p">(</span>mid <span class="p">+</span> <span class="n">1</span><span class="p">,</span> hi<span class="p">)</span> <span class="p">+</span> <span class="f">countCrossing</span><span class="p">(</span>lo<span class="p">,</span> mid<span class="p">,</span> hi<span class="p">);</span>
 <span class="p">}</span>
 
 <span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
-    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span> cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+    ios<span class="p">::</span>sync_with_stdio<span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
 
-    <span class="t">int</span> T<span class="p">;</span> cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
-    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="p">{</span>
-        cin <span class="p">&gt;&gt;</span> N<span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
-        cout <span class="p">&lt;&lt;</span> <span class="f">solve</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> N<span class="p">)</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="t">int</span> t<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> t<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>t<span class="p">--)</span> <span class="p">{</span>
+        cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> n<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
+        cout <span class="p">&lt;&lt;</span> <span class="f">solve</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> n<span class="p">)</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
 <span class="p">}</span></pre>
@@ -204,19 +192,19 @@
       <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
     </div>
 
-    <p>把 <code>count_crossing(lo, mid, hi)</code> 拆成 5 段（設 K = hi − lo + 1）：</p>
+    <p>把 <code>countCrossing(lo, mid, hi)</code> 拆成 5 段（設 K = hi − lo + 1）：</p>
 
     <table class="sc-table">
       <thead>
         <tr><th>步驟</th><th>內容</th><th>單次成本</th></tr>
       </thead>
       <tbody>
-        <tr><td>建 maxL/minL/maxR/minR</td><td>掃過左右兩半各一次</td><td class="mono">O(K)</td></tr>
-        <tr><td>Case 1</td><td>每個 L 一次 O(1) 檢查</td><td class="mono">O(K)</td></tr>
-        <tr><td>Case 2</td><td>每個 R 一次 O(1) 檢查</td><td class="mono">O(K)</td></tr>
-        <tr><td>Case 3 (two-pointer)</td><td>L 走一遍 + pmax/pmin 各走一遍</td><td class="mono">O(K)</td></tr>
-        <tr><td>Case 4 (two-pointer)</td><td>L 走一遍 + qlo/qhi 各走一遍</td><td class="mono">O(K)</td></tr>
-        <tr><td>cnt 清理</td><td>active set 大小 ≤ K，O(K) 歸零</td><td class="mono">O(K)</td></tr>
+        <tr><td><code>buildPrefix</code>：lMax/lMin/rMax/rMin</td><td>掃過左右兩半各一次</td><td class="mono">O(K)</td></tr>
+        <tr><td><code>maxLminL</code>（Case 1）</td><td>每個 l 一次 O(1) 檢查</td><td class="mono">O(K)</td></tr>
+        <tr><td><code>maxRminR</code>（Case 2）</td><td>每個 r 一次 O(1) 檢查</td><td class="mono">O(K)</td></tr>
+        <tr><td><code>maxLminR</code>（Case 3, two-pointer）</td><td>l 走一遍 + maxPtr/minPtr 各走一遍</td><td class="mono">O(K)</td></tr>
+        <tr><td><code>maxRminL</code>（Case 4, two-pointer）</td><td>l 走一遍 + maxPtr/minPtr 各走一遍</td><td class="mono">O(K)</td></tr>
+        <tr><td>bucket 清理</td><td>active set 大小 ≤ K，O(K) 歸零</td><td class="mono">O(K)</td></tr>
       </tbody>
     </table>
 
@@ -230,7 +218,7 @@
       <tbody>
         <tr><td>Time (單組)</td><td class="mono"><strong>O(N log N)</strong></td><td>N = 5 × 10⁵ ⇒ 約 10⁷ 次運算</td></tr>
         <tr><td>Time (全部 T 組)</td><td class="mono"><strong>O(S log S)</strong></td><td>S ≤ 5 × 10⁵ ⇒ ~10⁷ 級，安全過時限</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>a, maxL, minL, maxR, minR 各一支 + cnt 約 2N</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>a, lMax, lMin, rMax, rMin 各一支 + bucket 約 2N</td></tr>
         <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 5 × 10⁵ ⇒ 約 20 層</td></tr>
         <tr><td>Constant factor</td><td>中</td><td>四個 case + 兩個 two-pointer + cnt 加減</td></tr>
       </tbody>
@@ -251,38 +239,38 @@
       <tbody>
         <tr>
           <td><strong>答案型別 <code>long long</code></strong></td>
-          <td>N = 5 × 10⁵ 全為「已排序」時答案 = <code>N(N+1)/2 ≈ 1.25 × 10¹¹</code>，<strong>遠超 int 上限</strong>（2.1 × 10⁹）。
-            <code>solve</code>、<code>count_crossing</code> 都回傳 <code>long long</code>。</td>
+          <td>n = 5 × 10⁵ 全為「已排序」時答案 = <code>n(n+1)/2 ≈ 1.25 × 10¹¹</code>，<strong>遠超 int 上限</strong>（2.1 × 10⁹）。
+            <code>solve</code>、<code>countCrossing</code> 與四個 case 函式都回傳 <code>long long</code>。</td>
         </tr>
         <tr>
           <td><strong>跨 test case 殘留</strong></td>
-          <td><code>cnt[]</code> 在每個 case 3/4 結束都必須歸零；本實作在 <code>count_crossing</code> 結尾局部清掉
-            active set 範圍內的 index，避免後續 case 看到髒資料。</td>
+          <td><code>bucket[]</code> 在每個 case 3/4 結束都必須歸零；<code>maxLminR</code>/<code>maxRminL</code> 各自在結尾
+            局部清掉 active set 範圍 <code>[minPtr, maxPtr]</code>（或對稱）內的 index，避免後續 case 或測資看到髒資料。</td>
         </tr>
         <tr>
-          <td><strong>cnt 陣列範圍</strong></td>
-          <td>case 3 的 index 是 <code>R + minR[R] ∈ [2, 2N]</code>；
-            case 4 的 index 加了 <code>+ N</code> 偏移後 ∈ <code>[1, 2N − 1]</code>。
-            開到 <code>2 · N_MAX + 10</code> 才安全。</td>
+          <td><strong>bucket 陣列範圍</strong></td>
+          <td>case 3 的 key 是 <code>r + rMin[r] ∈ [2, 2n]</code>；
+            case 4 的 key 加了 <code>+ n</code> 偏移後 ∈ <code>[1, 2n − 1]</code>。
+            開到 <code>2 · MAXN</code> 才安全。</td>
         </tr>
         <tr>
           <td><strong>1-indexed vs 0-indexed</strong></td>
-          <td>實作採 <strong>1-indexed</strong>（a[1..N]）。<code>lo == hi</code> 即 base case；<code>mid = (lo + hi)/2</code>；
+          <td>實作採 <strong>1-indexed</strong>（a[1..n]）。<code>lo == hi</code> 即 base case；<code>mid = (lo + hi)/2</code>；
             crossing 範圍 <code>L ∈ [lo, mid]</code>、<code>R ∈ [mid+1, hi]</code>。</td>
         </tr>
         <tr>
           <td><strong>嚴格 vs 非嚴格</strong></td>
-          <td>permutation ⇒ 元素皆不同，所以 <code>maxL[L] ≠ maxR[R]</code>（不同位置的 max 不可能相等），
+          <td>permutation ⇒ 元素皆不同，所以 <code>lMax[l] ≠ rMax[r]</code>（不同位置的 max 不可能相等），
             可放心用 <strong>嚴格</strong>不等 <code>&gt;</code> / <code>&lt;</code>。</td>
         </tr>
         <tr>
           <td><strong>two-pointer 不要 reset</strong></td>
-          <td>case 3 內 <code>pmax/pmin</code> 全程單調右移，<strong>整個 L 迴圈共用一對指針</strong>，不在每個 L 重新初始化。
+          <td>case 3/4 內 <code>maxPtr/minPtr</code> 全程單調右移，<strong>整個 l 迴圈共用一對指針</strong>，不在每個 l 重新初始化。
             這是達到 O(N) 而非 O(N²) 的關鍵。</td>
         </tr>
         <tr>
           <td><strong>IO 速度</strong></td>
-          <td>T、N 都到 5 × 10⁵ 級，必加 <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 或改用 <code>scanf/printf</code>。
+          <td>t、n 都到 5 × 10⁵ 級，必加 <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 或改用 <code>scanf/printf</code>。
             輸出用 <code>'\n'</code> 別用 <code>endl</code>。</td>
         </tr>
       </tbody>
@@ -298,65 +286,65 @@
       <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// 4-Case Walkthrough</span></h2>
     </div>
 
-    <p><strong>① CASE 1：max + min 都在左半</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// CASE 1: max+min on LEFT</span>
-條件：max = maxL[L]、min = minL[L]
-goodness：maxL[L] − minL[L] = R − L
-       ⇒ R = L + maxL[L] − minL[L]   ← 對每個 L 直接算出唯一候選 R
+    <p><strong>① <code>maxLminL</code>（CASE 1）：max + min 都在左半</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// maxLminL — max+min on LEFT</span>
+條件：max = lMax[l]、min = lMin[l]
+goodness：lMax[l] − lMin[l] = r − l
+       ⇒ r = l + lMax[l] − lMin[l]   ← 對每個 l 直接算出唯一候選 r
 
-驗證右側不破壞：maxR[R] &lt; maxL[L]、minR[R] &gt; minL[L]
+驗證右側不破壞：rMax[r] &lt; lMax[l]、rMin[r] &gt; lMin[l]
    （若右側出現更大值或更小值，max/min 就不是「來自左半」了）
 
-for L in [lo, mid]:
-    R = L + maxL[L] − minL[L]
-    if R in (mid, hi] AND maxR[R] &lt; maxL[L] AND minR[R] &gt; minL[L]:
-        ans += 1</pre>
+for l in [lo, mid]:
+    r = l + lMax[l] − lMin[l]
+    if r in (mid, hi] AND rMax[r] &lt; lMax[l] AND rMin[r] &gt; lMin[l]:
+        good += 1</pre>
 
-    <p><strong>② CASE 2：max + min 都在右半</strong> · 對偶</p>
-    <pre class="sc-trace"><span class="sc-trace__head">// CASE 2: max+min on RIGHT</span>
-條件：max = maxR[R]、min = minR[R]
-goodness：maxR[R] − minR[R] = R − L
-       ⇒ L = R − (maxR[R] − minR[R])   ← 對每個 R 直接算出唯一候選 L
+    <p><strong>② <code>maxRminR</code>（CASE 2）：max + min 都在右半</strong> · 對偶</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// maxRminR — max+min on RIGHT</span>
+條件：max = rMax[r]、min = rMin[r]
+goodness：rMax[r] − rMin[r] = r − l
+       ⇒ l = r − (rMax[r] − rMin[r])   ← 對每個 r 直接算出唯一候選 l
 
-驗證左側不破壞：maxL[L] &lt; maxR[R]、minL[L] &gt; minR[R]
+驗證左側不破壞：lMax[l] &lt; rMax[r]、lMin[l] &gt; rMin[r]
 
-for R in (mid, hi]:
-    L = R − (maxR[R] − minR[R])
-    if L in [lo, mid] AND maxL[L] &lt; maxR[R] AND minL[L] &gt; minR[R]:
-        ans += 1</pre>
+for r in (mid, hi]:
+    l = r − (rMax[r] − rMin[r])
+    if l in [lo, mid] AND lMax[l] &lt; rMax[r] AND lMin[l] &gt; rMin[r]:
+        good += 1</pre>
 
-    <p><strong>③ CASE 3：max 在左、min 在右</strong> · two-pointer 計數</p>
-    <pre class="sc-trace"><span class="sc-trace__head">// CASE 3: max LEFT, min RIGHT</span>
-條件：maxL[L] &gt; maxR[R] AND minR[R] &lt; minL[L]
-goodness：maxL[L] − minR[R] = R − L
-       ⇒ L + maxL[L] = R + minR[R]   ← 等式可用 cnt[] hashing
+    <p><strong>③ <code>maxLminR</code>（CASE 3）：max 在左、min 在右</strong> · two-pointer 計數</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// maxLminR — max LEFT, min RIGHT</span>
+條件：lMax[l] &gt; rMax[r] AND rMin[r] &lt; lMin[l]
+goodness：lMax[l] − rMin[r] = r − l
+       ⇒ l + lMax[l] = r + rMin[r]   ← 等式可用 bucket[] hashing
 
-L 由 mid 向 lo 走：maxL[L] 不減、minL[L] 不增
-pmax (max-side 滿足者上界) ↗ 只右移：maxL 變大 ⇒ 更多 R 滿足
-pmin (min-side 不滿足者上界+1) ↗ 只右移：minL 變小 ⇒ 更少 R 滿足
-active set = R ∈ [pmin, pmax]
+l 由 mid 向 lo 走：lMax[l] 不減、lMin[l] 不增
+maxPtr (max-side 滿足者上界) ↗ 只右移：lMax 變大 ⇒ 更多 r 滿足
+minPtr (min-side 不滿足者上界+1) ↗ 只右移：lMin 變小 ⇒ 更少 r 滿足
+active set = r ∈ [minPtr, maxPtr]
 
-每加入 R ⇒ cnt[R + minR[R]]++
-每移除 R ⇒ cnt[R + minR[R]]−−
-查詢      ⇒ ans += cnt[L + maxL[L]]</pre>
+每加入 r ⇒ bucket[r + rMin[r]]++
+每移除 r ⇒ bucket[r + rMin[r]]−−
+查詢      ⇒ good += bucket[l + lMax[l]]</pre>
 
-    <p><strong>④ CASE 4：max 在右、min 在左</strong> · 對偶 two-pointer</p>
-    <pre class="sc-trace"><span class="sc-trace__head">// CASE 4: max RIGHT, min LEFT</span>
-條件：maxR[R] &gt; maxL[L] AND minR[R] &gt; minL[L]
-goodness：maxR[R] − minL[L] = R − L
-       ⇒ maxR[R] − R = minL[L] − L   ← 兩邊都跟「位置」綁在一起
+    <p><strong>④ <code>maxRminL</code>（CASE 4）：max 在右、min 在左</strong> · 對偶 two-pointer</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// maxRminL — max RIGHT, min LEFT</span>
+條件：rMax[r] &gt; lMax[l] AND rMin[r] &gt; lMin[l]
+goodness：rMax[r] − lMin[l] = r − l
+       ⇒ rMax[r] − r = lMin[l] − l   ← 兩邊都跟「位置」綁在一起
 
-cnt 用 (maxR[R] − R + N) 當 index（避免負數）
+bucket 用 (rMax[r] − r + n) 當 index（避免負數）
 
-L 由 mid 向 lo 走：maxL[L] 不減 ⇒ qlo 右移（max-side 失去 R）
-              minL[L] 不增 ⇒ qhi 右移（min-side 多收 R）
-active set = R ∈ [qlo, qhi]
+l 由 mid 向 lo 走：lMin[l] 不增 ⇒ minPtr 右移（min-side 多收 r）
+              lMax[l] 不減 ⇒ maxPtr 右移（max-side 失去 r）
+active set = r ∈ [maxPtr, minPtr]
 
-查詢 ⇒ ans += cnt[minL[L] − L + N]</pre>
+查詢 ⇒ good += bucket[lMin[l] − l + n]</pre>
 
     <p style="font-size:13px;color:var(--sc-ink-dim);margin-top:8px;">
-      <strong>為什麼是 O(N log N)？</strong>case 3/4 的 two-pointer 在 L 迴圈結束時，<code>pmax/qhi</code> 最多走過 hi−mid 步、
-      <code>pmin/qlo</code> 也最多走過 hi−mid 步 ⇒ 整個 case 在 <code>O(hi − lo + 1)</code> 內完成。每層遞迴掃 O(N)，共 log N 層。
+      <strong>為什麼是 O(N log N)？</strong>case 3/4 的 two-pointer 在 l 迴圈結束時，<code>maxPtr</code> 最多走過 hi−mid 步、
+      <code>minPtr</code> 也最多走過 hi−mid 步 ⇒ 整個 case 在 <code>O(hi − lo + 1)</code> 內完成。每層遞迴掃 O(N)，共 log N 層。
     </p>
   </section>
 
@@ -377,7 +365,7 @@ active set = R ∈ [qlo, qhi]
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">分治 + 跨界依 max/min 位置分 4 case：case 1/2 直接算出對應 L 或 R；case 3/4 用 two-pointer + cnt[] 計等式。</div>
+    <div class="sc-summary-bar__body">分治 + 跨界依 max/min 位置分 4 case：maxLminL/maxRminR 直接算出對應 l 或 r；maxLminR/maxRminL 用 two-pointer + bucket[] 計等式。</div>
     <div class="sc-summary-bar__detail">T(N) = 2·T(N/2) + O(N) ⇒ O(N log N) &nbsp;·&nbsp; 答案必用 long long（最大 ~1.25 × 10¹¹）</div>
   </div>
 
