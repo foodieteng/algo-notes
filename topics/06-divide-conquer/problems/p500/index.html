@@ -209,30 +209,20 @@
   </section>
 
   <!-- ============================================================
-       SECTION 05 — 跨界 4-case 動畫 · on [1,3,2,4]
+       SECTION 05 — General case 動畫 · D&C
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">05</span>
-      <h2 class="sc-section__title">跨界 4-case 動畫 · on [1,3,2,4]<span class="sc-section__title-en">// Animation B</span></h2>
+      <h2 class="sc-section__title">General case 動畫 · D&amp;C on [5,1,2,4,3]<span class="sc-section__title-en">// Animation B</span></h2>
     </div>
 
-    <p>跨界 good（<code>L ≤ mid &lt; R</code>）的 max 跟 min 各自可能來自左半或右半，
-    組合出 <strong>4 種 case</strong>。這裡用<strong>最小的範例 <code>[1, 3, 2, 4]</code></strong> —
-    它頂層切在 <code>mid = 2</code>，四個跨界 good <strong>剛好對應四種 case 各一個</strong>，一步看一種。</p>
-
-    <table class="sc-table" style="max-width:620px;margin-bottom:14px;">
-      <thead><tr><th>case</th><th>max 在</th><th>min 在</th><th>本例的跨界對</th><th>good 等式</th></tr></thead>
-      <tbody>
-        <tr><td><strong>1</strong></td><td>左</td><td>左</td><td class="mono">(1,3) [1,3,2]</td><td class="mono">2 = 2 ✓</td></tr>
-        <tr><td><strong>2</strong></td><td>右</td><td>右</td><td class="mono">(2,4) [3,2,4]</td><td class="mono">2 = 2 ✓</td></tr>
-        <tr><td><strong>3</strong></td><td>左</td><td>右</td><td class="mono">(2,3) [3,2]</td><td class="mono">1 = 1 ✓</td></tr>
-        <tr><td><strong>4</strong></td><td>右</td><td>左</td><td class="mono">(1,4) [1,3,2,4]</td><td class="mono">3 = 3 ✓</td></tr>
-      </tbody>
-    </table>
+    <p>用同一筆 <code>[5, 1, 2, 4, 3]</code> 看分治：切到 <code>mid = 3</code> →
+    左半 <code>[5,1,2]</code> 遞迴算出 4 個 good、右半 <code>[4,3]</code> 遞迴算出 3 個 good，
+    跨界（<code>L ≤ 3 &lt; R</code>）用 4-case 找到 3 個 good。<strong>合計 4 + 3 + 3 = 10</strong>。</p>
 
     <div class="sc-viz">
-      <div class="sc-viz__title">// VIZ B · CROSS 4-CASE · ONE STEP PER CASE</div>
+      <div class="sc-viz__title">// VIZ B · GENERAL CASE · D&amp;C SPLIT + CROSSING</div>
       <canvas id="viz-general" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
       <div class="sc-viz__controls">
         <button class="sc-btn" id="vg-reset">Reset</button>
@@ -242,7 +232,7 @@
         <span class="sc-viz__step" id="vg-step">-- / --</span>
       </div>
       <div class="sc-viz__label" id="vg-label">
-        <strong>INITIAL</strong> · 跨界計數 on [1, 3, 2, 4]，mid = 2
+        <strong>INITIAL</strong> · 序列 [5, 1, 2, 4, 3]，準備分治
       </div>
     </div>
   </section>
