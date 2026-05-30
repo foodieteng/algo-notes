@@ -228,14 +228,17 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
       ctx.fillText(String(i + 1), originX + i * (cellSize + gap) + cellSize / 2, originY - 10);
     }
 
-    // Brackets + range info below (gap 12 from cell bottom)
+    // Brackets + range info below (gap 12 from cell bottom).
+    // Keep labels short so the LEFT and RIGHT brackets never overlap on
+    // a narrow canvas (cross phase used long "(... picks from)" text that
+    // collided — shortened to "L=1..2" / "R=3").
     const bracketY = originY + cellSize + 12;
     if (phase === 'split' || phase === 'cross') {
       p500DrawBracket(ctx, originX, cellSize, gap, 0, 1, bracketY,
-                      phase === 'split' ? 'LEFT  L=1..2' : 'LEFT (L picks from)',
+                      'LEFT  L=1..2',
                       P500_COLOR.leftStrong);
       p500DrawBracket(ctx, originX, cellSize, gap, 2, 2, bracketY,
-                      phase === 'split' ? 'RIGHT  R=3..3' : 'RIGHT (R picks from)',
+                      'RIGHT  R=3',
                       P500_COLOR.rightStrong);
     } else if (phase === 'left') {
       p500DrawBracket(ctx, originX, cellSize, gap, 0, 1, bracketY,
@@ -247,24 +250,29 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
                       P500_COLOR.rightStrong);
     }
 
-    // Running totals panel (bottom)
+    // Running totals panel (bottom).
+    // Distribute LEFT / RIGHT / CROSS evenly across the band LEFT-of the
+    // TOTAL chip, instead of fixed +0/+100/+200 px which collided with the
+    // right-aligned TOTAL on a narrow canvas. TOTAL gets a reserved right zone.
     const panelY = h - 38;
-    ctx.fillStyle = P500_COLOR.inkDim;
     ctx.font = P500_FONT.tag;
-    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
 
-    // Left contrib
     const leftDone = phase === 'left' || phase === 'right' || phase === 'cross' || phase === 'done';
     const rightDone = phase === 'right' || phase === 'cross' || phase === 'done';
     const crossDone = phase === 'cross' || phase === 'done';
 
+    const totalZoneW = 96;                       // reserved for the TOTAL chip
+    const bandLeft = sidePad;
+    const bandRight = w - sidePad - totalZoneW;
+    const slot = (bandRight - bandLeft) / 3;     // 3 counters, left-anchored in each slot
+    ctx.textAlign = 'left';
     ctx.fillStyle = leftDone ? P500_COLOR.leftStrong : P500_COLOR.inactive;
-    ctx.fillText(`LEFT  = ${leftDone ? '3' : '?'}`, originX, panelY);
+    ctx.fillText(`LEFT = ${leftDone ? '3' : '?'}`, bandLeft + slot * 0, panelY);
     ctx.fillStyle = rightDone ? P500_COLOR.rightStrong : P500_COLOR.inactive;
-    ctx.fillText(`RIGHT = ${rightDone ? '1' : '?'}`, originX + 100, panelY);
+    ctx.fillText(`RIGHT = ${rightDone ? '1' : '?'}`, bandLeft + slot * 1, panelY);
     ctx.fillStyle = crossDone ? P500_COLOR.coral : P500_COLOR.inactive;
-    ctx.fillText(`CROSS = ${crossDone ? '1' : '?'}`, originX + 200, panelY);
+    ctx.fillText(`CROSS = ${crossDone ? '1' : '?'}`, bandLeft + slot * 2, panelY);
 
     // Total chip — right-align to canvas edge so it never overlaps CROSS
     ctx.fillStyle = phase === 'done' ? P500_COLOR.coral : P500_COLOR.inkDim;
@@ -519,7 +527,9 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
       drawMaxMinTable(ctx, w, tableY, originX, cellSize, gap, phase === 'cross-check');
     }
 
-    // Running totals panel (bottom)
+    // Running totals panel (bottom). Same proportional distribution as the
+    // base-case panel so the three counters never collide with the
+    // right-aligned TOTAL chip on a narrow canvas.
     const panelY = h - 36;
     const leftDone  = ['left','right','cross-prep','cross-check','done'].includes(phase);
     const rightDone = ['right','cross-prep','cross-check','done'].includes(phase);
@@ -527,13 +537,18 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
 
     ctx.font = P500_FONT.tag;
     ctx.textBaseline = 'middle';
+
+    const totalZoneW = 100;
+    const bandLeft = sidePad;
+    const bandRight = w - sidePad - totalZoneW;
+    const slot = (bandRight - bandLeft) / 3;
     ctx.textAlign = 'left';
     ctx.fillStyle = leftDone ? P500_COLOR.leftStrong : P500_COLOR.inactive;
-    ctx.fillText(`LEFT  = ${leftDone ? '4' : '?'}`, originX, panelY);
+    ctx.fillText(`LEFT = ${leftDone ? '4' : '?'}`, bandLeft + slot * 0, panelY);
     ctx.fillStyle = rightDone ? P500_COLOR.rightStrong : P500_COLOR.inactive;
-    ctx.fillText(`RIGHT = ${rightDone ? '3' : '?'}`, originX + 110, panelY);
+    ctx.fillText(`RIGHT = ${rightDone ? '3' : '?'}`, bandLeft + slot * 1, panelY);
     ctx.fillStyle = crossDone ? P500_COLOR.coral : P500_COLOR.inactive;
-    ctx.fillText(`CROSS = ${crossDone ? '3' : '?'}`, originX + 220, panelY);
+    ctx.fillText(`CROSS = ${crossDone ? '3' : '?'}`, bandLeft + slot * 2, panelY);
 
     ctx.fillStyle = phase === 'done' ? P500_COLOR.coral : P500_COLOR.inkDim;
     ctx.font = P500_FONT.callout;
