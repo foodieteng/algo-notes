@@ -326,14 +326,16 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
 })();
 
 /* ============================================================
-   ===== B · GENERAL CASE — D&C on [5, 1, 2, 4, 3] =====
-   Walk solve(1, 5):
-     STEP 1: SPLIT mid=3 → left [5,1,2], right [4,3]
-     STEP 2: LEFT  solve(1,3) = 4   (3 singletons + (2,3)=[1,2])
-     STEP 3: RIGHT solve(4,5) = 3   (2 singletons + (4,5)=[4,3])
-     STEP 4: CROSS — extend maxL/minL leftward from mid, maxR/minR rightward
-     STEP 5: CROSS — check 4 cases, find good crossings
-     STEP 6: TOTAL = 4 + 3 + 3 = 10
+   ===== B · CROSS 4-CASE — D&C on [1, 3, 2, 4] =====
+   The smallest permutation where all four crossing cases fire,
+   exactly once each (found by brute force). Top-level solve(1,4):
+     mid = 2 → left [1,3] (pos 1,2), right [2,4] (pos 3,4)
+   The four crossing pairs (L ≤ mid < R), one per case:
+     (1,3) [1,3,2]   max=3@L min=1@L  2=2 ✓  CASE 1 (max+min LEFT)
+     (2,4) [3,2,4]   max=4@R min=2@R  2=2 ✓  CASE 2 (max+min RIGHT)
+     (2,3) [3,2]     max=3@L min=2@R  1=1 ✓  CASE 3 (max LEFT, min RIGHT)
+     (1,4) [1,3,2,4] max=4@R min=1@L  3=3 ✓  CASE 4 (max RIGHT, min LEFT)
+   cross total = 4.
    ============================================================ */
 (function () {
   const canvas = document.getElementById('viz-general');
@@ -346,76 +348,60 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
   const btnPlay  = document.getElementById('vg-play');
   const btnReset = document.getElementById('vg-reset');
 
-  const ARR = [5, 1, 2, 4, 3];
-  // Indices 0..4 correspond to positions 1..5.
-  // mid index in code = (0+4)/2 = 2 (which is position 3, value 2).
-  // So mid = 2 (0-indexed) = position 3, value 2.
-  // Left = positions 1..3 = indices 0..2 = [5,1,2]
-  // Right = positions 4..5 = indices 3..4 = [4,3]
+  const ARR = [1, 3, 2, 4];   // positions 1..4
+  const MID = 2;              // index (1-based) of the split: left = 1..2, right = 3..4
 
-  // Precomputed max/min extending from mid for the CROSS step visualization.
-  // Left side (from mid index 2 leftward): maxL/minL of a[L..mid]
-  //   L=2: a[2..2] = [2]      maxL=2, minL=2
-  //   L=1: a[1..2] = [1,2]    maxL=2, minL=1
-  //   L=0: a[0..2] = [5,1,2]  maxL=5, minL=1
-  // Right side (from mid+1 index 3 rightward): maxR/minR of a[mid+1..R]
-  //   R=3: a[3..3] = [4]      maxR=4, minR=4
-  //   R=4: a[3..4] = [4,3]    maxR=4, minR=3
-  const maxL = [5, 2, 2];   // indexed by L (0,1,2)
-  const minL = [1, 1, 2];
-  const maxR = [4, 4];      // indexed by R-3 (0=R=3, 1=R=4)
-  const minR = [4, 3];
-
-  // Good crossing pairs:
-  //   (L=0, R=4): [5,1,2,4,3]  max-min = 5-1 = 4, R-L = 4 ✓
-  //   (L=1, R=4): [1,2,4,3]    max-min = 4-1 = 3, R-L = 3 ✓
-  //   (L=2, R=4): [2,4,3]      max-min = 4-2 = 2, R-L = 2 ✓
-  // Total cross = 3.
-
+  // Each step = one crossing pair = one case.
+  // maxSide / minSide ∈ 'L' | 'R' tells which half the extreme comes from.
   const STEPS = [
-    { phase: 'split',
-      title: 'STEP 01 · SPLIT · mid = 3',
+    {
+      caseNo: 1, L: 1, R: 3, maxPos: 2, minPos: 1, maxSide: 'L', minSide: 'L',
+      maxV: 3, minV: 1,
+      title: 'STEP 01 · CASE 1 · max + min 都在左半',
       detail:
-        '<code>solve(1, 5)</code> 取 <code>mid = 3</code>：<br/>' +
-        '左半 = <code>a[1..3] = [5, 1, 2]</code>，右半 = <code>a[4..5] = [4, 3]</code>。',
+        '跨界 <code>(L=1, R=3) = [1, 3, 2]</code>。<br/>' +
+        'max = 3、min = 1 <strong>都在左半</strong>（藍）。<br/>' +
+        '<code>max − min = 2 = R − L = 2</code> ✓ ⇒ good。' +
+        '<span style="color:#6b6b6b"> 公式：<code>R = L + maxL − minL</code>。</span>',
     },
-    { phase: 'left',
-      title: 'STEP 02 · LEFT · solve(1, 3) = 4',
+    {
+      caseNo: 2, L: 2, R: 4, maxPos: 4, minPos: 3, maxSide: 'R', minSide: 'R',
+      maxV: 4, minV: 2,
+      title: 'STEP 02 · CASE 2 · max + min 都在右半',
       detail:
-        '遞迴左半，回傳 <strong>4</strong>：<br/>' +
-        '<code>(1,1)=[5] · (2,2)=[1] · (3,3)=[2]</code> 三個 singleton，' +
-        '加 <code>(2,3)=[1,2]</code>（max−min=1=R−L ✓）= 4 個 good。',
+        '跨界 <code>(L=2, R=4) = [3, 2, 4]</code>。<br/>' +
+        'max = 4、min = 2 <strong>都在右半</strong>（褐）。<br/>' +
+        '<code>max − min = 2 = R − L = 2</code> ✓ ⇒ good。' +
+        '<span style="color:#6b6b6b"> 公式：<code>L = R − (maxR − minR)</code>。</span>',
     },
-    { phase: 'right',
-      title: 'STEP 03 · RIGHT · solve(4, 5) = 3',
+    {
+      caseNo: 3, L: 2, R: 3, maxPos: 2, minPos: 3, maxSide: 'L', minSide: 'R',
+      maxV: 3, minV: 2,
+      title: 'STEP 03 · CASE 3 · max 在左、min 在右',
       detail:
-        '遞迴右半，回傳 <strong>3</strong>：<br/>' +
-        '<code>(4,4)=[4] · (5,5)=[3]</code> 兩個 singleton，' +
-        '加 <code>(4,5)=[4,3]</code>（max−min=1=R−L ✓）= 3 個 good。',
+        '跨界 <code>(L=2, R=3) = [3, 2]</code>。<br/>' +
+        'max = 3 <strong>在左</strong>（藍）、min = 2 <strong>在右</strong>（褐）。<br/>' +
+        '<code>max − min = 1 = R − L = 1</code> ✓ ⇒ good。' +
+        '<span style="color:#6b6b6b"> 公式：<code>L + maxL = R + minR</code>（two-pointer）。</span>',
     },
-    { phase: 'cross-prep',
-      title: 'STEP 04 · CROSS · 算 maxL/minL · maxR/minR',
+    {
+      caseNo: 4, L: 1, R: 4, maxPos: 4, minPos: 1, maxSide: 'R', minSide: 'L',
+      maxV: 4, minV: 1,
+      title: 'STEP 04 · CASE 4 · max 在右、min 在左',
       detail:
-        '從 <code>mid</code> 往兩邊滑，逐步更新 <code>maxL[L]、minL[L]</code>' +
-        '（左半延伸）與 <code>maxR[R]、minR[R]</code>（右半延伸）。<br/>' +
-        '<span style="color:#6b6b6b">這是 O(N) 預備，4 種 case 都會用到。</span>',
+        '跨界 <code>(L=1, R=4) = [1, 3, 2, 4]</code>。<br/>' +
+        'max = 4 <strong>在右</strong>（褐）、min = 1 <strong>在左</strong>（藍）。<br/>' +
+        '<code>max − min = 3 = R − L = 3</code> ✓ ⇒ good。' +
+        '<span style="color:#6b6b6b"> 公式：<code>maxR − R = minL − L</code>（two-pointer）。</span>',
     },
-    { phase: 'cross-check',
-      title: 'STEP 05 · CROSS · 4 case 計數',
+    {
+      caseNo: 0, done: true,
+      title: 'STEP 05 · CROSS = 4 · 四種 case 各 1',
       detail:
-        '對每個跨界 (L, R)，依 max/min 來自哪半分 4 case：<br/>' +
-        '<code>(L=3, R=4)=[2,4]</code> max=4 min=2, R−L=1 ≠ 2 ✗<br/>' +
-        '<code>(L=3, R=5)=[2,4,3]</code> max=4 min=2, R−L=2 ✓<br/>' +
-        '<code>(L=2, R=5)=[1,2,4,3]</code> max=4 min=1, R−L=3 ✓<br/>' +
-        '<code>(L=1, R=5)=[5,1,2,4,3]</code> max=5 min=1, R−L=4 ✓<br/>' +
-        '跨界貢獻 = <strong>3</strong>',
-    },
-    { phase: 'done',
-      title: 'STEP 06 · TOTAL = 4 + 3 + 3 = 10',
-      detail:
-        '左半 4 + 右半 3 + 跨界 3 = <strong>10</strong>。<br/>' +
-        '<span style="color:#6b6b6b">遞迴完整展開：所有 size = 1 的 base case + ' +
-        '每一層分治的跨界貢獻 — O(N log N) 總和。</span>',
+        '四個跨界 good 各對應一種 case：<br/>' +
+        '<code>CASE 1 (1,3)</code> · <code>CASE 2 (2,4)</code> · ' +
+        '<code>CASE 3 (2,3)</code> · <code>CASE 4 (1,4)</code>。<br/>' +
+        '跨界貢獻 = <strong>4</strong>（再加左半 2 + 右半 2 = 全序列共 8 個 good）。',
     },
   ];
 
@@ -438,43 +424,39 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     ctx.fillStyle = P500_COLOR.paper;
     ctx.fillRect(0, 0, w, h);
 
-    // Headline — top band
+    // Headline
     ctx.fillStyle = P500_COLOR.ink;
     ctx.font = P500_FONT.head;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     const headline = step === -1
-      ? 'INITIAL · solve(1, 5) on [5, 1, 2, 4, 3]'
+      ? 'INITIAL · 跨界 4-case on [1, 3, 2, 4]'
       : STEPS[step].title;
     ctx.fillText(headline, w / 2, 14);
 
-    // Sub-line — separated band (gap ≥ 12 from headline)
+    // Sub-line
     ctx.fillStyle = P500_COLOR.inkDim;
     ctx.font = P500_FONT.sub;
-    ctx.fillText('count(lo, hi) = count(lo, mid) + count(mid+1, hi) + count_crossing(...)', w / 2, 38);
+    ctx.fillText('依「max / min 各來自左半還右半」分 4 種 case', w / 2, 38);
 
-    // Array row (centered, responsive)
+    // Array row
     const sidePad = 32;
     const gap = 8;
     const cellSize = Math.min((w - sidePad * 2 - gap * (ARR.length - 1)) / ARR.length, 56);
     const totalW = cellSize * ARR.length + gap * (ARR.length - 1);
     const originX = (w - totalW) / 2;
-    const originY = 84;   // matches base case — clears sub-line + index labels with breathing room
+    const originY = 92;
 
-    const phase = step >= 0 ? STEPS[step].phase : null;
+    const cur = step === -1 ? null : STEPS[step];
 
-    // Cell tints
+    // Cell tints: highlight the current crossing range; color max cell / min cell
+    // by which half they come from (L=blue, R=tan). Cells outside the range dimmed.
     const states = new Array(ARR.length).fill(undefined);
-    if (phase === 'split' || phase === 'cross-prep' || phase === 'cross-check') {
-      states[0] = 'L'; states[1] = 'L'; states[2] = 'L';
-      states[3] = 'R'; states[4] = 'R';
-    } else if (phase === 'left') {
-      states[0] = 'L'; states[1] = 'L'; states[2] = 'L';
-      states[3] = 'dim'; states[4] = 'dim';
-    } else if (phase === 'right') {
-      states[0] = 'dim'; states[1] = 'dim'; states[2] = 'dim';
-      states[3] = 'R'; states[4] = 'R';
-    } else if (phase === 'done') {
+    if (cur && !cur.done) {
+      for (let p = 1; p <= ARR.length; p++) {
+        if (p < cur.L || p > cur.R) { states[p - 1] = 'dim'; }
+      }
+    } else if (cur && cur.done) {
       for (let i = 0; i < ARR.length; i++) states[i] = 'good';
     }
     p500DrawArray(ctx, ARR, originX, originY, cellSize, gap, states);
@@ -488,131 +470,140 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
       ctx.fillText(String(i + 1), originX + i * (cellSize + gap) + cellSize / 2, originY - 10);
     }
 
-    // Mid marker line — coral dashed; label sits ABOVE the index numbers
-    if (phase && phase !== 'done') {
-      const midX = originX + 3 * (cellSize + gap) - gap / 2;
+    // mid divider — coral dashed, between position 2 and 3
+    const midX = originX + MID * (cellSize + gap) - gap / 2;
+    ctx.strokeStyle = P500_COLOR.coral;
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(midX, originY - 6);
+    ctx.lineTo(midX, originY + cellSize + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = P500_COLOR.coral;
+    ctx.font = P500_FONT.tagSm;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('mid', midX, originY - 22);
+
+    // Half labels under the array (always shown): LEFT / RIGHT
+    const halfY = originY + cellSize + 10;
+    p500DrawBracket(ctx, originX, cellSize, gap, 0, MID - 1, halfY, 'LEFT 左半', P500_COLOR.leftStrong);
+    p500DrawBracket(ctx, originX, cellSize, gap, MID, ARR.length - 1, halfY, 'RIGHT 右半', P500_COLOR.rightStrong);
+
+    if (cur && !cur.done) {
+      // Outline the current crossing range [L, R] with a coral rectangle
+      const rx = originX + (cur.L - 1) * (cellSize + gap) - 3;
+      const rw = (cur.R - cur.L) * (cellSize + gap) + cellSize + 6;
       ctx.strokeStyle = P500_COLOR.coral;
-      ctx.lineWidth = 1.4;
-      ctx.setLineDash([4, 3]);
-      ctx.beginPath();
-      ctx.moveTo(midX, originY - 6);
-      ctx.lineTo(midX, originY + cellSize + 10);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = P500_COLOR.coral;
-      ctx.font = P500_FONT.tagSm;
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(' mid = 3', midX, originY - 22);
+      ctx.lineWidth = 2.4;
+      ctx.strokeRect(rx, originY - 3, rw, cellSize + 6);
+
+      // Tag the max cell and min cell with side-colored dots + "max"/"min"
+      drawExtremeTag(ctx, originX, originY, cellSize, gap, cur.maxPos, 'max', cur.maxSide, -1);
+      drawExtremeTag(ctx, originX, originY, cellSize, gap, cur.minPos, 'min', cur.minSide, +1);
     }
 
-    // Brackets below array (gap 14 from cell bottom)
-    const bracketY = originY + cellSize + 14;
-    if (phase === 'split' || phase === 'cross-prep' || phase === 'cross-check') {
-      p500DrawBracket(ctx, originX, cellSize, gap, 0, 2, bracketY,
-                      'LEFT  [1, 3]',  P500_COLOR.leftStrong);
-      p500DrawBracket(ctx, originX, cellSize, gap, 3, 4, bracketY,
-                      'RIGHT [4, 5]', P500_COLOR.rightStrong);
-    } else if (phase === 'left') {
-      p500DrawBracket(ctx, originX, cellSize, gap, 0, 2, bracketY,
-                      'solve(1, 3) → 4', P500_COLOR.leftStrong);
-    } else if (phase === 'right') {
-      p500DrawBracket(ctx, originX, cellSize, gap, 3, 4, bracketY,
-                      'solve(4, 5) → 3', P500_COLOR.rightStrong);
-    }
+    // Case-classification 2x2 mini-grid + equation panel (lower half).
+    // Anchor to a fixed left position (not originX, which is centered and
+    // drifts right on narrow canvases — the equation text would overflow).
+    const panelX = sidePad + 56;   // 56px gutter for the "max 在左/右" row labels
+    drawCasePanel(ctx, w, h, panelX, cur);
 
-    // Max/min table — only when in cross phases (gap 40 from bracket so labels don't crowd)
-    if (phase === 'cross-prep' || phase === 'cross-check') {
-      const tableY = bracketY + 40;
-      drawMaxMinTable(ctx, w, tableY, originX, cellSize, gap, phase === 'cross-check');
-    }
-
-    // Running totals panel (bottom). Same proportional distribution as the
-    // base-case panel so the three counters never collide with the
-    // right-aligned TOTAL chip on a narrow canvas.
-    const panelY = h - 36;
-    const leftDone  = ['left','right','cross-prep','cross-check','done'].includes(phase);
-    const rightDone = ['right','cross-prep','cross-check','done'].includes(phase);
-    const crossDone = ['cross-check','done'].includes(phase);
-
-    ctx.font = P500_FONT.tag;
-    ctx.textBaseline = 'middle';
-
-    const totalZoneW = 100;
-    const bandLeft = sidePad;
-    const bandRight = w - sidePad - totalZoneW;
-    const slot = (bandRight - bandLeft) / 3;
-    ctx.textAlign = 'left';
-    ctx.fillStyle = leftDone ? P500_COLOR.leftStrong : P500_COLOR.inactive;
-    ctx.fillText(`LEFT = ${leftDone ? '4' : '?'}`, bandLeft + slot * 0, panelY);
-    ctx.fillStyle = rightDone ? P500_COLOR.rightStrong : P500_COLOR.inactive;
-    ctx.fillText(`RIGHT = ${rightDone ? '3' : '?'}`, bandLeft + slot * 1, panelY);
-    ctx.fillStyle = crossDone ? P500_COLOR.coral : P500_COLOR.inactive;
-    ctx.fillText(`CROSS = ${crossDone ? '3' : '?'}`, bandLeft + slot * 2, panelY);
-
-    ctx.fillStyle = phase === 'done' ? P500_COLOR.coral : P500_COLOR.inkDim;
+    // Running CROSS counter (bottom-right)
+    const panelY = h - 28;
+    const crossVal = cur ? (cur.done ? 4 : cur.caseNo) : 0;
     ctx.font = P500_FONT.callout;
     ctx.textAlign = 'right';
-    ctx.fillText(phase === 'done' ? 'TOTAL = 10' : 'TOTAL = ?', w - sidePad, panelY);
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = (cur && cur.done) ? P500_COLOR.coral : P500_COLOR.inkDim;
+    ctx.fillText(cur ? `CROSS = ${crossVal}${cur.done ? '' : ' / 4'}` : 'CROSS = 0 / 4',
+                 w - sidePad, panelY);
   }
 
-  function drawMaxMinTable(ctx, w, y, originX, cellSize, gap, highlightGoods) {
-    // Layout: a small grid showing maxL/minL for L=1..3 and maxR/minR for R=4..5
-    // Use the array columns as anchors so the table aligns under the array.
-    const labelX = originX - 18;
-    const rowGap = 12;
-
-    ctx.font = P500_FONT.tagSm;
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'middle';
-
-    // Row 1: maxL
-    ctx.fillStyle = P500_COLOR.leftStrong;
-    ctx.fillText('maxL', labelX, y);
-    ctx.fillText('minL', labelX, y + rowGap);
-    ctx.fillStyle = P500_COLOR.rightStrong;
-    ctx.fillText('maxR', labelX, y + rowGap * 2);
-    ctx.fillText('minR', labelX, y + rowGap * 3);
-
-    // Values per column
-    const cellCenterX = (i) => originX + i * (cellSize + gap) + cellSize / 2;
+  // Draw a "max"/"min" tag above (dir=-1) or below (dir=+1) a cell,
+  // colored by side (L=blue, R=tan).
+  function drawExtremeTag(ctx, originX, originY, cellSize, gap, pos, text, side, dir) {
+    const cx = originX + (pos - 1) * (cellSize + gap) + cellSize / 2;
+    const color = side === 'L' ? P500_COLOR.leftStrong : P500_COLOR.rightStrong;
+    ctx.fillStyle = color;
+    ctx.font = P500_FONT.tag;
     ctx.textAlign = 'center';
-
-    // L side (indices 0,1,2)
-    for (let i = 0; i < 3; i++) {
-      ctx.fillStyle = P500_COLOR.leftStrong;
-      ctx.fillText(String(maxL[i]), cellCenterX(i), y);
-      ctx.fillText(String(minL[i]), cellCenterX(i), y + rowGap);
-    }
-    // R side (indices 3,4 ⇒ R=3,4 in 0-indexed = positions 4,5)
-    for (let j = 0; j < 2; j++) {
-      ctx.fillStyle = P500_COLOR.rightStrong;
-      ctx.fillText(String(maxR[j]), cellCenterX(j + 3), y + rowGap * 2);
-      ctx.fillText(String(minR[j]), cellCenterX(j + 3), y + rowGap * 3);
-    }
-
-    if (highlightGoods) {
-      // Below: show the 3 good crossings as chips
-      const blockW = cellSize * ARR.length + gap * (ARR.length - 1);
-      const chipY = y + rowGap * 4 + 6;
-      ctx.font = P500_FONT.tagSm;
-      ctx.textAlign = 'center';
+    if (dir < 0) {
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(text, cx, originY - 30);
+    } else {
       ctx.textBaseline = 'top';
+      ctx.fillText(text, cx, originY + cellSize + 30);
+    }
+  }
 
-      const chips = [
-        { text: '(3, 5)  +1', x: originX + blockW * 0.22 },
-        { text: '(2, 5)  +1', x: originX + blockW * 0.50 },
-        { text: '(1, 5)  +1', x: originX + blockW * 0.78 },
-      ];
-      for (const c of chips) {
-        ctx.fillStyle = P500_COLOR.goodFill;
-        ctx.fillRect(c.x - 32, chipY - 2, 64, 16);
-        ctx.strokeStyle = P500_COLOR.goodStroke;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(c.x - 32 + 0.5, chipY - 2 + 0.5, 64 - 1, 16 - 1);
-        ctx.fillStyle = P500_COLOR.ink;
-        ctx.fillText(c.text, c.x, chipY);
+  // 2x2 case grid showing which (maxSide, minSide) the current step is,
+  // plus the good equation worked out.
+  function drawCasePanel(ctx, w, h, originX, cur) {
+    const gx = originX;
+    const gy = h - 150;
+    const cellW = 86, cellH = 30;
+
+    // grid header row/col labels
+    ctx.font = P500_FONT.tagSm;
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = P500_COLOR.inkDim;
+    ctx.fillText('min 在左', gx + cellW * 0.5, gy - 12);
+    ctx.fillText('min 在右', gx + cellW * 1.5, gy - 12);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = P500_COLOR.leftStrong;
+    ctx.fillText('max 在左', gx - 8, gy + cellH * 0.5);
+    ctx.fillStyle = P500_COLOR.rightStrong;
+    ctx.fillText('max 在右', gx - 8, gy + cellH * 1.5);
+
+    // 2x2 cells:  [max L,min L]=C1  [max L,min R]=C3
+    //             [max R,min L]=C4  [max R,min R]=C2
+    const grid = [
+      [{ n: 1, mx: 'L', mn: 'L' }, { n: 3, mx: 'L', mn: 'R' }],
+      [{ n: 4, mx: 'R', mn: 'L' }, { n: 2, mx: 'R', mn: 'R' }],
+    ];
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let r = 0; r < 2; r++) {
+      for (let c = 0; c < 2; c++) {
+        const x = gx + c * cellW;
+        const y = gy + r * cellH;
+        const g = grid[r][c];
+        const active = cur && !cur.done && cur.caseNo === g.n;
+        ctx.fillStyle = active ? P500_COLOR.coral
+                      : (cur && cur.done) ? P500_COLOR.goodFill : P500_COLOR.cellBg;
+        ctx.fillRect(x, y, cellW - 4, cellH - 4);
+        ctx.strokeStyle = active ? P500_COLOR.coral
+                        : (cur && cur.done) ? P500_COLOR.goodStroke : P500_COLOR.cellBorder;
+        ctx.lineWidth = active ? 2 : 1;
+        ctx.strokeRect(x + 0.5, y + 0.5, cellW - 4 - 1, cellH - 4 - 1);
+        ctx.fillStyle = active ? '#fff' : P500_COLOR.ink;
+        ctx.font = P500_FONT.tag;
+        ctx.fillText(`CASE ${g.n}`, x + (cellW - 4) / 2, y + (cellH - 4) / 2);
       }
+    }
+
+    // Equation worked out to the right of the grid
+    if (cur && !cur.done) {
+      const ex = gx + cellW * 2 + 24;
+      const ey = gy + cellH;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.font = P500_FONT.callout;
+      ctx.fillStyle = P500_COLOR.ink;
+      ctx.fillText(`max − min = ${cur.maxV} − ${cur.minV} = ${cur.maxV - cur.minV}`, ex, ey - 12);
+      ctx.fillStyle = P500_COLOR.coral;
+      ctx.fillText(`R − L = ${cur.R} − ${cur.L} = ${cur.R - cur.L}  ⇒ good ✓`, ex, ey + 12);
+    } else if (cur && cur.done) {
+      const ex = gx + cellW * 2 + 24;
+      const ey = gy + cellH;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.font = P500_FONT.callout;
+      ctx.fillStyle = P500_COLOR.goodStroke;
+      ctx.fillText('四格全亮 ⇒ 四種 case 各命中一次', ex, ey);
     }
   }
 
@@ -624,8 +615,8 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     if (labelEl) {
       if (step === -1) {
         labelEl.innerHTML =
-          '<strong>INITIAL</strong> · <code>solve(1, 5)</code> on <code>[5, 1, 2, 4, 3]</code><br/>' +
-          '<span style="color:#6b6b6b">按 Play 走過 6 步分治：SPLIT → LEFT → RIGHT → CROSS (準備) → CROSS (計數) → TOTAL。</span>';
+          '<strong>INITIAL</strong> · 跨界計數 on <code>[1, 3, 2, 4]</code>，<code>mid = 2</code>。<br/>' +
+          '<span style="color:#6b6b6b">這是最小的「四種 case 各發生一次」範例。按 Play 一步一個 case。</span>';
       } else {
         const s = STEPS[step];
         labelEl.innerHTML = `<strong>${s.title}</strong><br/>${s.detail}`;
@@ -643,7 +634,7 @@ function p500DrawBracket(ctx, originX, cellSize, gap, lo, hi, y, label, color) {
     timer = setInterval(() => {
       if (step >= STEPS.length - 1) { stop(); return; }
       next();
-    }, 1900);
+    }, 2000);
   }
   function stop() {
     if (timer) { clearInterval(timer); timer = null; }
