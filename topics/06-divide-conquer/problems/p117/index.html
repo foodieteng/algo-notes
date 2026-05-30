@@ -24,7 +24,7 @@
     </span>
     <span>
       <a href="https://tioj.sprout.tw/contests/20/problems/117/" target="_blank" rel="noopener">原題 ↗</a>
-      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.30
     </span>
   </div>
 
@@ -32,12 +32,14 @@
   <header class="sc-mast">
     <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
     <h1 class="sc-mast__title">糟糕陣列</h1>
-    <p class="sc-mast__subtitle">// Bad Array · 2×2 block 遞迴構造</p>
+    <p class="sc-mast__subtitle">// Bad Array · XOR 1-因子分解</p>
     <div class="sc-mast__meta">
       <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
-      核心 Divide &amp; Conquer · Constructive · N = 2^K ≤ 1024
+      核心 構造 · 組合數學 · N = 2^K ≤ 1024
       <span class="sc-mast__sep">·</span>
-      時間 <strong>Θ(N²)</strong>
+      時間 <strong>O(N²)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(1)</strong>
     </div>
   </header>
 
@@ -62,25 +64,32 @@
 
     <div class="sc-question">
       <span class="sc-question__label">QUESTION</span>
-      <p>給 <code>N = 2^K</code>（N ≤ 1024），請構造一個 <code>N × N</code> 矩陣 <code>A</code>，每格填入
-      <code>1..2N−1</code> 之中的某個整數（可重複），且滿足：
-      <strong>對於每個 <code>i</code>，row <code>i</code> 與 col <code>i</code> 所有元素的<strong>聯集</strong>恰為 <code>{1, 2, ..., 2N−1}</code></strong>。</p>
-      <p style="margin-top:8px;">互動式：實作 <code>solve(N)</code>，由 judge 提供 <code>void Report(int)</code>。
-      依 row-major 順序輸出 N² 個整數。</p>
+      <p>給 <code>N = 2^K</code>（N ≤ 1024），構造一個 <code>N × N</code> 陣列 <code>a</code>，每格填
+      <code>1..2N−1</code> 之間的整數（可重複），且滿足：
+      <strong>對每個 <code>i</code>，第 i 列（row i）和第 i 行（col i）合起來的值，聯集恰好是 <code>{1, 2, ..., 2N−1}</code>。</strong></p>
+      <p style="margin-top:8px;">互動式：實作 <code>solve(N)</code>，由 judge 提供 <code>void Report(int)</code>，
+      依 row-major 順序呼叫 N² 次。答案不唯一。</p>
     </div>
 
     <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
-      聯集大小是 <code>2N−1</code>；單一 row 或 col 有 <code>N</code> 格 — 所以 row 和 col 的元素之間必然<strong>大量重疊</strong>（剛好 1 個），這是構造能成立的容量條件。
+      先數一個關鍵的數字：row i 有 <code>N</code> 格、col i 有 <code>N</code> 格，但它們<strong>共用對角線 (i, i) 那一格</strong>，
+      所以合起來是 <code>N + N − 1 = 2N − 1</code> 格。而 <code>{1..2N−1}</code> 剛好有 <code>2N − 1</code> 個數 —
+      <strong>格數 = 數量</strong>，代表這個十字裡每個數<strong>恰好出現一次、不重不漏</strong>。
+    </p>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:8px;">
+      把「row i + col i」這個十字形叫做 <strong>index i 的十字 (cross)</strong>。
+      整題就是一句話：<strong>每個十字都要把 <code>1..2N−1</code> 不重不漏地放滿。</strong>
     </p>
   </section>
 
   <!-- ============================================================
-       SECTION 02 — 為什麼用分治構造
+       SECTION 02 — 為什麼用 XOR 構造
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">02</span>
-      <h2 class="sc-section__title">為什麼用分治構造<span class="sc-section__title-en">// Why D&amp;C</span></h2>
+      <h2 class="sc-section__title">為什麼用 XOR 構造<span class="sc-section__title-en">// Why XOR</span></h2>
     </div>
 
     <div class="sc-ko">
@@ -88,7 +97,7 @@
         <div class="sc-ko-card sc-ko-card--bad">
           <div class="sc-ko-card__head">
             <span class="sc-ko-card__badge">A</span>
-            <span class="sc-ko-card__title">暴力枚舉所有矩陣</span>
+            <span class="sc-ko-card__title">暴力枚舉所有陣列</span>
             <span class="sc-ko-card__o">O((2N−1)^(N²))</span>
           </div>
           <div class="sc-ko-card__body">指數爆。N = 1024 ⇒ <strong>(2047)^(10⁶)</strong> — 完全不可行。</div>
@@ -97,166 +106,152 @@
         <div class="sc-ko-card sc-ko-card--mid">
           <div class="sc-ko-card__head">
             <span class="sc-ko-card__badge">B</span>
-            <span class="sc-ko-card__title">隨機填 + 驗證</span>
-            <span class="sc-ko-card__o">非確定性</span>
+            <span class="sc-ko-card__title">一般偶數的圓圈法</span>
+            <span class="sc-ko-card__o">round-robin</span>
           </div>
-          <div class="sc-ko-card__body">N 大時隨機命中機率趨近 0；無法保證在時限內找到合法解。</div>
-          <div class="sc-ko-card__verdict">△ REJECT · UNRELIABLE</div>
+          <div class="sc-ko-card__body">1-因子分解對任何偶數都存在，但 round-robin 構造要轉指標、繞圈，程式碼瑣碎易錯。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · MESSY</div>
         </div>
       </div>
 
-      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+      <div class="sc-ko__arrow">N = 2^K · ADOPT</div>
 
       <div class="sc-ko-card sc-ko-card--good">
         <div class="sc-ko-card__head">
           <span class="sc-ko-card__badge">C</span>
-          <span class="sc-ko-card__title">2×2 block 遞迴構造</span>
-          <span class="sc-ko-card__o">Θ(N²)</span>
+          <span class="sc-ko-card__title">XOR 1-因子分解</span>
+          <span class="sc-ko-card__o">O(N²) · O(1) 空間</span>
         </div>
-        <div class="sc-ko-card__body">把 <code>A(N)</code> 看成 4 個 <code>K × K</code> 子塊（<code>K = N/2</code>），由 <code>A(K)</code> 平移 + 對角線「灑」最大值組裝。每格 O(1) 寫入。</div>
-        <div class="sc-ko-card__verdict">● ADOPT · Θ(N²)</div>
+        <div class="sc-ko-card__body"><code>color(i, j) = i XOR j</code>。N 是 2 的次方時 XOR 自動給出完美配對，把整個構造壓成一行位元運算，連陣列都不用存。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · O(1) 空間</div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================
-       SECTION 03 — 核心策略
+       SECTION 03 — 核心推導鏈
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">03</span>
-      <h2 class="sc-section__title">核心策略 · 2×2 block<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+      <h2 class="sc-section__title">核心推導 · 四步化約<span class="sc-section__title-en">// Derivation Chain</span></h2>
     </div>
 
-    <p style="font-size:14px;">設 <code>K = N/2</code>，<code>shift = 2K − 1 = N − 1</code>。把 <code>A(N)</code> 拆成 4 個 <code>K × K</code> 子塊：</p>
-
-    <table class="sc-table" style="max-width:560px;">
-      <thead><tr><th>子塊</th><th>內容</th><th>值域</th></tr></thead>
-      <tbody>
-        <tr><td><strong>TL</strong> (top-left)</td><td><code>A(K)[i][j]</code></td><td class="mono">{1..2K−1}</td></tr>
-        <tr><td><strong>BR</strong> (bottom-right)</td><td><code>A(K)[i][j]</code>（同 TL）</td><td class="mono">{1..2K−1}</td></tr>
-        <tr><td><strong>BL</strong> (bottom-left)</td><td><code>A(K)[i][j] + shift</code></td><td class="mono">{shift+1..2N−2}</td></tr>
-        <tr><td><strong>TR</strong> (top-right)</td><td><code>i == j</code> 填 <strong>2N − 1</strong>；否則 <code>A(K)[i][j] + shift</code></td><td class="mono">{shift+1..2N−1}</td></tr>
-      </tbody>
-    </table>
-
-    <ol style="margin-top:10px;">
-      <li><strong>遞迴填 TL</strong> · <code>build(K, 0, 0, base)</code></li>
-      <li><strong>遞迴填 BR</strong> · <code>build(K, K, K, base)</code>（與 TL 同值，不平移）</li>
-      <li><strong>掃 TL 推導 BL</strong> · <code>M[K+i][j] = M[i][j] + shift</code></li>
-      <li><strong>掃 TL 推導 TR</strong> · 對角線 (<code>i == j</code>) 填 <code>2N − 1</code>，其餘 <code>M[i][K+j] = M[i][j] + shift</code></li>
+    <ol style="font-size:14px;line-height:1.85;">
+      <li><strong>對角線全放 <code>N</code></strong>。對角格 (i, i) 同時屬於 row i 和 col i，是十字的中心。所有對角線放同一個常數 <code>N</code>（正中間最對稱），剩下 <code>2N−2</code> 格要放 <code>{1..N−1} ∪ {N+1..2N−1}</code>。</li>
+      <li><strong>剩下的數兩兩配成「和為 2N」的互補對</strong>：<code>{1, 2N−1}, {2, 2N−2}, …, {N−1, N+1}</code>，共 <code>N−1</code> 組。目標變成：讓 (i, c) 和 (c, i) 這兩格剛好放某一組互補對，即 <code>a[i][c] + a[c][i] = 2N</code>。</li>
+      <li><strong>化約成圖著色</strong>。定義 <code>color(i, c)</code> = 這格屬於第幾組互補對。因為 (i,c) 與 (c,i) 同組 ⇒ <code>color</code> 對稱。十字 i 不重不漏 ⟺ 當 c 跑遍其他 index，<code>color</code> 要把 <code>1..N−1</code> 每個編號各碰一次 ⇒ 這就是 <strong>K_N 的 1-因子分解</strong>。</li>
+      <li><strong>N = 2^K ⇒ 用 XOR</strong>。令 <code>color(i, j) = i XOR j</code>：固定 i 時 <code>i XOR j</code> 掃過 <code>1..N−1</code> 每個非零值各一次（雙射）、對稱、每色構成完美配對 — 三條件全中，一行解決。</li>
     </ol>
 
-    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
-      所有寫入都是 O(1)，每格只被填一次 ⇒ 總工作量 = N² ⇒ <strong>Θ(N²)</strong>。
-    </p>
+    <div class="sc-formula" style="margin-top:14px;">
+      <div class="sc-formula__main">
+        <code>i == j</code> → <strong>N</strong> &nbsp;·&nbsp;
+        <code>i &lt; j</code> → <strong>i ^ j</strong> &nbsp;·&nbsp;
+        <code>i &gt; j</code> → <strong>2N − (i ^ j)</strong>
+      </div>
+      <div class="sc-formula__hint">
+        用 <code>i</code> 與 <code>j</code> 的大小定方向（小的拿 <code>i^j</code>、大的拿 <code>2N−(i^j)</code>），
+        <strong><code>a[i][j] + a[j][i] = 2N</code> 自動成立</strong>。0-indexed。
+      </div>
+    </div>
   </section>
 
   <!-- ============================================================
-       SECTION 04 — Base case 動畫
+       SECTION 04 — 動畫
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">04</span>
-      <h2 class="sc-section__title">Base case 動畫 · build(2) on A(1) = [1]<span class="sc-section__title-en">// Animation A</span></h2>
+      <h2 class="sc-section__title">動畫 · XOR 著色 + 十字驗證 (N = 4)<span class="sc-section__title-en">// Animation</span></h2>
     </div>
 
-    <p>最小的非 trivial 構造：<code>K = 1</code>，<code>A(1) = [1]</code>，<code>shift = 2K − 1 = 1</code>，<code>2N − 1 = 3</code>。看 4 個子塊依序被填、最後驗證 row 1 ∪ col 1 = {1, 2, 3}。</p>
+    <p>用 <code>N = 4</code> 把整個構造畫出來：同一組互補對（和為 8）塗成同色，對角線中心（全是 4）用灰色，
+    紅框圈出 <strong>index 0 的十字</strong>，逐步點亮、收集它看到的值。</p>
 
     <div class="sc-viz">
-      <div class="sc-viz__title">// VIZ A · BASE CASE · build(2) FROM A(1)</div>
-      <canvas id="viz-base" class="sc-viz__canvas" height="240" style="height:240px"></canvas>
+      <div class="sc-viz__title">// VIZ · XOR CONSTRUCTION · N = 4 · CROSS OF index 0</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
       <div class="sc-viz__controls">
-        <button class="sc-btn" id="vb-reset">Reset</button>
-        <button class="sc-btn" id="vb-prev">Prev</button>
-        <button class="sc-btn sc-btn--primary" id="vb-play">Play</button>
-        <button class="sc-btn" id="vb-next">Next</button>
-        <span class="sc-viz__step" id="vb-step">-- / --</span>
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
       </div>
-      <div class="sc-viz__label" id="vb-label">
-        <strong>INITIAL</strong> · 2 × 2 空格，準備從 A(1) = [1] 建出 A(2)
-      </div>
-    </div>
-
-    <p style="font-size:13px;color:var(--sc-ink-dim);">
-      最終 <code>A(2) = [[1, 3], [2, 1]]</code>，row 1 ∪ col 1 = {1,3} ∪ {1,2} = {1,2,3} ✓、row 2 ∪ col 2 = {2,1} ∪ {3,1} = {1,2,3} ✓。
-    </p>
-  </section>
-
-  <!-- ============================================================
-       SECTION 05 — General case 動畫
-       ============================================================ -->
-  <section class="sc-section">
-    <div class="sc-section__head">
-      <span class="sc-section__num">05</span>
-      <h2 class="sc-section__title">General case 動畫 · build(4) on A(2)<span class="sc-section__title-en">// Animation B</span></h2>
-    </div>
-
-    <p>從 <code>A(2) = [[1, 3], [2, 1]]</code> 建出 <code>A(4)</code>。<code>K = 2</code>，<code>shift = 2K − 1 = 3</code>，<code>2N − 1 = 7</code>。動畫 5 步：TL → BR → BL → TR（含對角線特別處理）→ 驗證。</p>
-
-    <div class="sc-viz">
-      <div class="sc-viz__title">// VIZ B · GENERAL CASE · build(4) FROM A(2)</div>
-      <canvas id="viz-general" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
-      <div class="sc-viz__controls">
-        <button class="sc-btn" id="vg-reset">Reset</button>
-        <button class="sc-btn" id="vg-prev">Prev</button>
-        <button class="sc-btn sc-btn--primary" id="vg-play">Play</button>
-        <button class="sc-btn" id="vg-next">Next</button>
-        <span class="sc-viz__step" id="vg-step">-- / --</span>
-      </div>
-      <div class="sc-viz__label" id="vg-label">
-        <strong>INITIAL</strong> · 4 × 4 空格，準備從 A(2) 建出 A(4)
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 4 × 4 空格，準備用 <code>color = i ^ j</code> 填滿。
       </div>
     </div>
 
     <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
       <strong>顏色說明</strong>：
-      <span style="background:#e3edf5;padding:1px 6px;">TL · A(K) 原值</span> &nbsp;·&nbsp;
-      <span style="background:#f6ead8;padding:1px 6px;">BR · A(K) 原值（同 TL）</span> &nbsp;·&nbsp;
-      <span style="background:#d9e8c7;padding:1px 6px;">BL · +shift</span> &nbsp;·&nbsp;
-      <span style="background:#fbe2d7;padding:1px 6px;">TR · +shift / 對角線 2N−1</span>
+      <span style="background:#cfcfcf;padding:1px 6px;">對角中心 = N = 4</span> &nbsp;·&nbsp;
+      <span style="background:#e3edf5;padding:1px 6px;">互補對 1（和 8）</span> &nbsp;·&nbsp;
+      <span style="background:#f6ead8;padding:1px 6px;">互補對 2</span> &nbsp;·&nbsp;
+      <span style="background:#d9e8c7;padding:1px 6px;">互補對 3</span> &nbsp;·&nbsp;
+      <span style="background:#fbe2d7;padding:1px 6px;">index 0 的十字</span>
+    </p>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      紅框十字收集到 row 0 = {4, 1, 2, 3} 加上 col 0 = {4, 7, 6, 5}，去掉重複的對角 4，
+      剛好是 <strong>{1, 2, 3, 4, 5, 6, 7}</strong>。每個 index 的十字都同理。
     </p>
   </section>
 
   <!-- ============================================================
-       SECTION 06 — 構造正確性
+       SECTION 05 — 為什麼 XOR 給出 1-因子分解
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">06</span>
-      <h2 class="sc-section__title">構造正確性<span class="sc-section__title-en">// Correctness</span></h2>
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼 XOR 成立<span class="sc-section__title-en">// Why XOR Works</span></h2>
     </div>
 
     <div class="sc-dark-box">
-      <div class="sc-dark-box__title">// CORRECTNESS · 為何 row i ∪ col i = {1..2N−1}</div>
+      <div class="sc-dark-box__title">// LEMMA · color(i, j) = i XOR j 是 K_N 的 1-因子分解</div>
       <div class="sc-dark-box__body">
-        <p>歸納假設：對 <code>A(K)</code>，每個 <code>i ∈ [1..K]</code> 滿足 row i ∪ col i = <code>{1..2K−1}</code>。</p>
-        <p>看 <code>A(N)</code> 的某一個 <code>i ∈ [1..N]</code>。分兩種情況：</p>
+        <p>把 index 想成「點」、<code>color(i, j)</code> 想成「邊 {i, j} 的顏色」。要證三件事：</p>
         <ol>
-          <li><strong>i ∈ [1..K]（上半 / 左半）</strong>
-            <ul>
-              <li>row <code>i</code> = TL[i] ∪ TR[i]。TL[i] 是 A(K) 的 row i。TR[i] 除了對角格 (i, K+i) = <code>2N−1</code>，其餘 = A(K)[i] + shift（剝掉 j = i 那一格）。</li>
-              <li>col <code>i</code> = TL[*][i] ∪ BL[*][i]。TL[*][i] 是 A(K) 的 col i。BL[*][i] = A(K)[*][i] + shift（包含 j = i 那一格 = A(K)[i][i] + shift）。</li>
-              <li>聯集：A(K) 的 row i ∪ col i = <code>{1..2K−1}</code>（歸納假設）。加上 +shift 的版本 = <code>{shift+1 .. shift + 2K−1} = {2K .. 2N−2}</code>。再加上對角的 <code>2N−1</code>。合起來 = <code>{1..2K−1} ∪ {2K..2N−2} ∪ {2N−1} = {1..2N−1}</code>。</li>
-              <li>細節：TR[i] 缺了 j = i 那格的「A(K)[i][i] + shift」，但 BL[*][i] 補回來；對角線塞 <code>2N−1</code> 補上少的那個最大值。</li>
-            </ul>
-          </li>
-          <li><strong>i ∈ [K+1..N]（下半 / 右半）</strong>
-            <ul>
-              <li>令 <code>i' = i − K ∈ [1..K]</code>。row <code>i</code> = BL[i'] ∪ BR[i']。BR[i'] = A(K) 的 row i'。BL[i'] = A(K)[i'] + shift。</li>
-              <li>col <code>i</code> = TR[*][i'] ∪ BR[*][i']。TR[*][i'] 除了對角格 (i', K+i') = <code>2N−1</code>，其餘 = A(K)[*][i'] + shift（缺 j = i' 那一格）。BR[*][i'] = A(K) 的 col i'。</li>
-              <li>同樣聯集 = <code>{1..2K−1} ∪ {2K..2N−2} ∪ {2N−1} = {1..2N−1}</code> ✓。</li>
-            </ul>
-          </li>
+          <li><strong>每個點看到全部 N−1 種顏色</strong>：固定 <code>i</code>，當 <code>j</code> 跑遍 <code>j ≠ i</code>，<code>i XOR j</code> 是一個雙射（XOR 同一個常數是可逆的），值域是 <code>{1..N−1}</code> 的全部非零值 — 每色各一次。這正是「十字不重不漏」。</li>
+          <li><strong>對稱</strong>：<code>i XOR j = j XOR i</code> ⇒ (i,j) 與 (j,i) 同色 ⇒ 同屬一組互補對。</li>
+          <li><strong>每色是完美配對</strong>：顏色 <code>k</code> 的邊把 <code>i</code> 配給 <code>i XOR k</code>。因為 <code>(i XOR k) XOR k = i</code>，這是把每個點兩兩配對、無重疊 — 一個 1-因子（perfect matching）。</li>
         </ol>
-        <p>所有值都落在 <code>[1, 2N−1]</code> ⇒ 構造合法。Q.E.D.</p>
+        <p>三條件全中 ⇒ 顏色 <code>0..N−1</code>（扣掉 0 給對角）把 K_N 的邊分成 <code>N−1</code> 個完美配對 = 1-因子分解。N = 2^K 保證 XOR 在 <code>[0, N)</code> 上封閉，所以一定成立。Q.E.D.</p>
       </div>
     </div>
 
     <p style="margin-top:10px;font-size:14px;">
-      換句話說：<strong>shift = N − 1 把 A(K) 的值域 <code>{1..2K−1}</code> 平移到 <code>{2K..2N−2}</code></strong>，
-      兩個值域剛好對接、合起來是 <code>{1..2N−2}</code>；
-      <strong>TR 對角線塞 <code>2N−1</code></strong> 是把最後那個最大值「灑」進每一個 row 和 col，補完最後一格。
+      換句話說：<strong>XOR 把一個看似要動用組合設計（round-robin / 圓圈法）的構造，壓成一行位元運算。</strong>
+      之後遇到「N 是 2 的次方 + 要做兩兩配對 / 不重複覆蓋」的題目，<strong>XOR 1-因子分解都值得第一個試</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 定方向：互補對的兩半
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">定方向 · 互補對的兩半<span class="sc-section__title-en">// Orientation</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每組互補對是 <code>{k, 2N − k}</code>，其中 <code>k = i XOR j</code>。
+    還要決定 (i, j) 拿 <code>k</code> 還是 <code>2N − k</code> — 用 <code>i</code> 跟 <code>j</code> 的大小當分界：</p>
+
+    <table class="sc-table" style="max-width:600px;">
+      <thead><tr><th>情況</th><th>填值</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><code>i == j</code></td><td class="mono"><strong>N</strong></td><td>對角中心，所有十字共用</td></tr>
+        <tr><td><code>i &lt; j</code></td><td class="mono"><strong>i ^ j</strong></td><td>互補對較小的一半</td></tr>
+        <tr><td><code>i &gt; j</code></td><td class="mono"><strong>2N − (i ^ j)</strong></td><td>較大的一半，和為 2N</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      因為 <code>i &lt; j</code> 與 <code>i &gt; j</code> 是對稱兩格、<code>i^j</code> 相同，所以
+      <code>a[i][j] + a[j][i] = (i^j) + (2N − (i^j)) = 2N</code> 永遠成立 —
+      <strong>互補對的兩半永遠分居對角線兩側。</strong>
     </p>
   </section>
 
@@ -269,27 +264,28 @@
       <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
 
-    <p style="font-size:14px;">每個 <code>build(N)</code> 呼叫：遞迴填 TL、BR 各一次（兩個 <code>K × K</code>），然後掃 TL 推導 BL、TR 共 <code>2 · K²</code> 次寫入。</p>
+    <p style="font-size:14px;">沒有遞迴、沒有陣列 — 一個雙層迴圈，每格直接算出值並 <code>Report</code>，邊算邊輸出。</p>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">T(N) = 2 · T(N/2) + Θ(N²/2) &nbsp;⇒&nbsp; <strong>T(N) = Θ(N²)</strong></div>
+      <div class="sc-formula__main">每格 O(1) 位元運算 ⇒ <strong>Time = O(N²)</strong>，<strong>Space = O(1)</strong></div>
       <div class="sc-formula__hint">
-        每格只寫一次 ⇒ 總工作量 = 格數 = N²。<strong>Master Theorem case 3</strong>。
+        這已是<strong>理論下限</strong>：光是輸出就有 <code>N²</code> 個數要產生，不可能比 O(N²) 更快。
+        和遞迴版同樣 O(N²) 時間，但空間從 O(N²) 降到 O(1)。
       </div>
     </div>
 
     <table class="sc-table">
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>Θ(N²)</strong></td><td>每格 O(1) 寫入；N = 1024 ⇒ ~10⁶ 次運算</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>Θ(N²)</strong></td><td>全域 <code>int M[1100][1100]</code> ≈ 4.8 MB</td></tr>
-        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 1024 ⇒ 10 層</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O(N²)</strong></td><td>每格一次 XOR + 比較；N = 1024 ⇒ ~10⁶ 次</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(1)</strong></td><td>不存陣列，邊算邊 Report</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">—</td><td>無遞迴</td></tr>
         <tr><td>Report Calls</td><td class="mono">N²</td><td>row-major 順序輸出</td></tr>
       </tbody>
     </table>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>瓶頸是輸出</strong> — N² 個 Report 呼叫無法再省。建構本身與輸出同階。
+      <strong>瓶頸是輸出</strong> — N² 個 Report 呼叫無法再省。建構本身被「藏進」每次輸出，零額外開銷。
     </p>
   </section>
 
@@ -303,9 +299,9 @@
     </div>
 
     <div class="sc-insight">
-      <strong>TR 對角線塞 <code>2N−1</code> 是把「最大值」灑進每個 row 和 col 的關鍵。</strong><br/>
-      其他三塊（TL、BR、BL）合力撐起 <code>{1..2N−2}</code>，
-      <strong>對角的 <code>2N−1</code> 是唯一補上最後那一格的位置 — 每個 row i 都會碰到它一次，每個 col i 也是。</strong>
+      <strong>「每個十字不重不漏」= K_N 的 1-因子分解，而 N = 2^K 讓 <code>i XOR j</code> 免費給出完美配對。</strong><br/>
+      對角線固定成 <code>N</code>，其餘配成「和為 2N」的互補對，
+      <strong>XOR 把組合設計壓成一行位元運算 — 這是最該記住的一步。</strong>
     </div>
   </section>
 
@@ -326,8 +322,8 @@
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">A(N) = 2×2 blocks of A(K)：TL=BR=A(K)、BL=A(K)+shift、TR=A(K)+shift but 對角線=2N−1。</div>
-    <div class="sc-summary-bar__detail">Θ(N²) · N = 1024 ⇒ 10⁶ 格，每格 O(1) 寫入 + 10⁶ 次 Report。</div>
+    <div class="sc-summary-bar__body">對角 = N；i&lt;j 填 i^j、i&gt;j 填 2N−(i^j)。XOR 給出 K_N 的 1-因子分解，每個十字湊出 {1..2N−1}。</div>
+    <div class="sc-summary-bar__detail">O(N²) 時間 · O(1) 空間 · N = 1024 ⇒ 10⁶ 次 Report，邊算邊輸出。</div>
   </div>
 
   <script src="../../../../assets/js/viz/p117-bad-array.js"></script>

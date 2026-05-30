@@ -24,7 +24,7 @@
     </span>
     <span>
       <a href="https://tioj.sprout.tw/contests/20/problems/117/" target="_blank" rel="noopener">原題 ↗</a>
-      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.30
     </span>
   </div>
 
@@ -37,9 +37,9 @@
       <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
       C++17 · lib0117.h · Interactive
       <span class="sc-mast__sep">·</span>
-      時間 <strong>Θ(N²)</strong>
+      時間 <strong>O(N²)</strong>
       <span class="sc-mast__sep">·</span>
-      空間 <strong>Θ(N²)</strong>
+      空間 <strong>O(1)</strong>
     </div>
   </header>
 
@@ -64,6 +64,7 @@
 
     <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-bottom:10px;">
       互動式題目：實作 <code>solve(N)</code>，由 judge 提供 <code>Report(int)</code>。不需 <code>main()</code>。
+      整個解只有一個雙層迴圈 — <strong>不存陣列、邊算邊輸出</strong>。
     </p>
 
     <div class="sc-codewindow">
@@ -78,51 +79,24 @@
 <span class="k">#include</span> <span class="s">"lib0117.h"</span>
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
 
-<span class="k">const</span> <span class="t">int</span> N_MAX <span class="p">=</span> <span class="n">1100</span><span class="p">;</span>
-<span class="t">int</span> M<span class="p">[</span>N_MAX<span class="p">][</span>N_MAX<span class="p">];</span>   <span class="c">// 1-indexed N x N 矩陣</span>
-
-<span class="c">// 在 M[rowOff+1..rowOff+N][colOff+1..colOff+N] 內填入 A(N)，</span>
-<span class="c">// 值域 {base+1 .. base+2N-1}。base 通常為 0，遞迴中也保持 0。</span>
-<span class="t">void</span> <span class="f">build</span><span class="p">(</span><span class="t">int</span> N<span class="p">,</span> <span class="t">int</span> rowOff<span class="p">,</span> <span class="t">int</span> colOff<span class="p">,</span> <span class="t">int</span> base<span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span>N <span class="p">==</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span>
-        M<span class="p">[</span>rowOff <span class="p">+</span> <span class="n">1</span><span class="p">][</span>colOff <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">=</span> base <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
-        <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="t">int</span> K <span class="p">=</span> N <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
-    <span class="t">int</span> shift <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> K <span class="p">-</span> <span class="n">1</span><span class="p">;</span>             <span class="c">// = N - 1</span>
-
-    <span class="c">// TL：A(K) 原值，值域 {base+1 .. base+2K-1}</span>
-    <span class="f">build</span><span class="p">(</span>K<span class="p">,</span> rowOff<span class="p">,</span>     colOff<span class="p">,</span>     base<span class="p">);</span>
-    <span class="c">// BR：同樣 A(K) 原值（與 TL 一樣，不平移）</span>
-    <span class="f">build</span><span class="p">(</span>K<span class="p">,</span> rowOff <span class="p">+</span> K<span class="p">,</span> colOff <span class="p">+</span> K<span class="p">,</span> base<span class="p">);</span>
-
-    <span class="c">// 掃 TL，由 TL 推導 BL 與 TR</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> K<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> K<span class="p">;</span> <span class="p">++</span>j<span class="p">)</span> <span class="p">{</span>
-            <span class="t">int</span> tlVal <span class="p">=</span> M<span class="p">[</span>rowOff <span class="p">+</span> i<span class="p">][</span>colOff <span class="p">+</span> j<span class="p">];</span>
-            <span class="c">// BL：所有位置 +shift</span>
-            M<span class="p">[</span>rowOff <span class="p">+</span> K <span class="p">+</span> i<span class="p">][</span>colOff <span class="p">+</span> j<span class="p">]</span> <span class="p">=</span> tlVal <span class="p">+</span> shift<span class="p">;</span>
-            <span class="c">// TR：對角 i==j 填 2N-1；其餘 +shift</span>
-            <span class="k">if</span> <span class="p">(</span>i <span class="p">==</span> j<span class="p">)</span> <span class="p">{</span>
-                M<span class="p">[</span>rowOff <span class="p">+</span> i<span class="p">][</span>colOff <span class="p">+</span> K <span class="p">+</span> j<span class="p">]</span> <span class="p">=</span> base <span class="p">+</span> <span class="n">2</span> <span class="p">*</span> N <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                M<span class="p">[</span>rowOff <span class="p">+</span> i<span class="p">][</span>colOff <span class="p">+</span> K <span class="p">+</span> j<span class="p">]</span> <span class="p">=</span> tlVal <span class="p">+</span> shift<span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
+<span class="c">// 0-indexed。對角 = N；i&lt;j 填 i^j，i&gt;j 填 2N-(i^j)，互補對和為 2N。</span>
 <span class="t">void</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> N<span class="p">)</span> <span class="p">{</span>
-    <span class="f">build</span><span class="p">(</span>N<span class="p">,</span> <span class="n">0</span><span class="p">,</span> <span class="n">0</span><span class="p">,</span> <span class="n">0</span><span class="p">);</span>
-
-    <span class="c">// row-major 輸出</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> N<span class="p">;</span> <span class="p">++</span>j<span class="p">)</span> <span class="p">{</span>
-            <span class="f">Report</span><span class="p">(</span>M<span class="p">[</span>i<span class="p">][</span>j<span class="p">]);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> <span class="p">++</span>i<span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">0</span><span class="p">;</span> j <span class="p">&lt;</span> N<span class="p">;</span> <span class="p">++</span>j<span class="p">)</span> <span class="p">{</span>
+            <span class="t">int</span> val<span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span>i <span class="p">==</span> j<span class="p">)</span>      val <span class="p">=</span> N<span class="p">;</span>                 <span class="c">// 對角線中心</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span>i <span class="p">&lt;</span> j<span class="p">)</span>  val <span class="p">=</span> i <span class="p">^</span> j<span class="p">;</span>             <span class="c">// 互補對較小的一半</span>
+            <span class="k">else</span>             val <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> N <span class="p">-</span> <span class="p">(</span>i <span class="p">^</span> j<span class="p">);</span>   <span class="c">// 較大的一半，和為 2N</span>
+            <span class="f">Report</span><span class="p">(</span>val<span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span></pre>
     </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      雙層迴圈正好走 row-major（先 row 0 從左到右、再 row 1…），就是 judge 期待的 Report 順序。
+      答案不唯一，這份輸出跟題目範例長得不一樣沒關係 — 只要每個十字合法就會被接受。
+    </p>
   </section>
 
   <!-- ============================================================
@@ -134,44 +108,44 @@
       <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
     </div>
 
-    <p>把 <code>build(N)</code> 一層的工作量拆開：</p>
+    <p>把一次迴圈內層的工作量拆開：</p>
 
     <table class="sc-table">
       <thead>
-        <tr><th>步驟</th><th>內容</th><th>單呼叫成本</th></tr>
+        <tr><th>步驟</th><th>內容</th><th>單格成本</th></tr>
       </thead>
       <tbody>
-        <tr><td>遞迴填 TL</td><td><code>build(K, ...)</code></td><td class="mono">T(N/2)</td></tr>
-        <tr><td>遞迴填 BR</td><td><code>build(K, ...)</code>（另一個 K × K 子塊）</td><td class="mono">T(N/2)</td></tr>
-        <tr><td>掃 TL 推 BL + TR</td><td>K × K 個格子，每格寫 BL 1 次、寫 TR 1 次</td><td class="mono">Θ(2K²) = Θ(N²/2)</td></tr>
+        <tr><td>判斷象限</td><td><code>i == j</code> / <code>i &lt; j</code> 兩次比較</td><td class="mono">O(1)</td></tr>
+        <tr><td>算值</td><td><code>i ^ j</code> 一次 XOR（+ 一次減法）</td><td class="mono">O(1)</td></tr>
+        <tr><td>輸出</td><td><code>Report(val)</code></td><td class="mono">O(1)</td></tr>
       </tbody>
     </table>
 
-    <p style="margin-top:10px;font-size:14px;"><strong>遞迴式</strong>：</p>
+    <p style="margin-top:10px;font-size:14px;"><strong>總成本</strong>：</p>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">T(N) = 2 · T(N/2) + Θ(N²) &nbsp;⇒&nbsp; <strong>T(N) = Θ(N²)</strong></div>
+      <div class="sc-formula__main">N² 格 × O(1) = <strong>O(N²)</strong> 時間，<strong>O(1)</strong> 空間</div>
       <div class="sc-formula__hint">
-        Master Theorem case 3：<code>f(N) = Θ(N²)</code> 主宰 <code>N^(log₂ 2) = N</code> ⇒ T(N) = Θ(f(N)) = Θ(N²)。
-        更直觀：<strong>每格只寫一次 ⇒ 總工作量 = 格數 = N²</strong>。
+        沒有遞迴、沒有陣列。<strong>每格直接由 (i, j) 算出值</strong>，零中間狀態。
+        時間下限就是 N²（輸出量），<strong>已達最佳</strong>。
       </div>
     </div>
 
     <table class="sc-table">
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>Θ(N²)</strong></td><td>建構 + 輸出皆 Θ(N²)，同階</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>Θ(N²)</strong></td><td><code>int M[1100][1100]</code> ≈ 4.8 MB（int = 4B × 1100² ≈ 4.8M）</td></tr>
-        <tr><td>Recursion Depth</td><td class="mono">O(log N)</td><td>N = 1024 ⇒ 10 層</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O(N²)</strong></td><td>每格一次 XOR + 比較 + Report</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(1)</strong></td><td>不存陣列，邊算邊 Report（遞迴版要 ~4.8 MB 矩陣，這版省掉）</td></tr>
+        <tr><td>Recursion Depth</td><td class="mono">—</td><td>無遞迴</td></tr>
         <tr><td><strong>Report Calls</strong></td><td class="mono"><strong>N²</strong></td><td>N = 1024 ⇒ 約 10⁶ 次</td></tr>
       </tbody>
     </table>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
       <strong>子任務對照</strong>：
-      <code>N ≤ 8</code> ⇒ 64 個格、64 次 Report；
+      <code>N ≤ 8</code> ⇒ 64 次 Report；
       <code>N ≤ 64</code> ⇒ 4096；
-      <code>N ≤ 1024</code> 滿分 ⇒ 約 10⁶ — 全部都遠在時限內，<strong>瓶頸不是時間而是「正確構造」</strong>。
+      <code>N ≤ 1024</code> 滿分 ⇒ 約 10⁶ — 全部遠在時限內，<strong>瓶頸不是時間而是「想到 XOR 構造」</strong>。
     </p>
   </section>
 
@@ -193,31 +167,27 @@
         </tr>
         <tr>
           <td><strong>N 必須是 2 的次方</strong></td>
-          <td>遞迴每層切半（<code>K = N/2</code>）。題目滿分子任務都保證 <code>N = 2^K</code>，所以不需特判 N 為奇。若被丟非 2 次方的 N 進來，<code>K = N/2</code> 變不對稱（floor 後 <code>2K ≠ N</code>），構造會壞掉。</td>
+          <td>XOR 給出完美配對的前提是 <code>i XOR j</code> 在 <code>[0, N)</code> 上封閉 — 只有 <code>N = 2^K</code> 才成立。N 不是 2 次方時 <code>i^j</code> 可能 ≥ N，配對就壞了。題目保證 <code>N = 2^K</code>，不需特判。</td>
+        </tr>
+        <tr>
+          <td><strong>0-indexed，對角放 N 不是 2N−1</strong></td>
+          <td>這版 <code>i, j</code> 從 0 起跳。對角中心是 <code>N</code>（值域正中），不是遞迴版的 <code>2N−1</code>。互補對是 <code>{k, 2N−k}</code>，<code>2N−1</code> 只是其中一組（k=1）的大半。</td>
+        </tr>
+        <tr>
+          <td><strong>方向必須用 <code>i &lt; j</code> / <code>i &gt; j</code> 分</strong></td>
+          <td>(i,j) 與 (j,i) 必須一個拿 <code>i^j</code>、一個拿 <code>2N−(i^j)</code>，這樣相加才 = 2N。若兩格都填 <code>i^j</code>，互補對的「大半」永遠不出現 ⇒ 十字缺一半的數。</td>
         </tr>
         <tr>
           <td><strong>Report 順序必須 row-major</strong></td>
-          <td>judge 期待 (1,1), (1,2), ..., (1,N), (2,1), ..., (N,N) 的順序 — 不是 col-major、也不是遞迴順序。<code>solve()</code> 末尾的 <code>for i for j Report(M[i][j])</code> 就是這個順序。</td>
+          <td>judge 期待 (0,0), (0,1), ..., (0,N−1), (1,0), ..., (N−1,N−1) 的順序。<code>for i for j Report</code> 就是這個順序。</td>
         </tr>
         <tr>
           <td><strong>不用 <code>ios::sync_with_stdio</code></strong></td>
           <td>互動題只透過 <code>Report</code> 與 judge 溝通，沒有 <code>cin</code>/<code>cout</code> ⇒ 加 sync_with_stdio 也沒用，刪掉更乾淨。和 P116 同樣模式。</td>
         </tr>
         <tr>
-          <td><strong>全域矩陣 ≈ 4.8 MB</strong></td>
-          <td><code>int M[1100][1100]</code> = 4 × 1100² B ≈ 4.6 MB；放函數內會爆 stack，<strong>必須全域</strong>。N_MAX = 1100 比 1024 略大留餘量。</td>
-        </tr>
-        <tr>
-          <td><strong>BR 不能加 shift</strong></td>
-          <td>很容易直覺地把四塊都「平移到不同值域」，但 BR 必須與 TL <strong>同值</strong>。若 BR 加 shift，row N ∪ col N 會多 BR 高值、少 TL 低值，<strong>不再覆蓋 {1..2K−1}</strong> ⇒ 構造錯。</td>
-        </tr>
-        <tr>
-          <td><strong>TR 必須是「對角 = 2N−1，其餘 = +shift」</strong></td>
-          <td>若 TR 整塊都填 <code>+shift</code>，<code>2N−1</code> 就不會出現 ⇒ row 與 col 的聯集少掉 <code>2N−1</code>。對角線是這個構造的「靈魂」。</td>
-        </tr>
-        <tr>
-          <td><strong>base 參數保持 0</strong></td>
-          <td>遞迴呼叫 <code>build(K, ...)</code> 時，TL 與 BR 都傳 <code>base</code>（同值），<strong>不傳 <code>base + shift</code></strong>。BL 與 TR 的 +shift 是在外層直接加到 TL 值上，<strong>不是</strong>遞迴內部處理的。</td>
+          <td><strong>不需要全域矩陣</strong></td>
+          <td>這版邊算邊 Report，<strong>O(1) 空間</strong>。遞迴版要 <code>int M[1100][1100]</code> ≈ 4.8 MB；XOR 閉式解整個省掉，是它相對遞迴版的最大優勢。</td>
         </tr>
       </tbody>
     </table>
@@ -232,62 +202,49 @@
       <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
     </div>
 
-    <p><strong>① FILL TL</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// FILL TL</span>
-build(K, rowOff, colOff, base):
-    # 遞迴填 K x K 子塊，左上角 = (rowOff+1, colOff+1)
-    # 值域 {base+1 .. base+2K-1}
+    <p><strong>① 三種象限</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// THREE CASES per (i, j)</span>
+i == j  →  val = N                 # 對角中心，所有十字共用
+i &lt; j   →  val = i ^ j             # 互補對較小的一半
+i &gt; j   →  val = 2N - (i ^ j)      # 較大的一半
 
-→ 對於 N = 2，K = 1：
-   build(1, 0, 0, 0) ⇒ M[1][1] = 1
-→ 對於 N = 4，K = 2：
-   build(2, 0, 0, 0) ⇒ M[1..2][1..2] = [[1, 3], [2, 1]]</pre>
+關鍵不變量：a[i][j] + a[j][i] = (i^j) + (2N - (i^j)) = 2N</pre>
 
-    <p><strong>② FILL BR</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// FILL BR</span>
-build(K, rowOff + K, colOff + K, base):
-    # 與 TL 同值（同樣的 base）
-    # 不平移、不對角線特別處理
+    <p><strong>② 為什麼固定 i 時 i^j 掃過 1..N−1</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// BIJECTION (N = 4, i = 0)</span>
+j:      0    1    2    3
+i^j:    0    1    2    3     ← 跳過 j=i 的 0，其餘 {1,2,3} 各一次
 
-→ 對於 N = 2：M[2][2] = 1
-→ 對於 N = 4：M[3..4][3..4] = [[1, 3], [2, 1]]（與 TL 同）</pre>
+→ 對角 (i==i) 那格不算十字外的配對，恰好對應 i^j = 0 被排除。
+→ 所以 row 0 的非對角格貢獻互補對編號 {1, 2, 3} 各一次。</pre>
 
-    <p><strong>③ FILL BL (+ shift)</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// FILL BL</span>
-for i in [1, K], j in [1, K]:
-    tlVal = M[rowOff + i][colOff + j]
-    M[rowOff + K + i][colOff + j] = tlVal + shift
+    <p><strong>③ 互補對 — 同色兩格分居對角兩側</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// COMPLEMENT PAIR (N = 4, k = i^j)</span>
+(i, j) with i &lt; j  →  i ^ j        (小半)
+(j, i) with j &gt; i  →  2N - (i ^ j) (大半)
 
-→ 對於 N = 2，shift = 1：
-   M[2][1] = M[1][1] + 1 = 2
-→ 對於 N = 4，shift = 3：
-   M[3..4][1..2] = TL + 3 = [[4, 6], [5, 4]]</pre>
+例 (0,1): i&lt;j ⇒ 0^1 = 1
+   (1,0): i&gt;j ⇒ 8 - 1 = 7
+   → {1, 7} 是和為 8 的互補對 ✓</pre>
 
-    <p><strong>④ FILL TR (with diagonal = 2N − 1)</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// FILL TR (with diagonal = 2N - 1)</span>
-for i in [1, K], j in [1, K]:
-    if i == j:
-        M[rowOff + i][colOff + K + j] = base + 2N - 1
-    else:
-        M[rowOff + i][colOff + K + j] = tlVal + shift
+    <p><strong>④ 收集 index 0 的十字（N = 4）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// CROSS of index 0</span>
+row 0 = a[0][0..3] = {4, 1, 2, 3}   (對角 4 + i&lt;j 的 0^1,0^2,0^3)
+col 0 = a[0..3][0] = {4, 7, 6, 5}   (對角 4 + i&gt;j 的 8-1,8-2,8-3)
 
-→ 對於 N = 2，2N - 1 = 3：
-   i = j = 1 ⇒ M[1][2] = 3
-→ 對於 N = 4，2N - 1 = 7，shift = 3：
-   M[1][3] = 7 (i=j=1, 對角)
-   M[1][4] = M[1][2] + 3 = 3 + 3 = 6
-   M[2][3] = M[2][1] + 3 = 2 + 3 = 5
-   M[2][4] = 7 (i=j=2, 對角)
-   ⇒ M[1..2][3..4] = [[7, 6], [5, 7]]</pre>
+聯集 = {1,2,3,4,5,6,7} = {1..2N-1}  ✓</pre>
 
     <p><strong>⑤ REPORT ROW-MAJOR</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// REPORT ROW-MAJOR</span>
-for i in [1, N]:
-    for j in [1, N]:
-        Report(M[i][j])
+    <pre class="sc-trace"><span class="sc-trace__head">// REPORT ROW-MAJOR (N = 4)</span>
+for i in [0, N): for j in [0, N): Report(a[i][j])
 
-→ N = 2 輸出順序：1, 3, 2, 1
-→ N = 4 輸出順序：1, 3, 7, 6, 2, 1, 5, 7, 4, 6, 1, 3, 5, 4, 2, 1</pre>
+A(4) =
+  4 1 2 3
+  7 4 3 2
+  6 5 4 1
+  5 6 7 4
+
+輸出順序：4,1,2,3, 7,4,3,2, 6,5,4,1, 5,6,7,4</pre>
   </section>
 
   <!-- ============================================================
@@ -307,8 +264,8 @@ for i in [1, N]:
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">build(N) — TL/BR 遞迴 A(K)，BL = A(K)+shift，TR = A(K)+shift but 對角 = 2N−1，最後 row-major Report。</div>
-    <div class="sc-summary-bar__detail">T(N) = Θ(N²) · N = 1024 ⇒ ~10⁶ 次寫入 + ~10⁶ 次 Report</div>
+    <div class="sc-summary-bar__body">solve(N) — 雙層迴圈：對角 = N，i&lt;j 填 i^j，i&gt;j 填 2N−(i^j)，邊算邊 row-major Report。</div>
+    <div class="sc-summary-bar__detail">O(N²) 時間 · O(1) 空間 · N = 1024 ⇒ ~10⁶ 次 Report，不存陣列。</div>
   </div>
 
 </body>

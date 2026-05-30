@@ -24,7 +24,7 @@
     </span>
     <span>
       <a href="https://tioj.sprout.tw/contests/20/problems/117/" target="_blank" rel="noopener">原題 ↗</a>
-      &nbsp;·&nbsp; STUDY CARD · 2026.05.26
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.30
     </span>
   </div>
 
@@ -67,20 +67,20 @@
         <tr><th>關鍵點</th><th>內容</th></tr>
       </thead>
       <tbody>
-        <tr><td>2×2 block 切割</td>
-            <td><code>A(N) = [[TL, TR], [BL, BR]]</code>，每個子塊大小 <code>K × K = N/2 × N/2</code>。</td></tr>
-        <tr><td>TL = BR</td>
-            <td>兩個子塊都填 <code>A(K)</code> 原值（不加 shift）— 值域 <code>{1..2K−1}</code>。</td></tr>
-        <tr><td>BL = A(K) + shift</td>
-            <td>整塊平移 <code>shift = 2K−1 = N−1</code>，值域 <code>{2K..2N−2}</code>。</td></tr>
-        <tr><td>TR 對角 = 2N−1，其餘 = A(K) + shift</td>
-            <td>對角的 <code>2N−1</code> 是把最大值灑進每個 row/col 的關鍵；其餘格與 BL 同樣 +shift。</td></tr>
-        <tr><td>正確性</td>
-            <td>歸納：A(K) 滿足性質 ⇒ A(N) 也滿足。row i ∪ col i 拆成 A(K) 自己 + shifted 版本 + 對角 <code>2N−1</code> = <code>{1..2N−1}</code>。</td></tr>
+        <tr><td>十字的容量</td>
+            <td>row i + col i 共用對角格 ⇒ <code>2N − 1</code> 格，剛好放 <code>{1..2N−1}</code> ⇒ 每數恰好一次。</td></tr>
+        <tr><td>對角 = N</td>
+            <td>對角中心同屬 row i 與 col i，全放常數 <code>N</code>，剩 <code>2N−2</code> 格分給互補對。</td></tr>
+        <tr><td>互補對（和 2N）</td>
+            <td><code>{k, 2N−k}</code>，共 <code>N−1</code> 組。要求 <code>a[i][c] + a[c][i] = 2N</code>。</td></tr>
+        <tr><td>化約 = 1-因子分解</td>
+            <td>「每個十字碰每組互補對一次」= 把 <code>K_N</code> 用 <code>N−1</code> 色正常著色，每點看到全部顏色。</td></tr>
+        <tr><td>XOR 神兵</td>
+            <td>N = 2^K ⇒ <code>color(i,j) = i ^ j</code> 自動滿足雙射 + 對稱 + 完美配對，一行解決。</td></tr>
+        <tr><td>定方向</td>
+            <td><code>i==j</code> → N；<code>i&lt;j</code> → <code>i^j</code>；<code>i&gt;j</code> → <code>2N−(i^j)</code>。</td></tr>
         <tr><td>複雜度</td>
-            <td><code>T(N) = 2 T(N/2) + Θ(N²) = Θ(N²)</code>。N² 次寫入 + N² 次 Report。</td></tr>
-        <tr><td>輸出順序</td>
-            <td>row-major：先 row 1 從左到右，再 row 2，... 直到 row N。</td></tr>
+            <td><code>O(N²)</code> 時間、<strong><code>O(1)</code> 空間</strong>（不存陣列），row-major Report。</td></tr>
       </tbody>
     </table>
   </section>
@@ -96,32 +96,32 @@
 
     <div class="qa">
       <span class="qa__id">Q1</span>
-      <span class="qa__tag">遞迴前提</span>
-      <h4>為何 N 必須是 2 的次方？若 N = 6 或 N = 12，這個分治構造還能用嗎？</h4>
+      <span class="qa__tag">容量觀察</span>
+      <h4>為何「row i ∪ col i = {1..2N−1}」代表這 <code>2N−1</code> 格裡每個數恰好出現一次？這個觀察是怎麼推出來的？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q2</span>
-      <span class="qa__tag">對角線特殊處理</span>
-      <h4>為何 TR 的對角線要放 <code>2N−1</code>？把 <code>2N−1</code> 放在 TR 的其他位置（譬如反對角線）會怎樣？</h4>
+      <span class="qa__tag">XOR 雙射</span>
+      <h4>固定 <code>i</code>，為何 <code>i XOR j</code>（j 跑遍 j≠i）會剛好掃過 <code>1..N−1</code> 每個值各一次？這個性質為何需要 N = 2^K？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q3</span>
-      <span class="qa__tag">歸納證明</span>
-      <h4>給定 <code>A(K)</code> 滿足性質，請寫出 <code>A(N = 2K)</code> 的 row <code>i</code> ∪ col <code>i</code> = <code>{1..2N−1}</code> 的歸納骨架（針對 <code>i ∈ [1..K]</code> 的情況）。</h4>
+      <span class="qa__tag">1-因子分解</span>
+      <h4>把 index 當點、<code>color(i,j) = i^j</code> 當邊色，請說明「每色是一個完美配對」這件事，並寫出顏色 <code>k</code> 把誰配給誰。</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q4</span>
-      <span class="qa__tag">值域重複</span>
-      <h4>TL 與 BR 都是 <code>A(K)</code> — 那矩陣會不會出現大量重複值？題目允許嗎？</h4>
+      <span class="qa__tag">方向不變量</span>
+      <h4>為何要用 <code>i&lt;j</code> / <code>i&gt;j</code> 分方向？若 (i,j) 和 (j,i) 兩格都填 <code>i^j</code>，會違反哪一條性質？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q5</span>
-      <span class="qa__tag">變形題</span>
-      <h4>如果把 BR 也加上 <code>+shift</code>（讓 BR = <code>A(K) + shift</code>），會壞掉嗎？具體會違反哪一條性質？</h4>
+      <span class="qa__tag">對角選值</span>
+      <h4>對角線為何選 <code>N</code> 而不是別的值（譬如 1 或 2N−1）？換成別的常數還能用嗎？</h4>
     </div>
   </section>
 
@@ -131,73 +131,60 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">03</span>
-      <h2 class="sc-section__title">範例 Trace · 完整跑 build(4)<span class="sc-section__title-en">// Worked Trace</span></h2>
+      <h2 class="sc-section__title">範例 Trace · 完整跑 solve(4)<span class="sc-section__title-en">// Worked Trace</span></h2>
     </div>
 
-    <p>跑 <code>solve(4)</code> = <code>build(4, 0, 0, 0)</code>，遞迴展開：</p>
+    <p>跑 <code>solve(4)</code>，<code>N = 4</code>、<code>2N = 8</code>。逐格套公式（0-indexed）：</p>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 · build(4, 0, 0, 0)</span>
-N = 4, K = 2, shift = 2K - 1 = 3, 2N - 1 = 7
+    <pre class="sc-trace"><span class="sc-trace__head">// ROW 0 · i = 0</span>
+(0,0) i==j → 4
+(0,1) i&lt;j  → 0^1 = 1
+(0,2) i&lt;j  → 0^2 = 2
+(0,3) i&lt;j  → 0^3 = 3
+→ row 0 = [4, 1, 2, 3]</pre>
 
-→ build(2, 0, 0, 0)         ← 填 TL
-→ build(2, 2, 2, 0)         ← 填 BR
-→ 掃 TL[1..2][1..2] 推 BL, TR</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// ROW 1 · i = 1</span>
+(1,0) i&gt;j  → 8 - (1^0) = 8 - 1 = 7
+(1,1) i==j → 4
+(1,2) i&lt;j  → 1^2 = 3
+(1,3) i&lt;j  → 1^3 = 2
+→ row 1 = [7, 4, 3, 2]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 2 · build(2, 0, 0, 0) — 填 TL</span>
-N = 2, K = 1, shift = 1, 2N - 1 = 3
+    <pre class="sc-trace"><span class="sc-trace__head">// ROW 2 · i = 2</span>
+(2,0) i&gt;j  → 8 - (2^0) = 8 - 2 = 6
+(2,1) i&gt;j  → 8 - (2^1) = 8 - 3 = 5
+(2,2) i==j → 4
+(2,3) i&lt;j  → 2^3 = 1
+→ row 2 = [6, 5, 4, 1]</pre>
 
-→ build(1, 0, 0, 0)         ← M[1][1] = 1
-→ build(1, 1, 1, 0)         ← M[2][2] = 1
-→ 掃 TL[1][1] 推 BL[1][1], TR[1][1]:
-    tlVal = M[1][1] = 1
-    M[2][1] = 1 + 1 = 2     ← BL
-    i == j ⇒ M[1][2] = 3    ← TR 對角
-
-A(2) = [[1, 3],
-        [2, 1]]
-位置: M[1..2][1..2]</pre>
-
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 3 · build(2, 2, 2, 0) — 填 BR</span>
-與 CALL 2 相同流程，rowOff = colOff = 2。
-
-完成後 M[3..4][3..4]:
-1 3
-2 1
-（與 TL 同值）</pre>
-
-    <pre class="sc-trace"><span class="sc-trace__head">// CALL 1 續 · 掃 TL 推 BL + TR</span>
-TL 此時 = M[1..2][1..2] = [[1, 3], [2, 1]]
-
-i=1, j=1: tlVal=1, M[3][1]=4 (BL), i==j ⇒ M[1][3]=7 (TR 對角)
-i=1, j=2: tlVal=3, M[3][2]=6 (BL), i!=j ⇒ M[1][4]=6 (TR)
-i=2, j=1: tlVal=2, M[4][1]=5 (BL), i!=j ⇒ M[2][3]=5 (TR)
-i=2, j=2: tlVal=1, M[4][2]=4 (BL), i==j ⇒ M[2][4]=7 (TR 對角)
-
-BL = M[3..4][1..2] = [[4, 6], [5, 4]]
-TR = M[1..2][3..4] = [[7, 6], [5, 7]]</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// ROW 3 · i = 3</span>
+(3,0) i&gt;j  → 8 - (3^0) = 8 - 3 = 5
+(3,1) i&gt;j  → 8 - (3^1) = 8 - 2 = 6
+(3,2) i&gt;j  → 8 - (3^2) = 8 - 1 = 7
+(3,3) i==j → 4
+→ row 3 = [5, 6, 7, 4]</pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// FINAL · A(4)</span>
-1 3 | 7 6
-2 1 | 5 7
-----+----
-4 6 | 1 3
-5 4 | 2 1
+4 1 2 3
+7 4 3 2
+6 5 4 1
+5 6 7 4
 
-驗證：
-row 1 = {1, 3, 7, 6}, col 1 = {1, 2, 4, 5}, 聯集 = {1,2,3,4,5,6,7} ✓
-row 2 = {2, 1, 5, 7}, col 2 = {3, 1, 6, 4}, 聯集 = {1,2,3,4,5,6,7} ✓
-row 3 = {4, 6, 1, 3}, col 3 = {7, 5, 1, 2}, 聯集 = {1,2,3,4,5,6,7} ✓
-row 4 = {5, 4, 2, 1}, col 4 = {6, 7, 3, 1}, 聯集 = {1,2,3,4,5,6,7} ✓</pre>
+驗證每個十字（row i ∪ col i，去重後）：
+i=0: {4,1,2,3} ∪ {4,7,6,5} = {1,2,3,4,5,6,7} ✓
+i=1: {7,4,3,2} ∪ {1,4,5,6} = {1,2,3,4,5,6,7} ✓
+i=2: {6,5,4,1} ∪ {2,3,4,7} = {1,2,3,4,5,6,7} ✓
+i=3: {5,6,7,4} ∪ {3,2,1,4} = {1,2,3,4,5,6,7} ✓</pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT · row-major Report</span>
-Report(1); Report(3); Report(7); Report(6);
-Report(2); Report(1); Report(5); Report(7);
-Report(4); Report(6); Report(1); Report(3);
-Report(5); Report(4); Report(2); Report(1);</pre>
+Report(4); Report(1); Report(2); Report(3);
+Report(7); Report(4); Report(3); Report(2);
+Report(6); Report(5); Report(4); Report(1);
+Report(5); Report(6); Report(7); Report(4);</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：四個 row ∪ col 都恰好是 <code>{1..7}</code>，沒有任何一個被漏掉、也沒有任何超出 <code>2N−1 = 7</code> 的值。<strong>對角線的 7 出現在 (1,3), (2,4), (3,1)... 不，等一下：</strong>
-      <br/>實際上 <code>7</code> 出現在 <strong>(1,3) 和 (2,4)</strong>（TR 對角）。BR 那一塊沒有 7，但 row 3、row 4 的 7 來自 col 3、col 4 中的 TR 對角格 (1,3) 與 (2,4) — 透過 col 的聯集補上。
+      <strong>觀察</strong>：每組互補對（和為 8）的兩半永遠分居對角線兩側 — (0,1)=1 與 (1,0)=7、(0,2)=2 與 (2,0)=6…。
+      對角的 4 是所有十字的共用中心；其餘三組互補對各被每個十字碰一次，剛好湊出全部七個數。
     </div>
   </section>
 
@@ -213,19 +200,19 @@ Report(5); Report(4); Report(2); Report(1);</pre>
     <div class="qa">
       <span class="qa__id">App 1</span>
       <span class="qa__tag">直接查詢</span>
-      <h4>不展開整個 <code>A(8)</code>，直接推出 <code>A(8)[1][5]</code> 是多少？並說明你的推論。</h4>
+      <h4>不展開整個 <code>A(8)</code>，直接算出 <code>A(8)[1][6]</code> 與 <code>A(8)[6][1]</code> 各是多少？兩者相加應該是？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">App 2</span>
-      <span class="qa__tag">規模估算</span>
-      <h4>N = 1024 時，Report 呼叫總次數是多少？建構過程的總寫入操作數又是多少？兩者同階嗎？</h4>
+      <span class="qa__tag">記憶體比較</span>
+      <h4>XOR 閉式解相對「2×2 block 遞迴版」省下哪一項資源？N = 1024 時具體省多少？兩版的時間複雜度相同嗎？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">App 3</span>
-      <span class="qa__tag">改題思辨</span>
-      <h4>若把題目條件改成「row <code>i</code> ∪ col <code>i</code> = <code>{1..N}</code>」（值域縮到 N，不是 2N−1），這個構造還能用嗎？這個改題還有解嗎？跟原題比起來是哪一類問題？</h4>
+      <span class="qa__tag">遷移思辨</span>
+      <h4>若 N 不是 2 的次方（譬如 N = 6），<code>i XOR j</code> 構造為何失效？這時 1-因子分解還存在嗎？該用什麼方法？</h4>
     </div>
   </section>
 
@@ -244,152 +231,144 @@ Report(5); Report(4); Report(2); Report(1);</pre>
   <section class="sc-section">
 
     <div class="qa qa--answer">
-      <span class="qa__id">A1 · 遞迴前提</span>
+      <span class="qa__id">A1 · 容量觀察</span>
       <p>
-        構造的核心是 <strong>2×2 block 切割</strong>：把 <code>A(N)</code> 拆成 4 個大小相同的 <code>K × K</code> 子塊。要每一層都能對稱地切，就要 <code>N</code> 一路除 2 都還是整數 ⇒ <code>N = 2^K</code>。
+        <strong>格數 = 數量 ⇒ 一一對應。</strong>row i 有 N 格、col i 有 N 格，但對角格 (i, i) 同時屬於兩者、只算一次，
+        所以十字一共 <code>N + N − 1 = 2N − 1</code> 格。
       </p>
       <p>
-        若 <code>N = 6</code>，<code>K = 3</code>，<code>2K = 6</code> 一切都對稱；但下一層要切 <code>A(3)</code> 就<strong>切不開了</strong>（3 不是 2 的次方）。<code>N = 12</code> 同樣會在 <code>A(3)</code> 卡死。
+        而題目要求這些格的<strong>聯集</strong>等於 <code>{1..2N−1}</code> — 那是 <code>2N − 1</code> 個相異的數。
+        <code>2N−1</code> 個位置要裝下 <code>2N−1</code> 個相異值且全覆蓋 ⇒ 由鴿籠原理，<strong>每個值恰好佔一格、不重不漏</strong>。
       </p>
       <p>
-        所以本構造<strong>只適用於 <code>N = 2^K</code></strong>。對任意 N 是否存在 Bad Array 是另一個問題（其實有 — 但需要不同的構造），題目刻意限制 <code>N = 2^K</code> 讓分治成立。
-      </p>
-    </div>
-
-    <div class="qa qa--answer">
-      <span class="qa__id">A2 · 對角線特殊處理</span>
-      <p>
-        <strong>每個 row 和每個 col 都需要 <code>2N−1</code>。</strong>對角線 (i, K+i) 剛好是「row <code>i</code> 與 col <code>K+i</code>」的共同位置 — 同一格<strong>同時</strong>替兩條線塞入 <code>2N−1</code>。
-      </p>
-      <ul>
-        <li>row <code>i</code>（<code>i ∈ [1..K]</code>）會看到 (i, K+i) = <code>2N−1</code> ✓</li>
-        <li>col <code>K+i</code> 也會看到 (i, K+i) = <code>2N−1</code> ✓</li>
-        <li>下半 row（<code>i ∈ [K+1..N]</code>）：令 <code>i' = i − K</code>，row <code>i</code> 看的是 BR row <code>i'</code> 與 BL row <code>i'</code> — 都沒 <code>2N−1</code>。但 col <code>i</code> = col <code>K + i'</code>，其中位置 (i', K+i') = (i', i) = <code>2N−1</code>（TR 對角）⇒ col 補進來 ✓</li>
-      </ul>
-      <p>
-        如果把 <code>2N−1</code> 放到 TR 的非對角位置（譬如反對角 (i, K+K+1−i)）：
-      </p>
-      <ul>
-        <li>那一格只服務 row i 和 col (K+K+1−i)，<strong>不是</strong> col (K+i)。</li>
-        <li>row 還是有 <code>2N−1</code>，但 col 的覆蓋會錯位 — 對角的 i ↔ K+i 對應斷掉。</li>
-        <li>必須再額外補別的格才能覆蓋所有 col，TR 的結構就不再是「對角 + 其餘 +shift」這麼乾淨。</li>
-      </ul>
-      <p>對角線是<strong>唯一能讓 row 與 col 配對覆蓋 <code>2N−1</code> 的位置</strong>。</p>
-    </div>
-
-    <div class="qa qa--answer">
-      <span class="qa__id">A3 · 歸納證明</span>
-      <p>歸納假設：對 <code>A(K)</code>，所有 <code>i ∈ [1..K]</code> 都滿足 <code>row_K i ∪ col_K i = {1..2K−1}</code>。</p>
-      <p>對 <code>A(N = 2K)</code> 的 <code>i ∈ [1..K]</code>：</p>
-      <ul>
-        <li><strong>row <code>i</code></strong> = TL[i][*] ∪ TR[i][*]
-          <ul>
-            <li>TL[i][*] = A(K)[i][*]，貢獻 <code>row_K i</code> 的集合 ⊆ <code>{1..2K−1}</code></li>
-            <li>TR[i][*]：對角格 (i, K+i) = <code>2N−1</code>；其餘格 j ≠ i 是 <code>A(K)[i][j] + shift</code>，貢獻 <code>row_K i \ {A(K)[i][i]} 加 shift</code></li>
-          </ul>
-        </li>
-        <li><strong>col <code>i</code></strong> = TL[*][i] ∪ BL[*][i]
-          <ul>
-            <li>TL[*][i] = A(K)[*][i]，貢獻 <code>col_K i</code></li>
-            <li>BL[*][i] = A(K)[*][i] + shift，貢獻 <code>col_K i 加 shift</code>（包含 A(K)[i][i] + shift 那一格）</li>
-          </ul>
-        </li>
-      </ul>
-      <pre class="sc-trace"><span class="sc-trace__head">// UNION</span>
-A(K) 部分：row_K i ∪ col_K i = {1..2K−1}    (歸納假設)
-shifted 部分：(row_K i ∪ col_K i) + shift = {2K..2N−2}
-   注意 BL 補回了 TR 缺的「A(K)[i][i] + shift」
-   ⇒ shifted 部分完整覆蓋 {2K..2N−2}
-對角部分：{2N−1}    (來自 TR 對角)
-
-合起來：{1..2K−1} ∪ {2K..2N−2} ∪ {2N−1} = {1..2N−1}  ✓</pre>
-      <p><code>i ∈ [K+1..N]</code> 的情況對稱（用 <code>i' = i − K</code> 改套到下半）。Q.E.D.</p>
-    </div>
-
-    <div class="qa qa--answer">
-      <span class="qa__id">A4 · 值域重複</span>
-      <p>
-        <strong>會出現大量重複值</strong>。觀察 <code>A(4)</code>：
-      </p>
-      <pre class="sc-trace"><span class="sc-trace__head">// VALUE COUNTS in A(4)</span>
-value 1: 出現 4 次  (TL[1][1], TL[2][2], BR[1][1], BR[2][2])
-value 3: 出現 2 次  (TL[1][2], BR[1][2])
-value 4: 出現 2 次  (BL[1][1], BL[2][2])
-...
-value 7: 出現 2 次  (TR 對角 = (1,3), (2,4))</pre>
-      <p>
-        但題目<strong>允許重複</strong>。題目要求的只是「每個 row ∪ col 的<strong>集合</strong>是 <code>{1..2N−1}</code>」，集合會自動去重 — 同樣的值出現多次不影響集合內容。
-      </p>
-      <p>
-        實際上「重複」是構造能成功的<strong>必要條件</strong>：N × N = N² 個格，只有 2N−1 種值 ⇒ 平均每個值出現 <code>N²/(2N−1) ≈ N/2</code> 次。沒有重複根本塞不滿矩陣。
+        這個觀察是整題的起點：它把「填陣列」變成「每個十字是 <code>1..2N−1</code> 的一個排列」，
+        後面才有空間去談配對與著色。
       </p>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">A5 · 變形題</span>
+      <span class="qa__id">A2 · XOR 雙射</span>
       <p>
-        若 BR 改成 <code>A(K) + shift</code>，<strong>構造會壞掉</strong>。具體看下半的 <code>i ∈ [K+1..N]</code>：
+        固定 <code>i</code>，函數 <code>f(j) = i XOR j</code> 是<strong>自己的反函數</strong>（<code>f(f(j)) = i^(i^j) = j</code>），
+        所以是雙射。當 <code>j</code> 跑遍 <code>[0, N)</code>，<code>i^j</code> 也跑遍 <code>[0, N)</code> 每個值各一次。
+      </p>
+      <p>
+        排除 <code>j = i</code> 那一格（<code>i^i = 0</code>，對應對角，不參與十字的非對角配對），
+        剩下的 <code>i^j</code> 恰好是 <code>{1..N−1}</code> 每個各一次 ⇒ row i 的非對角格碰到每組互補對編號各一次。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 為何需要 N = 2^K</span>
+i^j 落在 [0, N) ⟺ i, j 的二進位都在 K = log2(N) 位內
+N = 2^K ⇒ [0, N) = 所有 K-bit 數 ⇒ XOR 封閉，i^j 一定 &lt; N
+
+若 N 不是 2 次方（如 N=6, 二進位有 3 bit 但 6,7 越界）：
+   i^j 可能 = 7 ≥ 6 ⇒ 顏色越界、雙射壞掉</pre>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 1-因子分解</span>
+      <p>
+        把 index <code>0..N−1</code> 當圖的點，每條邊 <code>{i, j}</code> 染上顏色 <code>i XOR j</code>。
+        固定一個顏色 <code>k ≠ 0</code>，看「所有顏色 = k 的邊」：
       </p>
       <ul>
-        <li>row <code>i</code> = BL[i'][*] ∪ BR[i'][*]，兩塊都 +shift ⇒ <strong>整個 row 的值域 ⊆ {2K..2N−2}</strong>，<strong>少了 {1..2K−1}</strong>。</li>
-        <li>col <code>i</code> = TR[*][i'] ∪ BR[*][i']。TR 對角貢獻 <code>2N−1</code>，TR 其餘 +shift，BR 也 +shift ⇒ <strong>col 值域 ⊆ {2K..2N−1}</strong>，同樣<strong>少了 {1..2K−1}</strong>。</li>
-        <li>row ∪ col ⊆ <code>{2K..2N−1}</code>，<strong>無法覆蓋 <code>{1..2K−1}</code></strong> ⇒ 違反 row i ∪ col i = <code>{1..2N−1}</code>。</li>
+        <li>邊 <code>{i, j}</code> 是 k 色 ⟺ <code>i XOR j = k</code> ⟺ <code>j = i XOR k</code>。</li>
+        <li>所以 k 色的邊就是把每個點 <code>i</code> 連到 <code>i XOR k</code>。</li>
+        <li>因為 <code>(i XOR k) XOR k = i</code>，<code>i</code> 與 <code>i XOR k</code> <strong>互相</strong>配對，且 <code>i ≠ i XOR k</code>（k≠0）⇒ 無自環、無重疊。</li>
       </ul>
+      <pre class="sc-trace"><span class="sc-trace__head">// PERFECT MATCHING for color k</span>
+i  ──k──  i XOR k     對所有 i 成立，兩兩配對覆蓋全部 N 個點
+⇒ 顏色 k 的邊集 = 一個 1-因子（perfect matching）
+
+N−1 個非零顏色 ⇒ K_N 被切成 N−1 個完美配對 = 1-因子分解</pre>
+      <p>每個點都恰好碰到每種顏色一次 ⇒ 每個十字碰每組互補對一次 ⇒ 不重不漏。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 方向不變量</span>
       <p>
-        BR 必須與 TL 同值，<strong>不能</strong>平移。直覺是：BR 是下半 row 與右半 col 「拿回低值（<code>{1..2K−1}</code>）」的唯一來源；BL 平移、TR 平移（含對角），三塊都跟「高值」站隊，BR 必須留守低值。
+        互補對 <code>{k, 2N−k}</code> 有<strong>兩個值</strong>，要分給對稱的兩格 (i,j) 與 (j,i)。
+        用 <code>i&lt;j</code> / <code>i&gt;j</code> 當分界，保證一格拿小半 <code>i^j</code>、另一格拿大半 <code>2N−(i^j)</code>：
       </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// INVARIANT</span>
+a[i][j] + a[j][i] = (i^j) + (2N - (i^j)) = 2N   ✓ 永遠成立</pre>
+      <p>
+        若兩格都填 <code>i^j</code>（小半）：
+      </p>
+      <ul>
+        <li>互補對的<strong>大半 <code>2N−(i^j)</code> 永遠不出現</strong>在陣列裡。</li>
+        <li>十字 i 只收得到 <code>{1..N−1}</code> 那一側的數 + 對角 N，<strong>完全缺 <code>{N+1..2N−1}</code></strong>。</li>
+        <li>違反 row i ∪ col i = <code>{1..2N−1}</code>。</li>
+      </ul>
+      <p>方向是讓「互補對的兩半都現身」的唯一機制 — 缺了它，一半的值域整個消失。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 對角選值</span>
+      <p>
+        對角線是十字的共用中心，所有十字都會碰到自己那一格的對角值。
+        所以<strong>對角必須放一個「對每個十字都合法」的常數</strong>。
+      </p>
+      <p>
+        選 <code>N</code> 是因為剩下的 <code>2N−2</code> 個數 <code>{1..N−1} ∪ {N+1..2N−1}</code> 剛好能配成
+        <code>N−1</code> 組「和為 2N」的互補對 — <strong>N 正好是這個對稱中心</strong>，互補對才漂亮。
+      </p>
+      <ul>
+        <li>換成別的常數 <code>v</code>：剩下的數變成 <code>{1..2N−1} \ {v}</code>，要配「和為某定值」的互補對就不對稱了。</li>
+        <li>譬如 <code>v = 1</code>：剩 <code>{2..2N−1}</code>，<code>2N−1</code> 個數扣掉 1 是偶數個，但配對中心不再是整數 ⇒ 構造得重新設計。</li>
+        <li><code>v = N</code> 是唯一讓「互補對和為 2N、且 XOR 方向乾淨對接」的選擇。</li>
+      </ul>
+      <p>對角 = N 不是隨便挑的，是讓整個互補對結構對稱的<strong>幾何中心</strong>。</p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A · App 1</span>
       <p>
-        <code>N = 8, K = 4, shift = 2K − 1 = 7, 2N − 1 = 15</code>。
+        <code>N = 8</code>，<code>2N = 16</code>。
       </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// A(8)[1][6] 與 A(8)[6][1]</span>
+(1, 6): i &lt; j ⇒ 1 ^ 6 = 0b001 ^ 0b110 = 0b111 = 7
+(6, 1): i &gt; j ⇒ 16 - (6 ^ 1) = 16 - 7 = 9
+
+驗證互補：7 + 9 = 16 = 2N  ✓</pre>
       <p>
-        <code>A(8)[1][5]</code>：col 5 = K + 1 = 5 ⇒ 落在 <strong>TR 子塊</strong>，TR 內的 local index 是 <code>(i=1, j=5−K=1)</code>。
-      </p>
-      <p>
-        <code>i == j</code>（都是 1）⇒ <strong>TR 對角</strong> ⇒ 值 = <code>2N − 1 = 15</code>。
-      </p>
-      <pre class="sc-trace"><span class="sc-trace__head">// A(8)[1][5] = 15</span>
-原始位置 (1, 5)
-→ TR 子塊 local (1, 1)
-→ i == j 對角 ⇒ 2N - 1 = 15</pre>
-      <p>
-        不需要展開 64 個格，<strong>直接看「落在哪個子塊」與「是不是對角」</strong>就能 O(log N) 查任意格的值。
+        不需展開 64 格 — <strong>看 (i, j) 的大小定方向、算一次 XOR</strong> 就 O(1) 查任意格的值。
+        對稱兩格相加必為 <code>2N = 16</code>。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A · App 2</span>
       <p>
-        <code>N = 1024</code>：
+        <strong>省下的是「空間」。</strong>
       </p>
-      <pre class="sc-trace"><span class="sc-trace__head">// N = 1024</span>
-Report 次數 = N² = 1024² = 1,048,576 ≈ 10⁶
+      <pre class="sc-trace"><span class="sc-trace__head">// N = 1024 資源對照</span>
+2×2 block 遞迴版：
+   Space = int M[1100][1100] ≈ 4.8 MB（必須全域存整個矩陣）
+   Time  = O(N²) ≈ 10⁶
 
-建構寫入：每格寫一次 = N² = 10⁶
-（TL 與 BR 由更深層遞迴寫；BL 與 TR 由當層的雙重 for 寫；每格只被某層寫一次。）
-
-兩者同階：Θ(N²) = 約 10⁶。</pre>
+XOR 閉式解：
+   Space = O(1)（不存陣列，邊算邊 Report）  ← 省掉 4.8 MB
+   Time  = O(N²) ≈ 10⁶  ← 與遞迴版同階</pre>
       <p>
-        <strong>瓶頸不是建構也不是輸出，是「兩者加起來 = 2 × 10⁶」</strong> — 對現代 CPU 仍然輕鬆秒過。
+        <strong>時間複雜度兩版相同（都是 O(N²)，受輸出量下限）</strong>，
+        但 XOR 版把空間從 <code>O(N²)</code> 降到 <code>O(1)</code>，且程式碼短到只剩一個雙層迴圈、沒有遞迴堆疊。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">A · App 3</span>
       <p>
-        若值域縮到 <code>{1..N}</code>，要求 <strong>row i ∪ col i = {1..N}</strong>：
+        若 N 不是 2 的次方，<code>i XOR j</code> 可能 <strong>≥ N</strong>（XOR 在 <code>[0, N)</code> 上不封閉），
+        顏色越界、雙射壞掉 ⇒ <strong>XOR 構造失效</strong>。
       </p>
       <ul>
-        <li>row i 有 N 格、col i 有 N 格、扣掉重疊格 (i, i)，共 <code>2N − 1</code> 個位置。要塞滿 <code>{1..N}</code>（N 種值），<strong>必然有 <code>2N−1 − N = N−1</code> 格是重複</strong>。</li>
-        <li>更強的解：<strong>Latin square</strong>（拉丁方陣） — 每 row 都是 <code>{1..N}</code> 的排列、每 col 也是。對任何 N ≥ 1 都存在（譬如 <code>A[i][j] = ((i + j − 2) mod N) + 1</code>）。</li>
-        <li>本構造完全不能用 — 我們依賴 <code>{1..2K−1}</code> ∪ <code>{2K..2N−2}</code> ∪ <code>{2N−1}</code> 的拼接，那是「為 <code>2N−1</code> 量身打造的容量規劃」，縮到 <code>N</code> 後拼接邏輯整個垮掉。</li>
+        <li><strong>1-因子分解仍然存在</strong>：只要 N 是<strong>偶數</strong>，<code>K_N</code> 一定有 1-因子分解（這是經典定理）。</li>
+        <li>此時要用 <strong>round-robin / 圓圈法</strong>：固定一個點在圓心，其餘 N−1 個點繞圈，每輪旋轉得到一個完美配對。程式碼要轉指標、取模，比 XOR 瑣碎。</li>
+        <li>N 為<strong>奇數</strong>時 <code>K_N</code> 沒有完美配對（點數奇），這題的「對角 + 互補對」框架也得改 — 但本題保證 <code>N = 2^K</code>，永遠偶數，不必煩惱。</li>
       </ul>
       <p>
-        所以 <code>{1..N}</code> 版的問題<strong>是另一類問題</strong>（Latin square / quasigroup），跟本題的 <code>{1..2N−1}</code> Bad Array 屬於不同分類。
-        <strong>本題的「2N−1」是構造能用 D&amp;C 拼接的唯一容量點</strong>。
+        一句話：<strong>XOR 是「N = 2^K」的專屬捷徑</strong>；一般偶數退回 round-robin，奇數則整個結構失效。
+        題目限制 <code>N = 2^K</code> 正是為了讓 XOR 這條最乾淨的路成立。
       </p>
     </div>
 
@@ -412,8 +391,8 @@ Report 次數 = N² = 1024² = 1,048,576 ≈ 10⁶
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 完整 build(4) trace — A(4) 的四個 row ∪ col 都覆蓋 {1..7}。</div>
-    <div class="sc-summary-bar__detail">TR 對角線的 2N−1 是 row/col 「最大值補完」的唯一機制。</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 完整 solve(4) trace — A(4) 的四個十字都覆蓋 {1..7}。</div>
+    <div class="sc-summary-bar__detail">核心：對角 = N、互補對和 2N、XOR 給出 K_N 的 1-因子分解。</div>
   </div>
 
 </body>
