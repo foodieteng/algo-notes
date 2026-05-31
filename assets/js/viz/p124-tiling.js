@@ -86,10 +86,10 @@
   // Part B: recurrence building f[4]
   snap({ part: 'B', show: 'states',
     text: '<strong>怎麼推到大的 N？</strong> 定義兩個狀態：' +
-          '<code>f[n]</code> = 完整鋪滿 3×n；<code>g[n]</code> = 3×n 但<strong>多凸出一格</strong>（鋸齒邊界）。' });
+          '<code>f[n]</code> = 完整鋪滿 3×n；<code>g[n]</code> = 最後一欄<strong>缺一角</strong>（凹進去的鋸齒邊界）。' });
 
   snap({ part: 'B', show: 'recur',
-    text: '邊界只有「平的」或「凸一格」兩種型態 ⇒ 互相遞推：<br/>' +
+    text: '邊界只需追蹤「平的」或「缺一角」兩種型態 ⇒ 互相遞推：<br/>' +
           '<code>f[n] = f[n−2] + 2·g[n−1]</code>　·　<code>g[n] = f[n−1] + g[n−2]</code>。' });
 
   // numeric build f,g up to 4
@@ -202,8 +202,8 @@
     const w = canvas.clientWidth, h = canvas.clientHeight;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 
-    // two state diagrams: flat boundary (f) and bump boundary (g)
-    const drawProfile = (cx, cy, label, bump, color) => {
+    // two state diagrams: flat boundary (f) and concave missing-corner boundary (g)
+    const drawProfile = (cx, cy, label, concave, color) => {
       const cell = 26;
       const x0 = cx - cell, y0 = cy - cell * 1.5;
       for (let r = 0; r < 3; r++) {
@@ -217,16 +217,29 @@
       }
       // boundary marker
       ctx.strokeStyle = color; ctx.lineWidth = 3;
-      if (!bump) {
+      if (!concave) {
         ctx.beginPath(); ctx.moveTo(x0 + 2 * cell, y0); ctx.lineTo(x0 + 2 * cell, y0 + 3 * cell); ctx.stroke();
       } else {
-        // jutting one cell at middle row
+        // missing the top cell of the last column: a concave boundary.
+        ctx.fillStyle = COLOR.paper;
+        ctx.fillRect(x0 + cell + 1, y0 + 1, cell - 2, cell - 2);
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x0 + cell + 2, y0 + 2, cell - 4, cell - 4);
+        ctx.setLineDash([]);
         ctx.fillStyle = color;
-        ctx.fillRect(x0 + 2 * cell, y0 + cell, cell, cell);
+        ctx.font = '700 10px "JetBrains Mono", monospace';
+        ctx.fillText('缺', x0 + cell * 1.5, y0 + cell * 0.5);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(x0 + 2 * cell, y0); ctx.lineTo(x0 + 2 * cell, y0 + cell);
-        ctx.lineTo(x0 + 3 * cell, y0 + cell); ctx.lineTo(x0 + 3 * cell, y0 + 2 * cell);
-        ctx.lineTo(x0 + 2 * cell, y0 + 2 * cell); ctx.lineTo(x0 + 2 * cell, y0 + 3 * cell);
+        ctx.moveTo(x0 + cell, y0);
+        ctx.lineTo(x0 + 2 * cell, y0);
+        ctx.lineTo(x0 + 2 * cell, y0 + cell);
+        ctx.lineTo(x0 + cell, y0 + cell);
+        ctx.moveTo(x0 + 2 * cell, y0 + cell);
+        ctx.lineTo(x0 + 2 * cell, y0 + 3 * cell);
         ctx.stroke();
       }
       ctx.fillStyle = COLOR.ink;
@@ -239,7 +252,7 @@
       ctx.font = '700 15px "Oswald", sans-serif';
       ctx.fillText('兩種邊界型態', w / 2, 36);
       drawProfile(w * 0.32, h * 0.42, 'f[n] · 平邊界', false, COLOR.dom[1]);
-      drawProfile(w * 0.66, h * 0.42, 'g[n] · 凸一格', true, COLOR.active);
+      drawProfile(w * 0.66, h * 0.42, 'g[n] · 缺一角', true, COLOR.active);
 
       if (s.show === 'recur') {
         ctx.fillStyle = COLOR.text;
