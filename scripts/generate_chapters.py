@@ -73,6 +73,15 @@ PROBLEMS = {
         ('p117', '糟糕陣列',       'bonus',    'done'),
         ('p500', '好的連續子序列', 'practice', 'done'),
     ],
+    '07': [
+        ('p124', '円円數磁磚',                      'main',  'todo'),
+        ('p126', '円円送禮物',                      'main',  'done'),
+        ('p127', '取數字1',                         'main',  'todo'),
+        ('p128', '取數字2',                         'main',  'todo'),
+        ('p129', '合成円円',                        'main',  'todo'),
+        ('p157', '分送高棕櫚',                      'bonus', 'todo'),
+        ('p326', '2016算法班第一階段認證考_pD',     'bonus', 'todo'),
+    ],
 }
 
 CATEGORY_NAMES = {
@@ -88,6 +97,7 @@ CATEGORY_ORDER = ['main', 'bonus', 'practice', 'hand']
 WEEK_CONTEST = {
     '03': 11,
     '06': 20,
+    '07': 24,
 }
 DEFAULT_CONTEST = 20
 

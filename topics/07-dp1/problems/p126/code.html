@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P126 · 02 Code // 円円送禮物 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P126
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/126/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">円円送禮物</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 線性 DP + 預處理
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(maxN + T)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(maxN)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 末位顏色 DP + 頭尾修正<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">忠於 DP 思路的寫法：固定<strong>第一個 coin 的顏色</strong>，對每個首色各跑一次線性 DP，
+    末位再依「頭尾不一藍一綠」取捨。一次把 <code>ans[1..maxN]</code> 全填好。</p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p126.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MOD <span class="p">=</span> <span class="n">1000007</span><span class="p">;</span>
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">100005</span><span class="p">;</span>
+
+<span class="t">int</span> ans<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// ans[N] = N 個 coin 的塗色方法數 (mod)</span>
+
+<span class="c">// 顏色：0 紅(R)  1 綠(G)  2 藍(B)。限制：G 與 B 不相鄰（含頭尾）</span>
+<span class="c">// dp[last] = 「第一個塗 first、目前末位塗 last」的方法數</span>
+<span class="t">void</span> <span class="f">build</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> first <span class="p">=</span> <span class="n">0</span><span class="p">;</span> first <span class="p">&lt;</span> <span class="n">3</span><span class="p">;</span> first<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">int</span> r <span class="p">=</span> <span class="p">(</span>first <span class="p">==</span> <span class="n">0</span><span class="p">);</span>          <span class="c">// N=1：末位 = first</span>
+        <span class="t">int</span> g <span class="p">=</span> <span class="p">(</span>first <span class="p">==</span> <span class="n">1</span><span class="p">);</span>
+        <span class="t">int</span> b <span class="p">=</span> <span class="p">(</span>first <span class="p">==</span> <span class="n">2</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> n <span class="p">=</span> <span class="n">1</span><span class="p">;</span> n <span class="p">&lt;</span> MAXN<span class="p">;</span> n<span class="p">++)</span> <span class="p">{</span>
+            <span class="c">// 累計這個 first 對 ans[n] 的貢獻（末位不可與 first 形成一藍一綠）</span>
+            <span class="t">int</span> add <span class="p">=</span> r<span class="p">;</span>                                  <span class="c">// 末位 R 一定合法</span>
+            <span class="k">if</span> <span class="p">(!(</span>first <span class="p">==</span> <span class="n">2</span> <span class="p">&amp;&amp;</span> <span class="n">1</span><span class="p">))</span> <span class="p">{}</span>                  <span class="c">// (佔位，見下方條件)</span>
+            <span class="k">if</span> <span class="p">(!(</span>first <span class="p">==</span> <span class="n">2</span><span class="p">))</span> add <span class="p">=</span> <span class="p">(</span>add <span class="p">+</span> g<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>  <span class="c">// 末位 G：首色不能是 B</span>
+            <span class="k">if</span> <span class="p">(!(</span>first <span class="p">==</span> <span class="n">1</span><span class="p">))</span> add <span class="p">=</span> <span class="p">(</span>add <span class="p">+</span> b<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>  <span class="c">// 末位 B：首色不能是 G</span>
+            ans<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>ans<span class="p">[</span>n<span class="p">]</span> <span class="p">+</span> add<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+
+            <span class="c">// 轉移到 n+1（線性：G 不接 B、B 不接 G）</span>
+            <span class="t">int</span> nr <span class="p">=</span> <span class="p">(</span>r <span class="p">+</span> g <span class="p">+</span> b<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+            <span class="t">int</span> ng <span class="p">=</span> <span class="p">(</span>r <span class="p">+</span> g<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+            <span class="t">int</span> nb <span class="p">=</span> <span class="p">(</span>r <span class="p">+</span> b<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+            r <span class="p">=</span> nr<span class="p">;</span> g <span class="p">=</span> ng<span class="p">;</span> b <span class="p">=</span> nb<span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="f">build</span><span class="p">();</span>                       <span class="c">// 一次預處理所有 N</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="p">{</span>
+        <span class="t">int</span> n<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+        cout <span class="p">&lt;&lt;</span> ans<span class="p">[</span>n<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>   <span class="c">// 查表 O(1)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>更短的等價寫法</strong>：答案數列滿足三項遞迴
+      <code>a(n) = 3·a(n−1) − a(n−2) − a(n−3)</code>（base 3,7,15）。預處理只要一條迴圈：
+    </p>
+
+    <div class="sc-codewindow" style="margin-top:8px;">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p126_recur.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="t">long long</span> a<span class="p">[</span>MAXN<span class="p">];</span>
+a<span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">3</span><span class="p">;</span> a<span class="p">[</span><span class="n">2</span><span class="p">]</span> <span class="p">=</span> <span class="n">7</span><span class="p">;</span> a<span class="p">[</span><span class="n">3</span><span class="p">]</span> <span class="p">=</span> <span class="n">15</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="t">int</span> n <span class="p">=</span> <span class="n">4</span><span class="p">;</span> n <span class="p">&lt;</span> MAXN<span class="p">;</span> n<span class="p">++)</span>
+    a<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">((</span><span class="n">3</span> <span class="p">*</span> a<span class="p">[</span>n<span class="p">-</span><span class="n">1</span><span class="p">]</span> <span class="p">-</span> a<span class="p">[</span>n<span class="p">-</span><span class="n">2</span><span class="p">]</span> <span class="p">-</span> a<span class="p">[</span>n<span class="p">-</span><span class="n">3</span><span class="p">])</span> <span class="p">%</span> MOD <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+<span class="c">// 注意減法後可能變負 ⇒ + MOD 再取餘</span></pre>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>build 預處理</td><td>3 個首色 × 掃 maxN（或遞迴一條迴圈）</td><td class="mono">O(maxN)</td></tr>
+        <tr><td>回答每筆</td><td>查表 <code>ans[n]</code></td><td class="mono">O(1)</td></tr>
+        <tr><td>全部 T 筆</td><td>—</td><td class="mono">O(T)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">總時間 = O(maxN) + O(T) = <strong>O(maxN + T)</strong></div>
+      <div class="sc-formula__hint">maxN, T ≤ 10⁵ ⇒ 約 2×10⁵ 步；對照每筆重算的 O(T·N)=10¹⁰</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(maxN + T)</strong></td><td>預處理一次、查表 O(1)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(maxN)</strong></td><td><code>ans[]</code> 一條陣列</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純迴圈填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>整數加減取餘</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>模數是 1000007 不是 1e9+7</strong></td>
+          <td>題目要求對 <code>1000007</code> 取餘 — 別反射性寫成 <code>1000000007</code>。而且 1000007 <strong>不是質數</strong>（= 29 × 34483），但本題只有加減、用不到除法 / 逆元。</td>
+        </tr>
+        <tr>
+          <td><strong>遞迴減法變負</strong></td>
+          <td><code>3a−a−a</code> 取餘後可能 &lt; 0 ⇒ 寫 <code>(x % MOD + MOD) % MOD</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>多筆要預處理</strong></td>
+          <td>T 筆各自 O(N) 會 TLE；<strong>一次 build 全部 N</strong>、查表回答。</td>
+        </tr>
+        <tr>
+          <td><strong>頭尾限制別漏</strong></td>
+          <td>只做線性 DP 會多算「頭尾一藍一綠」的情形 ⇒ N=3 會得 17 而非 15。要固定首色取捨 / 扣掉。</td>
+        </tr>
+        <tr>
+          <td><strong>N = 1 / N = 2 邊界</strong></td>
+          <td>N=1 沒有相鄰也沒頭尾配對 ⇒ 3；N=2 兩端相鄰，{G,B} 兩種被擋 ⇒ 9−2 = 7。遞迴 base 要正確。</td>
+        </tr>
+        <tr>
+          <td><strong>10⁵ 筆 I/O</strong></td>
+          <td><code>sync_with_stdio(false); cin.tie(nullptr);</code>，輸出用 <code>'\n'</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 線性轉移（核心）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// transition</span>
+nr = r + g + b      // 末位 R：前一位什麼都行
+ng = r + g          // 末位 G：前一位不能是 B
+nb = r + b          // 末位 B：前一位不能是 G
+// base: 第一個 coin → (r,g,b) 只有 first 那一格是 1</pre>
+
+    <p><strong>② 頭尾取捨（把環補回來）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// endpoint</span>
+固定 first 後，末位累進 ans[n] 時：
+  末位 R → 一定合法
+  末位 G → 只有 first ≠ B 才算（否則頭尾 = 一藍一綠）
+  末位 B → 只有 first ≠ G 才算
+∴ 三種 first 各自掃一遍、累加，就自動排除頭尾違規</pre>
+
+    <p><strong>③ 為什麼可以「線性總數 − 頭尾{G,B}」</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// 等價觀點</span>
+線性 DP 數的是「相鄰都合法」的所有塗法 L(N)
+其中違反頭尾規則的，恰好是「第1個與第N個 = 一藍一綠」
+這些在線性裡是合法的（頭尾不相鄰）所以被算進去了
+⇒ 答案 = L(N) − #(頭尾為 {G,B})
+N=3: 17 − 2 = 15 ✓</pre>
+
+    <p><strong>④ 三項遞迴怎麼來的</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// recurrence</span>
+答案數列 3, 7, 15, 35, 83, 199, 479, ...
+設 a(n) = p·a(n-1) + q·a(n-2) + r·a(n-3)
+用前幾項解出 (p,q,r) = (3, -1, -1)
+驗證後續項皆成立 ⇒ a(n) = 3a(n-1) − a(n-2) − a(n-3)</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">固定首色跑末位 DP（G/B 不相鄰）+ 頭尾取捨，一次 build 全部 N，查表 O(1)。</div>
+    <div class="sc-summary-bar__detail">等價遞迴 a(n)=3a(n−1)−a(n−2)−a(n−3)；mod 1000007 記得處理負數。</div>
+  </div>
+
+</body>
+</html>

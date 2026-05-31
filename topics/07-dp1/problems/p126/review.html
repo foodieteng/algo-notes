@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P126 · 03 Review // 円円送禮物 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P126
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/126/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">円円送禮物</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>3 色塗一列、綠藍不相鄰（含頭尾）⇒ 計數 DP。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>dp[i][色]</code> = 前 i 個、第 i 個塗該色的方法數。合法只看上一格。</td></tr>
+        <tr><td>轉移</td>
+            <td>R←{R,G,B}、G←{R,G}、B←{R,B}（綠藍互斥）。</td></tr>
+        <tr><td>頭尾</td>
+            <td>固定首色，末位排除與首色形成 {G,B}；或「線性總數 − 頭尾{G,B}」。</td></tr>
+        <tr><td>多筆</td>
+            <td>一次預處理 <code>ans[1..maxN]</code>，每筆查表 O(1)。</td></tr>
+        <tr><td>模數</td>
+            <td>對 <code>1000007</code> 取餘；減法後 <code>+MOD</code> 再取餘。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">狀態設計</span>
+      <h4>為什麼狀態要記「末位顏色」而不是只記方法總數？少了顏色會錯在哪？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">轉移正確性</span>
+      <h4><code>g[i]=r[i-1]+g[i-1]</code> 為什麼不加 <code>b[i-1]</code>？這條式子對應哪個限制？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">頭尾限制</span>
+      <h4>只做線性 DP（不管頭尾）N=3 會得幾？跟正解差多少？差的那些是什麼塗法？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">多筆策略</span>
+      <h4>為什麼不能每筆測資各自跑一次 O(N) DP？要怎麼改才不會 TLE？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">模運算</span>
+      <h4>用遞迴 <code>3a−a−a</code> 時，為什麼要 <code>(x%MOD+MOD)%MOD</code>？模數 1000007 是質數嗎、有影響嗎？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 DP 看 N=3 怎麼得 15<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用線性 per-color DP（<code>r,g,b</code> = 末位塗 R/G/B 的方法數），最後扣頭尾：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// i = 1 (base)</span>
+r=1  g=1  b=1     // 第 1 個 coin 三色各一種
+total = 3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// i = 2</span>
+r = r+g+b = 1+1+1 = 3
+g = r+g   = 1+1   = 2     // G 不接前面的 B
+b = r+b   = 1+1   = 2     // B 不接前面的 G
+total = 3+2+2 = 7   ← N=2 沒有頭尾{G,B}（會被相鄰擋掉），答案就是 7 ✓</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// i = 3</span>
+r = 3+2+2 = 7
+g = 3+2   = 5
+b = 3+2   = 5
+linear total = 7+5+5 = 17</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 頭尾修正</span>
+17 種裡，第1個與第3個恰為「一藍一綠」的有：
+  G · ? · B   →  中間只能 R（G-?-B，?≠相鄰違規）：G R B  (1 種)
+  B · ? · G   →  中間只能 R：B R G               (1 種)
+共 2 種違反頭尾規則 ⇒ 扣掉</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>17 − 2 = 15</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：線性 DP 已經把「綠藍相鄰」擋好（所以 <code>G _ B</code> 中間不能再放 G 或 B），
+      但<strong>頭尾不相鄰</strong>，線性 DP 管不到 ⇒ 必須額外扣掉 <code>G R B</code> / <code>B R G</code> 這 2 種。
+      這就是「環形限制」要特別處理的地方。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">無頭尾限制</span>
+      <h4>若拿掉「頭尾不一藍一綠」只剩相鄰限制，N=3 答案是多少？通式長怎樣？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">真環形</span>
+      <h4>若改成「環狀排列」（第 N 個與第 1 個真的相鄰、所有相鄰都禁綠藍），DP 要怎麼調整？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">k 色推廣</span>
+      <h4>若有 k 種顏色、某些顏色對不能相鄰，這套 DP 怎麼推廣？複雜度？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 狀態設計</span>
+      <p>
+        因為「下一個能塗什麼」取決於<strong>當前末位的顏色</strong>（綠後面不能接藍…）。
+        若只記方法總數，無法判斷加新 coin 時哪些顏色合法 ⇒ 轉移無從寫起。
+        把末位顏色加入狀態，才能正確分流轉移。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 轉移正確性</span>
+      <p>
+        <code>g[i]</code> 是「第 i 個塗 G」的方法數。它的前一個 coin 不能是 B（綠藍不相鄰），
+        所以只能接在末位是 R 或 G 的序列後面 ⇒ <code>g[i] = r[i-1] + g[i-1]</code>，不含 <code>b[i-1]</code>。
+        這條式子正是「<strong>G 不接 B</strong>」這個限制的直接編碼。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 頭尾限制</span>
+      <p>
+        只做線性 DP，N=3 得 <strong>17</strong>；正解 15，<strong>多算 2</strong>。
+        多出來的正是頭尾一藍一綠的兩種：<code>G R B</code> 與 <code>B R G</code>
+        （它們相鄰都合法，但頭尾違規）。所以要扣掉。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 多筆策略</span>
+      <p>
+        T、N 都可達 10⁵，每筆各跑 O(N) ⇒ 最壞 <code>T·N = 10¹⁰</code>，TLE。
+      </p>
+      <p>
+        關鍵：不同測資只是不同的 N，<strong>答案只跟 N 有關</strong>。
+        所以<strong>一次預處理</strong> <code>ans[1..10⁵]</code>（O(maxN)），每筆查表 O(1) ⇒ 總 O(maxN + T)。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 模運算</span>
+      <p>
+        <code>3a(n−1) − a(n−2) − a(n−3)</code> 先各自取餘後相減，結果可能是負數
+        （例如被減項較大）⇒ C++ 的 <code>%</code> 對負數會回傳負餘數。寫 <code>(x % MOD + MOD) % MOD</code> 校正回 <code>[0, MOD)</code>。
+      </p>
+      <p>
+        模數 <code>1000007 = 29 × 34483</code><strong>不是質數</strong>。但本題全程只有加減乘、<strong>沒有除法 / 逆元</strong>，
+        合成數不影響正確性。（若要算組合數除法就得小心。）
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 無頭尾限制</span>
+      <p>
+        只剩相鄰限制 ⇒ 就是線性總數 <code>L(N)</code>。N=3 為 <strong>17</strong>。
+      </p>
+      <p>
+        通式：<code>L(N) = r+g+b</code>，由 <code>r'=r+g+b, g'=r+g, b'=r+b</code> 遞推。
+        因對稱 <code>g=b</code>，可化簡為 <code>L(N) = L(N−1) + 2·g(N−1)</code> 一類二階遞迴
+        （數列 3,7,17,41,99,… 滿足 <code>L(N)=2L(N−1)+L(N−2)</code>，即 Pell 型）。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 真環形</span>
+      <p>
+        環狀（所有相鄰、含 N–1 接回 0 都禁綠藍）的標準做法：<strong>列舉第一個 coin 的顏色 c₀</strong>，
+        對每個 c₀ 跑線性 DP，最後只累加「末位與 c₀ 也合法相鄰」的方法數。
+      </p>
+      <ul>
+        <li>固定 c₀ ⇒ 末位限制 = 「不能與 c₀ 綠藍相鄰」。</li>
+        <li>3 個 c₀ 各跑一次 O(N)，加總即環形答案。</li>
+      </ul>
+      <p>本題的「頭尾不一藍一綠」就是這個技巧的特例（只禁 {G,B} 這一對端點）。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · k 色推廣</span>
+      <p>
+        狀態 <code>dp[i][c]</code>（c 是 k 種顏色之一）；轉移
+        <code>dp[i][c] = Σ_{c' 可接 c} dp[i-1][c']</code>。
+      </p>
+      <p>
+        用「相鄰相容矩陣」<code>A[c'][c]</code> 表示哪些對可相鄰，DP 就是反覆乘這個 k×k 矩陣 ⇒
+        單次 O(k²)，N 步共 <code>O(N·k²)</code>；若 N 巨大可用<strong>矩陣快速冪</strong> <code>O(k³ log N)</code>。
+        環形版同樣用「固定首色」處理。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W07 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會末位顏色 DP 與頭尾（環形）修正。</div>
+    <div class="sc-summary-bar__detail">N=3：線性 17 − 頭尾{G,B} 2 = 15；遞迴 a(n)=3a(n−1)−a(n−2)−a(n−3)。</div>
+  </div>
+
+</body>
+</html>
