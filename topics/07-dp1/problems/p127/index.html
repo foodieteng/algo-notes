@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P127 · 01 概念 // 取數字1 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P127
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/127/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">取數字 1</h1>
+    <p class="sc-mast__subtitle">// 線性 DP · 最大不相鄰子集和</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      核心 一維 DP（House Robber）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給一個正整數陣列 <code>a₁, a₂, …, a_N</code>，要從中取出一些數字，
+      但<strong>任兩個被取的數字不能相鄰</strong>，求取出數字的<strong>總和最大值</strong>。
+      多筆 <code>T ≤ 10</code>，<code>1 ≤ N ≤ 10⁵</code>，<code>1 ≤ aᵢ ≤ 1000</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      經典的「打家劫舍 / House Robber」：一排房子不能搶相鄰兩間，求最大金額。
+      範例：<code>[1,2,3,4] → 6</code>（取 2+4）、<code>[1,3,4,2] → 5</code>（取 3+2 或 1+4）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 DP
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 DP<span class="sc-section__title-en">// Why DP</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉子集</span>
+            <span class="sc-ko-card__o">O(2ᴺ)</span>
+          </div>
+          <div class="sc-ko-card__body">試每種取法再檢查相鄰 ⇒ N=10⁵ 完全不可能（連 N=40 都爆）。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">貪心取大</span>
+            <span class="sc-ko-card__o">O(N log N)</span>
+          </div>
+          <div class="sc-ko-card__body">每次挑最大的、刪掉它的鄰居 ⇒ <strong>會選錯</strong>：<code>[3,4,3,4,3]</code> 貪心拿不到最佳。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">線性 DP</span>
+          <span class="sc-ko-card__o">O(N)</span>
+        </div>
+        <div class="sc-ko-card__body">每個位置只有「取 / 不取」兩種，遞迴關係只看前一、前二格。一遍掃完。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼貪心錯？</strong> 局部最大不保證全域最佳 — 拿了一個大數會封鎖兩個鄰居，可能擋掉更好的組合。
+      DP 把「取 / 不取」的後果完整往後傳遞，才正確。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 狀態與轉移
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">狀態與轉移<span class="sc-section__title-en">// State & Transition</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>dp[i]</code> = 只看 <code>a[0..i]</code> 時的最大不相鄰和。每個位置兩個選擇：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">dp[i] = max( <strong>dp[i−1]</strong> , <strong>dp[i−2] + a[i]</strong> )</div>
+      <div class="sc-formula__hint">
+        <strong>跳過 a[i]</strong> ⇒ 沿用 dp[i−1]；<strong>取 a[i]</strong> ⇒ 不能用 a[i−1]，接 dp[i−2] 再加 a[i]
+      </div>
+    </div>
+
+    <ol style="margin-top:10px;">
+      <li><strong>base</strong> · <code>dp[0] = a[0]</code>、<code>dp[1] = max(a[0], a[1])</code>。</li>
+      <li><strong>答案</strong> · <code>dp[N−1]</code>。</li>
+      <li><strong>滾動優化</strong> · 只用到前兩格 ⇒ 兩個變數 <code>take / skip</code> 即可，空間 O(1)。</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · dp 表逐格填<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>a = [1, 3, 4, 2]</code>（答案 5）。上排是陣列、下排是 <code>dp</code>。每格看兩個候選
+    （<span style="color:#d4a017">跳過 = dp[i−1]</span> vs <span style="color:#5fa866">取 = dp[i−2]+a[i]</span>）誰大，最後回溯被選中的數：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · DP (a = [1,3,4,2])</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 準備填 dp 表
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">■</span> 陣列 / dp 一般格 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> 正在計算的 dp[i] &nbsp;·&nbsp;
+      <span style="color:#d4a017">■</span> 候選「跳過」dp[i−1] &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 候選「取」dp[i−2] / 最終被選中的數
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 正確性
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼這個轉移是對的<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 最優子結構 + 無後效性</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>看最後一個被考慮的 a[i]，最佳解<strong>只有兩種可能</strong>：<strong>沒取它</strong> 或 <strong>取了它</strong>。</li>
+          <li><strong>沒取 a[i]</strong> ⇒ 問題退化成「a[0..i−1] 的最佳解」= <code>dp[i−1]</code>。</li>
+          <li><strong>取了 a[i]</strong> ⇒ a[i−1] 不能取（相鄰），剩下自由的是 a[0..i−2] ⇒ <code>dp[i−2] + a[i]</code>。</li>
+          <li>兩種互斥且涵蓋所有情況 ⇒ 取 max 即 dp[i]。子問題的最佳解能組出大問題的最佳解（<strong>最優子結構</strong>）。</li>
+          <li>dp[i] 只依賴更小的 i（<strong>無後效性</strong>）⇒ 由小到大一次填完即可。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      因為 <code>aᵢ ≥ 1</code> 全為正，「多取一個合法的數」永遠不會變差，所以不需要考慮「故意少取」 — 轉移取 max 就涵蓋了。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">每格 O(1) × N 格 = <strong>O(N)</strong> 每筆</div>
+      <div class="sc-formula__hint">滾動兩變數 ⇒ 空間 O(1)（不算讀入陣列）；N = 10⁵、T ≤ 10 輕鬆過</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N)</strong></td><td>單次掃描，每格常數工作</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(1)</strong></td><td>滾動 take/skip 兩變數即可</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純迴圈</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>一次比較一次加法</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>每個位置只有「取 / 不取」兩條路。</strong><br/>
+      取就跳過鄰居接 dp[i−2]，不取就沿用 dp[i−1]，兩者取大 —<br/>
+      <strong>dp[i] = max(dp[i−1], dp[i−2] + a[i])，一遍 O(N) 解決。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">最大不相鄰子集和 = dp[i]=max(dp[i−1], dp[i−2]+a[i])，一遍 O(N)。</div>
+    <div class="sc-summary-bar__detail">貪心會選錯；DP 把「取/不取」後果完整傳遞才正確。滾動兩變數空間 O(1)。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p127-rob.js"></script>
+</body>
+</html>

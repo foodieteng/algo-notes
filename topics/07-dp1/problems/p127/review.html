@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P127 · 03 Review // 取數字1 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P127
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/127/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">取數字 1</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>最大「不相鄰子集和」= House Robber。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>dp[i]</code> = 看到 a[0..i] 的最大和；每格只有取 / 不取。</td></tr>
+        <tr><td>轉移</td>
+            <td><code>dp[i] = max(dp[i−1], dp[i−2] + a[i])</code>。</td></tr>
+        <tr><td>滾動優化</td>
+            <td>只用前兩格 ⇒ <code>take / skip</code> 兩變數，空間 O(1)。</td></tr>
+        <tr><td>正確性</td>
+            <td>取 / 不取兩種互斥且涵蓋全部 ⇒ 最優子結構。</td></tr>
+        <tr><td>貪心不行</td>
+            <td>局部拿最大會封鎖鄰居、漏掉更好組合。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">轉移推導</span>
+      <h4>解釋 <code>dp[i]=max(dp[i−1], dp[i−2]+a[i])</code> 兩項各代表什麼決策？為什麼取 a[i] 要接 dp[i−2]？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">貪心反例</span>
+      <h4>給一個「每次拿最大、刪鄰居」會選錯的具體陣列，並說明 DP 為何對。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">滾動變數</span>
+      <h4>滾動版的 <code>take</code> 為什麼接 <code>skip</code>、<code>skip</code> 為什麼取 <code>max(take,skip)</code>？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">更新順序</span>
+      <h4>為什麼要先用舊值算出 newTake / newSkip 再一起更新？先覆寫 take 會怎樣？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">正數假設</span>
+      <h4>本題 aᵢ ≥ 1 全正。如果允許負數，這份 code 哪裡會出錯？怎麼修？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑滾動 DP 看 [1,3,4,2]<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>追 <code>take / skip</code> 每一步（初值 <code>take=skip=0</code>）：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>4
+1 3 4 2</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// a = 1</span>
+newTake = skip + 1 = 0 + 1 = 1
+newSkip = max(take, skip) = max(0, 0) = 0
+take=1  skip=0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// a = 3</span>
+newTake = skip + 3 = 0 + 3 = 3
+newSkip = max(take, skip) = max(1, 0) = 1
+take=3  skip=1</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// a = 4</span>
+newTake = skip + 4 = 1 + 4 = 5      // = 取 a[0]=1 與 a[2]=4
+newSkip = max(take, skip) = max(3, 1) = 3
+take=5  skip=3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// a = 2</span>
+newTake = skip + 2 = 3 + 2 = 5      // = 取 a[1]=3 與 a[3]=2
+newSkip = max(take, skip) = max(5, 3) = 5
+take=5  skip=5</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>max(take, skip) = max(5, 5) = 5</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：最後 take=skip=5 — 代表有<strong>兩條不同的最佳取法</strong>：
+      取 <code>a[0]+a[2]=1+4=5</code>（最後一格沒取）或取 <code>a[1]+a[3]=3+2=5</code>（最後一格有取）。
+      DP 不在乎是哪一條，只回傳最大值 5。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">環形版</span>
+      <h4>若陣列是<strong>環形</strong>（a[0] 與 a[N−1] 也算相鄰），怎麼用同一套 DP 解？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">輸出方案</span>
+      <h4>若還要輸出「取了哪些 index」而不只是總和，要怎麼回溯？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">至少間隔 k</span>
+      <h4>若限制改成「任兩個被取的數至少間隔 k 格」，轉移怎麼改？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 轉移推導</span>
+      <p>
+        <code>dp[i−1]</code> = <strong>不取 a[i]</strong>：問題退化成只看 a[0..i−1]。
+        <code>dp[i−2] + a[i]</code> = <strong>取 a[i]</strong>：因為 a[i−1] 與 a[i] 相鄰不能同取，
+        取了 a[i] 後最近能自由選的是 a[0..i−2] ⇒ 接 <code>dp[i−2]</code> 再加 a[i]。兩種互斥取 max。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 貪心反例</span>
+      <p>
+        <code>[3, 4, 3, 4, 3]</code>。貪心先拿最大的 4（其一）、刪兩鄰，再拿另一個 4 ⇒ 4+4 = <strong>8</strong>。
+        但最佳是取三個 3（index 0,2,4）= <strong>9</strong>。
+      </p>
+      <p>
+        DP 不會被「眼前最大」綁架：它對每個位置都同時保留「取 / 不取」兩條最佳鏈，
+        最後才比較，因此能找到 9。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 滾動變數</span>
+      <p>
+        <code>take</code>（取這格）⇒ 上一格<strong>必須沒取</strong>，所以只能接 <code>skip</code>，得 <code>skip + a</code>。
+      </p>
+      <p>
+        <code>skip</code>（不取這格）⇒ 上一格<strong>取或不取都合法</strong>（反正這格沒取、不會相鄰衝突），
+        所以取兩者較大 <code>max(take, skip)</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 更新順序</span>
+      <p>
+        因為 newTake 和 newSkip <strong>都依賴舊的 take / skip</strong>。若先把 take 覆寫成 newTake，
+        接著算 newSkip = max(take, skip) 就會用到<strong>已被汙染的 take</strong> ⇒ 算錯。
+      </p>
+      <p>
+        所以要先用舊值算出兩個新值（存到暫存），再同時更新；或用一個暫存變數保留舊 take。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 正數假設</span>
+      <p>
+        本題 aᵢ ≥ 1，所以「能取就取不會虧」，<code>take = skip + a</code> 一定 ≥ 不取的情況，邏輯成立。
+      </p>
+      <p>
+        若允許負數，<strong>取一個負數可能變差</strong>。此時：
+      </p>
+      <ul>
+        <li>「空集合」要算合法（和 = 0）⇒ 答案 <code>max(take, skip, 0)</code>，或讓 skip 永遠能保留 0。</li>
+        <li>視題意，可能要允許「取了但寧可不加」⇒ <code>newTake = max(skip, ...) + a</code> 之類，或直接 <code>max(skip + a, skip)</code>。</li>
+      </ul>
+      <p>核心轉移結構不變，只是 base / 是否允許空集合要重新界定。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 環形版</span>
+      <p>
+        環形時 a[0] 與 a[N−1] 相鄰，不能同取。標準技巧：<strong>拆成兩個線性問題取最大</strong> —
+      </p>
+      <ul>
+        <li>情況 A：<strong>不取 a[0]</strong> ⇒ 在 a[1..N−1] 上跑線性 DP。</li>
+        <li>情況 B：<strong>不取 a[N−1]</strong> ⇒ 在 a[0..N−2] 上跑線性 DP。</li>
+      </ul>
+      <p>答案 = max(A, B)。這樣保證頭尾不會同時被取。（N=1 特判直接回 a[0]。）</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 輸出方案</span>
+      <p>
+        開整條 <code>dp[]</code>（不滾動），再<strong>從 dp[N−1] 往回走</strong>：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// backtrack</span>
+i = N-1
+while i &gt;= 0:
+    if i == 0 or dp[i] == dp[i-1]:   // 沒取 a[i]（沿用前一格）
+        i -= 1
+    else:                            // 取了 a[i] = dp[i-2]+a[i]
+        記錄 i; i -= 2</pre>
+      <p>反序記錄的 index 即為取法（之一）。需要 O(N) 空間存 dp。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 至少間隔 k</span>
+      <p>
+        「任兩個被取的至少間隔 k 格」⇒ 取 a[i] 後，下一個最近能取的是 a[i+k]（中間 k−1 個不能取）。
+        轉移改成：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// gap &gt;= k</span>
+dp[i] = max(dp[i-1], dp[i-k] + a[i])
+// 取 a[i] ⇒ 接 dp[i-k]（保證間隔 ≥ k）
+// k=2 就退化回本題</pre>
+      <p>仍是 O(N)，只是「取」那項從 dp[i−2] 換成 dp[i−k]。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W07 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會最大不相鄰和的 DP 與滾動優化。</div>
+    <div class="sc-summary-bar__detail">[1,3,4,2] → 5（兩條最佳取法：1+4 或 3+2）。環形 / 間隔 k 都可延伸。</div>
+  </div>
+
+</body>
+</html>
