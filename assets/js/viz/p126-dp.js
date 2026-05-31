@@ -63,7 +63,7 @@
   //             'endpoint', 'final'
   const steps = [];
   function snap(filled, active, feeders, kind, text) {
-    steps.push({ filled: filled.map(r => r.slice()), active, feeders: feeders ? feeders.slice() : [], kind, text });
+    steps.push({ filled: filled.map(r => (r ? r.slice() : null)), active, feeders: feeders ? feeders.slice() : [], kind, text });
   }
 
   // filled[i][k] = whether cell shown (1-indexed; index 0 unused)
