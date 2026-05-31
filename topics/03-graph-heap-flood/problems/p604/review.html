@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P604 · 03 Review // 哪裡有卦，哪裡就有源 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph &amp; Heap</a>
+      &nbsp;/&nbsp;
+      P604
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/604/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">哪裡有卦，哪裡就有源</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>建模</td>
+            <td>人 = 點、卦源 = 無向邊；「人人異性」⇔ 圖可<strong>二著色</strong>（二分圖）。</td></tr>
+        <tr><td>判定核心</td>
+            <td>二分圖 ⇔ <strong>沒有奇環</strong>。BFS 沿邊塗反色，撞到同色相鄰即奇環。</td></tr>
+        <tr><td>不連通處理</td>
+            <td>對每個 <code>color == −1</code> 的點各跑一次 BFS。</td></tr>
+        <tr><td>輸出</td>
+            <td>全塗完無衝突 ⇒ <code>NORMAL.</code>；任一衝突 ⇒ <code>RAINBOW.</code>。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>O(n + m)</code> 每筆；多筆測資各自重置。</td></tr>
+        <tr><td>實作細節</td>
+            <td>用 BFS 陣列佇列（避免遞迴爆 stack）；反色用 <code>color[u] ^ 1</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">建模</span>
+      <h4>為什麼「每對卦源必異性」會等價於「圖是二分圖」？把題意翻成圖論語言。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">奇環</span>
+      <h4>為什麼「二分圖 ⇔ 沒有奇環」？三角形為什麼一定 RAINBOW？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">不連通</span>
+      <h4>若只從點 0 跑一次 BFS 會有什麼 bug？舉一個會被坑的測資。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">DFS vs BFS</span>
+      <h4>用遞迴 DFS 染色也對，為什麼這裡偏好 BFS？什麼測資會讓 DFS 出事？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">著色語意</span>
+      <h4><code>color[v] = color[u] ^ 1</code> 中的 XOR 在做什麼？為何不會「塗錯」？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑樣本第 1 筆<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>樣本第 1 筆：<code>n = 3</code>、<code>m = 3</code>，卦源 <code>0–1 · 1–2 · 2–0</code>（三角形）。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT (第 1 筆)</span>3
+3
+0 1
+1 2
+2 0</pre>
+
+    <p>建好的鄰接表（無向，兩邊都加）：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// adjacency</span>
+adj[0] = [1, 2]
+adj[1] = [0, 2]
+adj[2] = [1, 0]
+color  = [-1, -1, -1]</pre>
+
+    <p>主迴圈：<code>color[0] == −1</code> ⇒ 呼叫 <code>canColor(0)</code>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// BFS · 推入起點 0</span>
+color[0] = 0
+queue = [0]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop 0 (color 0)</span>
+看 adj[0] = [1, 2]
+  v=1: color[1] == -1 → 塗 color[0]^1 = 1，推進 queue
+  v=2: color[2] == -1 → 塗 color[0]^1 = 1，推進 queue
+queue = [1, 2]   color = [0, 1, 1, ...]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop 1 (color 1)</span>
+看 adj[1] = [0, 2]
+  v=0: color[0]=0 ≠ color[1]=1 → OK（這是來時的樹邊）
+  v=2: color[2]=1 == color[1]=1 → <span class="sc-trace__out">同色相鄰！return false</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT (第 1 筆)</span>canColor(0) = false → ok = false → RAINBOW.</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：點 1 和點 2 都被塗成顏色 1（因為都離起點 0 距離 1），
+      但 <code>1–2</code> 之間<strong>本來就有一條卦源邊</strong> — 同色卻相鄰，正是把三角形這個奇環封口的那條邊。
+      三人不可能兩兩異性 ⇒ RAINBOW。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">偶環</span>
+      <h4>把樣本改成 4 人的環 <code>0–1 · 1–2 · 2–3 · 3–0</code>（長度 4），輸出會是什麼？為什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">最壞規模</span>
+      <h4>n = 10⁵、m = 2 × 10⁵、T = 10，總運算量量級多少？會不會 TLE？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">延伸</span>
+      <h4>若改問「最少要拿掉幾對卦源才能變合理」，這還能用同一招嗎？難度如何？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 建模</span>
+      <p>
+        每個人是一個點；每對卦源是一條無向邊。「人人異性戀、每對卦源異性」代表：
+        每個人被指派一種性別（兩種選擇），<strong>每條邊兩端必須不同性別</strong>。
+      </p>
+      <p>
+        把兩種性別看成兩種顏色，問題就是「能不能用 2 種顏色塗所有點，使每條邊兩端異色」——
+        這正是<strong>二分圖（bipartite）</strong>的定義。能 ⇒ NORMAL；不能 ⇒ RAINBOW。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 奇環</span>
+      <p>
+        沿一個環走，顏色必須 0,1,0,1,… 交替。要走一圈回到起點且顏色一致，環長必須是<strong>偶數</strong>。
+        若環長是奇數，繞一圈後顏色會跟起點相反 ⇒ <strong>矛盾</strong> ⇒ 不可二著色。
+      </p>
+      <p>
+        三角形是長度 3 的環（最短奇環）：A 異於 B、B 異於 C ⇒ A 同 C，但 A–C 又是一對卦源要求異性 ⇒ 衝突 ⇒ RAINBOW。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 不連通</span>
+      <p>
+        圖可能有多個連通塊。只從點 0 跑一次 BFS，只會著色點 0 所在那塊，<strong>其他塊完全沒檢查</strong>。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 會被坑的測資</span>
+n = 5, m = 3
+邊: 0–1   (塊 A：一條邊，OK)
+    2–3, 3–4, 4–2  (塊 B：三角形 → 應 RAINBOW)
+只從 0 跑 ⇒ 只看到塊 A ⇒ 誤判 NORMAL ❌</pre>
+      <p>所以必須 <code>for i in [0,n): if color[i]==-1: canColor(i)</code>，逐塊檢查。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · DFS vs BFS</span>
+      <p>
+        DFS 染色邏輯一樣正確，但<strong>遞迴深度可達 O(n)</strong>。n = 10⁵ 的長鏈
+        <code>0–1–2–…–99999</code> 會遞迴十萬層 ⇒ <strong>stack overflow（RE）</strong>。
+      </p>
+      <p>
+        BFS 用一個顯式的陣列佇列，深度永遠 O(1) 的呼叫堆疊、佇列吃 heap 空間 ⇒ 不會爆。
+        （想用 DFS 也可以，但要改成顯式 stack 的迭代版。）
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 著色語意</span>
+      <p>
+        <code>^ 1</code> 是位元 XOR：<code>0 ^ 1 = 1</code>、<code>1 ^ 1 = 0</code>，剛好把顏色翻面。
+        所以 <code>color[v] = color[u] ^ 1</code> 就是「把 v 塗成 u 的反色」。
+      </p>
+      <p>
+        不會塗錯，是因為我們<strong>只在 <code>color[v] == −1</code>（還沒塗）時才塗</strong>；
+        已經塗過的點不重塗，只拿來檢查是否衝突。每個點的顏色一旦定下就固定，等於記下它到起點距離的奇偶。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        4 環是<strong>偶環</strong>，輸出 <code>NORMAL.</code>。BFS 從 0 塗：
+        <code>0→0、1→1、3→1、2→0</code>。最後邊 <code>1–2</code> 連的是 color 1 與 color 0，異色 OK；
+        <code>2–3</code> 連 color 0 與 color 1，也 OK。沒有任何同色相鄰 ⇒ 可二著色。
+      </p>
+      <p>性別指派：{0,2} 一種性別、{1,3} 另一種，完全自洽。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        單筆 O(n + m) = O(10⁵ + 2×10⁵) = 3 × 10⁵；T = 10 筆 ⇒ 約 <strong>3 × 10⁶</strong> 次基本運算。
+      </p>
+      <p>
+        遠在 3 秒時限內（時限 3000ms），<strong>不會 TLE</strong>。瓶頸反而是 I/O —
+        記得 <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 與用 <code>'\n'</code> 不用 <code>endl</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        「最少刪幾條邊使圖變二分圖」是 <strong>Maximum Bipartite Subgraph / Edge Bipartization</strong>，
+        在一般圖上是 <strong>NP-hard</strong>，沒有已知多項式解。
+      </p>
+      <p>
+        所以不能再用這招簡單解決 —— 本題只問「是否可能」（判定），是 O(n+m) 的簡單版；
+        一旦改問「最少修改量」就跳進難題範疇。判定與最佳化的難度落差，是這類題的常見陷阱。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W03 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 看懂三角形如何在 BFS 第 2 步撞出 RAINBOW。</div>
+    <div class="sc-summary-bar__detail">判定可二分圖 = O(n+m)；但「最少刪幾條」是 NP-hard，難度天差地遠。</div>
+  </div>
+
+</body>
+</html>

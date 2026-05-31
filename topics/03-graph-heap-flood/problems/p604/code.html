@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P604 · 02 Code // 哪裡有卦，哪裡就有源 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph &amp; Heap</a>
+      &nbsp;/&nbsp;
+      P604
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/604/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">哪裡有卦，哪裡就有源</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · BFS 二著色
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(n + m)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(n + m)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p604.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">100005</span><span class="p">;</span>
+
+<span class="t">vector</span><span class="p">&lt;</span><span class="t">int</span><span class="p">&gt;</span> adj<span class="p">[</span>MAXN<span class="p">];</span>          <span class="c">// 鄰接表：adj[u] = u 的所有卦源對象</span>
+<span class="t">int</span> color<span class="p">[</span>MAXN<span class="p">];</span>                <span class="c">// −1 未著色 / 0 / 1（兩種性別）</span>
+<span class="t">int</span> bfsQueue<span class="p">[</span>MAXN<span class="p">];</span>            <span class="c">// 自己的環形佇列，比 std::queue 快</span>
+
+<span class="c">// 從 start 出發 BFS 二著色；回傳 true = 這塊連通塊可二分</span>
+<span class="t">bool</span> <span class="f">canColor</span><span class="p">(</span><span class="t">int</span> start<span class="p">)</span> <span class="p">{</span>
+    <span class="t">int</span> head <span class="p">=</span> <span class="n">0</span><span class="p">,</span> tail <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    color<span class="p">[</span>start<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    bfsQueue<span class="p">[</span>tail<span class="p">++]</span> <span class="p">=</span> start<span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span>head <span class="p">&lt;</span> tail<span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> u <span class="p">=</span> bfsQueue<span class="p">[</span>head<span class="p">++];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> v <span class="p">:</span> adj<span class="p">[</span>u<span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span>color<span class="p">[</span>v<span class="p">]</span> <span class="p">==</span> <span class="p">-</span><span class="n">1</span><span class="p">)</span> <span class="p">{</span>           <span class="c">// 還沒塗 → 塗成 u 的反色</span>
+                color<span class="p">[</span>v<span class="p">]</span> <span class="p">=</span> color<span class="p">[</span>u<span class="p">]</span> <span class="p">^</span> <span class="n">1</span><span class="p">;</span>
+                bfsQueue<span class="p">[</span>tail<span class="p">++]</span> <span class="p">=</span> v<span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span>color<span class="p">[</span>v<span class="p">]</span> <span class="p">==</span> color<span class="p">[</span>u<span class="p">])</span> <span class="p">{</span>  <span class="c">// 已塗且同色 → 奇環</span>
+                <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    <span class="t">int</span> n<span class="p">,</span> m<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> n <span class="p">&gt;&gt;</span> m<span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>     <span class="c">// 每筆測資都要重置</span>
+        adj<span class="p">[</span>i<span class="p">].</span><span class="f">clear</span><span class="p">();</span>
+        color<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="p">-</span><span class="n">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> e <span class="p">=</span> <span class="n">0</span><span class="p">;</span> e <span class="p">&lt;</span> m<span class="p">;</span> e<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">int</span> a<span class="p">,</span> b<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> a <span class="p">&gt;&gt;</span> b<span class="p">;</span>
+        adj<span class="p">[</span>a<span class="p">].</span><span class="f">push_back</span><span class="p">(</span>b<span class="p">);</span>        <span class="c">// 無向邊，兩邊都加</span>
+        adj<span class="p">[</span>b<span class="p">].</span><span class="f">push_back</span><span class="p">(</span>a<span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="t">bool</span> ok <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>     <span class="c">// 圖可能不連通 → 每個未著色點各跑一次</span>
+        <span class="k">if</span> <span class="p">(</span>color<span class="p">[</span>i<span class="p">]</span> <span class="p">==</span> <span class="p">-</span><span class="n">1</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="f">canColor</span><span class="p">(</span>i<span class="p">))</span> <span class="p">{</span>
+            ok <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> <span class="p">(</span>ok <span class="p">?</span> <span class="s">"NORMAL.\n"</span> <span class="p">:</span> <span class="s">"RAINBOW.\n"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="f">solve</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>單筆測資的工作量拆成 3 段：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>重置</td><td>清空 n 個 adj[]、color[] 設 −1</td><td class="mono">O(n)</td></tr>
+        <tr><td>建鄰接表</td><td>讀 m 條邊，每條 push 兩次</td><td class="mono">O(m)</td></tr>
+        <tr><td>BFS 著色</td><td>每點進出 queue 各一次、每邊掃兩次</td><td class="mono">O(n + m)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = O(n + m) &nbsp;每筆 &nbsp;·&nbsp; 總 O(T · (n + m))</div>
+      <div class="sc-formula__hint">T ≤ 10、n ≤ 10⁵、m ≤ 2 × 10⁵ ⇒ 最壞約 3 × 10⁶，秒過</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(n + m)</strong></td><td>線性掃完整張圖</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(n + m)</strong></td><td>鄰接表 O(m) + color/queue O(n)</td></tr>
+        <tr><td>BFS 廣度</td><td class="mono">O(n)</td><td>bfsQueue 最壞裝整個連通塊</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>自製陣列佇列 + 反色用 XOR，無浮點</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      用 <strong>BFS（陣列佇列）</strong>而非遞迴 DFS：n = 10⁵ 的鏈狀圖遞迴會爆 stack，BFS 完全沒這風險。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>多筆測資要重置</strong></td>
+          <td><code>T</code> 筆共用全域陣列；每筆開頭清空 <code>adj[0..n−1]</code>、<code>color[]</code> 設 −1。漏了會帶髒資料。</td>
+        </tr>
+        <tr>
+          <td><strong>圖不一定連通</strong></td>
+          <td>必須對<strong>每個未著色點</strong>各跑一次 BFS，不能只從點 0 跑一次。孤立點 / 多個連通塊都算合理。</td>
+        </tr>
+        <tr>
+          <td><strong>無向邊兩邊都加</strong></td>
+          <td><code>adj[a].push_back(b)</code> 也要 <code>adj[b].push_back(a)</code>，否則漏掉反向就抓不到環。</td>
+        </tr>
+        <tr>
+          <td><strong>自環 / 重邊</strong></td>
+          <td>自環 <code>a == b</code>（自己跟自己）必同色 ⇒ 直接 RAINBOW；本寫法 BFS 取到 v == u 時 color 相同會正確判 false。重邊不影響正確性。</td>
+        </tr>
+        <tr>
+          <td><strong>遞迴 vs BFS</strong></td>
+          <td>n = 10⁵ 的長鏈用 DFS 遞迴會 stack overflow；本題用 BFS 陣列佇列避開。</td>
+        </tr>
+        <tr>
+          <td><strong>輸出格式</strong></td>
+          <td>注意題目要求帶句點：<code>NORMAL.</code> / <code>RAINBOW.</code>，別漏掉那個 <code>.</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 每筆測資重置</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// reset</span>
+for i in [0, n):
+    adj[i].clear()      ← 上一筆的邊全清掉
+    color[i] = -1       ← -1 代表「未著色」
+讀 m 條邊，無向 ⇒ adj[a] 推 b、adj[b] 推 a</pre>
+
+    <p><strong>② 逐連通塊跑 BFS</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// component loop</span>
+for i in [0, n):
+    if color[i] == -1:        ← 還沒碰過的點 ⇒ 新連通塊
+        if not canColor(i): RAINBOW; break
+全部塗完沒衝突 ⇒ NORMAL</pre>
+
+    <p><strong>③ BFS 二著色（核心）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// canColor(start)</span>
+color[start] = 0; 推進 queue
+while queue 非空:
+    u = pop()
+    for v in adj[u]:
+        if color[v] == -1:           ← 沒塗過
+            color[v] = color[u] ^ 1   ← 塗反色（XOR 1：0↔1）
+            推進 queue
+        elif color[v] == color[u]:   ← 已塗且同色
+            return false              ← 撞到奇環！</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);"><code>color[u] ^ 1</code> 是把 0 變 1、1 變 0 的標準寫法 —
+    每條樹邊兩端必為反色，唯一會「同色相鄰」的就是把奇環封口的那條非樹邊。</p>
+
+    <p><strong>④ 為何用自製陣列佇列</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// queue</span>
+int bfsQueue[MAXN]; int head, tail;
+push: bfsQueue[tail++] = x
+pop : x = bfsQueue[head++]
+每點最多進一次 ⇒ tail 不會超過 n ⇒ 不必環形繞回，直接線性陣列。
+比 std::queue 少了配置/釋放節點的常數。</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">鄰接表 + 逐連通塊 BFS 二著色 — color[u]^1 塗反色，同色相鄰回 false。</div>
+    <div class="sc-summary-bar__detail">T = O(n + m) 每筆 · 多筆測資記得重置 · 用 BFS 陣列佇列避開遞迴爆 stack。</div>
+  </div>
+
+</body>
+</html>

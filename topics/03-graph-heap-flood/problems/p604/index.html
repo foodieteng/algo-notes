@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P604 · 01 概念 // 哪裡有卦，哪裡就有源 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph &amp; Heap</a>
+      &nbsp;/&nbsp;
+      P604
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/604/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">哪裡有卦，哪裡就有源</h1>
+    <p class="sc-mast__subtitle">// Bipartite Check · 二分圖判定（染色法）</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 BFS 二著色 · 找奇環
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(n + m)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p><code>n</code> 個成員（編號 <code>0 ~ n−1</code>），給 <code>m</code> 對「卦源」。
+      假設<strong>每對卦源必由不同性別的兩人組成</strong>（人人異性戀）。
+      問：這份調查結果<strong>有沒有可能合理</strong>？可能輸出 <code>NORMAL.</code>，否則 <code>RAINBOW.</code></p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      把人當<strong>點</strong>、卦源當<strong>邊</strong>。「每條邊兩端不同性別」⇔ 用兩種顏色塗點，
+      <strong>每條邊兩端顏色不同</strong> ⇔ 這張圖是不是<strong>二分圖（bipartite）</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用染色
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 BFS 染色<span class="sc-section__title-en">// Why 2-Coloring</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉每人性別</span>
+            <span class="sc-ko-card__o">O(2ⁿ)</span>
+          </div>
+          <div class="sc-ko-card__body">n ≤ 10⁵ ⇒ 2¹⁰⁰⁰⁰⁰ 種指派，宇宙熱寂前跑不完</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">隨便塗再驗</span>
+            <span class="sc-ko-card__o">不一定收斂</span>
+          </div>
+          <div class="sc-ko-card__body">沒有「沿邊傳遞」的紀律，反覆塗改可能無限迴圈</div>
+          <div class="sc-ko-card__verdict">△ REJECT · UNSTABLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">BFS 二著色</span>
+          <span class="sc-ko-card__o">O(n + m)</span>
+        </div>
+        <div class="sc-ko-card__body">任挑起點塗色 0 → 沿邊把鄰居塗成反色 → 撞到「同色相鄰」就是奇環 ⇒ RAINBOW</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>等價說法</strong>：圖是二分圖 ⇔ 沒有<strong>奇數長度的環</strong>。三角形（長度 3 的環）就是最短的奇環 —
+      A–B、B–C、C–A 三對卦源，三人不可能兩兩異性，必定矛盾。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">建鄰接表後，對<strong>每個還沒著色的點</strong>跑一次 BFS（圖可能不連通）：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>起點塗 0</strong> · 推進 queue，<code>color[s] = 0</code></li>
+      <li><strong>沿邊傳遞</strong> · 取出 <code>u</code>，每個鄰居 <code>v</code>：沒塗過就塗成 <code>color[u] ^ 1</code> 推進 queue</li>
+      <li><strong>檢查衝突</strong> · 若 <code>v</code> 已塗過且 <code>color[v] == color[u]</code> ⇒ 奇環 ⇒ 整題 <code>RAINBOW.</code></li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      所有點都塗完、從沒撞到衝突 ⇒ <code>NORMAL.</code>。<strong>多筆測資</strong> <code>T ≤ 10</code>，每筆獨立重置。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 三角形 ⇒ RAINBOW<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例第 1 筆：<code>n = 3</code>，卦源 <code>0–1 · 1–2 · 2–0</code>（一個三角形）。
+    BFS 從點 0 塗藍、沿邊把鄰居塗成反色，最後一條邊 <code>2–0</code> 會踩到<strong>同色衝突</strong> ⇒ 奇環 ⇒ RAINBOW：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · BFS 2-COLORING</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 3 點、3 條卦源邊，全未著色
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#1f5a99">●</span> 顏色 0（一種性別）&nbsp;·&nbsp;
+      <span style="color:#d4a017">●</span> 顏色 1（另一種性別）&nbsp;·&nbsp;
+      <span style="color:#8a847a">●</span> 尚未著色 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 正在處理 / 衝突邊
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為何「同色相鄰」⇔ 奇環
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何「同色相鄰」就等於有奇環<span class="sc-section__title-en">// Why It Works</span></h2>
+    </div>
+
+    <p style="font-size:14px;">BFS 著色其實在記每個點的<strong>層數奇偶</strong>：<code>color = 距起點距離 mod 2</code>。
+    撞到衝突代表找到一條「同奇偶」卻又相鄰的邊 —— 那必然圍出一個奇環。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">關鍵觀察 · 衝突邊 = 奇環的最後一塊拼圖</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>BFS 把每點塗成 <code>dist(起點, 點) mod 2</code>：層 0 塗 0、層 1 塗 1、層 2 塗 0……。</li>
+          <li>正常的<strong>樹邊</strong>都連「相鄰層」⇒ 兩端奇偶相反 ⇒ 顏色一定不同。</li>
+          <li>若某條邊 <code>u–v</code> 兩端<strong>同色</strong> ⇒ <code>dist(s,u)</code> 與 <code>dist(s,v)</code> 同奇偶。</li>
+          <li>從 <code>s</code> 到 <code>u</code> 的路徑（長 <code>du</code>）＋ 邊 <code>u–v</code>（長 1）＋ <code>v</code> 回 <code>s</code> 的路徑（長 <code>dv</code>）
+            繞一圈，長度 <code>du + 1 + dv</code>。<code>du</code> 與 <code>dv</code> 同奇偶 ⇒ <code>du + dv</code> 偶 ⇒ 全長<strong>奇數</strong>。</li>
+          <li>⇒ 存在<strong>奇環</strong> ⇒ 無法二著色 ⇒ 不可能人人異性 ⇒ <code>RAINBOW.</code>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      反過來，若整張圖塗到底都沒衝突，那這個著色本身就是一組合法性別指派 ⇒ <strong>必定 <code>NORMAL.</code></strong>。
+      所以 BFS 一遍就同時「找到反例」或「給出一組可行解」。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">建鄰接表 <code>O(n + m)</code>；BFS 每個點進出 queue 各一次、每條邊看兩次（無向）：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = O(n + m)</div>
+      <div class="sc-formula__hint">
+        每個點走訪一次 + 每條邊掃兩次 — 與圖大小成線性
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(n + m)</strong></td><td>n ≤ 10⁵、m ≤ 2 × 10⁵，單筆即線性掃完</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(n + m)</strong></td><td>鄰接表 + color[] + queue</td></tr>
+        <tr><td>BFS 廣度</td><td class="mono">O(n)</td><td>queue 最壞裝全部點，用陣列當佇列即可</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>純整數、無遞迴爆 stack 風險（用 BFS）</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「異性戀關係能不能自洽」就是「這張圖是不是二分圖」。</strong><br/>
+      BFS 沿邊把鄰居塗反色，<br/>
+      <strong>撞到同色相鄰 = 找到奇環 = RAINBOW；塗到底沒撞 = NORMAL。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">把人當點、卦源當邊 → BFS 二著色 → 撞到同色相鄰（奇環）⇒ RAINBOW，否則 NORMAL。</div>
+    <div class="sc-summary-bar__detail">二分圖判定 · O(n + m) · 圖可能不連通，對每個未著色點各跑一次 BFS。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p604-bipartite.js"></script>
+</body>
+</html>
