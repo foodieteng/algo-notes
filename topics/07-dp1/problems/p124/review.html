@@ -72,7 +72,7 @@
         <tr><td>奇偶</td>
             <td>3N 為奇數（N 奇）時鋪不滿 ⇒ 答案 0。</td></tr>
         <tr><td>狀態</td>
-            <td><code>f[n]</code> 平邊界、<code>g[n]</code> 凸一格邊界。</td></tr>
+            <td><code>f[n]</code> 平邊界、<code>g[n]</code> 缺一角（凹）邊界。</td></tr>
         <tr><td>遞推</td>
             <td><code>f[n]=f[n−2]+2g[n−1]</code>、<code>g[n]=f[n−1]+g[n−2]</code>。</td></tr>
         <tr><td>單一式</td>
@@ -101,7 +101,7 @@
     <div class="qa">
       <span class="qa__id">Q2</span>
       <span class="qa__tag">狀態意義</span>
-      <h4><code>g[n]</code>「凸出一格」是什麼意思？為什麼只需要「平 / 凸一格」兩種狀態、不會有更多型態？</h4>
+      <h4><code>g[n]</code>「缺一角」是什麼意思？為什麼只需要「平 / 缺一角」兩種狀態、不會有更多型態？</h4>
     </div>
 
     <div class="qa">
@@ -156,7 +156,7 @@ f[4] = 4·f[2] − f[0] = 4·3 − 1 = 11     ← 同樣得 11 ✓</pre>
     <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT (若 N=4)</span>11</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：<code>g</code> 在偶數 n 都是 0、奇數 n 才有值（凸一格會破壞奇偶平衡）。
+      <strong>觀察</strong>：<code>g</code> 在偶數 n 都是 0、奇數 n 才有值（缺一角會破壞奇偶平衡）。
       兩條鏈交錯餵養：偶數的 <code>f</code> 靠奇數的 <code>g</code>、奇數的 <code>g</code> 靠偶數的 <code>f</code>。
       消去 g 後就只剩偶數項的 <code>f[n]=4f[n−2]−f[n−4]</code>。
     </div>
@@ -216,10 +216,10 @@ f[4] = 4·f[2] − f[0] = 4·3 − 1 = 11     ← 同樣得 11 ✓</pre>
       <span class="qa__id">Q2 · 狀態意義</span>
       <p>
         逐欄往右鋪時，已鋪滿區域的「右邊界輪廓」決定後面怎麼接。寬度只有 3，
-        邊界要嘛<strong>三格都齊（平）</strong>，要嘛<strong>有一格被一塊橫骨牌凸出去（凸一格）</strong>。
+        邊界要嘛<strong>三格都齊（平）</strong>，要嘛<strong>最後一欄缺了頂端或底端一格（缺一角、凹進去）</strong>。
       </p>
       <p>
-        「凸兩格」或「凸不同列」其實都能歸到這兩類（上下對稱、或等價於更早的狀態），
+        「缺中間一格」或「缺兩格」其實都能歸到這兩類（上下對稱、或等價於更早的狀態），
         所以兩個狀態 <code>f / g</code> 就足以描述所有邊界，遞迴才會封閉。
       </p>
     </div>
@@ -227,8 +227,8 @@ f[4] = 4·f[2] − f[0] = 4·3 − 1 = 11     ← 同樣得 11 ✓</pre>
     <div class="qa qa--answer">
       <span class="qa__id">Q3 · 轉移 ×2</span>
       <p>
-        <code>2·g[n−1]</code> 的 2 來自<strong>上下對稱</strong>：一個凸出的邊界可以凸在「上面那格」或「下面那格」，
-        兩種鏡像情形數量相同，補平它們各貢獻一份 ⇒ 乘 2。
+        <code>2·g[n−1]</code> 的 2 來自<strong>上下對稱</strong>：缺角可以缺在「上面那格」或「下面那格」，
+        兩種鏡像情形數量相同，各貢獻一份 ⇒ 乘 2。
       </p>
     </div>
 

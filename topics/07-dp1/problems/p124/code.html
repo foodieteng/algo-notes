@@ -111,7 +111,7 @@
     </div>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>理解版（耦合兩狀態）</strong>：若想直接照「平 / 凸」兩種邊界寫，用 <code>f</code>、<code>g</code> 兩條陣列同步遞推：
+      <strong>理解版（耦合兩狀態）</strong>：若想直接照「平 / 缺一角」兩種邊界寫，用 <code>f</code>、<code>g</code> 兩條陣列同步遞推：
     </p>
 
     <div class="sc-codewindow" style="margin-top:8px;">
@@ -221,15 +221,15 @@ g<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span 
     <p><strong>① 兩種邊界狀態</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// states</span>
 f[n] = 3×n 完整鋪滿（右邊界是平的）的方法數
-g[n] = 3×n 全滿、右邊界「多凸出一格」到下一欄的方法數（是多一格，不是少）
+g[n] = 前 n-1 欄全滿、最後一欄缺頂端一格（缺一角／凹）的方法數
 答案 = f[N]</pre>
 
     <p><strong>② 耦合遞推</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// recurrence</span>
 f[n] = f[n-2] + 2·g[n-1]
-       // 接 3×(n-2) 補滿最後 2 欄；或補平一個凸邊界（上下對稱 ×2）
+       // 最左欄三橫填滿 2 欄(→f[n-2])；或留下缺角邊界(缺頂/缺底 上下對稱 ×2)
 g[n] = f[n-1] + g[n-2]
-       // 在平邊界後凸一塊；或承接更早的凸邊界</pre>
+       // 缺角正下方那格：直放→f[n-1]；橫放→又冒出缺角 g[n-2]</pre>
 
     <p><strong>③ 消去 g 得單一遞迴</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// eliminate g</span>

@@ -118,7 +118,7 @@
     </div>
 
     <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>核心想法</strong>：一欄一欄往右鋪，<strong>欄與欄的交界</strong>只可能是「平的」或「凸出一格」少數幾種型態。
+      <strong>核心想法</strong>：一欄一欄往右鋪，<strong>欄與欄的交界</strong>只可能是「平的」或「缺一角（凹進去）」少數幾種型態。
       把這些型態當狀態，就能寫出線性遞迴。多筆 ⇒ 一次預處理所有 N。
     </p>
   </section>
@@ -136,7 +136,7 @@
 
     <ul style="margin-top:6px;">
       <li><code>f[n]</code> = 把 <strong>3×n 完整鋪滿</strong>（平邊界）的方法數。</li>
-      <li><code>g[n]</code> = 3×n 全滿、再<strong>多凸出一格</strong>到下一欄（鋸齒邊界，是<strong>多</strong>一格、不是少）的方法數。</li>
+      <li><code>g[n]</code> = 鋪滿前 n−1 欄，<strong>最後一欄只鋪了底部兩格、頂端那格還空著</strong>（<strong>缺一角／凹進去</strong>的鋸齒邊界）的方法數。</li>
     </ul>
 
     <div class="sc-formula">
@@ -150,7 +150,7 @@
     </div>
 
     <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
-      （<code>f[n]=f[n−2]+2g[n−1]</code>：最後兩欄塞滿三橫或承接凸邊界；
+      （<code>f[n]=f[n−2]+2g[n−1]</code>：最左欄三橫填滿、或留下一個缺角邊界；
       兩式聯立消去 g 後得單一遞迴 <code>f[n]=4f[n−2]−f[n−4]</code>。）
     </p>
   </section>
@@ -185,7 +185,7 @@
     <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
       <strong>顏色說明</strong>：不同顏色 = 不同骨牌（黑框 = 剛放上的那塊）&nbsp;·&nbsp;
       <span style="color:#2f6fb6">■</span> f 狀態（平邊界）&nbsp;·&nbsp;
-      <span style="color:#d96e4e">■</span> g 狀態（凸一格）&nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> g 狀態（缺一角）&nbsp;·&nbsp;
       <span style="color:#5fa866">■</span> 累計 / 答案
     </p>
   </section>
@@ -201,46 +201,43 @@
 
     <p style="font-size:14px;">先把 <code>g</code> 講清楚，再看 <code>f[n]=f[n−2]+2·g[n−1]</code> 的每一項長什麼樣。</p>
 
-    <!-- ===== 先定義 g：什麼叫「凸一格」 ===== -->
+    <!-- ===== 先定義 g：什麼叫「缺一角」 ===== -->
     <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:18px 0 8px;color:var(--sc-ink);">
       <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 1</span>
-      g[k] 是什麼？「鋪好 k 欄、但多戳一格到第 k+1 欄」
+      g[n] 是什麼？「鋪到最後一欄時，缺了一角（凹進去）」
     </h3>
 
     <div style="margin:12px 0;overflow-x:auto;">
     <svg viewBox="0 0 760 250" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
-      <text x="380" y="28" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="15" font-weight="700" fill="#1f1f1f">f（平邊界）vs g（凸一格邊界）</text>
+      <text x="380" y="28" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="15" font-weight="700" fill="#1f1f1f">f（平邊界，鋪滿）vs g（缺一角，凹進去）</text>
 
-      <!-- f profile -->
+      <!-- f profile: full 3x3 -->
       <g>
-        <!-- 3x3 grid, all filled, flat right edge -->
         <rect x="70"  y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="70"  y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="70"  y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="118" y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="118" y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="118" y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
-        <!-- flat boundary line -->
         <line x1="166" y1="58" x2="166" y2="206" stroke="#2f6fb6" stroke-width="4"/>
-        <text x="118" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#2f6fb6">f · 右邊界「平的」</text>
+        <text x="118" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#2f6fb6">f · 三格都鋪滿（平）</text>
       </g>
 
-      <!-- g profile -->
+      <!-- g profile: full except TOP cell of last column is EMPTY (concave) -->
       <g>
+        <!-- col 0 (full) -->
         <rect x="430" y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="430" y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="430" y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
-        <rect x="478" y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <!-- col 1: top cell EMPTY (missing corner), bottom two filled -->
+        <rect x="478" y="60" width="48" height="48" fill="#ffffff" stroke="#d96e4e" stroke-width="2.5" stroke-dasharray="5,3"/>
+        <text x="502" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#d96e4e">缺</text>
         <rect x="478" y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
         <rect x="478" y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
-        <!-- bump cell jutting into next column (middle row shown; here top row) -->
-        <rect x="526" y="60" width="48" height="48" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2.5"/>
-        <text x="550" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#a8472c">凸</text>
-        <!-- jagged boundary -->
-        <polyline points="526,58 526,108 574,108 574,206 526,206" fill="none" stroke="#d96e4e" stroke-width="3"/>
-        <line x1="526" y1="58" x2="526" y2="60" stroke="#d96e4e" stroke-width="3"/>
-        <line x1="574" y1="58" x2="574" y2="108" stroke="#d96e4e" stroke-width="3"/>
-        <text x="500" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#d96e4e">g · 多戳一格出去（鋸齒）</text>
+        <!-- concave boundary outline -->
+        <polyline points="478,60 526,60 526,108 478,108" fill="none" stroke="#d96e4e" stroke-width="2.5"/>
+        <line x1="526" y1="108" x2="526" y2="206" stroke="#d96e4e" stroke-width="3"/>
+        <text x="478" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#d96e4e">g · 最後一欄缺頂端一格（凹）</text>
       </g>
 
       <text x="295" y="138" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="22" fill="#9a9a9a">vs</text>
@@ -248,17 +245,15 @@
     </div>
 
     <p style="font-size:13.5px;color:var(--sc-ink-dim);">
-      <code>g</code> 之所以重要：鋪到一半時，「已鋪滿區域的右緣」要嘛是<strong>平的（f）</strong>，要嘛是<strong>凸出一格（g）</strong>，
-      不會有別種形狀。所以只要追蹤這兩個量。
+      <code>g</code> 之所以重要：逐欄往右鋪時，「最後一欄」要嘛<strong>三格都滿（f，平邊界）</strong>，
+      要嘛<strong>缺頂端或底端一格（g，凹進去）</strong>，不會有別種形狀。所以只要追蹤這兩個量。
     </p>
 
     <div class="sc-question" style="margin-top:12px;">
-      <span class="sc-question__label">注意 · g 只算「一側」</span>
-      <p style="margin:0;"><code>g[k]</code> 的定義是「凸格<strong>固定在某一側</strong>（例如固定凸在<strong>頂端</strong>）」，
-      <strong>不是</strong>「上下兩種都算」。凸在頂、凸在底是<strong>兩組不同的鋪法</strong>，但因為上下鏡像、<strong>數量剛好相等</strong>，
-      所以都記成同一個數 <code>g[k]</code>。<br/>
-      —— 這就是後面 <code>2·g[n−1]</code> 那個 <strong>2</strong> 的來源：A 給「凸在下的 g」、B 給「凸在上的 g」，
-      兩組不重疊，各一份 ⇒ <code>g + g = 2g</code>。</p>
+      <span class="sc-question__label">注意 · g 只算「缺一側」</span>
+      <p style="margin:0;"><code>g[n]</code> 固定算「缺<strong>某一側</strong>」（例如固定缺<strong>頂端</strong>那格）。
+      缺頂端、缺底端是<strong>兩組不同的鋪法</strong>，但上下鏡像、<strong>數量剛好相等</strong>，所以都記成同一個數 <code>g[n]</code>。<br/>
+      —— 這就是後面 <code>2·g[n−1]</code> 那個 <strong>2</strong> 的來源：一種缺在頂、一種缺在底，兩組不重疊、各一份 ⇒ <code>g + g = 2g</code>。</p>
     </div>
 
     <!-- ===== STEP 2：看「最左欄第一塊怎麼放」→ 3 種互斥情況 ===== -->
@@ -287,8 +282,8 @@
       <rect x="100" y="46" width="40" height="122" fill="none" stroke="#cfcfcf" stroke-width="1"/>
       <!-- remaining region: bump in bottom of col1 → g state -->
       <text x="200" y="92" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="20" fill="#5a5a5a">→</text>
-      <text x="130" y="190" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11.5" fill="#1f1f1f">上直 + 下橫戳出</text>
-      <text x="130" y="206" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#d96e4e">剩 g[n−1]（凸在下）</text>
+      <text x="130" y="190" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11.5" fill="#1f1f1f">上直 + 下橫（吃掉下一欄底格）</text>
+      <text x="130" y="206" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#d96e4e">剩 g[n−1]（缺在底）</text>
 
       <!-- ============ 情況 B：下面直 + 上面橫戳出去 → g (bump 在上) ============ -->
       <text x="370" y="28" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#d96e4e">情況 B</text>
@@ -299,8 +294,8 @@
       <rect x="300" y="46" width="40" height="122" fill="none" stroke="#cfcfcf" stroke-width="1"/>
       <rect x="340" y="46" width="40" height="122" fill="none" stroke="#cfcfcf" stroke-width="1"/>
       <text x="430" y="92" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="20" fill="#5a5a5a">→</text>
-      <text x="370" y="190" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11.5" fill="#1f1f1f">下直 + 上橫戳出</text>
-      <text x="370" y="206" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#d96e4e">剩 g[n−1]（凸在上）</text>
+      <text x="370" y="190" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11.5" fill="#1f1f1f">下直 + 上橫（吃掉下一欄頂格）</text>
+      <text x="370" y="206" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#d96e4e">剩 g[n−1]（缺在頂）</text>
 
       <!-- ============ 情況 C：三條橫 → f[n-2] ============ -->
       <text x="620" y="28" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#2f6fb6">情況 C</text>
@@ -328,7 +323,7 @@
     <div class="sc-formula">
       <div class="sc-formula__main">A 和 B 都是 <code>g[n−1]</code>，<strong>那不是重複嗎？</strong></div>
       <div class="sc-formula__hint">
-        <strong>不重複。</strong> A 留下的是「凸在<strong>下</strong>」的 g、B 留下的是「凸在<strong>上</strong>」的 g —— 是<strong>兩組不同的鋪法</strong>，
+        <strong>不重複。</strong> A 留下的是「缺<strong>底</strong>角」的 g、B 留下的是「缺<strong>頂</strong>角」的 g —— 是<strong>兩組不同的鋪法</strong>，
         只是上下鏡像、<strong>數量剛好相等</strong>，才都寫成 <code>g[n−1]</code>。兩份相加 ⇒ <code>g[n−1] + g[n−1] = 2·g[n−1]</code>。<br/>
         而「沒有 +3」是因為我們<strong>不是在數 3×2 有幾種</strong>，是把鋪法依「最左欄第一塊怎麼放」分成 A/B/C，加總就是全部、沒有第 4 類。
       </div>
@@ -337,9 +332,9 @@
     <!-- 用 n=2 驗證 -->
     <p style="font-size:14px;margin-top:14px;"><strong>套到 n = 2 驗證</strong>（<code>g[1]=1, f[0]=1</code>）：</p>
     <pre class="sc-trace"><span class="sc-trace__head">// n = 2</span>
-情況 A：上直 + 下橫戳出 → 剩 g[1] = 1 種
-情況 B：下直 + 上橫戳出 → 剩 g[1] = 1 種
-情況 C：三條橫        → 剩 f[0] = 1 種
+情況 A：上直 + 下橫 → 剩 g[1]（缺底）= 1 種
+情況 B：下直 + 上橫 → 剩 g[1]（缺頂）= 1 種
+情況 C：三條橫      → 剩 f[0] = 1 種
 合計 f[2] = 1 + 1 + 1 = 3  ✓（剛好就是那 3 種 3×2 鋪法）</pre>
 
     <p style="font-size:13.5px;color:var(--sc-ink-dim);">
@@ -350,129 +345,94 @@
     <!-- ===== STEP 3：推 g[n] 自己的遞迴 ===== -->
     <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:24px 0 8px;color:var(--sc-ink);">
       <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 3</span>
-      那 g[n] 自己呢？看「凸出的那一格」怎麼被蓋
+      那 g[n] 自己呢？看「缺角正下方那格」怎麼蓋
     </h3>
 
-    <p style="font-size:14px;"><code>g[n]</code> 的盤面 = 完整 3×n <strong>再多凸一格</strong>（下圖凸在頂端，畫出最後 3 欄
-    <code>n−2 · n−1 · n</code>，左邊以「<code>…</code>」代表前面已鋪滿）。跟著 ①②③ 看：</p>
+    <p style="font-size:14px;"><code>g[n]</code> 的盤面 = 前 n−1 欄全滿，<strong>最後一欄缺頂端一格</strong>（下圖畫最後 2 欄，左邊「<code>…</code>」代表前面已鋪滿）。
+    缺角那格暫時管不到（要靠它<strong>左邊或下面</strong>的骨牌伸過來補），所以改看<strong>缺角正下方那格</strong>怎麼蓋，只有兩種：</p>
 
     <div style="margin:12px 0;overflow-x:auto;">
-    <svg viewBox="0 0 760 560" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
-      <!-- ===========================================================
-           grid helper: each board is 3 cols (n-2,n-1,n) × 3 rows, cell 46.
-           A bump cell sits at (row0, col n)  → x for col n is x0+3*46
-           =========================================================== -->
+    <svg viewBox="0 0 760 440" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
 
-      <!-- ============ ① 起始 g[n] 盤面 ============ -->
-      <text x="40" y="34" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#1f1f1f">① 起始：g[n] = 3×n 全滿，頂端凸一格</text>
-      <!-- board origin -->
-      <!-- 3x3 empty grid -->
+      <!-- ============ ① 起始 g[n] 盤面（缺頂角） ============ -->
+      <text x="40" y="32" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#1f1f1f">① 起始：g[n] = 最後一欄「缺頂端一格」（凹）</text>
       <g>
-        <!-- cols n-2,n-1,n  ×  rows 0,1,2 ; x0=120 y0=48 -->
-        <rect x="120" y="48" width="138" height="138" fill="#eef2f6" stroke="#cfcfcf" stroke-width="1"/>
-        <!-- internal grid lines -->
-        <line x1="166" y1="48" x2="166" y2="186" stroke="#cfcfcf"/>
-        <line x1="212" y1="48" x2="212" y2="186" stroke="#cfcfcf"/>
-        <line x1="120" y1="94" x2="258" y2="94" stroke="#cfcfcf"/>
-        <line x1="120" y1="140" x2="258" y2="140" stroke="#cfcfcf"/>
-        <!-- "..." for earlier full columns -->
-        <text x="143" y="122" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="18" fill="#9a9a9a">…</text>
-        <!-- the whole 3x3 is "already full" → tint lightly -->
-        <rect x="120" y="48" width="138" height="138" fill="#dbe6f0" fill-opacity="0.45"/>
-        <!-- bump cell at (row0, col n) = x 258..304 -->
-        <rect x="258" y="48" width="46" height="46" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2.5"/>
-        <text x="281" y="76" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#a8472c">凸</text>
-        <!-- col labels -->
-        <text x="143" y="204" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5a5a5a">n−2</text>
-        <text x="189" y="204" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5a5a5a">n−1</text>
-        <text x="235" y="204" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5a5a5a">n</text>
-        <text x="281" y="204" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#a8472c">n+1</text>
+        <!-- two cols: n-1 (120-166), n (166-212); rows 0(48-94)1(94-140)2(140-186) -->
+        <text x="100" y="122" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="18" fill="#9a9a9a">…</text>
+        <!-- col n-1 full -->
+        <rect x="120" y="48" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <rect x="120" y="94" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <rect x="120" y="140" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <!-- col n: top MISSING, mid+bot full -->
+        <rect x="166" y="48" width="46" height="46" fill="#ffffff" stroke="#d96e4e" stroke-width="2.5" stroke-dasharray="5,3"/>
+        <text x="189" y="74" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#d96e4e">缺</text>
+        <rect x="166" y="94" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <rect x="166" y="140" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <!-- mark the cell directly below the gap: (row1, col n) -->
+        <rect x="166" y="94" width="46" height="46" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+        <text x="189" y="118" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="700" fill="#1a1a1a">看這格</text>
+        <text x="143" y="204" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5a5a5a">n−1</text>
+        <text x="189" y="204" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5a5a5a">n</text>
       </g>
 
-      <!-- arrow to ② -->
-      <text x="360" y="120" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="22" fill="#5a5a5a">→</text>
+      <text x="270" y="118" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="22" fill="#5a5a5a">→</text>
 
-      <!-- ============ ② 凸格只能被橫骨牌蓋 → 頂格被佔 → 洞在它下面 ============ -->
-      <text x="430" y="34" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#1f1f1f">② 凸格只能被「橫骨牌」蓋 → 最右上格被佔走</text>
+      <!-- ============ ②-A 該格直放 → f[n-1] ============ -->
+      <text x="430" y="32" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#2f6fb6">A · 那格「直放」(配下面那格)</text>
       <g>
-        <!-- board cols: 470-516(n-2 via …), 516-562(n-1), 562-608(n) ; bump at 608-654 -->
-        <rect x="470" y="48" width="138" height="138" fill="#dbe6f0" fill-opacity="0.45" stroke="#cfcfcf" stroke-width="1"/>
-        <line x1="516" y1="48" x2="516" y2="186" stroke="#cfcfcf"/>
-        <line x1="562" y1="48" x2="562" y2="186" stroke="#cfcfcf"/>
-        <line x1="470" y1="94" x2="608" y2="94" stroke="#cfcfcf"/>
-        <line x1="470" y1="140" x2="608" y2="140" stroke="#cfcfcf"/>
-        <text x="493" y="122" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="18" fill="#9a9a9a">…</text>
-        <!-- capping horizontal domino: covers top cell of col n (562-608) + bump (608-654) -->
-        <rect x="564" y="52" width="86" height="38" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
-        <text x="607" y="74" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff">橫骨牌</text>
-        <!-- the cell now needing attention: (row1, col n) = 562-608, y 94-140 -->
-        <rect x="562" y="94" width="46" height="46" fill="#fff" stroke="#d96e4e" stroke-width="2.5" stroke-dasharray="5,3"/>
-        <text x="585" y="120" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#d96e4e">洞</text>
-        <!-- arrow pointing from cap down to hole -->
-        <text x="585" y="86" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#d96e4e">↓</text>
-        <text x="539" y="204" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11.5" fill="#1f1f1f">頂格被橫骨牌佔走 ⇒ <tspan fill="#d96e4e">它正下方變成要處理的「洞」</tspan></text>
+        <text x="350" y="122" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="18" fill="#9a9a9a">…</text>
+        <!-- col n-1 full -->
+        <rect x="370" y="48" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <rect x="370" y="94" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <rect x="370" y="140" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <!-- col n: top still missing, but rows1-2 now a VERTICAL domino -->
+        <rect x="416" y="48" width="46" height="46" fill="#ffffff" stroke="#d96e4e" stroke-width="2.2" stroke-dasharray="5,3"/>
+        <text x="439" y="74" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="700" fill="#d96e4e">缺</text>
+        <rect x="420" y="98" width="38" height="84" rx="5" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
+        <text x="439" y="204" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11" fill="#1f1f1f">最後一欄收乾淨（缺角靠左邊補）</text>
       </g>
+      <text x="600" y="80" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#2f6fb6">剩平邊界</text>
+      <text x="600" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#2f6fb6">→ f[n−1]</text>
 
-      <!-- divider line -->
+      <!-- divider -->
       <line x1="40" y1="232" x2="720" y2="232" stroke="#ecd9a6" stroke-width="1.5"/>
 
-      <!-- ============ ③ 看洞下方那格怎麼蓋 → 兩種 ============ -->
-      <text x="40" y="262" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#1f1f1f">③ 看「洞正下方那格」怎麼蓋 — 只有兩種：</text>
-
-      <!-- ===== ③-A 直放 → f[n-1] ===== -->
-      <text x="200" y="290" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="13" font-weight="700" fill="#2f6fb6">A · 洞下方「直放」</text>
+      <!-- ============ ②-B 該格橫放 → g[n-2] ============ -->
+      <text x="40" y="262" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#d96e4e">B · 那格「橫放」(往左伸一塊)</text>
       <g>
-        <rect x="120" y="304" width="138" height="138" fill="#eef2f6" stroke="#cfcfcf" stroke-width="1"/>
-        <line x1="166" y1="304" x2="166" y2="442" stroke="#cfcfcf"/>
-        <line x1="212" y1="304" x2="212" y2="442" stroke="#cfcfcf"/>
-        <line x1="120" y1="350" x2="258" y2="350" stroke="#cfcfcf"/>
-        <line x1="120" y1="396" x2="258" y2="396" stroke="#cfcfcf"/>
-        <!-- capping horizontal at top covering hole+next: top row of col n-1 & n -->
-        <rect x="166" y="308" width="84" height="38" rx="5" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
-        <!-- vertical domino in col n-1, rows 1-2 -->
-        <rect x="170" y="350" width="38" height="84" rx="5" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
-        <!-- left region f[n-1] (cols n-2 fully + col n rows1,2 absorbed) -->
-        <rect x="120" y="304" width="46" height="138" fill="#dbe6f0" fill-opacity="0.55"/>
-        <text x="143" y="378" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="16" fill="#9a9a9a">…</text>
-        <rect x="212" y="350" width="46" height="92" fill="#dbe6f0" fill-opacity="0.55"/>
+        <text x="120" y="338" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="18" fill="#9a9a9a">…</text>
+        <!-- show cols n-2(150-196), n-1(196-242), n(242-288) -->
+        <!-- col n-2 -->
+        <rect x="150" y="264" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <rect x="150" y="310" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <!-- col n-2 row2 will join the new gap below → leave as gap marker -->
+        <rect x="150" y="356" width="46" height="46" fill="#ffffff" stroke="#d96e4e" stroke-width="2.2" stroke-dasharray="5,3"/>
+        <text x="173" y="382" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="700" fill="#d96e4e">新缺</text>
+        <!-- col n-1 -->
+        <rect x="196" y="264" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <!-- the horizontal domino covering (row1, n-1)-(row1, n) -->
+        <rect x="200" y="314" width="84" height="38" rx="5" fill="#0f9b9b" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="196" y="356" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <!-- col n -->
+        <rect x="242" y="264" width="46" height="46" fill="#ffffff" stroke="#d96e4e" stroke-width="2.2" stroke-dasharray="5,3"/>
+        <text x="265" y="290" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="700" fill="#d96e4e">缺</text>
+        <rect x="242" y="356" width="46" height="46" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.4"/>
+        <text x="219" y="424" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="11" fill="#1f1f1f">橫骨牌往左伸 → 又冒出一個缺角</text>
       </g>
-      <text x="200" y="466" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#2f6fb6">邊界變平 → 剩 f[n−1]</text>
-
-      <!-- ===== ③-B 橫放 → g[n-2] ===== -->
-      <text x="540" y="290" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="13" font-weight="700" fill="#d96e4e">B · 洞下方「橫放」</text>
-      <g>
-        <rect x="460" y="304" width="138" height="138" fill="#eef2f6" stroke="#cfcfcf" stroke-width="1"/>
-        <line x1="506" y1="304" x2="506" y2="442" stroke="#cfcfcf"/>
-        <line x1="552" y1="304" x2="552" y2="442" stroke="#cfcfcf"/>
-        <line x1="460" y1="350" x2="598" y2="350" stroke="#cfcfcf"/>
-        <line x1="460" y1="396" x2="598" y2="396" stroke="#cfcfcf"/>
-        <!-- capping horizontal at top (col n-1 & n, row0) -->
-        <rect x="506" y="308" width="84" height="38" rx="5" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
-        <!-- horizontal domino row1 covering col n-2 & n-1 -->
-        <rect x="464" y="354" width="84" height="38" rx="5" fill="#0f9b9b" stroke="#1a1a1a" stroke-width="2"/>
-        <!-- this leaves a bump downward: (row2, col n-1) sticking out → new g -->
-        <rect x="506" y="396" width="46" height="46" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2.5"/>
-        <text x="529" y="424" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#a8472c">凸</text>
-        <text x="483" y="332" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#9a9a9a">…</text>
-      </g>
-      <text x="540" y="466" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#d96e4e">又冒出凸邊界 → 剩 g[n−2]</text>
+      <text x="470" y="330" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#d96e4e">又是「缺角」形狀</text>
+      <text x="470" y="350" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#d96e4e">→ g[n−2]</text>
 
       <!-- summary bar -->
-      <rect x="40" y="486" width="680" height="58" rx="6" fill="#1f1f1f"/>
-      <text x="380" y="510" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="13.5" font-weight="700" fill="#fef8e8">
-        洞下方 <tspan fill="#9ec8f0">直放 → f[n−1]</tspan>　／　<tspan fill="#f3c9b8">橫放 → g[n−2]</tspan>（兩種互斥）
-      </text>
-      <text x="380" y="532" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#fff">
-        g[n] = <tspan fill="#9ec8f0">f[n−1]</tspan> + <tspan fill="#f3c9b8">g[n−2]</tspan>
-      </text>
+      <rect x="40" y="390" width="680" height="0" fill="none"/>
+      <text x="600" y="404" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="16" font-weight="700" fill="#1a1a1a">g[n] = f[n−1] + g[n−2]</text>
     </svg>
     </div>
 
     <p style="font-size:14px;margin-top:6px;"><strong>套到 n = 3 驗證</strong>（<code>f[2]=3, g[1]=1</code>）：</p>
-    <pre class="sc-trace"><span class="sc-trace__head">// g[3]</span>
-凸格被橫骨牌蓋 → 留下洞
-  ① 洞下直放 → 剩 f[2] = 3
-  ② 洞下橫放 → 剩 g[1] = 1
+    <pre class="sc-trace"><span class="sc-trace__head">// g[3]（最後一欄缺頂角）</span>
+看缺角正下方那格怎麼蓋
+  A 直放 → 最後一欄收乾淨 → 剩 f[2] = 3
+  B 橫放 → 又冒出一個缺角   → 剩 g[1] = 1
 g[3] = f[2] + g[1] = 3 + 1 = 4  ✓</pre>
 
     <div class="sc-dark-box" style="margin-top:14px;">
@@ -480,9 +440,9 @@ g[3] = f[2] + g[1] = 3 + 1 = 4  ✓</pre>
       <div class="sc-dark-box__body">
         <ol>
           <li><strong>f[n] 的 (a) 項</strong>：最右邊用「三條橫」把整塊 3×2 收掉，前面剩一個<strong>平邊界</strong> ⇒ 接 <code>f[n−2]</code>。</li>
-          <li><strong>f[n] 的 (b) 項</strong>：最右邊是一個<strong>凸邊界</strong>被一塊骨牌補平；凸在上 / 凸在下兩種鏡像 ⇒ <code>2·g[n−1]</code>。</li>
+          <li><strong>f[n] 的 (b) 項</strong>：最左欄擺成「直 + 橫」，留下一個<strong>缺一角</strong>的邊界；缺在頂 / 缺在底兩種鏡像 ⇒ <code>2·g[n−1]</code>。</li>
           <li>合起來 <code>f[n] = f[n−2] + 2·g[n−1]</code>。<span style="color:var(--sc-coral)">（n=2 驗證：1 + 2×1 = 3 ✓）</span></li>
-          <li><strong>g[n]</strong>（STEP 3）：凸格只能被橫骨牌蓋 → 看洞下方那格，直放剩 <code>f[n−1]</code>、橫放剩 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。<span style="color:var(--sc-coral)">（n=3 驗證：3 + 1 = 4 ✓）</span></li>
+          <li><strong>g[n]</strong>（STEP 3）：看缺角正下方那格，直放剩 <code>f[n−1]</code>、橫放剩 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。<span style="color:var(--sc-coral)">（n=3 驗證：3 + 1 = 4 ✓）</span></li>
           <li>兩式消去 g ⇒ <strong><code>f[n] = 4·f[n−2] − f[n−4]</code></strong>（實作最省事）。</li>
         </ol>
       </div>
@@ -531,7 +491,7 @@ g[3] = f[2] + g[1] = 3 + 1 = 4  ✓</pre>
     </div>
 
     <div class="sc-insight">
-      <strong>逐欄鋪，交界只有「平」或「凸一格」兩種型態。</strong><br/>
+      <strong>逐欄鋪，交界只有「平」或「缺一角」兩種型態。</strong><br/>
       把型態當狀態 ⇒ f / g 互相遞推 ⇒ 消去後 <code>f[n]=4f[n−2]−f[n−4]</code>；<br/>
       <strong>奇數 N 直接 0；多筆一次預處理查表。</strong>
     </div>
