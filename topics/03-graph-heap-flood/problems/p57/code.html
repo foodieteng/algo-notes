@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P57 · 02 Code // heap 練習 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P57
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/57/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">heap 練習</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      C++17 · 手刻 Min-Heap
+      <span class="sc-mast__sep">·</span>
+      每次 <strong>O(log n)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(n)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 手刻 min-heap<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p57.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">1000006</span><span class="p">;</span>
+
+<span class="t">int</span> heap<span class="p">[</span>MAXN<span class="p">];</span>      <span class="c">// 1-indexed 完全二元樹；heap[1] 永遠是最小值</span>
+<span class="t">int</span> sz <span class="p">=</span> <span class="n">0</span><span class="p">;</span>          <span class="c">// 目前元素個數</span>
+
+<span class="c">// 插入：放尾端，往上浮到不比父小為止</span>
+<span class="t">void</span> <span class="f">push</span><span class="p">(</span><span class="t">int</span> v<span class="p">)</span> <span class="p">{</span>
+    heap<span class="p">[++</span>sz<span class="p">]</span> <span class="p">=</span> v<span class="p">;</span>
+    <span class="t">int</span> i <span class="p">=</span> sz<span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span>i <span class="p">&gt;</span> <span class="n">1</span> <span class="p">&amp;&amp;</span> heap<span class="p">[</span>i<span class="p">]</span> <span class="p">&lt;</span> heap<span class="p">[</span>i <span class="p">/</span> <span class="n">2</span><span class="p">])</span> <span class="p">{</span>   <span class="c">// 比父小 ⇒ 上浮</span>
+        <span class="f">swap</span><span class="p">(</span>heap<span class="p">[</span>i<span class="p">],</span> heap<span class="p">[</span>i <span class="p">/</span> <span class="n">2</span><span class="p">]);</span>
+        i <span class="p">/=</span> <span class="n">2</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">// 取出最小：根與尾端互換、size--，再把新的根往下沉</span>
+<span class="t">int</span> <span class="f">pop</span><span class="p">()</span> <span class="p">{</span>
+    <span class="t">int</span> ret <span class="p">=</span> heap<span class="p">[</span><span class="n">1</span><span class="p">];</span>            <span class="c">// 最小值</span>
+    heap<span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> heap<span class="p">[</span>sz<span class="p">--];</span>        <span class="c">// 最後一個搬到根，元素數 -1</span>
+
+    <span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> smallest <span class="p">=</span> i<span class="p">;</span>
+        <span class="t">int</span> l <span class="p">=</span> i <span class="p">*</span> <span class="n">2</span><span class="p">,</span> r <span class="p">=</span> i <span class="p">*</span> <span class="n">2</span> <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span>l <span class="p">&lt;=</span> sz <span class="p">&amp;&amp;</span> heap<span class="p">[</span>l<span class="p">]</span> <span class="p">&lt;</span> heap<span class="p">[</span>smallest<span class="p">])</span> smallest <span class="p">=</span> l<span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span>r <span class="p">&lt;=</span> sz <span class="p">&amp;&amp;</span> heap<span class="p">[</span>r<span class="p">]</span> <span class="p">&lt;</span> heap<span class="p">[</span>smallest<span class="p">])</span> smallest <span class="p">=</span> r<span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span>smallest <span class="p">==</span> i<span class="p">)</span> <span class="k">break</span><span class="p">;</span>       <span class="c">// 父 ≤ 兩子 ⇒ 定位完成</span>
+
+        <span class="f">swap</span><span class="p">(</span>heap<span class="p">[</span>i<span class="p">],</span> heap<span class="p">[</span>smallest<span class="p">]);</span>  <span class="c">// 與較小子交換，往下沉</span>
+        i <span class="p">=</span> smallest<span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> ret<span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="p">{</span>
+        <span class="t">int</span> op<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> op<span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span>op <span class="p">==</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="t">int</span> n<span class="p">;</span>
+            cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+            <span class="f">push</span><span class="p">(</span>n<span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>                       <span class="c">// op == 2 ⇒ pop-min</span>
+            <span class="k">if</span> <span class="p">(</span>sz <span class="p">==</span> <span class="n">0</span><span class="p">)</span> cout <span class="p">&lt;&lt;</span> <span class="s">"empty!\n"</span><span class="p">;</span>
+            <span class="k">else</span>          cout <span class="p">&lt;&lt;</span> <span class="f">pop</span><span class="p">()</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>偷懶版</strong>：STL 直接給你 heap — <code>priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;</code>
+      就是 min-heap，<code>pq.push(n)</code> / <code>pq.top()</code> / <code>pq.pop()</code>。本卡示範手刻是為了<strong>理解內部</strong>；
+      競賽時用 <code>priority_queue</code> 即可。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>push · sift-up</td><td>從尾端往父走，最多走樹高層</td><td class="mono">O(log n)</td></tr>
+        <tr><td>pop · sift-down</td><td>從根往較小子走，最多走樹高層</td><td class="mono">O(log n)</td></tr>
+        <tr><td>每層比較 / 交換</td><td>常數次（看 1 個父或 2 個子）</td><td class="mono">O(1)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">總時間 = T × O(log n) = <strong>O(T log T)</strong></div>
+      <div class="sc-formula__hint">T = 10⁶ ⇒ ~2×10⁷ 次運算；I/O 量大，<strong>務必關 sync</strong></div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(T log T)</strong></td><td>每操作 O(log n)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(n)</strong></td><td><code>heap[]</code> 最壞裝下全部 push 進來的數</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>sift 用 while 迴圈，無遞迴</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>整數比較、index 乘除 2</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>用 1-indexed</strong></td>
+          <td>父子公式 <code>2i / 2i+1 / i/2</code> 才漂亮。若 0-indexed 要改成 <code>2i+1 / 2i+2 / (i−1)/2</code>，易錯。</td>
+        </tr>
+        <tr>
+          <td><strong>sift-down 要比「較小的子」</strong></td>
+          <td>min-heap 下沉時跟<strong>兩個子裡較小的那個</strong>換，不是隨便挑左子；否則破壞 heap 性質。</td>
+        </tr>
+        <tr>
+          <td><strong>子節點存在性檢查</strong></td>
+          <td>取 <code>l, r</code> 前要 <code>l &lt;= sz</code> / <code>r &lt;= sz</code>，否則讀到界外或已 pop 的舊值。</td>
+        </tr>
+        <tr>
+          <td><strong>空 heap pop</strong></td>
+          <td><code>sz == 0</code> 時輸出 <code>empty!</code>，<strong>不要</strong>進 pop（會讀 heap[1] 垃圾值 / sz 變負）。</td>
+        </tr>
+        <tr>
+          <td><strong>10⁶ I/O 要加速</strong></td>
+          <td><code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 必加；輸出用 <code>'\n'</code> 不用 <code>endl</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>陣列開夠大</strong></td>
+          <td>最壞全是 push ⇒ <code>heap[]</code> 要能放 T = 10⁶ 個 ⇒ <code>MAXN ≈ 10⁶ + 餘裕</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① push — sift-up（上浮）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// push(v)</span>
+heap[++sz] = v            ← 放到陣列尾端（樹的最後一個位置）
+i = sz
+while i &gt; 1 and heap[i] &lt; heap[i/2]:   ← 比父小
+    swap(heap[i], heap[i/2])           ← 上浮
+    i /= 2
+// 直到 ≥ 父 或 到根 ⇒ heap 性質恢復</pre>
+
+    <p><strong>② pop — sift-down（下沉）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// pop()</span>
+ret = heap[1]             ← 根 = 最小值
+heap[1] = heap[sz--]      ← 最後一個搬到根，size 減 1
+i = 1
+loop:
+    smallest = i
+    l = 2i, r = 2i+1
+    if l&lt;=sz and heap[l]&lt;heap[smallest]: smallest = l
+    if r&lt;=sz and heap[r]&lt;heap[smallest]: smallest = r
+    if smallest == i: break    ← 父已 ≤ 兩子
+    swap(heap[i], heap[smallest]); i = smallest   ← 與較小子換、下沉
+return ret</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      <strong>為何取「最後一個搬到根」？</strong> 這樣才維持完全二元樹的形狀（最後一層由右往左收）；
+      再用 sift-down 把這個可能很大的值沉到正確位置。</p>
+
+    <p><strong>③ STL 對照</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// priority_queue 版（min-heap）</span>
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;
+op 1 n → pq.push(n);
+op 2   → if (pq.empty()) cout &lt;&lt; "empty!\n";
+         else { cout &lt;&lt; pq.top() &lt;&lt; '\n'; pq.pop(); }</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">1-indexed 陣列 heap：push 上浮、pop 根與尾互換後下沉，各 O(log n)；空則印 empty!。</div>
+    <div class="sc-summary-bar__detail">手刻理解內部；競賽用 priority_queue + greater 即 min-heap。10⁶ 操作記得關 sync。</div>
+  </div>
+
+</body>
+</html>

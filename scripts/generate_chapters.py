@@ -59,8 +59,8 @@ PROBLEMS = {
     '03': [
         ('p41',  '庭院裡的水池',          'main',  'done'),
         ('p43',  '喵喵抓老鼠',            'main',  'done'),
-        ('p57',  'heap 練習',             'main',  'todo'),
-        ('p604', '哪裡有卦，哪裡就有源',  'main',  'todo'),
+        ('p57',  'heap 練習',             'main',  'done'),
+        ('p604', '哪裡有卦，哪裡就有源',  'main',  'done'),
         ('p45',  '染色遊戲',              'bonus', 'todo'),
         ('p364', 'Game',                  'bonus', 'todo'),
     ],

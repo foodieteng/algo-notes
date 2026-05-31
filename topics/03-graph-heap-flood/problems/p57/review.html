@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P57 · 03 Review // heap 練習 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P57
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/57/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">heap 練習</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>結構</td>
+            <td>完全二元樹存進 1-indexed 陣列；不用指標。</td></tr>
+        <tr><td>索引</td>
+            <td>左子 <code>2i</code>、右子 <code>2i+1</code>、父 <code>⌊i/2⌋</code>。</td></tr>
+        <tr><td>heap 性質</td>
+            <td>min-heap：父 ≤ 兩子 ⇒ 最小值永遠在 <code>heap[1]</code>。</td></tr>
+        <tr><td>insert</td>
+            <td>放尾端 → sift-up：比父小就上浮，O(log n)。</td></tr>
+        <tr><td>pop-min</td>
+            <td>輸出根 → 尾端搬到根 → sift-down：與較小子比、往下沉，O(log n)。</td></tr>
+        <tr><td>空 heap</td>
+            <td>pop 前先檢查 <code>sz == 0</code>，輸出 <code>empty!</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">為何 O(log n)</span>
+      <h4>為什麼 push / pop 都是 O(log n)？跟樹的什麼性質有關？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">sift-down 細節</span>
+      <h4>pop 時為什麼要把「最後一個元素」搬到根，而不是直接把某個子提上來？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">較小子</span>
+      <h4>sift-down 跟左子換 vs 跟「較小的子」換，會差在哪？舉一個換錯就壞掉的例子。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">全序 vs 局部序</span>
+      <h4>heap 有沒有保證整個陣列是排序好的？為什麼「不要求全序」反而是優點？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">效能</span>
+      <h4>T = 10⁶ 時，為什麼用 <code>cin/cout</code> 沒關 sync 可能 TLE？怎麼修？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用題目範例的 7 個操作。<code>heap[]</code> 以 1-indexed 顯示（<code>_</code> 是不用的位置 0）：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>7
+1 2
+1 3
+2
+1 1
+2
+2
+2</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 1 · push 2</span>
+heap = [_, 2]   sz=1
+sift-up：i=1 已是根 → 停</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 2 · push 3</span>
+放尾端 heap[2]=3 → heap = [_, 2, 3]   sz=2
+sift-up：heap[2]=3 &lt; heap[1]=2？否 → 停（3 留在位置 2）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 3 · pop (2)</span>
+ret = heap[1] = 2   → 輸出 <span class="sc-trace__out">2</span>
+heap[1] = heap[2] = 3，sz=1 → heap = [_, 3]
+sift-down：i=1，左子 2 &gt; sz=1（不存在）→ 停</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 4 · push 1</span>
+放尾端 heap[2]=1 → heap = [_, 3, 1]   sz=2
+sift-up：heap[2]=1 &lt; heap[1]=3？是 → swap → heap = [_, 1, 3]
+i=1 到根 → 停</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 5 · pop (1)</span>
+ret = heap[1] = 1   → 輸出 <span class="sc-trace__out">1</span>
+heap[1] = heap[2] = 3，sz=1 → heap = [_, 3]
+sift-down：左子 2 &gt; sz=1 → 停</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 6 · pop (3)</span>
+ret = heap[1] = 3   → 輸出 <span class="sc-trace__out">3</span>
+heap[1] = heap[1]，sz=0 → heap 空
+sift-down：左子 2 &gt; sz=0 → 停</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OP 7 · pop（空）</span>
+sz == 0 → 輸出 <span class="sc-trace__out">empty!</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>2
+1
+3
+empty!</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：OP 4 的 push 1 觸發了唯一一次 sift-up 交換（1 比 3 小，浮到根）。
+      之後三次 pop 因為 heap 很小，sift-down 都<strong>立刻因「沒有子節點」而停</strong> —
+      可見 sift 的成本完全跟<strong>當下的樹高</strong>成正比。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">max-heap</span>
+      <h4>若改成「pop 最大值」，手刻 code 要改哪裡？用 <code>priority_queue</code> 又怎麼改？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">建堆</span>
+      <h4>一次給 n 個數要建成 heap，逐個 push 是 O(n log n)。有沒有 O(n) 的建堆法？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">應用</span>
+      <h4>哪些經典演算法 / 題型直接用到 heap？舉 3 個。</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 為何 O(log n)</span>
+      <p>
+        heap 是<strong>完全二元樹</strong>，<code>n</code> 個節點高度只有 <code>⌊log₂ n⌋</code>。
+        sift-up 每步往父走一層、sift-down 每步往子走一層，最多走樹高那麼多層，每層只做常數比較 / 交換 ⇒
+        <strong>O(log n)</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · sift-down 細節</span>
+      <p>
+        因為要<strong>維持完全二元樹的形狀</strong>：移除的是根，但「空缺」必須由樹最後一個位置來補，
+        才不會在中間留洞。所以把最後一個元素搬到根（形狀立刻正確），再用 sift-down 修正大小關係。
+      </p>
+      <p>
+        若直接把某個子提上來，會在那個子的位置留下新空缺，得遞迴處理、且最後一層可能破洞 ⇒ 形狀不再「完全」。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 較小子</span>
+      <p>
+        min-heap 下沉必須跟<strong>兩子中較小者</strong>交換，換上去的才會 ≤ 另一個子，維持「父 ≤ 兩子」。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 換錯（跟左子換）的反例</span>
+根 = 9，左子 = 5，右子 = 2
+若跟左子 5 換：新根 = 5，但右子 2 &lt; 5 ⇒ 違反 heap 性質！
+正確：跟較小的右子 2 換 → 新根 2 ≤ 5 ✓</pre>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 全序 vs 局部序</span>
+      <p>
+        heap <strong>不保證</strong>陣列整體有序 — 它只保證「每個父 ≤ 它的子」這種<strong>局部</strong>關係。
+        例如 <code>[_,1,5,3,8,6]</code> 是合法 min-heap，但陣列不是排序的。
+      </p>
+      <p>
+        正因為只維持局部序，插入 / 取出只要修一條根到葉的路徑（O(log n)），
+        不必像排序陣列那樣維持全序（insert O(n)）。<strong>「剛好夠用的弱保證」就是 heap 快的原因。</strong>
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 效能</span>
+      <p>
+        <code>cin/cout</code> 預設與 C 的 <code>stdio</code> 同步，每次讀寫都有額外成本；10⁶ 次操作（含輸出）會把這成本放大到可能 TLE。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 修法</span>
+ios::sync_with_stdio(false);
+cin.tie(nullptr);
+// 輸出用 '\n' 不要 endl（endl 每次 flush）</pre>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · max-heap</span>
+      <p>
+        手刻：把所有比較的 <code>&lt;</code> 改成 <code>&gt;</code>（sift-up「比父大就上浮」、sift-down「跟<strong>較大</strong>子換」），根就變成最大值。
+      </p>
+      <p>
+        STL 更簡單：<code>priority_queue&lt;int&gt; pq;</code>（預設就是 max-heap，<code>top()</code> 是最大）。
+        反之 min-heap 才需要 <code>greater&lt;int&gt;</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 建堆</span>
+      <p>
+        有。把 n 個數先<strong>原封不動放進陣列</strong>，再從 <code>i = n/2</code> 往 1 對每個節點做一次 sift-down
+        （<code>build_heap</code>）。
+      </p>
+      <p>
+        雖然單次 sift-down 是 O(log n)，但靠近底層的節點很多卻只需走很少層，數學上加總是 <strong>O(n)</strong>，
+        比逐個 push 的 O(n log n) 快。（本題操作是穿插進來的，用不到一次建堆，但值得知道。）
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 應用</span>
+      <ul>
+        <li><strong>Dijkstra 最短路</strong>：用 min-heap 每次取出「目前距離最小」的點。</li>
+        <li><strong>Prim 最小生成樹</strong>：用 heap 取出最小權邊。</li>
+        <li><strong>Top-K / 第 K 大</strong>、<strong>合併 K 條已排序串列</strong>、<strong>Huffman 編碼</strong>、事件模擬的時間佇列…都靠 heap。</li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W03 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會手刻 min-heap 的 sift-up / sift-down。</div>
+    <div class="sc-summary-bar__detail">範例輸出：2 · 1 · 3 · empty!（只有 push 1 那次真的上浮交換）。</div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P57 · 01 概念 // heap 練習 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P57
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/57/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">heap 練習</h1>
+    <p class="sc-mast__subtitle">// Binary Min-Heap · 優先佇列基礎</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      核心 Binary Heap（陣列實作）
+      <span class="sc-mast__sep">·</span>
+      每次操作 <strong>O(log n)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>處理 <code>T ≤ 10⁶</code> 個操作，每個是兩種之一：
+      <code>1 n</code> 把數字 <code>n</code> 放入 heap；<code>2</code> 把 heap 中<strong>最小的數字 pop 出來並輸出</strong>。
+      若 pop 時 heap 已空，輸出一行 <code>empty!</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      要的就是一個支援「插入」與「取出最小」的資料結構 — 也就是 <strong>min-heap（最小堆 / 優先佇列）</strong>。
+      本題練的是<strong>自己用陣列把 heap 寫出來</strong>（或直接用 STL <code>priority_queue</code>）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 Heap
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 Heap<span class="sc-section__title-en">// Why a Heap</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">未排序陣列</span>
+            <span class="sc-ko-card__o">pop O(n)</span>
+          </div>
+          <div class="sc-ko-card__body">insert O(1)，但每次 pop 要<strong>掃全部找最小</strong> ⇒ 10⁶ 次 pop 最壞 O(n²) ≈ 10¹².</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">維護排序陣列</span>
+            <span class="sc-ko-card__o">insert O(n)</span>
+          </div>
+          <div class="sc-ko-card__body">pop O(1)（取頭），但每次 insert 要<strong>挪位插入</strong> ⇒ 一樣 O(n²)。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · TLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">Binary Heap</span>
+          <span class="sc-ko-card__o">兩者 O(log n)</span>
+        </div>
+        <div class="sc-ko-card__body">完全二元樹存進陣列；insert 上浮、pop 下沉，各只走樹高 O(log n)。最小值永遠在根。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      A、B 都把成本壓在某一邊、犧牲另一邊 ⇒ 10⁶ 操作必 TLE。Heap 讓 <strong>insert 與 pop 同時 O(log n)</strong>，
+      總時間 <code>O(T log T)</code> 才能在時限內跑完。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心結構 · 陣列存樹<span class="sc-section__title-en">// Array as Tree</span></h2>
+    </div>
+
+    <p style="font-size:14px;">把<strong>完全二元樹</strong>用 1-indexed 陣列存（不用指標）：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>索引關係</strong> · 節點 <code>i</code> 的左子 = <code>2i</code>、右子 = <code>2i+1</code>、父 = <code>⌊i/2⌋</code>。</li>
+      <li><strong>heap 性質</strong> · 每個節點都 ≤ 它的兩個子（min-heap）⇒ <strong>最小值永遠在 <code>heap[1]</code></strong>。</li>
+      <li><strong>插入（sift-up）</strong> · 放到陣列尾端，與父比、比父小就交換上浮，直到 ≥ 父或到根。</li>
+      <li><strong>取出最小（sift-down）</strong> · 輸出 <code>heap[1]</code>，把最後一個搬到根，與<strong>較小的子</strong>比、比子大就交換下沉。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      樹高 = <code>⌊log₂ n⌋</code>，sift-up / sift-down 各最多走這麼多層 ⇒ 每次操作 <strong>O(log n)</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · sift-up / sift-down<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>直接跑題目範例的 7 個操作：<span class="mono" style="font-size:12px;">1 2 · 1 3 · 2 · 1 1 · 2 · 2 · 2</span>。
+    上方是<strong>二元樹</strong>、中間是對應的<strong>1-indexed 陣列</strong>，下方累積 <strong>OUTPUT</strong>。
+    一步步看插入怎麼上浮、pop 怎麼下沉：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · MIN-HEAP OPERATIONS</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="440" style="height:440px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 空的 min-heap
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">●</span> 一般節點 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 正在上浮 / 下沉的節點 &nbsp;·&nbsp;
+      <span style="color:#d4a017">●</span> 正在比較的對象（父 / 較小子）&nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 剛 pop 出來的最小值
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼 sift 只走 O(log n)
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼每次操作只要 O(log n)<span class="sc-section__title-en">// Why O(log n)</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// LEMMA · 完全二元樹的高度是 ⌊log₂ n⌋</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>heap 是<strong>完全二元樹</strong>：除最後一層外每層填滿，最後一層由左往右填。</li>
+          <li>第 <code>d</code> 層最多 <code>2ᵈ</code> 個節點 ⇒ 前 <code>h</code> 層共 <code>2ʰ⁺¹ − 1</code> 個。</li>
+          <li>所以 <code>n</code> 個節點的樹高 <code>h = ⌊log₂ n⌋</code>。</li>
+          <li><strong>sift-up</strong> 每次往父走一層、<strong>sift-down</strong> 每次往子走一層 ⇒ 最多走 <code>h</code> 層。</li>
+          <li>⇒ insert、pop 各 <strong>O(log n)</strong>；每層只做常數次比較與交換。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      <strong>對照</strong>：未排序陣列 pop 要 O(n)、排序陣列 insert 要 O(n)。Heap 用「只維持<strong>局部</strong>父子關係、不要求全序」換來兩邊都 O(log n)。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">每次操作 O(log n) &nbsp;⇒&nbsp; 總計 <strong>O(T log T)</strong></div>
+      <div class="sc-formula__hint">
+        T = 10⁶ ⇒ 約 10⁶ × 20 = 2×10⁷，秒過（記得用快速 I/O）
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>操作</th><th>未排序陣列</th><th>排序陣列</th><th>Binary Heap</th></tr></thead>
+      <tbody>
+        <tr><td>insert</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono"><strong>O(log n)</strong></td></tr>
+        <tr><td>pop-min</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono"><strong>O(log n)</strong></td></tr>
+        <tr><td>查最小</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)（看根）</td></tr>
+        <tr><td>空間</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>Heap = 只維持父子大小關係的完全二元樹，存進陣列。</strong><br/>
+      最小值永遠在根；插入上浮、取出下沉，<br/>
+      <strong>各只走一條樹高 O(log n) — 兩邊都快。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">完全二元樹存陣列：insert 上浮、pop-min 下沉，各 O(log n)，最小值在根。</div>
+    <div class="sc-summary-bar__detail">未排序 / 排序陣列都會在某一邊 O(n) ⇒ 10⁶ 操作 TLE；heap 兩邊都快。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p57-heap.js"></script>
+</body>
+</html>
