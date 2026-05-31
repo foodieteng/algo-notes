@@ -168,15 +168,15 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">04</span>
-      <h2 class="sc-section__title">動畫演示 · DP 表逐欄填<span class="sc-section__title-en">// Animation</span></h2>
+      <h2 class="sc-section__title">動畫演示 · 固定首色 DP（跟 code 一致）<span class="sc-section__title-en">// Animation</span></h2>
     </div>
 
-    <p>用 <code>N = 3</code>。一欄是一個 coin、三列是 R / G / B 的方法數。看每格怎麼從<strong>前一欄</strong>加總（黃框 = 來源），
-    最後加總末欄得線性 <strong>17</strong>，再扣頭尾 {G,B} 的 2 種 → <strong>15</strong>。
-    （這是「<strong>線性 − 頭尾</strong>」的等價視角；§05 證明它跟 code 用的「固定首色加總」得到同一個 15。）</p>
+    <p>用 <code>N = 3</code>，<strong>完全照 code 的做法</strong>：固定第一個 coin 的顏色 = R / G / B 各跑一次末位 DP
+    （一欄一個 coin、三列 R/G/B、黃框 = 來源），跑完用 <code>ok()</code> 過濾末位 —— <strong>綠框 ✓ 收、紅框 ✗ 丟</strong> ——
+    三次貢獻 <strong>7 + 4 + 4 = 15</strong>，全程只有加總、沒有減法：</p>
 
     <div class="sc-viz">
-      <div class="sc-viz__title">// VIZ · DP TABLE (N = 3)</div>
+      <div class="sc-viz__title">// VIZ · 固定首色 DP (N = 3)</div>
       <canvas id="viz-canvas" class="sc-viz__canvas" height="400" style="height:400px"></canvas>
       <div class="sc-viz__controls">
         <button class="sc-btn" id="viz-reset">Reset</button>
@@ -197,7 +197,8 @@
       <span style="color:#2f6fb6">■</span> B 列 &nbsp;·&nbsp;
       <span style="color:#d96e4e">■</span> 正在計算的格 &nbsp;·&nbsp;
       <span style="color:#d4a017">■</span> 來源格（前一欄）&nbsp;·&nbsp;
-      <span style="color:#5fa866">■</span> 末欄 / 答案
+      <span style="color:#5fa866">■</span> 末位 ✓ 收 &nbsp;·&nbsp;
+      <span style="color:#cdb4b4">■</span> 末位 ✗ 丟（與首色一藍一綠）
     </p>
   </section>
 

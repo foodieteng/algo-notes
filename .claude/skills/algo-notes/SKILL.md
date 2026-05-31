@@ -54,7 +54,22 @@ It rewrites every `topics/<NN>-<slug>/index.html` chapter page and refreshes the
    - Crumb back to chapter index uses `../../index.html`
    - Sibling subpage links use bare `concept.html` / `viz.html` / etc.
 
-4. **If the algorithm benefits from animation**, write `assets/js/viz/<slug>-<algo>.js`. Reference `assets/js/viz/p114-lboard.js` for the pattern:
+4. **🔴 MANDATORY: compile & run the C++ on the sample I/O before pasting it into `code.html`.** This is not optional — a wrong solution in the notes is worse than no notes. Do it in a scratch dir, never commit the scratch files:
+   ```bash
+   mkdir -p /tmp/algo-check && cd /tmp/algo-check
+   cat > sol.cpp <<'CPP'
+   ... the exact code you intend to put on the page ...
+   CPP
+   g++ -O2 -std=c++17 sol.cpp -o sol && ./sol < sample.in
+   # compare stdout against EVERY sample output line-for-line (incl. the largest N)
+   ```
+   - Run **every** sample case the problem gives (and the big stress one like `N=100000` when the statement lists its answer — that catches off-by-one / overflow / mod bugs).
+   - If the page shows **two implementations** (e.g. a `_fg` / recurrence variant), compile-run **both**; they must agree.
+   - If you can't reproduce the expected output, the code is wrong — **fix it before writing the page**, don't paste hopeful code.
+   - **Never leave dead placeholder lines** like `if (!(cond && 1)) {}` or `// 見下方` stubs in submitted code — they compile but signal the logic was never actually run. (This rule exists because P126 shipped exactly such a stub.)
+   - The page's `// OUTPUT` trace block and any per-step hand-trace must match what the verified binary actually prints.
+
+5. **If the algorithm benefits from animation**, write `assets/js/viz/<slug>-<algo>.js`. Reference `assets/js/viz/p114-lboard.js` for the pattern:
    - White paper background `#ffffff`
    - Step-by-step state machine driven by Reset / Prev / Play / Next
    - Single canvas per page; canvas + control IDs are `viz-canvas`, `viz-reset`, `viz-prev`, `viz-play`, `viz-next`, `viz-step`, `viz-label` (read these via `getElementById`)
@@ -62,9 +77,9 @@ It rewrites every `topics/<NN>-<slug>/index.html` chapter page and refreshes the
    - Special / blocked / important cell distinguished from regular cells
    - If a page needs TWO animations (base case + general case, like P507), use prefixed IDs `viz-base` / `vb-*` and `viz-general` / `vg-*`
 
-5. **Flip status to `'done'`** in PROBLEMS, then `python3 scripts/generate_chapters.py`.
+6. **Flip status to `'done'`** in PROBLEMS, then `python3 scripts/generate_chapters.py`.
 
-6. **Commit:**
+7. **Commit:**
    ```
    feat(W<NN>/P<XXX>): <title> — <one-line algorithm summary>
    ```
@@ -266,6 +281,8 @@ Verdict / label text in this variant is **always** uppercase mono with `letter-s
 6. **Re-run the generator** after any change to `PROBLEMS` or `CHAPTERS`. Sidebars desync silently otherwise.
 7. **Study-card variant: no pastel-per-position fills.** Cards in a row must share the paper bg `#faf5e6`; the *winner* gets coral border + ink hard shadow. Pink/yellow/green fills (`#fde6ec` / `#fff4cf` / `#e3f0d8`) and emoji verdicts (`❌` `⚠️` `✓`) were explicitly rejected — use mono uppercase `× REJECT` / `△ REJECT` / `● ADOPT` and ink-black square chips for badges.
 8. **No wobble filter** in the study-card variant. `filter: url(#sn-wobble)` and decorative pseudo-elements (`'∑'`, `'』'`, `'✦'`) belong to the abandoned sketchnote experiment — don't reintroduce them.
+9. **Never ship unverified C++.** The code on `code.html` must have been compiled and run against every sample (see Integration step 4). No dead `if (!(cond && 1)) {}` placeholders, no "probably correct" code. If the page's `// OUTPUT` trace or hand-trace disagrees with the verified binary, the page is wrong.
+10. **SVG `<text>` cannot contain `<strong>`/HTML tags** — use `<tspan font-weight="700">`. An HTML tag inside SVG severs the SVG at that point (the rest leaks out as plain text and half the figure vanishes). This bit P124's STEP 1 figure. Screenshot-check figures, don't just tag-balance them.
 
 ## Git workflow
 
