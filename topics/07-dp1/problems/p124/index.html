@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P124 · 01 概念 // 円円數磁磚 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P124
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/124/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">円円數磁磚</h1>
+    <p class="sc-mast__subtitle">// 計數 DP · 3×N 骨牌鋪法</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 耦合狀態 DP（profile）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(maxN + T)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>一條寬 <strong>3</strong> 塊磁磚、長 <code>N</code> 塊磁磚的走廊（即 <code>3 × N</code> 方格），
+      要用 <strong>1×2 的長方形骨牌</strong>鋪滿，問共有幾種鋪法？答案對 <code>1000007</code> 取餘。
+      多筆 <code>T ≤ 10⁵</code>，<code>1 ≤ N ≤ 10⁵</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      範例：<code>N=1 → 0</code>、<code>N=2 → 3</code>、<code>N=4 → 11</code>、<code>N=100000 → 232803</code>。
+      <strong>關鍵觀察</strong>：3×N 共 <code>3N</code> 格，每塊骨牌蓋 2 格 ⇒ <strong>N 為奇數時 3N 是奇數、鋪不滿 ⇒ 0</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 DP
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 DP<span class="sc-section__title-en">// Why DP</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉所有鋪法</span>
+            <span class="sc-ko-card__o">指數級</span>
+          </div>
+          <div class="sc-ko-card__body">逐格嘗試放骨牌再回溯 ⇒ 方法數本身就指數成長，N=100000 完全不可能列出。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">每筆各自 DP</span>
+            <span class="sc-ko-card__o">O(T · N)</span>
+          </div>
+          <div class="sc-ko-card__body">每筆測資重跑 O(N) ⇒ T·N 最壞 10⁵×10⁵ = 10¹⁰，TLE。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · TLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">耦合狀態 DP + 預處理</span>
+          <span class="sc-ko-card__o">O(maxN + T)</span>
+        </div>
+        <div class="sc-ko-card__body">用「逐欄填、邊界只有兩種型態」推遞迴，一次算好 <code>f[1..10⁵]</code>，每筆查表 O(1)。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>核心想法</strong>：一欄一欄往右鋪，<strong>欄與欄的交界</strong>只可能是「平的」或「凸出一格」少數幾種型態。
+      把這些型態當狀態，就能寫出線性遞迴。多筆 ⇒ 一次預處理所有 N。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 狀態設計
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">狀態設計 · 兩種邊界<span class="sc-section__title-en">// State Design</span></h2>
+    </div>
+
+    <p style="font-size:14px;">逐欄鋪，看「目前已鋪區域的右邊界」長什麼樣。3 寬的走廊，邊界本質上只有兩型：</p>
+
+    <ul style="margin-top:6px;">
+      <li><code>f[n]</code> = 把 <strong>3×n 完整鋪滿</strong>（平邊界）的方法數。</li>
+      <li><code>g[n]</code> = 3×n 但<strong>多凸出一格</strong>（鋸齒邊界，少一格沒鋪）的方法數。</li>
+    </ul>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">
+        f[n] = f[n−2] + 2·g[n−1]<br/>
+        g[n] = f[n−1] + g[n−2]
+      </div>
+      <div class="sc-formula__hint">
+        base <code>f[0]=1, f[1]=0, g[0]=0, g[1]=1</code>；答案 = <code>f[N]</code>
+      </div>
+    </div>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      （<code>f[n]=f[n−2]+2g[n−1]</code>：最後兩欄塞滿三橫或承接凸邊界；
+      兩式聯立消去 g 後得單一遞迴 <code>f[n]=4f[n−2]−f[n−4]</code>。）
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · base case + 遞推<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>前半：列出 <code>3×2</code> 的<strong>全部 3 種</strong>鋪法（base case f[2]=3），一塊塊放骨牌。
+    後半：用兩種邊界狀態 <code>f / g</code> 遞推到 <code>f[4] = 11</code>：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · 3×2 BASE + RECURRENCE</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="400" style="height:400px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 準備鋪 3×2
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：不同顏色 = 不同骨牌（黑框 = 剛放上的那塊）&nbsp;·&nbsp;
+      <span style="color:#2f6fb6">■</span> f 狀態（平邊界）&nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> g 狀態（凸一格）&nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 累計 / 答案
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 遞迴推導
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">遞迴怎麼來的<span class="sc-section__title-en">// Deriving the Recurrence</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 從邊界型態推轉移</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>看 <strong>3×n 的最右邊</strong>怎麼收尾。完整鋪滿 <code>f[n]</code> 的最後一塊區域只有兩種收法：</li>
+          <li><strong>(a)</strong> 最後兩欄用「三條橫」或「一橫+兩直」之外…其實可歸成：接在 <code>f[n−2]</code> 後面把 3×2 補滿（3 種 3×2 鋪法中對應「不靠凸邊」的那一種）⇒ 貢獻 <code>f[n−2]</code>。</li>
+          <li><strong>(b)</strong> 最後是一個凸邊界 <code>g</code> 被一塊骨牌補平 ⇒ 上下兩種對稱情形 ⇒ 貢獻 <code>2·g[n−1]</code>。</li>
+          <li>合起來 <code>f[n] = f[n−2] + 2·g[n−1]</code>。</li>
+          <li>凸邊界 <code>g[n]</code> 同理：由 <code>f[n−1]</code> 再凸一塊、或承接更早的凸邊界 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。</li>
+          <li>兩式消去 g ⇒ <strong><code>f[n] = 4·f[n−2] − f[n−4]</code></strong>（實作最省事）。</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="sc-formula" style="margin-top:14px;">
+      <div class="sc-formula__main">f[n] = <strong>4·f[n−2] − f[n−4]</strong></div>
+      <div class="sc-formula__hint">
+        base <code>f[0]=1, f[2]=3</code>；奇數 N → 0；對 1000007 取餘（減法後 +MOD）
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">預處理 O(maxN) + 每筆 O(1) = <strong>O(maxN + T)</strong></div>
+      <div class="sc-formula__hint">maxN = 10⁵、T = 10⁵ ⇒ 約 2×10⁵ 步，秒過；對照每筆重算 O(T·N)=10¹⁰</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(maxN + T)</strong></td><td>預處理一次、查表 O(1)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(maxN)</strong></td><td><code>f[]</code> 一條陣列</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純迴圈填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>整數加減取餘</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>逐欄鋪，交界只有「平」或「凸一格」兩種型態。</strong><br/>
+      把型態當狀態 ⇒ f / g 互相遞推 ⇒ 消去後 <code>f[n]=4f[n−2]−f[n−4]</code>；<br/>
+      <strong>奇數 N 直接 0；多筆一次預處理查表。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">3×N 骨牌鋪法：邊界兩型態 f/g 遞推，消去得 f[n]=4f[n−2]−f[n−4]，一次預處理查表。</div>
+    <div class="sc-summary-bar__detail">奇數 N → 0（格數奇數鋪不滿）；mod 1000007；N=100000 → 232803。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p124-tiling.js"></script>
+</body>
+</html>

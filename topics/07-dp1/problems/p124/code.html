@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P124 · 02 Code // 円円數磁磚 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P124
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/124/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">円円數磁磚</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 遞迴預處理
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(maxN + T)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(maxN)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 單一遞迴預處理<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">最省事的寫法：直接用消去後的 <code>f[n] = 4·f[n−2] − f[n−4]</code>，一次填好 <code>f[1..maxN]</code>。</p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p124.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MOD <span class="p">=</span> <span class="n">1000007</span><span class="p">;</span>
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">100005</span><span class="p">;</span>
+
+<span class="t">long long</span> f<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// f[n] = 用 1×2 骨牌鋪滿 3×n 的方法數 (mod)</span>
+
+<span class="t">void</span> <span class="f">build</span><span class="p">()</span> <span class="p">{</span>
+    f<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>                          <span class="c">// 空走廊：1 種（什麼都不放）</span>
+    <span class="k">if</span> <span class="p">(</span>MAXN <span class="p">&gt;</span> <span class="n">1</span><span class="p">)</span> f<span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>            <span class="c">// 3×1 = 3 格，奇數鋪不滿</span>
+    <span class="k">if</span> <span class="p">(</span>MAXN <span class="p">&gt;</span> <span class="n">2</span><span class="p">)</span> f<span class="p">[</span><span class="n">2</span><span class="p">]</span> <span class="p">=</span> <span class="n">3</span><span class="p">;</span>            <span class="c">// 3×2 = 3 種（base case）</span>
+    <span class="k">if</span> <span class="p">(</span>MAXN <span class="p">&gt;</span> <span class="n">3</span><span class="p">)</span> f<span class="p">[</span><span class="n">3</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>            <span class="c">// 奇數 → 0</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> n <span class="p">=</span> <span class="n">4</span><span class="p">;</span> n <span class="p">&lt;</span> MAXN<span class="p">;</span> n<span class="p">++)</span> <span class="p">{</span>
+        <span class="c">// 減法後可能變負 ⇒ + MOD 再取餘</span>
+        f<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">((</span><span class="n">4</span> <span class="p">*</span> f<span class="p">[</span>n<span class="p">-</span><span class="n">2</span><span class="p">]</span> <span class="p">-</span> f<span class="p">[</span>n<span class="p">-</span><span class="n">4</span><span class="p">])</span> <span class="p">%</span> MOD <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="f">build</span><span class="p">();</span>                          <span class="c">// 一次預處理所有 N</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="p">{</span>
+        <span class="t">int</span> n<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+        cout <span class="p">&lt;&lt;</span> f<span class="p">[</span>n<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>     <span class="c">// 查表 O(1)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>理解版（耦合兩狀態）</strong>：若想直接照「平 / 凸」兩種邊界寫，用 <code>f</code>、<code>g</code> 兩條陣列同步遞推：
+    </p>
+
+    <div class="sc-codewindow" style="margin-top:8px;">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p124_fg.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="t">long long</span> f<span class="p">[</span>MAXN<span class="p">],</span> g<span class="p">[</span>MAXN<span class="p">];</span>
+f<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span> f<span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+g<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span> g<span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="t">int</span> n <span class="p">=</span> <span class="n">2</span><span class="p">;</span> n <span class="p">&lt;</span> MAXN<span class="p">;</span> n<span class="p">++)</span> <span class="p">{</span>
+    f<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>f<span class="p">[</span>n<span class="p">-</span><span class="n">2</span><span class="p">]</span> <span class="p">+</span> <span class="n">2</span> <span class="p">*</span> g<span class="p">[</span>n<span class="p">-</span><span class="n">1</span><span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
+    g<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>f<span class="p">[</span>n<span class="p">-</span><span class="n">1</span><span class="p">]</span> <span class="p">+</span> g<span class="p">[</span>n<span class="p">-</span><span class="n">2</span><span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
+<span class="p">}</span>
+<span class="c">// 答案一樣是 f[N]，且沒有減法、不必補 MOD</span></pre>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>build 預處理</td><td>一條迴圈填 f[4..maxN]</td><td class="mono">O(maxN)</td></tr>
+        <tr><td>回答每筆</td><td>查表 <code>f[n]</code></td><td class="mono">O(1)</td></tr>
+        <tr><td>全部 T 筆</td><td>—</td><td class="mono">O(T)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">總時間 = O(maxN) + O(T) = <strong>O(maxN + T)</strong></div>
+      <div class="sc-formula__hint">maxN, T ≤ 10⁵ ⇒ 約 2×10⁵ 步；對照每筆重算 O(T·N) = 10¹⁰</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(maxN + T)</strong></td><td>預處理一次、查表 O(1)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(maxN)</strong></td><td><code>f[]</code>（或 f/g 兩條）</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純迴圈填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>整數加減取餘</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>奇數 N → 0</strong></td>
+          <td>3×N 共 3N 格，N 奇數 ⇒ 格數奇數、骨牌蓋偶數格 ⇒ 鋪不滿。遞迴本身會自動算出 0，但要確認 base 正確。</td>
+        </tr>
+        <tr>
+          <td><strong>單一遞迴的減法會變負</strong></td>
+          <td><code>4f[n−2] − f[n−4]</code> 取餘後可能 &lt; 0 ⇒ <code>(x % MOD + MOD) % MOD</code>。（用 f/g 雙狀態版則無減法、不必補。）</td>
+        </tr>
+        <tr>
+          <td><strong>模數是 1000007</strong></td>
+          <td>對 <code>1000007</code> 取餘，不是 1e9+7。它非質數（=29×34483），但只有加減乘、用不到逆元。</td>
+        </tr>
+        <tr>
+          <td><strong>f[0] = 1</strong></td>
+          <td>空走廊算「1 種鋪法」是遞迴正確的基底；設成 0 會讓整條遞迴歪掉。</td>
+        </tr>
+        <tr>
+          <td><strong>多筆要預處理</strong></td>
+          <td>T 筆各自 O(N) 會 TLE；<strong>一次 build 全部 N</strong>、查表回答。</td>
+        </tr>
+        <tr>
+          <td><strong>10⁵ 筆 I/O</strong></td>
+          <td><code>sync_with_stdio(false); cin.tie(nullptr);</code>，輸出用 <code>'\n'</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 兩種邊界狀態</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// states</span>
+f[n] = 3×n 完整鋪滿（右邊界是平的）的方法數
+g[n] = 3×n 但右邊界「凸出一格」（少一格沒鋪）的方法數
+答案 = f[N]</pre>
+
+    <p><strong>② 耦合遞推</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// recurrence</span>
+f[n] = f[n-2] + 2·g[n-1]
+       // 接 3×(n-2) 補滿最後 2 欄；或補平一個凸邊界（上下對稱 ×2）
+g[n] = f[n-1] + g[n-2]
+       // 在平邊界後凸一塊；或承接更早的凸邊界</pre>
+
+    <p><strong>③ 消去 g 得單一遞迴</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// eliminate g</span>
+由兩式代入消去 g，可得：
+f[n] = 4·f[n-2] − f[n-4]
+// 只用 f，一條陣列就好（代價：出現減法要補 MOD）</pre>
+
+    <p><strong>④ 為什麼奇數一定 0</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// parity</span>
+總格數 = 3 × N
+每塊骨牌蓋 2 格 ⇒ 鋪滿需要總格數為偶
+3N 偶 ⇔ N 偶 ⇒ N 奇 ⇒ f[N] = 0
+（遞迴 base f[1]=f[3]=0 會把奇數鏈全壓成 0）</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">f/g 雙狀態遞推（無減法）或單一 f[n]=4f[n−2]−f[n−4]（補 MOD），一次 build 查表。</div>
+    <div class="sc-summary-bar__detail">f[0]=1, f[2]=3；奇數 N → 0；mod 1000007。N=100000 → 232803。</div>
+  </div>
+
+</body>
+</html>

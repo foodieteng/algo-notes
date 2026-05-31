@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P124 · 03 Review // 円円數磁磚 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P124
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/124/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">円円數磁磚</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>3×N 用 1×2 骨牌鋪滿的方法數（domino tiling）。</td></tr>
+        <tr><td>奇偶</td>
+            <td>3N 為奇數（N 奇）時鋪不滿 ⇒ 答案 0。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>f[n]</code> 平邊界、<code>g[n]</code> 凸一格邊界。</td></tr>
+        <tr><td>遞推</td>
+            <td><code>f[n]=f[n−2]+2g[n−1]</code>、<code>g[n]=f[n−1]+g[n−2]</code>。</td></tr>
+        <tr><td>單一式</td>
+            <td>消去 g ⇒ <code>f[n]=4f[n−2]−f[n−4]</code>（減法補 MOD）。</td></tr>
+        <tr><td>多筆</td>
+            <td>一次預處理 <code>f[1..maxN]</code>，查表 O(1)；mod 1000007。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">奇偶</span>
+      <h4>為什麼 N 是奇數時答案一定是 0？用格子數說明。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">狀態意義</span>
+      <h4><code>g[n]</code>「凸出一格」是什麼意思？為什麼只需要「平 / 凸一格」兩種狀態、不會有更多型態？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">轉移 ×2</span>
+      <h4><code>f[n]=f[n−2]+2·g[n−1]</code> 裡的係數 <strong>2</strong> 從哪來？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">單一遞迴</span>
+      <h4>單一式 <code>f[n]=4f[n−2]−f[n−4]</code> 比雙狀態版方便在哪？又多了什麼要小心？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">f[0]=1</span>
+      <h4>為什麼 base 要設 <code>f[0]=1</code>（空走廊算 1 種）而不是 0？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 雙狀態推到 f[4]=11<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用 <code>f[n]=f[n−2]+2g[n−1]</code>、<code>g[n]=f[n−1]+g[n−2]</code> 一路推（base 如下）：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// base</span>
+f[0]=1  f[1]=0
+g[0]=0  g[1]=1</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// n = 2</span>
+f[2] = f[0] + 2·g[1] = 1 + 2·1 = 3      ← 範例 N=2 → 3 ✓
+g[2] = f[1] + g[0]   = 0 + 0   = 0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// n = 3</span>
+f[3] = f[1] + 2·g[2] = 0 + 0 = 0        ← 奇數 → 0 ✓
+g[3] = f[2] + g[1]   = 3 + 1 = 4</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// n = 4</span>
+f[4] = f[2] + 2·g[3] = 3 + 2·4 = 11     ← 範例 N=4 → 11 ✓
+g[4] = f[3] + g[2]   = 0 + 0   = 0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 對照單一遞迴</span>
+f[4] = 4·f[2] − f[0] = 4·3 − 1 = 11     ← 同樣得 11 ✓</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT (若 N=4)</span>11</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：<code>g</code> 在偶數 n 都是 0、奇數 n 才有值（凸一格會破壞奇偶平衡）。
+      兩條鏈交錯餵養：偶數的 <code>f</code> 靠奇數的 <code>g</code>、奇數的 <code>g</code> 靠偶數的 <code>f</code>。
+      消去 g 後就只剩偶數項的 <code>f[n]=4f[n−2]−f[n−4]</code>。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">2×N</span>
+      <h4>若走廊寬度改成 2（2×N），鋪法數是什麼數列？遞迴長怎樣？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">一般寬度</span>
+      <h4>寬度 m（m×N）一般情形怎麼做？為什麼 m 大時要用「broken profile / 輪廓 DP」？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">巨大 N</span>
+      <h4>若 N 可達 10¹⁸（但只問一個 N），O(N) 預處理就不行了，怎麼辦？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 奇偶</span>
+      <p>
+        3×N 共 <code>3N</code> 格。每塊 1×2 骨牌恰蓋 2 格，鋪滿需要總格數是偶數。
+        <code>3N</code> 為偶 ⇔ <code>N</code> 為偶。所以 N 奇數時 3N 是奇數，<strong>無論怎麼放都剩一格</strong> ⇒ 0 種。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 狀態意義</span>
+      <p>
+        逐欄往右鋪時，已鋪滿區域的「右邊界輪廓」決定後面怎麼接。寬度只有 3，
+        邊界要嘛<strong>三格都齊（平）</strong>，要嘛<strong>有一格被一塊橫骨牌凸出去（凸一格）</strong>。
+      </p>
+      <p>
+        「凸兩格」或「凸不同列」其實都能歸到這兩類（上下對稱、或等價於更早的狀態），
+        所以兩個狀態 <code>f / g</code> 就足以描述所有邊界，遞迴才會封閉。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 轉移 ×2</span>
+      <p>
+        <code>2·g[n−1]</code> 的 2 來自<strong>上下對稱</strong>：一個凸出的邊界可以凸在「上面那格」或「下面那格」，
+        兩種鏡像情形數量相同，補平它們各貢獻一份 ⇒ 乘 2。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 單一遞迴</span>
+      <p>
+        方便：<strong>只需一條陣列 <code>f[]</code></strong>，不用同時維護 g，程式更短。
+      </p>
+      <p>
+        要小心：式子有<strong>減法</strong>（<code>−f[n−4]</code>），取餘後可能變負 ⇒ 一定要
+        <code>(x % MOD + MOD) % MOD</code>。雙狀態 f/g 版全是加法、反而不會踩這個雷。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · f[0]=1</span>
+      <p>
+        <code>f[0]</code> 代表「長度 0 的空走廊」的鋪法數。空走廊有<strong>唯一一種</strong>「鋪法」——什麼都不放 ——
+        所以是 1。這個 1 是遞迴的乘法/加法基底：例如 <code>f[2]=f[0]+2g[1]=1+2=3</code> 就靠它。
+      </p>
+      <p>若誤設 <code>f[0]=0</code>，<code>f[2]</code> 會變 2、整條鏈全錯。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 2×N</span>
+      <p>
+        2×N 用 1×2 骨牌的鋪法數是<strong>費氏數列</strong>：<code>1, 1, 2, 3, 5, 8, …</code>，
+        遞迴 <code>a[n] = a[n−1] + a[n−2]</code>（最右一欄放一個直的 ⇒ a[n−1]；放兩個橫的 ⇒ a[n−2]）。
+        比 3×N 簡單，因為邊界只有「平」一種、不需要 g。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 一般寬度</span>
+      <p>
+        寬度 m 一般情形用<strong>輪廓 DP（broken profile / bitmask DP）</strong>：
+        狀態是「目前這一欄的填充情形」用 m 位元的 bitmask 表示，
+        逐格決定放橫 / 直骨牌，轉移到下一個 bitmask。
+      </p>
+      <p>
+        複雜度約 <code>O(N · 2^m)</code>（或 <code>O(N · 4^m)</code> 視轉移寫法）。
+        m 小（如 3）可手推成上面的封閉遞迴；m 大就一定要 bitmask DP，因為邊界型態變成指數多種。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 巨大 N</span>
+      <p>
+        遞迴 <code>f[n]=4f[n−2]−f[n−4]</code> 是<strong>線性常係數遞迴</strong> ⇒ 可用<strong>矩陣快速冪</strong>
+        把狀態向量 <code>(f[n], f[n−2])</code>（或 f/g 向量）寫成轉移矩陣的冪次。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// matrix power</span>
+把 (f[n], f[n-2]) = M · (f[n-2], f[n-4]) 寫成 2×2 矩陣 M
+求 M^(N/2) ⇒ O(2³ · log N) = O(log N)
+可處理 N 高達 10^18（仍對 1000007 取餘）</pre>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W07 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會 3×N 骨牌鋪法的雙狀態 DP 與封閉遞迴。</div>
+    <div class="sc-summary-bar__detail">f[4]=11（雙狀態與單式都得 11）；2×N 是費氏；大 N 用矩陣快速冪。</div>
+  </div>
+
+</body>
+</html>
