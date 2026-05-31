@@ -337,6 +337,75 @@
       係數只有 A+B 合成的 <strong>2</strong>。把 n 換大，三類各自縮成的子問題 <code>g[n−1], g[n−1], f[n−2]</code> 就不再都是 1，但<strong>分類方式完全一樣</strong>。
     </p>
 
+    <!-- ===== STEP 3：推 g[n] 自己的遞迴 ===== -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:24px 0 8px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 3</span>
+      那 g[n] 自己呢？看「凸出的那一格」怎麼被蓋
+    </h3>
+
+    <p style="font-size:14px;"><code>g[n]</code> 的盤面 = 完整 3×n <strong>再多凸一格</strong>（圖示凸在頂端）。
+    要鋪滿它，<strong>先問那個凸格怎麼被蓋住</strong>。它右邊、下邊都沒有格子可配
+    ⇒ <strong>只能被一個橫骨牌</strong> <code>(0,n−1)–(0,n)</code> 蓋。蓋完留下「3×n 缺了 <code>(0,n−1)</code> 一格」的洞。
+    再看<strong>洞正下方那格 <code>(1,n−1)</code></strong> 怎麼蓋，只有兩種：</p>
+
+    <div style="margin:12px 0;overflow-x:auto;">
+    <svg viewBox="0 0 760 330" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- 起始 g[n] 盤面（左上小圖示意） -->
+      <text x="380" y="26" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#1f1f1f">凸格只能被橫骨牌蓋 → 留下一個洞 → 洞下方兩種蓋法</text>
+
+      <!-- ===== 情況 ①：洞下方直立 → f[n-1] ===== -->
+      <text x="200" y="58" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="13.5" font-weight="700" fill="#2f6fb6">① 洞正下方放「直骨牌」</text>
+
+      <!-- grid: show last two columns (n-1, n). rows 0..2 -->
+      <!-- the capping horizontal on top: (0,n-1)-(0,n) -->
+      <rect x="120" y="74" width="100" height="36" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="170" y="94" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff">蓋凸格</text>
+      <!-- vertical below hole: (1,n-1)-(2,n-1) -->
+      <rect x="120" y="112" width="48" height="76" rx="6" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
+      <!-- col n rows1,2 still belong to the "rest" → shade as f[n-1] block -->
+      <rect x="168" y="112" width="52" height="76" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.2"/>
+      <!-- left side: the f[n-1] region -->
+      <rect x="60" y="74" width="60" height="114" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.2"/>
+      <text x="90" y="135" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#2f6fb6">f[n−1]</text>
+      <text x="200" y="212" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12.5" font-weight="700" fill="#2f6fb6">剩平邊界 → f[n−1]</text>
+
+      <!-- divider -->
+      <line x1="380" y1="48" x2="380" y2="300" stroke="#ecd9a6" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+      <!-- ===== 情況 ②：洞下方橫放 → g[n-2] ===== -->
+      <text x="560" y="58" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="13.5" font-weight="700" fill="#d96e4e">② 洞正下方放「橫骨牌」</text>
+
+      <!-- capping horizontal on top -->
+      <rect x="500" y="74" width="100" height="36" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
+      <text x="550" y="94" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#fff">蓋凸格</text>
+      <!-- horizontal below hole: (1,n-2)-(1,n-1) -->
+      <rect x="452" y="112" width="100" height="36" rx="6" fill="#0f9b9b" stroke="#1a1a1a" stroke-width="2"/>
+      <!-- this leaves a NEW bump downward → g[n-2] shape -->
+      <rect x="500" y="150" width="52" height="38" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2"/>
+      <text x="526" y="172" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="700" fill="#a8472c">凸</text>
+      <rect x="440" y="74" width="60" height="114" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.2"/>
+      <text x="470" y="135" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#5a5a5a">…</text>
+      <text x="560" y="212" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12.5" font-weight="700" fill="#d96e4e">又冒出一個凸邊界 → g[n−2]</text>
+
+      <!-- summary bar -->
+      <rect x="40" y="240" width="680" height="74" rx="6" fill="#1f1f1f"/>
+      <text x="380" y="268" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#fef8e8">
+        凸格被橫骨牌蓋掉後，洞下方<tspan fill="#d96e4e"> 直放 / 橫放</tspan> 兩種互斥情況
+      </text>
+      <text x="380" y="298" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" font-weight="700" fill="#fff">
+        g[n] = <tspan fill="#9ec8f0">f[n−1]</tspan> + <tspan fill="#f3c9b8">g[n−2]</tspan>
+      </text>
+    </svg>
+    </div>
+
+    <p style="font-size:14px;margin-top:6px;"><strong>套到 n = 3 驗證</strong>（<code>f[2]=3, g[1]=1</code>）：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// g[3]</span>
+凸格被橫骨牌蓋 → 留下洞
+  ① 洞下直放 → 剩 f[2] = 3
+  ② 洞下橫放 → 剩 g[1] = 1
+g[3] = f[2] + g[1] = 3 + 1 = 4  ✓</pre>
+
     <div class="sc-dark-box" style="margin-top:14px;">
       <div class="sc-dark-box__title">// 整理 · 兩條遞迴怎麼來的</div>
       <div class="sc-dark-box__body">
@@ -344,7 +413,7 @@
           <li><strong>f[n] 的 (a) 項</strong>：最右邊用「三條橫」把整塊 3×2 收掉，前面剩一個<strong>平邊界</strong> ⇒ 接 <code>f[n−2]</code>。</li>
           <li><strong>f[n] 的 (b) 項</strong>：最右邊是一個<strong>凸邊界</strong>被一塊骨牌補平；凸在上 / 凸在下兩種鏡像 ⇒ <code>2·g[n−1]</code>。</li>
           <li>合起來 <code>f[n] = f[n−2] + 2·g[n−1]</code>。<span style="color:var(--sc-coral)">（n=2 驗證：1 + 2×1 = 3 ✓）</span></li>
-          <li><strong>g[n]</strong> 同理：一個平邊界 <code>f[n−1]</code> 再戳一塊出去、或承接更早的凸邊界 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。</li>
+          <li><strong>g[n]</strong>（STEP 3）：凸格只能被橫骨牌蓋 → 看洞下方那格，直放剩 <code>f[n−1]</code>、橫放剩 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。<span style="color:var(--sc-coral)">（n=3 驗證：3 + 1 = 4 ✓）</span></li>
           <li>兩式消去 g ⇒ <strong><code>f[n] = 4·f[n−2] − f[n−4]</code></strong>（實作最省事）。</li>
         </ol>
       </div>
