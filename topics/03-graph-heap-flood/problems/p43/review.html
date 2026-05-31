@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P43 · 03 Review // 喵喵抓老鼠 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P43
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/43/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">喵喵抓老鼠</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>無權圖（每步成本 1）的<strong>單源最短路</strong>到任一終點。</td></tr>
+        <tr><td>選 BFS</td>
+            <td>FIFO queue 逐層擴散；DFS 不保證最短，Dijkstra 是 overkill。</td></tr>
+        <tr><td>dist 單調不減</td>
+            <td>queue 內 dist 最多差 1 ⇒ 取出順序 = 距離由小到大。</td></tr>
+        <tr><td>第一個取出的 @</td>
+            <td>它的 dist 即全場最小 ⇒ 立刻回傳，<strong>判斷放在 pop</strong>。</td></tr>
+        <tr><td>入列即定 dist</td>
+            <td><code>dist != -1</code> 兼當 visited，避免同格重複入列。</td></tr>
+        <tr><td>走不到</td>
+            <td>queue 空仍未碰 <code>@</code> ⇒ 印 <code>= ="</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">BFS vs DFS</span>
+      <h4>為什麼最短路要用 BFS 而非 DFS？DFS 第一次碰到 <code>@</code> 的路為什麼不一定最短？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">終點判斷時機</span>
+      <h4>判斷「是不是老鼠」要放在<strong>入列（push）</strong>還是<strong>出列（pop）</strong>？放錯會怎樣？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">dist 與 visited</span>
+      <h4>程式只有 <code>dist[][]</code> 沒有獨立的 <code>visited[][]</code>，怎麼判斷一格走過沒？為什麼這樣夠？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>為什麼整段 BFS 是 O(N×M) 而非 O((NM)²)？每格被 push 幾次？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">多筆測資</span>
+      <h4>T 筆之間哪些狀態必須重置？漏了會出現什麼錯誤？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用動畫那張 5×7 迷宮（座標 <code>(row, col)</code> 0-indexed）。貓 <code>K</code> 在 <code>(1,1)</code>，老鼠 <code>@</code> 在 <code>(1,4)</code> 與 <code>(3,3)</code>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT (這一筆)</span>5 7
+#######
+#K..@.#
+#.##..#
+#..@..#
+#######</pre>
+
+    <p>BFS 從 <code>K(1,1)</code> 出發，<code>dist[1][1]=0</code> 入列。以下每行是「pop 一格 → 推鄰居」：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop (1,1) dist 0</span>
+鄰居可走且未訪：(1,2) (2,1)
+→ dist 設 1，push
+queue: [ (1,2)d1, (2,1)d1 ]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop (1,2) dist 1</span>
+上(0,2)# 下(2,2)# 左(1,1)已訪 右(1,3)未訪
+→ push (1,3) dist 2
+queue: [ (2,1)d1, (1,3)d2 ]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop (2,1) dist 1</span>
+上(1,1)已訪 下(3,1)未訪 左(2,0)# 右(2,2)#
+→ push (3,1) dist 2
+queue: [ (1,3)d2, (3,1)d2 ]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop (1,3) dist 2</span>
+上(0,3)# 下(2,3)# 左(1,2)已訪 右(1,4)='@' 未訪
+→ push (1,4) dist 3
+queue: [ (3,1)d2, (1,4)d3 ]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop (3,1) dist 2</span>
+上(2,1)已訪 下(4,1)# 左(3,0)# 右(3,2)未訪
+→ push (3,2) dist 3
+queue: [ (1,4)d3, (3,2)d3 ]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// pop (1,4) dist 3  ← grid 是 '@'！</span>
+ans = dist[1][4] = 3
+break（不再處理另一隻 @(3,3)，它更遠）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>3</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：另一隻老鼠 <code>(3,3)</code> 距離是 4
+      （經 <code>(3,1)→(3,2)→(3,3)</code>）。但 BFS 在 dist 3 那層就先取出 <code>(1,4)</code> 並 break，
+      <strong>根本沒去碰更遠的那隻</strong> — 這就是「第一個 pop 的 @ 必最近」省下的工。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">多源 BFS</span>
+      <h4>若反過來問「每隻老鼠各自離最近的貓多遠」（貓有很多隻），怎麼一次 BFS 全部算出？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">無解判定</span>
+      <h4>Sample 第 2 筆 <code>#K..#...@#</code> 為何輸出 <code>= ="</code>？code 哪一行負責這個輸出？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">輸出陷阱</span>
+      <h4>要印的字串是 <code>= ="</code>（含一個雙引號）。C++ 字串字面值該怎麼寫？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · BFS vs DFS</span>
+      <p>
+        BFS 用 FIFO queue，<strong>逐層擴散</strong>：先把 dist=k 的格全處理完，才進 dist=k+1。
+        所以第一次碰到終點時走的步數一定最少。
+      </p>
+      <p>
+        DFS 用 stack（或遞迴），會「一條路衝到底」再回溯。第一次碰到 <code>@</code> 的路徑長度
+        取決於它選的方向順序，<strong>未必最短</strong>；要保證最短得遍歷所有路徑 ⇒ 指數級。
+        所以無權最短路一律用 BFS。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 終點判斷時機</span>
+      <p>
+        放在<strong>出列（pop）</strong>。因為「pop 順序 = dist 由小到大」，pop 到的第一個 <code>@</code>
+        保證最近。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 若放在 push 就回傳 → 可能錯</span>
+擴散方向的關係，一個 dist 較大的 @ 可能比 dist 較小的 @ 「先被 push」
+push 順序 ≠ 距離排序
+∴ 必須等 pop 時才確認最近</pre>
+      <p>（本題終點是 <code>@</code> 格；起點 <code>K</code> 不是終點，所以 pop K 時不會誤判。）</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · dist 與 visited</span>
+      <p>
+        用 <code>dist[i][j] == -1</code> 代表「未訪」。一格被入列的當下就把 dist 設成非 −1 的值，
+        等於同時標記了 visited。之後任何鄰居再看到它都因 <code>dist != -1</code> 而略過。
+      </p>
+      <p>
+        這樣夠，是因為 BFS 中<strong>一格第一次被設定的 dist 就是它的最短距離</strong>，
+        永遠不需要更新 ⇒ 不必區分「訪過但還能更短」的狀態，一個 <code>dist</code> 陣列就身兼兩職。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 複雜度</span>
+      <p>
+        每格<strong>恰好 push 一次</strong>（入列即定 dist，之後不再入列）。pop 後看固定 4 個方向 ⇒ 每格 O(1)。
+        所有格加總 ≤ N×M ⇒ 整段 BFS 是 <code>O(N × M)</code>。
+      </p>
+      <p>
+        會誤以為 O((NM)²) 通常是把「每格都重新掃整張圖」當成本；但有了 dist/visited，
+        每格只處理一次，沒有重複。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 多筆測資</span>
+      <p>
+        必清 <code>dist</code>（每筆讀圖時設回 −1）。<code>grid</code> 整張重讀會覆蓋、不必特別清；
+        <code>qx/qy</code> 靠每筆開頭 <code>head=tail=0</code> 歸零。
+      </p>
+      <p>
+        若漏清 <code>dist</code>：上一筆設過的格在這一筆被當「已訪」⇒ BFS 擴散不出去 ⇒
+        可能誤判走不到 ⇒ 答案錯（偏大或印 <code>= ="</code>）。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 多源 BFS</span>
+      <p>
+        把<strong>所有貓</strong>在 BFS 開始前<strong>同時</strong>入列、各自 <code>dist = 0</code>。
+        之後照常擴散，<code>dist[i][j]</code> 自然就是「離最近的貓多遠」。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// multi-source BFS</span>
+for 每個貓 (cx,cy):
+    dist[cx][cy] = 0
+    push (cx,cy)
+// 接著同一個 while 迴圈擴散，無需改動</pre>
+      <p>複雜度仍是 O(N×M)，因為每格還是只入列一次。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 無解判定</span>
+      <p>
+        <code>#K..#...@#</code>（3×10，中間列）：貓在 <code>(1,1)</code>，往右走到 <code>(1,3)</code> 後
+        <code>(1,4)='#'</code> 擋住；上下兩列整排 <code>#</code> 繞不過去 ⇒ 到不了 <code>(1,8)</code> 的老鼠。
+      </p>
+      <p>
+        BFS queue 把左側能走的幾格擴散完就空了，<code>ans</code> 仍是 −1。
+        負責輸出的是這行：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 無解</span>if (ans == -1) cout &lt;&lt; "= =\"" &lt;&lt; '\n';</pre>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 輸出陷阱</span>
+      <p>
+        要印出的 4 個字元是：等號、空白、等號、雙引號 → <code>= ="</code>。
+        雙引號在 C++ 字串裡要跳脫成 <code>\"</code>：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 正確寫法</span>cout &lt;&lt; "= =\"" &lt;&lt; '\n';
+// 等價：cout &lt;&lt; "= =" &lt;&lt; '"' &lt;&lt; '\n';</pre>
+      <p>漏掉跳脫（寫成 <code>"= =""</code>）會被編譯器當成兩個相鄰字串拼接，少印一個雙引號。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W03 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會驗證 BFS 怎麼找最近終點。</div>
+    <div class="sc-summary-bar__detail">5×7 迷宮答案：3 步（近的 @ 在 dist 3 先被 pop，遠的 @ 根本沒碰）。</div>
+  </div>
+
+</body>
+</html>

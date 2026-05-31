@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P43 · 01 概念 // 喵喵抓老鼠 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P43
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/43/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">喵喵抓老鼠</h1>
+    <p class="sc-mast__subtitle">// BFS 最短路 · 迷宮多源終點</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      核心 BFS Shortest Path（無權圖）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N × M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給 <code>N × M</code> 迷宮（<code>N, M ≤ 100</code>），四周圍牆。
+      <code>#</code> 不能走、<code>.</code> 可走、<code>@</code> 是老鼠（<strong>可能多隻</strong>）、<code>K</code> 是貓（<strong>只有一隻</strong>）。
+      貓只能上下左右移動，問<strong>離貓最近的老鼠要走幾步</strong>？走不到任何老鼠輸出 <code>= ="</code>。多筆 <code>T ≤ 31</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      迷宮每一步成本都是 1（無權圖），求<strong>單源最短路</strong>到「任一終點」。
+      無權最短路 = <strong>BFS</strong>，不需要 Dijkstra。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 BFS
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 BFS<span class="sc-section__title-en">// Why BFS</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">DFS 找路</span>
+            <span class="sc-ko-card__o">不保證最短</span>
+          </div>
+          <div class="sc-ko-card__body">DFS 先衝到底，第一次碰到 <code>@</code> 的路徑<strong>不一定最短</strong>；要找最短得遍歷所有路徑 ⇒ 指數爆炸。</div>
+          <div class="sc-ko-card__verdict">× REJECT · WRONG</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">Dijkstra</span>
+            <span class="sc-ko-card__o">O(NM log NM)</span>
+          </div>
+          <div class="sc-ko-card__body">正確，但每步權重都是 1，用 priority queue 是<strong>殺雞用牛刀</strong>，多一個 log。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · OVERKILL</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">BFS</span>
+          <span class="sc-ko-card__o">O(N × M)</span>
+        </div>
+        <div class="sc-ko-card__body">從 K 出發一圈一圈擴散，<strong>第一個被取出的 @ 必為最近</strong>；每格只入列一次。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>核心保證</strong>：BFS 按距離分層擴散 — dist 0、dist 1、dist 2…<strong>逐層</strong>取出。
+      所以最先被取出的老鼠，它的 dist 就是全場最小，<strong>當下即可停止</strong>。這正是「無權圖最短路」的標準解。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">維護 <code>dist[N][M]</code>（初始 −1 = 未訪），把貓 <code>K</code> 當起點：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>起點入列</strong> · 找到 <code>K</code>，<code>dist[K] = 0</code>，推進 queue。</li>
+      <li><strong>逐格擴散</strong> · 取出隊頭，看四方向；可走且未訪的鄰居 <code>dist = 當前 + 1</code> 並入列。</li>
+      <li><strong>碰到老鼠就停</strong> · 取出的格子若是 <code>@</code>，它的 <code>dist</code> 即答案。queue 空了還沒碰到 ⇒ 走不到 ⇒ <code>= ="</code>。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵不變量</strong>：queue 裡的 dist <strong>單調不減</strong>（最多差 1）⇒ 第一個取出的 <code>@</code> 一定最近。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · BFS 一圈一圈擴散<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用一個 5×7 小迷宮：貓 <code>K</code> 在左上、兩隻老鼠 <code>@</code>。看 BFS 怎麼從 K 按距離分層擴散，
+    每格標上「走幾步到」，<strong>第一個被取出的 @</strong>（這裡 dist 3）就是答案、立刻停：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · BFS SHORTEST PATH</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 準備從貓出發
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#3a3a3a">■</span> 牆 <code>#</code> &nbsp;·&nbsp;
+      <span style="color:#2f6fb6">■</span> 貓 <code>K</code>（起點）&nbsp;·&nbsp;
+      <span style="color:#c98a24">■</span> 還沒走到的老鼠 <code>@</code> &nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> queue 中的 frontier &nbsp;·&nbsp;
+      <span style="color:#e3edf5">■</span> 已取出 visited &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 找到的最近老鼠
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼第一個取出的 @ 必為最近
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼第一個取出的 @ 必為最近<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// LEMMA · BFS queue 的 dist 單調不減</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>BFS 用<strong>普通 queue（FIFO）</strong>。每次擴散，新入列的格子 <code>dist = 父 dist + 1</code>。</li>
+          <li>因為父節點是按 dist 由小到大取出的，子節點的 dist 也跟著由小到大入列 ⇒ <strong>queue 內 dist 永遠單調不減，且最多差 1</strong>。</li>
+          <li>所以「取出順序」= 「dist 由小到大」⇒ <strong>BFS 是逐層擴散</strong>：先把所有 dist=k 取完才開始 dist=k+1。</li>
+          <li>⇒ 第一個被取出的 <code>@</code>，它的 dist 不可能比任何還沒取出的 <code>@</code> 大 ⇒ <strong>它就是最近的</strong>，可立即回傳。</li>
+          <li>每格 <code>dist</code> 一旦設定就不再更新（已訪即略過）⇒ 每格<strong>恰好入列一次</strong> ⇒ 總工作 O(N×M)。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      <strong>對照 DFS</strong>：DFS 用 stack（LIFO），會「一路衝到底」⇒ 第一次碰到 <code>@</code> 的路長<strong>未必最短</strong>。
+      所以最短路一定要 <strong>BFS（FIFO）</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每格水路<strong>最多入列一次、出列一次</strong>，出列後看固定 4 個方向 ⇒ 每格 O(1)。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(N, M) = <strong>O(N × M)</strong> &nbsp;每筆測資</div>
+      <div class="sc-formula__hint">
+        無權圖 BFS = 點數 + 邊數 = O(V + E)，網格上 E ≈ 4V ⇒ O(N × M)
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N × M)</strong></td><td>100×100 = 10⁴，× T ≤ 31 ⇒ ~3×10⁵，秒過</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N × M)</strong></td><td><code>dist</code> 陣列 + BFS queue 最壞裝全圖</td></tr>
+        <tr><td>Queue 深度</td><td class="mono">O(N × M)</td><td>放陣列，不吃呼叫堆疊</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>整數索引、4 方向 if</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>無權圖最短路 = BFS。</strong><br/>
+      queue 逐層擴散，dist 單調不減 ⇒<br/>
+      <strong>第一個取出的終點 = 最近終點，當場回傳。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">從貓 BFS 逐層擴散記 dist，第一個取出的老鼠即最近 — O(N×M)。</div>
+    <div class="sc-summary-bar__detail">無權最短路用 BFS（FIFO）；DFS 不保證最短、Dijkstra 是 overkill。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p43-bfs.js"></script>
+</body>
+</html>

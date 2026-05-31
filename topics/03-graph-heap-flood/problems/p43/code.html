@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P43 · 02 Code // 喵喵抓老鼠 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P43
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/43/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">喵喵抓老鼠</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      C++17 · BFS 最短路
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N × M)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N × M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p43.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">105</span><span class="p">;</span>
+
+<span class="t">char</span> grid<span class="p">[</span>MAXN<span class="p">][</span>MAXN<span class="p">];</span>          <span class="c">// 迷宮：'#' 牆 / '.' 路 / 'K' 貓 / '@' 老鼠</span>
+<span class="t">int</span>  dist<span class="p">[</span>MAXN<span class="p">][</span>MAXN<span class="p">];</span>          <span class="c">// 到該格的最短步數，-1 = 未訪</span>
+
+<span class="c">// BFS 用的手動 queue（int 陣列，不吃呼叫堆疊）</span>
+<span class="t">int</span> qx<span class="p">[</span>MAXN <span class="p">*</span> MAXN<span class="p">];</span>
+<span class="t">int</span> qy<span class="p">[</span>MAXN <span class="p">*</span> MAXN<span class="p">];</span>
+
+<span class="t">int</span> dx<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span><span class="n">-1</span><span class="p">,</span> <span class="n">1</span><span class="p">,</span> <span class="n">0</span><span class="p">,</span> <span class="n">0</span><span class="p">};</span>      <span class="c">// 上下左右</span>
+<span class="t">int</span> dy<span class="p">[</span><span class="n">4</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span><span class="n">0</span><span class="p">,</span> <span class="n">0</span><span class="p">,</span> <span class="n">-1</span><span class="p">,</span> <span class="n">1</span><span class="p">};</span>
+
+<span class="t">int</span> N<span class="p">,</span> M<span class="p">;</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M<span class="p">;</span>
+
+    <span class="t">int</span> startX <span class="p">=</span> <span class="n">-1</span><span class="p">,</span> startY <span class="p">=</span> <span class="n">-1</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        cin <span class="p">&gt;&gt;</span> grid<span class="p">[</span>i<span class="p">];</span>                        <span class="c">// 整行讀入</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">0</span><span class="p">;</span> j <span class="p">&lt;</span> M<span class="p">;</span> j<span class="p">++)</span> <span class="p">{</span>
+            dist<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">=</span> <span class="n">-1</span><span class="p">;</span>                    <span class="c">// 多筆測資：每格重置</span>
+            <span class="k">if</span> <span class="p">(</span>grid<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">==</span> <span class="s">'K'</span><span class="p">)</span> <span class="p">{</span> startX <span class="p">=</span> i<span class="p">;</span> startY <span class="p">=</span> j<span class="p">;</span> <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c">// ── BFS from 貓 K ──</span>
+    <span class="t">int</span> head <span class="p">=</span> <span class="n">0</span><span class="p">,</span> tail <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    qx<span class="p">[</span>tail<span class="p">]</span> <span class="p">=</span> startX<span class="p">;</span>
+    qy<span class="p">[</span>tail<span class="p">]</span> <span class="p">=</span> startY<span class="p">;</span>
+    tail<span class="p">++;</span>
+    dist<span class="p">[</span>startX<span class="p">][</span>startY<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+
+    <span class="t">int</span> ans <span class="p">=</span> <span class="n">-1</span><span class="p">;</span>                            <span class="c">// -1 = 還沒找到老鼠</span>
+
+    <span class="k">while</span> <span class="p">(</span>head <span class="p">&lt;</span> tail<span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> x <span class="p">=</span> qx<span class="p">[</span>head<span class="p">];</span>
+        <span class="t">int</span> y <span class="p">=</span> qy<span class="p">[</span>head<span class="p">];</span>
+        head<span class="p">++;</span>
+
+        <span class="k">if</span> <span class="p">(</span>grid<span class="p">[</span>x<span class="p">][</span>y<span class="p">]</span> <span class="p">==</span> <span class="s">'@'</span><span class="p">)</span> <span class="p">{</span>            <span class="c">// 第一個取出的老鼠 ⇒ 最近</span>
+            ans <span class="p">=</span> dist<span class="p">[</span>x<span class="p">][</span>y<span class="p">];</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> d <span class="p">=</span> <span class="n">0</span><span class="p">;</span> d <span class="p">&lt;</span> <span class="n">4</span><span class="p">;</span> d<span class="p">++)</span> <span class="p">{</span>
+            <span class="t">int</span> nx <span class="p">=</span> x <span class="p">+</span> dx<span class="p">[</span>d<span class="p">];</span>
+            <span class="t">int</span> ny <span class="p">=</span> y <span class="p">+</span> dy<span class="p">[</span>d<span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span>nx <span class="p">&lt;</span> <span class="n">0</span> <span class="p">||</span> nx <span class="p">&gt;=</span> N <span class="p">||</span> ny <span class="p">&lt;</span> <span class="n">0</span> <span class="p">||</span> ny <span class="p">&gt;=</span> M<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span>grid<span class="p">[</span>nx<span class="p">][</span>ny<span class="p">]</span> <span class="p">==</span> <span class="s">'#'</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>        <span class="c">// 牆</span>
+            <span class="k">if</span> <span class="p">(</span>dist<span class="p">[</span>nx<span class="p">][</span>ny<span class="p">]</span> <span class="p">!=</span> <span class="n">-1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>       <span class="c">// 已訪</span>
+
+            dist<span class="p">[</span>nx<span class="p">][</span>ny<span class="p">]</span> <span class="p">=</span> dist<span class="p">[</span>x<span class="p">][</span>y<span class="p">]</span> <span class="p">+</span> <span class="n">1</span><span class="p">;</span>      <span class="c">// 入列即定 dist（等同 visited）</span>
+            qx<span class="p">[</span>tail<span class="p">]</span> <span class="p">=</span> nx<span class="p">;</span>
+            qy<span class="p">[</span>tail<span class="p">]</span> <span class="p">=</span> ny<span class="p">;</span>
+            tail<span class="p">++;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span>ans <span class="p">==</span> <span class="n">-1</span><span class="p">)</span> cout <span class="p">&lt;&lt;</span> <span class="s">"= =\""</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>   <span class="c">// 走不到任何老鼠</span>
+    <span class="k">else</span>            cout <span class="p">&lt;&lt;</span> ans <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="f">solve</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>注意輸出</strong>：走不到時印 <code>= ="</code>（等號、空白、等號、雙引號）。
+      C++ 字串字面值寫成 <code>"= =\""</code> — 結尾的雙引號要跳脫成 <code>\"</code>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>讀圖 + 找 K</td><td>掃過 N×M 格各一次</td><td class="mono">O(N × M)</td></tr>
+        <tr><td>BFS 入列</td><td>每格<strong>最多入列一次</strong>（入列即定 dist）</td><td class="mono">O(N × M)</td></tr>
+        <tr><td>BFS 出列 + 看四方向</td><td>每格出列一次，常數 4 鄰居</td><td class="mono">O(4 · N × M)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = O(N × M) = <strong>O(V + E)</strong></div>
+      <div class="sc-formula__hint">網格圖 V = N×M、E ≈ 4V ⇒ BFS 線性</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N × M)</strong></td><td>100×100×31 ≈ 3×10⁵，秒過</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N × M)</strong></td><td>grid + dist + queue 各約 10⁴</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>BFS 用全域陣列，不爆 stack</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>整數索引、4 方向 if</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>用 BFS 不用 DFS</strong></td>
+          <td>DFS 第一次碰到的 <code>@</code> 不保證最短。最短路一定要 BFS（FIFO 逐層）。</td>
+        </tr>
+        <tr>
+          <td><strong>入列即定 dist</strong></td>
+          <td><code>dist != -1</code> 同時當「已訪」用。若等出列才標，同格會被多個鄰居重複入列 ⇒ queue 爆。</td>
+        </tr>
+        <tr>
+          <td><strong>第一個取出的 @ 才回傳</strong></td>
+          <td>不能「入列時」就回傳 — 入列順序不等於距離順序的終點判定。要在<strong>出列（pop）</strong>時判斷。</td>
+        </tr>
+        <tr>
+          <td><strong>多隻老鼠、一隻貓</strong></td>
+          <td><code>@</code> 可能多個 ⇒ 不能假設只有一個終點；<code>K</code> 唯一 ⇒ 單源即可。</td>
+        </tr>
+        <tr>
+          <td><strong>走不到要印 <code>= ="</code></strong></td>
+          <td>queue 空了 <code>ans</code> 仍 −1 ⇒ 印 <code>= ="</code>。C++ 寫 <code>"= =\""</code>（跳脫尾雙引號）。</td>
+        </tr>
+        <tr>
+          <td><strong>多筆要清 dist</strong></td>
+          <td>每筆讀圖時把 <code>dist</code> 全設 −1。漏清會誤判已訪 ⇒ 答案錯。</td>
+        </tr>
+        <tr>
+          <td><strong>K 可踩、@ 可踩</strong></td>
+          <td>BFS 擴散時 <code>'.'</code>、<code>'@'</code> 都算可走（只有 <code>'#'</code> 擋）；<code>@</code> 也要能被走進去才算抓到。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 讀圖 + 找起點 + 清 dist</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// read</span>
+for i in [0,N): cin &gt;&gt; grid[i]
+  for j in [0,M):
+    dist[i][j] = -1          ← 多筆測資必清
+    if grid[i][j]=='K': (startX,startY)=(i,j)</pre>
+
+    <p><strong>② BFS 主迴圈 — pop 時判斷終點</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// bfs</span>
+push K; dist[K]=0
+while queue 非空:
+    (x,y) = pop front
+    if grid[x][y]=='@': ans = dist[x][y]; break   ← 第一個取出的 @ 最近
+    for d in 4 方向:
+        (nx,ny)=(x+dx,y+dy)
+        略過: 出界 / '#' / dist!=-1
+        dist[nx][ny]=dist[x][y]+1; push (nx,ny)</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      <code>head</code>/<code>tail</code> 指標只往前走 ⇒ 每格 push 一次、pop 一次。
+      dist 沿父鏈 +1 累加，所以 pop 出來的就是真正最短步數。</p>
+
+    <p><strong>③ 為什麼判斷要放在「pop」而非「push」</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// 反例：若在 push 時就回傳</span>
+某個遠的 @ 可能比近的 @ 先被「push」進 queue（看擴散方向）
+但它的 dist 更大 → push 順序 ≠ 由近到遠
+∴ 一定要等「pop」時才確認：pop 順序 = dist 由小到大</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">找 K → BFS 用手動 queue 逐層擴散記 dist → pop 到 @ 即回傳；走不到印 = ="。</div>
+    <div class="sc-summary-bar__detail">T = O(N×M) 每筆 · 入列即定 dist · 終點判斷放在 pop。</div>
+  </div>
+
+</body>
+</html>
