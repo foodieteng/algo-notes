@@ -252,6 +252,15 @@
       不會有別種形狀。所以只要追蹤這兩個量。
     </p>
 
+    <div class="sc-question" style="margin-top:12px;">
+      <span class="sc-question__label">注意 · g 只算「一側」</span>
+      <p style="margin:0;"><code>g[k]</code> 的定義是「凸格<strong>固定在某一側</strong>（例如固定凸在<strong>頂端</strong>）」，
+      <strong>不是</strong>「上下兩種都算」。凸在頂、凸在底是<strong>兩組不同的鋪法</strong>，但因為上下鏡像、<strong>數量剛好相等</strong>，
+      所以都記成同一個數 <code>g[k]</code>。<br/>
+      —— 這就是後面 <code>2·g[n−1]</code> 那個 <strong>2</strong> 的來源：A 給「凸在下的 g」、B 給「凸在上的 g」，
+      兩組不重疊，各一份 ⇒ <code>g + g = 2g</code>。</p>
+    </div>
+
     <!-- ===== STEP 2：看「最左欄第一塊怎麼放」→ 3 種互斥情況 ===== -->
     <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:22px 0 8px;color:var(--sc-ink);">
       <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 2</span>
@@ -317,10 +326,11 @@
     </div>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">為什麼<strong>沒有「+3」</strong>？</div>
+      <div class="sc-formula__main">A 和 B 都是 <code>g[n−1]</code>，<strong>那不是重複嗎？</strong></div>
       <div class="sc-formula__hint">
-        因為我們不是在數「3×2 有幾種鋪法」，而是把所有鋪法<strong>依「最左欄第一塊怎麼放」分成 A/B/C 三類</strong>。
-        A、B 各剩一個 <code>g[n−1]</code>（合起來 <code>2·g[n−1]</code>），C 剩一個 <code>f[n−2]</code> —— 加總就是全部，<strong>沒有第 4 類</strong>。
+        <strong>不重複。</strong> A 留下的是「凸在<strong>下</strong>」的 g、B 留下的是「凸在<strong>上</strong>」的 g —— 是<strong>兩組不同的鋪法</strong>，
+        只是上下鏡像、<strong>數量剛好相等</strong>，才都寫成 <code>g[n−1]</code>。兩份相加 ⇒ <code>g[n−1] + g[n−1] = 2·g[n−1]</code>。<br/>
+        而「沒有 +3」是因為我們<strong>不是在數 3×2 有幾種</strong>，是把鋪法依「最左欄第一塊怎麼放」分成 A/B/C，加總就是全部、沒有第 4 類。
       </div>
     </div>
 
