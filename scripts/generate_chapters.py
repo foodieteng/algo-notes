@@ -56,6 +56,14 @@ PROBLEMS = {
     '01': [
         ('p18', 'Maximum Subarray Sum', 'main', 'demo'),
     ],
+    '03': [
+        ('p41',  '庭院裡的水池',          'main',  'done'),
+        ('p43',  '喵喵抓老鼠',            'main',  'todo'),
+        ('p57',  'heap 練習',             'main',  'todo'),
+        ('p604', '哪裡有卦，哪裡就有源',  'main',  'todo'),
+        ('p45',  '染色遊戲',              'bonus', 'todo'),
+        ('p364', 'Game',                  'bonus', 'todo'),
+    ],
     '06': [
         ('p114', '王老先生',       'main',     'done'),
         ('p115', '逆序數對',       'main',     'done'),
@@ -74,6 +82,14 @@ CATEGORY_NAMES = {
     'hand':     '手寫作業',
 }
 CATEGORY_ORDER = ['main', 'bonus', 'practice', 'hand']
+
+# TIOJ contest id per week (the "原題 ↗" links). Different weeks live in
+# different sprout contests. Falls back to DEFAULT_CONTEST when unmapped.
+WEEK_CONTEST = {
+    '03': 11,
+    '06': 20,
+}
+DEFAULT_CONTEST = 20
 
 
 # ============================================================
@@ -125,17 +141,22 @@ def resolve_problem_link(week_slug, prob_slug):
     return f'problems/{prob_slug}/index.html'
 
 
-def tioj_url(slug):
-    """Build TIOJ source URL from a problem slug like 'p114' → .../problems/114/."""
+def tioj_url(slug, week=None):
+    """Build TIOJ source URL from a problem slug like 'p114' → .../problems/114/.
+
+    The contest id is chosen per week via WEEK_CONTEST (falls back to
+    DEFAULT_CONTEST), because each week maps to a different sprout contest.
+    """
     digits = ''.join(ch for ch in slug if ch.isdigit())
-    return f'https://tioj.sprout.tw/contests/20/problems/{digits}/'
+    contest = WEEK_CONTEST.get(week, DEFAULT_CONTEST)
+    return f'https://tioj.sprout.tw/contests/{contest}/problems/{digits}/'
 
 
 def render_problem_item(week, week_slug, slug, title, status, *, indent=''):
     """Render a single <li> for a problem (used in both chapter outline and section list)."""
     pid = slug.upper()
     source = (
-        f' <a href="{tioj_url(slug)}" target="_blank" rel="noopener" '
+        f' <a href="{tioj_url(slug, week)}" target="_blank" rel="noopener" '
         f'style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">'
         f'原題 ↗</a>'
     )
@@ -172,7 +193,7 @@ def chapter_quick_index(week, week_slug, probs):
         cat_name = CATEGORY_NAMES.get(cat, cat)
         pid = slug.upper()
         href = resolve_problem_link(week_slug, slug)
-        source = tioj_url(slug)
+        source = tioj_url(slug, week)
 
         if status == 'done':
             status_html = '<span style="color:#6ba368">✓ done</span>'

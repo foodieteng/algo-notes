@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P41 · 03 Review // 庭院裡的水池 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P41
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/41/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">庭院裡的水池</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>數「水的 4-連通塊」個數 = connected components。</td></tr>
+        <tr><td>主迴圈</td>
+            <td>row-major 掃全圖，遇到<strong>沒走過的水</strong>才 <code>count++</code> 並 flood。</td></tr>
+        <tr><td>Flood Fill</td>
+            <td>BFS / 迭代 DFS 把整灘水標記 visited；一灘只被「開新池」一次。</td></tr>
+        <tr><td>入列即標記</td>
+            <td>push 進 queue 的當下就 <code>visited = true</code>，避免同格重複入列。</td></tr>
+        <tr><td>避免遞迴</td>
+            <td>1000×1000 全水 ⇒ 遞迴深 10⁶ 爆 stack；改用全域 queue 陣列。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>O(H × W)</code> 每筆 — 每格造訪 O(1) 次。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">計數正確性</span>
+      <h4>為什麼「遇到沒走過的水才 +1」剛好等於水池數？同一灘有很多格，會不會被多數幾次？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">DFS vs BFS</span>
+      <h4>遞迴 DFS 邏輯也對，為什麼這題偏要用 BFS（或迭代 DFS）？哪個輸入會讓遞迴版掛掉？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">入列時機</span>
+      <h4><code>visited</code> 要在「入列時」還是「出列時」設成 true？設錯會發生什麼事？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>每格水會被 BFS 處理幾次？為什麼整段 flood 的總成本是 O(H × W) 而非 O((HW)²)？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">多筆測資</span>
+      <h4>T 筆測資之間，哪些全域狀態必須重置？漏了會怎樣？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用題目<strong>範例第 4 筆</strong>地圖（4×4，正解 = 3）。座標以 <code>(row, col)</code> 0-indexed：</p>
+
+    <table class="sc-table">
+      <thead><tr><th>r \ c</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0</td><td class="mono">.</td><td class="mono">#</td><td class="mono">#</td><td class="mono">#</td></tr>
+        <tr><td class="mono">1</td><td class="mono">#</td><td class="mono">.</td><td class="mono">.</td><td class="mono">#</td></tr>
+        <tr><td class="mono">2</td><td class="mono">#</td><td class="mono">.</td><td class="mono">.</td><td class="mono">#</td></tr>
+        <tr><td class="mono">3</td><td class="mono">#</td><td class="mono">#</td><td class="mono">#</td><td class="mono">.</td></tr>
+      </tbody>
+    </table>
+
+    <p>輸入：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT (這一筆)</span>4 4
+.###
+#..#
+#..#
+###.</pre>
+
+    <p>主迴圈 row-major 掃描，<code>pools</code> 初始 0：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// SCAN 到 (0,0) = '.' 且未走過 → 開新池</span>
+pools: 0 → 1
+flood(0,0):
+  push (0,0), visited[0][0]=true
+  pop (0,0): 上(出界) 下(1,0)='#' 左(出界) 右(0,1)='#' → 無新格
+  queue 空 → pool 1 = { (0,0) }</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// SCAN (0,1)(0,2)(0,3) = '#' → 跳過</span>
+// SCAN (1,0) = '#' → 跳過</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// SCAN 到 (1,1) = '.' 且未走過 → 開新池</span>
+pools: 1 → 2
+flood(1,1):
+  push (1,1)
+  pop (1,1): 上(0,1)# 下(2,1). → push  左(1,0)# 右(1,2). → push
+  pop (2,1): 上(1,1)v 下(3,1)# 左(2,0)# 右(2,2). → push
+  pop (1,2): 上(0,2)# 下(2,2)v 左(1,1)v 右(1,3)#
+  pop (2,2): 上(1,2)v 下(3,2)# 左(2,1)v 右(2,3)#
+  queue 空 → pool 2 = { (1,1),(2,1),(1,2),(2,2) }  ← 中間 2×2 整塊</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// SCAN (1,2)(2,1)(2,2) 已走過 → 跳過；其餘為 '#'</span>
+// SCAN (1,3)(2,0)(2,3)(3,0)(3,1)(3,2) = '#' → 跳過</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// SCAN 到 (3,3) = '.' 且未走過 → 開新池</span>
+pools: 2 → 3
+flood(3,3):
+  push (3,3)
+  pop (3,3): 上(2,3)# 下(出界) 左(3,2)# 右(出界) → 無新格
+  queue 空 → pool 3 = { (3,3) }</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>3</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：中間 4 格水 <code>(1,1)(1,2)(2,1)(2,2)</code> 雖然各自被掃到，
+      但只有<strong>最先碰到的 (1,1)</strong> 觸發 <code>pools++</code>，其餘三格在掃到時都已是 visited ⇒
+      <strong>一灘只數一次</strong>。這正是計數正確的核心。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">最大水池面積</span>
+      <h4>若題目改問「最大那灘水池有幾格」，code 要加什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">八方向</span>
+      <h4>若相鄰改成含對角線（8 連通），要改哪裡？答案會變大還變小？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">記憶體</span>
+      <h4>H = W = 1000 時，<code>qx[]</code>、<code>qy[]</code> 各要開多大？用 int 大約吃多少記憶體？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 計數正確性</span>
+      <p>
+        因為 <code>count++</code> 和「flood 淹滿整灘」是<strong>綁在一起</strong>的：每次 +1，緊接著的 BFS
+        就把同一灘所有格標成 visited。所以同一灘裡，只有<strong>主迴圈最先碰到的那一格</strong>是「未走過的水」、才會 +1；
+        其餘格之後掃到時都是 visited ⇒ <strong>不重複數</strong>。又因 row-major 一定走遍全圖，每灘至少被碰一次 ⇒
+        <strong>不漏數</strong>。兩者合起來 <code>count</code> 恰好 = 連通塊數。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · DFS vs BFS</span>
+      <p>
+        遞迴 DFS 邏輯正確，但<strong>遞迴深度 = 最壞連通塊大小</strong>。
+        <code>1000 × 1000</code> 全是水時，一灘就有 10⁶ 格 ⇒ 遞迴深 10⁶，
+        遠超預設呼叫堆疊（通常幾 MB / 約 10⁴∼10⁵ 層）⇒ <strong>Stack Overflow / RE</strong>。
+      </p>
+      <p>
+        BFS（或<strong>手動 stack 的迭代 DFS</strong>）把待辦格子放在<strong>全域陣列（heap）</strong>，
+        深度再大也只是陣列變長，不碰呼叫堆疊 ⇒ 安全。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 入列時機</span>
+      <p>
+        必須在<strong>入列（push）的當下</strong>就 <code>visited = true</code>。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 若改成「出列時才標記」</span>
+某格 (a,b) 是兩個已在 queue 中的格子的共同鄰居
+→ 處理第一個鄰居時 (a,b) 未 visited → push
+→ 處理第二個鄰居時 (a,b) 仍未 visited（還沒輪到出列）→ 又 push
+⇒ 同格被 push 多次 → queue 膨脹、可能超出陣列上界 → RE</pre>
+      <p>入列即標記，保證每格<strong>恰好 push 一次</strong>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 複雜度</span>
+      <p>
+        每格水<strong>恰好 push 一次、pop 一次</strong>（入列即標記保證）。pop 後看固定 4 個方向 ⇒ 每格 O(1)。
+        所有 flood 加總處理的格數 = 水格總數 ≤ <code>H × W</code> ⇒ 整段 BFS 是
+        <code>O(H × W)</code>，不是 <code>O((HW)²)</code>。
+      </p>
+      <p>主迴圈掃描也是 <code>O(H × W)</code>，兩者相加仍 <strong>O(H × W)</strong>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 多筆測資</span>
+      <p>
+        每筆之間要重置 <code>visited</code>（這份 code 在讀地圖時逐格清成 false）。
+        <code>grid</code> 因為整張重讀會被覆蓋、不必特別清；<code>qx/qy</code> 靠 <code>head/tail</code>
+        在每次 flood 開頭歸零，自然不殘留。
+      </p>
+      <p>
+        若漏清 <code>visited</code>：上一筆標過的格子在這一筆仍被當「走過」⇒ 該數的水池被跳過 ⇒ <strong>答案偏小</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 最大水池面積</span>
+      <p>
+        讓 <code>flood</code> <strong>回傳這次淹了幾格</strong>（BFS 結束時 <code>tail</code> 即為格數），
+        主迴圈用 <code>best = max(best, flood(i,j))</code> 取最大。輸出 <code>best</code> 即可，同樣 O(H×W)。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 八方向</span>
+      <p>
+        把方向陣列從 4 個擴成 8 個（加四個對角）：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 8 連通</span>
+int dx[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
+int dy[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
+// 迴圈上界 d &lt; 8</pre>
+      <p>
+        連通性<strong>變強</strong>（更多格被視為相鄰）⇒ 水池更容易連在一起 ⇒
+        水池數<strong>只會變少或不變</strong>，不會變多。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 記憶體</span>
+      <p>
+        最壞整圖全水，一次 flood 要裝 <code>H × W = 10⁶</code> 個座標 ⇒
+        <code>qx[]</code>、<code>qy[]</code> 各要能放 <code>10⁶</code> 個 <code>int</code>。
+      </p>
+      <ul>
+        <li>每個 int 4 bytes ⇒ 單個陣列 <code>10⁶ × 4 B ≈ 4 MB</code>，兩個約 8 MB。</li>
+        <li>再加 <code>grid</code>（char，~1 MB）、<code>visited</code>（bool，~1 MB），總計約 10 MB — 在常見 256 MB 限制內安全。</li>
+      </ul>
+      <p>所以 code 用 <code>qx[MAXN*MAXN]</code> 開到 <code>≈ 10⁶</code> 是必要且足夠的。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W03 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會驗證 flood fill 怎麼數連通塊。</div>
+    <div class="sc-summary-bar__detail">範例第 4 筆答案：3 灘（單格 + 中央 2×2 + 單格）。</div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P41 · 01 概念 // 庭院裡的水池 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W03 · Graph · Heap</a>
+      &nbsp;/&nbsp;
+      P41
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/11/problems/41/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.05.31
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">庭院裡的水池</h1>
+    <p class="sc-mast__subtitle">// Flood Fill · 連通塊計數經典</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      核心 Flood Fill · 連通塊 (Connected Components)
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(H × W)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給一張 <code>H × W</code> 的地圖（<code>H, W ≤ 1000</code>），<code>.</code> 是水、<code>#</code> 是障礙。
+      一格水與它<strong>上下左右</strong>相鄰的水算同一灘水池。問<strong>地圖上共有幾灘不同的水池</strong>？
+      多筆測資 <code>T ≤ 10</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      換句話說：把每格水當圖的點、相鄰的水之間連邊，問<strong>有幾個連通塊（connected components）</strong>。
+      這就是 Flood Fill 的標準應用。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 Flood Fill
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 Flood Fill<span class="sc-section__title-en">// Why Flood Fill</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">直接數水格</span>
+            <span class="sc-ko-card__o">錯解</span>
+          </div>
+          <div class="sc-ko-card__body">把每個 <code>.</code> 都算成一灘 ⇒ 相鄰的水被重複計數，答案爆增。</div>
+          <div class="sc-ko-card__verdict">× REJECT · WRONG</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">遞迴 DFS</span>
+            <span class="sc-ko-card__o">O(HW)</span>
+          </div>
+          <div class="sc-ko-card__body">邏輯對，但 <code>1000×1000</code> 全水時遞迴深度可達 10⁶ ⇒ <strong>爆 stack</strong>。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · STACK OVERFLOW</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">BFS Flood Fill</span>
+          <span class="sc-ko-card__o">O(HW)</span>
+        </div>
+        <div class="sc-ko-card__body">掃過每格，遇到沒走過的水就 +1 並用 queue 淹滿整灘、全部標記為走過。每格只進 queue 一次。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      DFS 本身沒錯，<strong>遞迴版</strong>才危險。要嘛改成<strong>手動 stack 的迭代 DFS</strong>，要嘛用 <strong>BFS（queue）</strong> —
+      兩者都把「待處理的格子」放在 heap 記憶體而非呼叫堆疊，徹底避開爆 stack。本卡採 BFS。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">維護一個 <code>visited[H][W]</code>，主迴圈 row-major 掃過每一格：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>掃描</strong> · 遇到 <code>#</code> 或<strong>已走過的水</strong> → 跳過。</li>
+      <li><strong>開新池</strong> · 遇到<strong>沒走過的水</strong> → 答案 <code>+1</code>，把它丟進 queue。</li>
+      <li><strong>BFS 淹滿</strong> · 不斷從 queue 取格，把四方向<strong>沒走過的水</strong>標記 visited 並推進 queue，直到 queue 空 → 這一整灘處理完。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵不變量</strong>：每格水<strong>恰好被標記一次</strong>，所以總工作量 = 格子數 = <code>O(H × W)</code>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 掃描 + BFS 淹滿<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用題目<strong>範例第 4 筆</strong>地圖（4×4，答案 = 3）。
+    <span class="mono" style="font-size:12px;">.### / #..# / #..# / ###.</span>
+    一步步看主迴圈怎麼掃、BFS 怎麼把同一灘水染同色、pool 計數何時 +1：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · FLOOD FILL</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 準備開始掃描
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#3a3a3a">■</span> 障礙 <code>#</code> &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 還沒走過的水 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> 掃描游標 / BFS 待處理 frontier &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span><span style="color:#2f6fb6">■</span><span style="color:#c98a24">■</span> 第 1 / 2 / 3 灘已淹滿的水池
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼不會重複數、不會漏數
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼剛好數對<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// INVARIANT · 每灘恰好被「開新池」一次</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>主迴圈只在遇到<strong>沒走過的水</strong>時才 <code>count++</code>。</li>
+          <li>緊接著的 BFS 會把<strong>同一灘所有水</strong>標記成 visited。</li>
+          <li>所以同一灘裡，<strong>只有最先被主迴圈碰到的那一格</strong>會觸發 <code>count++</code>；其餘格之後都因「已走過」而跳過 ⇒ <strong>不重複數</strong>。</li>
+          <li>每格水遲早會被主迴圈掃到（row-major 一定走遍全圖）⇒ 每灘至少數到一次 ⇒ <strong>不漏數</strong>。</li>
+          <li>⇒ <code>count</code> 恰好等於連通塊個數。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      <strong>一句話</strong>：<code>count++</code> 與「淹滿一整灘」綁在一起，<strong>一灘只觸發一次</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">主迴圈走過 <code>H × W</code> 格各一次；BFS 部分，<strong>每格水最多進 queue 一次、出 queue 一次</strong>，
+    每次看 4 個方向 ⇒ 整個 BFS 的總工作量也是 <code>O(H × W)</code>。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T(H, W) = <strong>O(H × W)</strong> &nbsp;每筆測資</div>
+      <div class="sc-formula__hint">
+        每格被造訪 <strong>O(1)</strong> 次（4 方向常數）⇒ 全圖線性
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(H × W)</strong></td><td>1000×1000 ⇒ 10⁶，× T ≤ 10 ⇒ 10⁷，秒過</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(H × W)</strong></td><td><code>visited</code> 陣列 + BFS queue 最壞裝全圖</td></tr>
+        <tr><td>Queue 深度</td><td class="mono">O(H × W)</td><td>放 heap 記憶體，<strong>不吃呼叫堆疊</strong></td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>純整數索引、4 方向 if 判斷</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「數連通塊」= 掃全圖 + 每碰到新塊就 +1 並一次淹滿。</strong><br/>
+      淹滿用 BFS / 迭代 DFS，把待辦格子放 queue 而非遞迴 —<br/>
+      <strong>1000×1000 全水也不爆 stack。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">掃全圖，遇到沒走過的水就 count++ 並 BFS 淹滿整灘 = 連通塊計數 O(H×W)。</div>
+    <div class="sc-summary-bar__detail">用 BFS / 迭代 DFS 避開遞迴爆 stack — 1000×1000 安全。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p41-floodfill.js"></script>
+</body>
+</html>
