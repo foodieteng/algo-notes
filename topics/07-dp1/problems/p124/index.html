@@ -199,15 +199,176 @@
       <h2 class="sc-section__title">遞迴怎麼來的<span class="sc-section__title-en">// Deriving the Recurrence</span></h2>
     </div>
 
-    <div class="sc-dark-box">
-      <div class="sc-dark-box__title">// 從邊界型態推轉移</div>
+    <p style="font-size:14px;">先把 <code>g</code> 講清楚，再看 <code>f[n]=f[n−2]+2·g[n−1]</code> 的每一項長什麼樣。</p>
+
+    <!-- ===== 先定義 g：什麼叫「凸一格」 ===== -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:18px 0 8px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 1</span>
+      g[k] 是什麼？「鋪好 k 欄、但多戳一格到第 k+1 欄」
+    </h3>
+
+    <div style="margin:12px 0;overflow-x:auto;">
+    <svg viewBox="0 0 760 250" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
+      <text x="380" y="28" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="15" font-weight="700" fill="#1f1f1f">f（平邊界）vs g（凸一格邊界）</text>
+
+      <!-- f profile -->
+      <g>
+        <!-- 3x3 grid, all filled, flat right edge -->
+        <rect x="70"  y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="70"  y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="70"  y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="118" y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="118" y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="118" y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <!-- flat boundary line -->
+        <line x1="166" y1="58" x2="166" y2="206" stroke="#2f6fb6" stroke-width="4"/>
+        <text x="118" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#2f6fb6">f · 右邊界「平的」</text>
+      </g>
+
+      <!-- g profile -->
+      <g>
+        <rect x="430" y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="430" y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="430" y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="478" y="60" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="478" y="108" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <rect x="478" y="156" width="48" height="48" fill="#dbe6f0" stroke="#8fb3d4" stroke-width="1.5"/>
+        <!-- bump cell jutting into next column (middle row shown; here top row) -->
+        <rect x="526" y="60" width="48" height="48" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2.5"/>
+        <text x="550" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#a8472c">凸</text>
+        <!-- jagged boundary -->
+        <polyline points="526,58 526,108 574,108 574,206 526,206" fill="none" stroke="#d96e4e" stroke-width="3"/>
+        <line x1="526" y1="58" x2="526" y2="60" stroke="#d96e4e" stroke-width="3"/>
+        <line x1="574" y1="58" x2="574" y2="108" stroke="#d96e4e" stroke-width="3"/>
+        <text x="500" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" font-weight="700" fill="#d96e4e">g · 多戳一格出去（鋸齒）</text>
+      </g>
+
+      <text x="295" y="138" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="22" fill="#9a9a9a">vs</text>
+    </svg>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);">
+      <code>g</code> 之所以重要：鋪到一半時，「已鋪滿區域的右緣」要嘛是<strong>平的（f）</strong>，要嘛是<strong>凸出一格（g）</strong>，
+      不會有別種形狀。所以只要追蹤這兩個量。
+    </p>
+
+    <!-- ===== STEP 2：用 f[2]=3 拆解每一項 ===== -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:22px 0 8px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">STEP 2</span>
+      用範例拆解：f[2] = f[0] + 2·g[1] = 1 + 2 = 3
+    </h3>
+
+    <p style="font-size:14px;">3×2 剛好有 <strong>3 種</strong>鋪法。把它們按「最右邊怎麼收尾」分成兩組 —
+    正好對應遞迴的 <code>f[0]</code> 一項和 <code>2·g[1]</code> 兩項：</p>
+
+    <div style="margin:12px 0;overflow-x:auto;">
+    <svg viewBox="0 0 760 430" width="100%" style="background:#fffaf0;border:1px solid var(--sc-cream-bd);border-radius:6px;display:block;min-width:680px;" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- ===== 左組：f[0] 項（1 種） ===== -->
+      <text x="170" y="30" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#2f6fb6">第 (a) 種 → 來自 f[0]</text>
+      <text x="170" y="50" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="12" fill="#5a5a5a">三條橫骨牌，整塊 3×2 自成一體</text>
+
+      <!-- 3x2 grid with three horizontal dominoes -->
+      <g>
+        <!-- row0 horizontal -->
+        <rect x="110" y="66" width="120" height="44" rx="6" fill="#c7352a" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- row1 horizontal -->
+        <rect x="110" y="114" width="120" height="44" rx="6" fill="#2f6fb6" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- row2 horizontal -->
+        <rect x="110" y="162" width="120" height="44" rx="6" fill="#2e9d63" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- column split guide -->
+        <line x1="170" y1="64" x2="170" y2="208" stroke="#ffffff" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+      </g>
+      <text x="170" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1f1f1f">前面接 f[0]=1（空） → 1 種</text>
+
+      <!-- divider -->
+      <line x1="320" y1="40" x2="320" y2="410" stroke="#ecd9a6" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+      <!-- ===== 右組：2·g[1] 項（2 種，上下對稱） ===== -->
+      <text x="540" y="30" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#d96e4e">第 (b) 種 → 來自 2·g[1]</text>
+      <text x="540" y="50" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="12" fill="#5a5a5a">一橫 + 兩直；橫的可在「上」或「下」 → ×2</text>
+
+      <!-- (b1) top-horizontal + two verticals -->
+      <g>
+        <!-- top row horizontal -->
+        <rect x="380" y="66" width="120" height="44" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- left vertical rows1-2 -->
+        <rect x="380" y="114" width="56" height="92" rx="6" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- right vertical rows1-2 -->
+        <rect x="444" y="114" width="56" height="92" rx="6" fill="#0f9b9b" stroke="#1a1a1a" stroke-width="2"/>
+      </g>
+      <text x="440" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1f1f1f">橫在上</text>
+
+      <!-- (b2) bottom-horizontal + two verticals -->
+      <g>
+        <!-- left vertical rows0-1 -->
+        <rect x="580" y="66" width="56" height="92" rx="6" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- right vertical rows0-1 -->
+        <rect x="644" y="66" width="56" height="92" rx="6" fill="#0f9b9b" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- bottom row horizontal -->
+        <rect x="580" y="162" width="120" height="44" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
+      </g>
+      <text x="640" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#1f1f1f">橫在下</text>
+
+      <!-- mirror arrow -->
+      <text x="540" y="180" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="20" fill="#d96e4e">⇅</text>
+
+      <!-- ===== 下方：把 (b) 拆成「g[1] 的凸邊界 + 補一塊」 ===== -->
+      <line x1="40" y1="252" x2="720" y2="252" stroke="#ecd9a6" stroke-width="1"/>
+      <text x="380" y="276" text-anchor="middle" font-family="'Noto Serif TC',serif" font-size="14" font-weight="700" fill="#1f1f1f">為什麼 (b) 是「2 × g[1]」？拆給你看 ↓</text>
+
+      <!-- show g[1]: 1 column tiled... actually g[1] = one column with a bump.
+           Story: first column has a vertical domino + one cell juts right (the bump).
+           Then ONE domino caps the bump flat. Mirror up/down ⇒ ×2 -->
+
+      <!-- g[1] state (top-bump) -->
+      <g>
+        <text x="150" y="300" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#d96e4e">g[1] 狀態（凸在上）</text>
+        <!-- col0: a vertical domino covering rows1-2, top cell juts into col1 -->
+        <rect x="110" y="316" width="48" height="48" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2.5"/>
+        <text x="134" y="344" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#a8472c">凸</text>
+        <rect x="110" y="364" width="48" height="44" rx="5" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- the jut cell into col1 top -->
+        <rect x="158" y="316" width="44" height="48" rx="5" fill="#f3c9b8" stroke="#d96e4e" stroke-width="2" stroke-dasharray="4,3"/>
+      </g>
+
+      <text x="240" y="362" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="22" fill="#5a5a5a">+</text>
+
+      <!-- one capping domino -->
+      <g>
+        <text x="330" y="300" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#1f1f1f">補 1 塊骨牌補平</text>
+        <rect x="280" y="364" width="100" height="44" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
+        <text x="330" y="388" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#fff">cap</text>
+      </g>
+
+      <text x="430" y="362" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="22" fill="#5a5a5a">=</text>
+
+      <!-- result = the (b1) tiling -->
+      <g>
+        <text x="540" y="300" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" font-weight="700" fill="#2e9d63">補成完整 3×2</text>
+        <rect x="490" y="316" width="100" height="44" rx="6" fill="#c98a24" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="490" y="364" width="48" height="44" rx="5" fill="#6e41c8" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="538" y="364" width="48" height="44" rx="5" fill="#0f9b9b" stroke="#1a1a1a" stroke-width="2"/>
+      </g>
+
+      <text x="660" y="362" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="13" font-weight="700" fill="#d96e4e">凸在下<tspan font-family="'JetBrains Mono',monospace"> 同理 → ×2</tspan></text>
+    </svg>
+    </div>
+
+    <p style="font-size:14px;">
+      所以 <code>2·g[n−1]</code> 的 <strong>2 就是「凸出的那一格在上、在下」兩種鏡像</strong>。
+      每一種凸邊界 <code>g[n−1]</code>，都恰好能被<strong>一塊骨牌</strong>補平成完整的 <code>f[n]</code> —
+      凸在上補一種、凸在下補一種，數量一樣多，故乘 2。
+    </p>
+
+    <div class="sc-dark-box" style="margin-top:14px;">
+      <div class="sc-dark-box__title">// 整理 · 兩條遞迴怎麼來的</div>
       <div class="sc-dark-box__body">
         <ol>
-          <li>看 <strong>3×n 的最右邊</strong>怎麼收尾。完整鋪滿 <code>f[n]</code> 的最後一塊區域只有兩種收法：</li>
-          <li><strong>(a)</strong> 最後兩欄用「三條橫」或「一橫+兩直」之外…其實可歸成：接在 <code>f[n−2]</code> 後面把 3×2 補滿（3 種 3×2 鋪法中對應「不靠凸邊」的那一種）⇒ 貢獻 <code>f[n−2]</code>。</li>
-          <li><strong>(b)</strong> 最後是一個凸邊界 <code>g</code> 被一塊骨牌補平 ⇒ 上下兩種對稱情形 ⇒ 貢獻 <code>2·g[n−1]</code>。</li>
-          <li>合起來 <code>f[n] = f[n−2] + 2·g[n−1]</code>。</li>
-          <li>凸邊界 <code>g[n]</code> 同理：由 <code>f[n−1]</code> 再凸一塊、或承接更早的凸邊界 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。</li>
+          <li><strong>f[n] 的 (a) 項</strong>：最右邊用「三條橫」把整塊 3×2 收掉，前面剩一個<strong>平邊界</strong> ⇒ 接 <code>f[n−2]</code>。</li>
+          <li><strong>f[n] 的 (b) 項</strong>：最右邊是一個<strong>凸邊界</strong>被一塊骨牌補平；凸在上 / 凸在下兩種鏡像 ⇒ <code>2·g[n−1]</code>。</li>
+          <li>合起來 <code>f[n] = f[n−2] + 2·g[n−1]</code>。<span style="color:var(--sc-coral)">（n=2 驗證：1 + 2×1 = 3 ✓）</span></li>
+          <li><strong>g[n]</strong> 同理：一個平邊界 <code>f[n−1]</code> 再戳一塊出去、或承接更早的凸邊界 <code>g[n−2]</code> ⇒ <code>g[n] = f[n−1] + g[n−2]</code>。</li>
           <li>兩式消去 g ⇒ <strong><code>f[n] = 4·f[n−2] − f[n−4]</code></strong>（實作最省事）。</li>
         </ol>
       </div>
