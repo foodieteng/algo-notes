@@ -35,7 +35,7 @@
     <p class="sc-mast__subtitle">// 計數 DP · 相鄰限制塗色</p>
     <div class="sc-mast__meta">
       <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
-      核心 線性 DP（狀態 = 末位顏色）
+      核心 線性 DP（末位顏色）+ 固定首色
       <span class="sc-mast__sep">·</span>
       時間 <strong>O(maxN + T)</strong>
     </div>
@@ -112,14 +112,14 @@
           <span class="sc-ko-card__title">線性 DP + 預處理</span>
           <span class="sc-ko-card__o">O(maxN + T)</span>
         </div>
-        <div class="sc-ko-card__body">狀態 = 末位顏色，一次把 <code>ans[1..10⁵]</code> 全算好；每筆查表 O(1)。</div>
+        <div class="sc-ko-card__body">先用末位顏色處理相鄰，再固定首色補頭尾；一次把 <code>ans[1..10⁵]</code> 全算好。</div>
         <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
       </div>
     </div>
 
     <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>關鍵觀察</strong>：要不要合法，只跟<strong>前一個 coin 的顏色</strong>有關（綠藍不相鄰）。
-      這種「只看上一格」的結構就是線性 DP。多筆測資 ⇒ <strong>一次預處理所有 N</strong>，查表回答。
+      <strong>關鍵觀察</strong>：一般相鄰是否合法，只跟<strong>前一個 coin 的顏色</strong>有關（綠藍不相鄰）。
+      頭尾那一條額外限制則靠<strong>固定第一個顏色</strong>補回。多筆測資 ⇒ <strong>一次預處理所有 N</strong>，查表回答。
     </p>
   </section>
 
@@ -132,7 +132,7 @@
       <h2 class="sc-section__title">狀態設計 · 末位顏色<span class="sc-section__title-en">// State Design</span></h2>
     </div>
 
-    <p style="font-size:14px;">先<strong>只管相鄰限制</strong>（綠藍不相鄰），定義線性 DP：</p>
+    <p style="font-size:14px;">合法只看<strong>前一個 coin 的顏色</strong>（綠藍不相鄰）⇒ 用「末位顏色」當狀態的線性 DP：</p>
 
     <div class="sc-formula">
       <div class="sc-formula__main">
@@ -145,9 +145,20 @@
       </div>
     </div>
 
+    <p style="font-size:14px;margin-top:12px;">但這只擋了「相鄰」，還沒擋「<strong>頭尾</strong>不一藍一綠」。乾淨的處理是<strong>固定第一個 coin 的顏色 <code>first</code></strong>，
+    對每個 first 各跑一次上面的 DP，最後加總時<strong>只收「末位 last 跟 first 不形成一藍一綠」</strong>的那些：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">ans[N] = Σ<sub>first</sub>　Σ<sub>last：ok(first,last)</sub>　dp<sub>first</sub>[N][last]</div>
+      <div class="sc-formula__hint">
+        <code>ok(x,y)</code> = ¬( {x,y} = {G,B} )；即只排除 <code>(G,B)</code> 與 <code>(B,G)</code> 這兩種頭尾
+      </div>
+    </div>
+
     <ol style="margin-top:10px;">
-      <li><strong>線性總數</strong> · <code>L(N) = r[N] + g[N] + b[N]</code>（還沒處理頭尾）。</li>
-      <li><strong>頭尾修正</strong> · 扣掉「第 1 個與第 N 個恰為一藍一綠」的情形。</li>
+      <li><strong>跑 3 次</strong> · first = R / G / B 各跑一次末位 DP。</li>
+      <li><strong>頭尾過濾</strong> · 末位用 <code>ok(first,last)</code> 取捨，直接加總 ⇒ 不用再做減法。</li>
+      <li><strong>等價捷徑</strong> · 也可「線性總數 − 頭尾恰為 {G,B} 的數量」，或用三項遞迴 <code>a(N)=3a(N−1)−a(N−2)−a(N−3)</code>（見 §05）。</li>
     </ol>
   </section>
 
@@ -161,7 +172,8 @@
     </div>
 
     <p>用 <code>N = 3</code>。一欄是一個 coin、三列是 R / G / B 的方法數。看每格怎麼從<strong>前一欄</strong>加總（黃框 = 來源），
-    最後加總末欄得線性 17，再扣頭尾 {G,B} 的 2 種 → <strong>15</strong>：</p>
+    最後加總末欄得線性 <strong>17</strong>，再扣頭尾 {G,B} 的 2 種 → <strong>15</strong>。
+    （這是「<strong>線性 − 頭尾</strong>」的等價視角；§05 證明它跟 code 用的「固定首色加總」得到同一個 15。）</p>
 
     <div class="sc-viz">
       <div class="sc-viz__title">// VIZ · DP TABLE (N = 3)</div>
@@ -211,7 +223,21 @@
       </div>
     </div>
 
-    <p style="margin-top:14px;font-size:14px;">直接對答案數列 <code>a(N) = 3, 7, 15, 35, 83, …</code> 找線性遞迴，得到極簡式：</p>
+    <pre class="sc-trace" style="margin-top:12px;"><span class="sc-trace__head">// endpoint rule · ok(first, last)</span>
+固定 first 後，最後一格 last 能不能計入答案：
+  last = R：一定可以
+  last = G：first 不能是 B
+  last = B：first 不能是 G
+也就是只排除 (first,last) = (G,B) 和 (B,G)。</pre>
+
+    <p style="margin-top:14px;font-size:14px;"><strong>N = 3 直接套（這就是 code 在做的事）</strong>：每個 first 跑到 n=3 的末位 (R,G,B) 分佈，再用 ok() 過濾加總：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// N = 3 · 三個 first 各自貢獻</span>
+first=R：末位(R,G,B)=(3,2,2) → 三色全收 → 3+2+2 = 7
+first=G：末位(R,G,B)=(2,2,1) → 丟末位 B   → 2+2   = 4
+first=B：末位(R,G,B)=(2,1,2) → 丟末位 G   → 2+2   = 4
+ans[3] = 7 + 4 + 4 = 15  ✓（不用任何減法）</pre>
+
+    <p style="margin-top:14px;font-size:14px;">若把「固定首色」的狀態遞推整理掉中間變數，答案數列 <code>a(N) = 3, 7, 15, 35, 83, …</code> 還有一條極簡式：</p>
 
     <div class="sc-formula">
       <div class="sc-formula__main">a(N) = <strong>3·a(N−1) − a(N−2) − a(N−3)</strong></div>
@@ -221,7 +247,7 @@
     </div>
 
     <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
-      （遞迴係數由前幾項解線性方程得出；用它預處理最省事，O(maxN) 一次填滿 <code>ans[]</code>。）
+      （可由固定首色 DP / 轉移矩陣推出；用它預處理最省事，O(maxN) 一次填滿 <code>ans[]</code>。）
     </p>
   </section>
 
@@ -260,8 +286,8 @@
     </div>
 
     <div class="sc-insight">
-      <strong>合法性只看「上一個顏色」⇒ 狀態 = 末位顏色的線性 DP。</strong><br/>
-      相鄰限制用轉移處理、頭尾限制用「固定首色 + 末位取捨」補回；<br/>
+      <strong>相鄰限制看上一格，頭尾限制看第一格。</strong><br/>
+      所以用「末位顏色 DP」處理相鄰，再用「固定首色 + 末位取捨」補回頭尾；<br/>
       <strong>多筆測資就一次預處理所有 N，查表 O(1)。</strong>
     </div>
   </section>

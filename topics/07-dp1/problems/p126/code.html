@@ -82,6 +82,10 @@
 <span class="t">int</span> ans<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// ans[N] = N 個 coin 的塗色方法數 (mod)</span>
 
 <span class="c">// 顏色：0 紅(R)  1 綠(G)  2 藍(B)。限制：G 與 B 不相鄰（含頭尾）</span>
+<span class="t">bool</span> <span class="f">ok</span><span class="p">(</span><span class="t">int</span> x<span class="p">,</span> <span class="t">int</span> y<span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">!((</span>x <span class="p">==</span> <span class="n">1</span> <span class="p">&amp;&amp;</span> y <span class="p">==</span> <span class="n">2</span><span class="p">)</span> <span class="p">||</span> <span class="p">(</span>x <span class="p">==</span> <span class="n">2</span> <span class="p">&amp;&amp;</span> y <span class="p">==</span> <span class="n">1</span><span class="p">));</span>
+<span class="p">}</span>
+
 <span class="c">// dp[last] = 「第一個塗 first、目前末位塗 last」的方法數</span>
 <span class="t">void</span> <span class="f">build</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="t">int</span> first <span class="p">=</span> <span class="n">0</span><span class="p">;</span> first <span class="p">&lt;</span> <span class="n">3</span><span class="p">;</span> first<span class="p">++)</span> <span class="p">{</span>
@@ -91,10 +95,11 @@
 
         <span class="k">for</span> <span class="p">(</span><span class="t">int</span> n <span class="p">=</span> <span class="n">1</span><span class="p">;</span> n <span class="p">&lt;</span> MAXN<span class="p">;</span> n<span class="p">++)</span> <span class="p">{</span>
             <span class="c">// 累計這個 first 對 ans[n] 的貢獻（末位不可與 first 形成一藍一綠）</span>
-            <span class="t">int</span> add <span class="p">=</span> r<span class="p">;</span>                                  <span class="c">// 末位 R 一定合法</span>
-            <span class="k">if</span> <span class="p">(!(</span>first <span class="p">==</span> <span class="n">2</span> <span class="p">&amp;&amp;</span> <span class="n">1</span><span class="p">))</span> <span class="p">{}</span>                  <span class="c">// (佔位，見下方條件)</span>
-            <span class="k">if</span> <span class="p">(!(</span>first <span class="p">==</span> <span class="n">2</span><span class="p">))</span> add <span class="p">=</span> <span class="p">(</span>add <span class="p">+</span> g<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>  <span class="c">// 末位 G：首色不能是 B</span>
-            <span class="k">if</span> <span class="p">(!(</span>first <span class="p">==</span> <span class="n">1</span><span class="p">))</span> add <span class="p">=</span> <span class="p">(</span>add <span class="p">+</span> b<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>  <span class="c">// 末位 B：首色不能是 G</span>
+            <span class="t">int</span> dp<span class="p">[</span><span class="n">3</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span>r<span class="p">,</span> g<span class="p">,</span> b<span class="p">};</span>
+            <span class="t">int</span> add <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> last <span class="p">=</span> <span class="n">0</span><span class="p">;</span> last <span class="p">&lt;</span> <span class="n">3</span><span class="p">;</span> last<span class="p">++)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="f">ok</span><span class="p">(</span>first<span class="p">,</span> last<span class="p">))</span> add <span class="p">=</span> <span class="p">(</span>add <span class="p">+</span> dp<span class="p">[</span>last<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
+            <span class="p">}</span>
             ans<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>ans<span class="p">[</span>n<span class="p">]</span> <span class="p">+</span> add<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
 
             <span class="c">// 轉移到 n+1（線性：G 不接 B、B 不接 G）</span>
@@ -211,7 +216,7 @@ a<span class="p">[</span><span class="n">1</span><span class="p">]</span> <span 
         </tr>
         <tr>
           <td><strong>N = 1 / N = 2 邊界</strong></td>
-          <td>N=1 沒有相鄰也沒頭尾配對 ⇒ 3；N=2 兩端相鄰，{G,B} 兩種被擋 ⇒ 9−2 = 7。遞迴 base 要正確。</td>
+          <td>N=1 沒有相鄰也沒有一對不同端點 ⇒ 3；N=2 的頭尾就是同一對相鄰端點，{G,B} 兩種已被相鄰限制擋掉 ⇒ 9−2 = 7。遞迴 base 要正確。</td>
         </tr>
         <tr>
           <td><strong>10⁵ 筆 I/O</strong></td>
@@ -240,9 +245,9 @@ nb = r + b          // 末位 B：前一位不能是 G
     <p><strong>② 頭尾取捨（把環補回來）</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// endpoint</span>
 固定 first 後，末位累進 ans[n] 時：
-  末位 R → 一定合法
-  末位 G → 只有 first ≠ B 才算（否則頭尾 = 一藍一綠）
-  末位 B → 只有 first ≠ G 才算
+  for last in {R,G,B}:
+    若 ok(first, last)，才把 dp[last] 加進 ans[n]
+其中 ok() 只會擋掉 (G,B) 和 (B,G) 兩種頭尾組合
 ∴ 三種 first 各自掃一遍、累加，就自動排除頭尾違規</pre>
 
     <p><strong>③ 為什麼可以「線性總數 − 頭尾{G,B}」</strong></p>
@@ -256,9 +261,9 @@ N=3: 17 − 2 = 15 ✓</pre>
     <p><strong>④ 三項遞迴怎麼來的</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// recurrence</span>
 答案數列 3, 7, 15, 35, 83, 199, 479, ...
-設 a(n) = p·a(n-1) + q·a(n-2) + r·a(n-3)
-用前幾項解出 (p,q,r) = (3, -1, -1)
-驗證後續項皆成立 ⇒ a(n) = 3a(n-1) − a(n-2) − a(n-3)</pre>
+把固定首色 DP 的狀態轉移整理成答案序列後，可消去中間變數
+得到 a(n) = 3a(n-1) − a(n-2) − a(n-3)
+實作可直接用這條遞迴預處理；有減法所以要補 MOD</pre>
   </section>
 
   <!-- ============================================================

@@ -70,11 +70,11 @@
         <tr><td>問題本質</td>
             <td>3 色塗一列、綠藍不相鄰（含頭尾）⇒ 計數 DP。</td></tr>
         <tr><td>狀態</td>
-            <td><code>dp[i][色]</code> = 前 i 個、第 i 個塗該色的方法數。合法只看上一格。</td></tr>
+            <td>線性部分用 <code>dp[i][色]</code> 記末位顏色；完整題目還要固定首色處理頭尾。</td></tr>
         <tr><td>轉移</td>
             <td>R←{R,G,B}、G←{R,G}、B←{R,B}（綠藍互斥）。</td></tr>
         <tr><td>頭尾</td>
-            <td>固定首色，末位排除與首色形成 {G,B}；或「線性總數 − 頭尾{G,B}」。</td></tr>
+            <td>固定首色，末位只排除 <code>(G,B)</code> 與 <code>(B,G)</code>；或「線性總數 − 頭尾{G,B}」。</td></tr>
         <tr><td>多筆</td>
             <td>一次預處理 <code>ans[1..maxN]</code>，每筆查表 O(1)。</td></tr>
         <tr><td>模數</td>
@@ -142,7 +142,7 @@ total = 3</pre>
 r = r+g+b = 1+1+1 = 3
 g = r+g   = 1+1   = 2     // G 不接前面的 B
 b = r+b   = 1+1   = 2     // B 不接前面的 G
-total = 3+2+2 = 7   ← N=2 沒有頭尾{G,B}（會被相鄰擋掉），答案就是 7 ✓</pre>
+total = 3+2+2 = 7   ← N=2 的頭尾就是相鄰那一對，{G,B} 已被相鄰限制擋掉，答案就是 7 ✓</pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// i = 3</span>
 r = 3+2+2 = 7
@@ -150,18 +150,26 @@ g = 3+2   = 5
 b = 3+2   = 5
 linear total = 7+5+5 = 17</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// 頭尾修正</span>
+    <pre class="sc-trace"><span class="sc-trace__head">// 頭尾修正（視角 A：線性 − 頭尾）</span>
 17 種裡，第1個與第3個恰為「一藍一綠」的有：
   G · ? · B   →  中間只能 R（G-?-B，?≠相鄰違規）：G R B  (1 種)
   B · ? · G   →  中間只能 R：B R G               (1 種)
-共 2 種違反頭尾規則 ⇒ 扣掉</pre>
+共 2 種違反頭尾規則 ⇒ 扣掉   ⇒  17 − 2 = 15</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>17 − 2 = 15</pre>
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>視角 B（code 實際用的）</strong>：固定首色、末位用 <code>ok()</code> 過濾直接加總，<strong>不做減法</strong>：</p>
+    <pre class="sc-trace"><span class="sc-trace__head">// 固定首色加總 · 同樣得 15</span>
+first=R：末位(R,G,B)=(3,2,2) → 全收     → 7
+first=G：末位(R,G,B)=(2,2,1) → 丟末位 B → 4
+first=B：末位(R,G,B)=(2,1,2) → 丟末位 G → 4
+ans[3] = 7 + 4 + 4 = 15  ✓</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>15</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：線性 DP 已經把「綠藍相鄰」擋好（所以 <code>G _ B</code> 中間不能再放 G 或 B），
-      但<strong>頭尾不相鄰</strong>，線性 DP 管不到 ⇒ 必須額外扣掉 <code>G R B</code> / <code>B R G</code> 這 2 種。
-      這就是「環形限制」要特別處理的地方。
+      <strong>觀察</strong>：兩個視角同樣得 15。線性 DP 已擋好「綠藍相鄰」，但<strong>頭尾不相鄰</strong>它管不到 ——
+      視角 A 事後<strong>扣掉</strong> <code>G R B</code> / <code>B R G</code>；視角 B 一開始就<strong>固定首色、末位過濾</strong>不讓它們進來。
+      code 採視角 B（加總、無減法）。
     </div>
   </section>
 
