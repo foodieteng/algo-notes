@@ -112,19 +112,25 @@
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
-    const h = rect.height || 400;
+    const h = rect.height || 480;
     canvas.width  = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
+  // Layout bands (top→bottom): banner | column headers | grid | contrib
+  const BANNER_Y   = 34;   // baseline of the banner row
+  const RULE_Y     = 58;   // hairline under banner
+  const COLHEAD_Y  = 84;   // baseline of #1 #2 #3
+  const GRID_TOP   = 100;  // grid starts here
+
   function geom() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    const padTop = 70, padX = 76, padBot = 92;
-    const availW = w - padX - 24;
-    const cell = Math.min(90, availW / N, (h - padTop - padBot) / 3);
+    const padX = 80, padBot = 116;   // padBot leaves room for the CONTRIB band
+    const availW = w - padX - 28;
+    const cell = Math.min(88, availW / N, (h - GRID_TOP - padBot) / 3);
     const gridW = cell * N, gridH = cell * 3;
-    const x0 = padX, y0 = padTop;
+    const x0 = padX, y0 = GRID_TOP;
     return { w, h, cell, x0, y0, gridW, gridH };
   }
 
@@ -136,29 +142,33 @@
     ctx.fillStyle = COLOR.paper;
     ctx.fillRect(0, 0, w, h);
 
-    // ── top banner: which first-colour run ──
+    // ── BAND 1 · top banner: which first-colour run ──
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     if (s.first >= 0) {
+      const sw = 24;
       ctx.fillStyle = ROWCOL[s.first];
-      ctx.fillRect(x0 - 1, 28, 26, 26);
+      ctx.fillRect(x0 - 1, BANNER_Y - sw / 2, sw, sw);
       ctx.strokeStyle = COLOR.ink; ctx.lineWidth = 1.5;
-      ctx.strokeRect(x0 - 0.5, 28.5, 25, 25);
-      ctx.fillStyle = '#fff'; ctx.font = '700 14px "Oswald", sans-serif';
+      ctx.strokeRect(x0 - 0.5, BANNER_Y - sw / 2 + 0.5, sw - 1, sw - 1);
+      ctx.fillStyle = '#fff'; ctx.font = '700 13px "Oswald", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(ROWS[s.first], x0 + 12, 41);
+      ctx.fillText(ROWS[s.first], x0 - 1 + sw / 2, BANNER_Y + 1);
       ctx.textAlign = 'left';
       ctx.fillStyle = COLOR.ink; ctx.font = '700 15px "Oswald", sans-serif';
-      ctx.fillText('FIRST = ' + ROWS[s.first] + ' · DP 表', x0 + 36, 41);
+      ctx.fillText('固定首色 = ' + ROWS[s.first] + ' · 跑末位 DP', x0 + sw + 10, BANNER_Y);
     } else {
       ctx.fillStyle = COLOR.ink; ctx.font = '700 15px "Oswald", sans-serif';
-      ctx.fillText(s.phase === 'done' ? '三個首色加總 → 15' : '円円送禮物 · 固定首色 DP', x0 - 1, 41);
+      ctx.fillText(s.phase === 'done' ? '三個首色加總 → 15' : '円円送禮物 · 固定首色 DP', x0 - 1, BANNER_Y);
     }
+    // hairline under banner — clearly separates banner from the table
+    ctx.strokeStyle = '#e6ddc6'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0 - 40, RULE_Y); ctx.lineTo(w - 24, RULE_Y); ctx.stroke();
 
-    // ── column headers (coin #) ──
+    // ── BAND 2 · column headers (coin #) ──
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (let i = 1; i <= N; i++) {
-      ctx.fillStyle = COLOR.ink; ctx.font = '700 13px "Oswald", sans-serif';
-      ctx.fillText('#' + i, x0 + (i - 0.5) * cell, y0 - 14);
+      ctx.fillStyle = COLOR.dim; ctx.font = '700 13px "Oswald", sans-serif';
+      ctx.fillText('coin #' + i, x0 + (i - 0.5) * cell, COLHEAD_Y);
     }
     // row headers (swatch)
     for (let k = 0; k < 3; k++) {
@@ -223,30 +233,47 @@
       ctx.strokeRect(x0 - 1, y0 - 1, gridW + 2, gridH + 2);
     }
 
-    // ── lower band: three contribution chips + running total ──
-    const by = y0 + gridH + 30;
+    // ── BAND 4 · contribution chips as an equation: [R:7] + [G:4] + [B:4] = Σ ──
+    const bandTop = y0 + gridH + 22;           // clear gap below the grid
+    // separating hairline
+    ctx.strokeStyle = '#e6ddc6'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0 - 40, bandTop); ctx.lineTo(w - 24, bandTop); ctx.stroke();
+
+    const labelY = bandTop + 18;
+    const chipY  = bandTop + 46;               // chips on their own row, well below label
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.font = '600 12px "JetBrains Mono", monospace';
+    ctx.font = '600 11px "JetBrains Mono", monospace';
     ctx.fillStyle = COLOR.dim;
-    ctx.fillText('CONTRIB', x0 - 34, by);
+    ctx.fillText('每個首色的貢獻 (ok 過濾後加總)', x0 - 1, labelY);
+
     const doneFirsts = s.phase === 'done' ? 3
       : (s.first < 0 ? 0 : (s.phase === 'filter' ? s.first + 1 : s.first));
+    const chipW = 70, gap = 30;                // gap holds the "+" sign
     for (let fi = 0; fi < 3; fi++) {
-      const px = x0 + 56 + fi * 86;
+      const px = x0 + fi * (chipW + gap);
       const done = fi < doneFirsts;
-      ctx.fillStyle = done ? ROWCOL[fi] : '#eeeeee';
-      ctx.fillRect(px, by - 13, 72, 26);
-      ctx.strokeStyle = COLOR.ink; ctx.lineWidth = 1.4;
-      ctx.strokeRect(px + 0.5, by - 12.5, 71, 25);
+      ctx.fillStyle = done ? ROWCOL[fi] : '#f0f0f0';
+      ctx.fillRect(px, chipY - 16, chipW, 32);
+      ctx.strokeStyle = done ? COLOR.ink : '#d8d8d8'; ctx.lineWidth = 1.5;
+      ctx.strokeRect(px + 0.5, chipY - 15.5, chipW - 1, 31);
       ctx.fillStyle = done ? '#fff' : '#bbb';
-      ctx.font = '700 12px "JetBrains Mono", monospace';
+      ctx.font = '700 13px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(done ? `${ROWS[fi]}:${contrib[fi]}` : `${ROWS[fi]}:?`, px + 36, by + 1);
-      ctx.textAlign = 'left';
+      ctx.fillText(done ? `${ROWS[fi]}: ${contrib[fi]}` : `${ROWS[fi]}: ?`, px + chipW / 2, chipY + 1);
+      // "+" between chips
+      if (fi < 2) {
+        ctx.fillStyle = COLOR.dim; ctx.font = '700 18px "Oswald", sans-serif';
+        ctx.fillText('+', px + chipW + gap / 2, chipY);
+      }
     }
-    // running total
-    ctx.fillStyle = COLOR.keep; ctx.font = '700 17px "Oswald", sans-serif';
-    ctx.fillText('Σ = ' + s.running, x0 + 56 + 3 * 86 + 8, by + 1);
+    // "= Σ" total on the right
+    const eqX = x0 + 3 * (chipW + gap) - gap + 14;
+    ctx.fillStyle = COLOR.dim; ctx.font = '700 18px "Oswald", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('=', eqX, chipY);
+    ctx.fillStyle = (s.phase === 'done') ? COLOR.keep : COLOR.ink;
+    ctx.font = '700 22px "Oswald", sans-serif';
+    ctx.fillText(String(s.running), eqX + 22, chipY + 1);
   }
 
   function update() {
