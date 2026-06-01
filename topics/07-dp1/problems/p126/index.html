@@ -117,10 +117,20 @@
       </div>
     </div>
 
-    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>關鍵觀察</strong>：一般相鄰是否合法，只跟<strong>前一個 coin 的顏色</strong>有關（綠藍不相鄰）。
-      頭尾那一條額外限制則靠<strong>固定第一個顏色</strong>補回。多筆測資 ⇒ <strong>一次預處理所有 N</strong>，查表回答。
-    </p>
+    <div class="sc-dark-box" style="margin-top:12px;">
+      <div class="sc-dark-box__title">// 關鍵觀察 · 把限制拆成「相鄰」與「頭尾」兩類</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li><strong>「能不能接下一個」只看當前末位顏色</strong>：因為唯一的相鄰限制是「綠藍不相鄰」，
+            放第 i 個時只要知道第 i−1 個是什麼色就夠 ⇒ 這就是線性 DP 的「無後效性」，狀態只需<strong>末位顏色</strong>。</li>
+          <li><strong>頭尾那條限制比較特別</strong>：它把「第 1 個」和「第 N 個」綁在一起，是<strong>環形</strong>的，
+            線性 DP 從左往右掃時碰不到 ⇒ 要額外處理。</li>
+          <li><strong>處理頭尾的招：固定第一個 coin 的顏色</strong>。一旦首色固定，跑完 DP 後「末色」也知道了，
+            就能直接判斷首↔末這對行不行（細節見 §05）。</li>
+          <li><strong>多筆測資</strong>：答案只跟 N 有關 ⇒ <strong>一次預處理 <code>ans[1..10⁵]</code></strong>，每筆 O(1) 查表。</li>
+        </ol>
+      </div>
+    </div>
   </section>
 
   <!-- ============================================================
@@ -224,12 +234,58 @@
       </div>
     </div>
 
+    <!-- ===== 原理細解：為什麼「只檢查首末這一對」就夠 ===== -->
+    <div class="sc-dark-box" style="margin-top:14px;">
+      <div class="sc-dark-box__title">// WHY · 為什麼「固定首色 + 過濾末色」剛好補上頭尾這條限制</div>
+      <div class="sc-dark-box__body">
+        <p>把所有限制列出來，看誰已經被處理、誰還沒：</p>
+        <ol>
+          <li><strong>相鄰限制（共 N−1 條）</strong>：第 1↔2、2↔3、…、(N−1)↔N 都不能一藍一綠。
+            這些<strong>全被線性轉移擋掉了</strong> — <code>g[i]</code> 不接 <code>b[i−1]</code>、<code>b[i]</code> 不接 <code>g[i−1]</code>，
+            所以線性 DP 數出來的每一種，內部相鄰一定合法。</li>
+          <li><strong>頭尾限制（剩 1 條）</strong>：第 1↔N 也不能一藍一綠。這條是<strong>環形</strong>的 —— 在「一條直線」的結構裡，
+            第 1 個和第 N 個<strong>並不相鄰</strong>，所以線性轉移<strong>碰不到它</strong>，是唯一漏網的限制。</li>
+          <li><strong>關鍵</strong>：這條漏網限制<strong>只跟兩個格子有關 —— 第 1 個（首色）和第 N 個（末色）</strong>，中間 N−2 個格子完全不影響它合不合法。</li>
+          <li>所以只要<strong>同時知道首色與末色</strong>，就能判斷頭尾這對行不行。
+            做法：<strong>固定首色</strong>當已知，跑完 DP 後末色就是現成的狀態 ⇒ 對 <code>(首,末)</code> 套一次 <code>ok()</code> 取捨即可，
+            <strong>不必再檢查中間</strong>（中間早被相鄰限制管好了）。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      一句話：<strong>線性 DP 包辦了 N−1 條相鄰限制，只剩「首↔末」這 1 條環形限制漏掉；而它只看首色與末色兩格，所以「固定首色 + 末位過濾」正好補上。</strong>
+    </p>
+
     <pre class="sc-trace" style="margin-top:12px;"><span class="sc-trace__head">// endpoint rule · ok(first, last)</span>
 固定 first 後，最後一格 last 能不能計入答案：
-  last = R：一定可以
-  last = G：first 不能是 B
-  last = B：first 不能是 G
-也就是只排除 (first,last) = (G,B) 和 (B,G)。</pre>
+  last = R：一定可以（R 跟誰都不衝突）
+  last = G：first 不能是 B（否則頭=B、尾=G ⇒ 一藍一綠）
+  last = B：first 不能是 G（否則頭=G、尾=B ⇒ 一藍一綠）
+也就是只排除 (first,last) = (G,B) 和 (B,G) 這兩種首末組合。</pre>
+
+    <p style="margin-top:14px;font-size:14px;"><strong>過濾怎麼寫？</strong> 就是一個 <code>ok(x, y)</code> 判斷「x、y 是否<strong>不</strong>形成一藍一綠」，
+    加總末位時只收 <code>ok(first, last)</code> 為真的：</p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">endpoint.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="c">// 顏色 0=R 1=G 2=B。ok = 「x,y 不形成一藍一綠」</span>
+<span class="t">bool</span> <span class="f">ok</span><span class="p">(</span><span class="t">int</span> x<span class="p">,</span> <span class="t">int</span> y<span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">!((</span>x <span class="p">==</span> <span class="n">1</span> <span class="p">&amp;&amp;</span> y <span class="p">==</span> <span class="n">2</span><span class="p">)</span> <span class="p">||</span> <span class="p">(</span>x <span class="p">==</span> <span class="n">2</span> <span class="p">&amp;&amp;</span> y <span class="p">==</span> <span class="n">1</span><span class="p">));</span>   <span class="c">// 擋 (G,B) 與 (B,G)</span>
+<span class="p">}</span>
+
+<span class="c">// 跑完一個 first 的 DP 後，dp[last] = 末位該色的方法數</span>
+<span class="t">int</span> add <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="t">int</span> last <span class="p">=</span> <span class="n">0</span><span class="p">;</span> last <span class="p">&lt;</span> <span class="n">3</span><span class="p">;</span> last<span class="p">++)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="f">ok</span><span class="p">(</span>first<span class="p">,</span> last<span class="p">))</span> add <span class="p">=</span> <span class="p">(</span>add <span class="p">+</span> dp<span class="p">[</span>last<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>   <span class="c">// 只收頭尾合法的末位</span>
+ans<span class="p">[</span>n<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>ans<span class="p">[</span>n<span class="p">]</span> <span class="p">+</span> add<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span></pre>
+    </div>
 
     <p style="margin-top:14px;font-size:14px;"><strong>N = 3 直接套（這就是 code 在做的事）</strong>：每個 first 跑到 n=3 的末位 (R,G,B) 分佈，再用 ok() 過濾加總：</p>
     <pre class="sc-trace"><span class="sc-trace__head">// N = 3 · 三個 first 各自貢獻</span>
