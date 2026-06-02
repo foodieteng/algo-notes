@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P128 · 02 Code // 取數字2 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P128
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/128/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.02
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">取數字 2</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ☆ ☆ ☆</span>
+      C++17 · 一維 DP（dp[i−K]）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · dp[i] = max(dp[i−1], dp[i−K]+a[i])<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      和「取數字1」的滾動版不同，這裡「取」要接 <code>dp[i−K]</code>（往回 K 格），K 不固定，
+      所以最直接就是<strong>留整條 dp[]</strong>、用 1-indexed 讓 <code>dp[0]=0</code> 自然當 base。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p128.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">1005</span><span class="p">;</span>
+<span class="t">long long</span> a<span class="p">[</span>MAXN<span class="p">];</span>    <span class="c">// a[1..n] 陣列元素</span>
+<span class="t">long long</span> dp<span class="p">[</span>MAXN<span class="p">];</span>   <span class="c">// dp[i] = 只看 a[1..i] 的最大合法和</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    <span class="t">int</span> n<span class="p">,</span> k<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> n <span class="p">&gt;&gt;</span> k<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> n<span class="p">;</span> i<span class="p">++)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
+
+    dp<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>                         <span class="c">// 空集合</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">long long</span> prev <span class="p">=</span> <span class="p">(</span>i <span class="p">-</span> k <span class="p">&gt;=</span> <span class="n">0</span><span class="p">)</span> <span class="p">?</span> dp<span class="p">[</span>i <span class="p">-</span> k<span class="p">]</span> <span class="p">:</span> <span class="n">0</span><span class="p">;</span>  <span class="c">// 取 a[i] ⇒ 接前 K 格</span>
+        <span class="t">long long</span> take <span class="p">=</span> prev <span class="p">+</span> a<span class="p">[</span>i<span class="p">];</span>  <span class="c">// 取這格：往回跳 K 格保證距離 ≥ K</span>
+        <span class="t">long long</span> skip <span class="p">=</span> dp<span class="p">[</span>i <span class="p">-</span> <span class="n">1</span><span class="p">];</span>    <span class="c">// 不取這格：沿用上一格最佳</span>
+        dp<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>skip<span class="p">,</span> take<span class="p">);</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> dp<span class="p">[</span>n<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="f">solve</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼 1-indexed？</strong> 讓 <code>dp[0]=0</code> 直接當「空前綴」的 base —
+      當 <code>i ≤ K</code>（取了這格、前面湊不到 K 格）時，<code>i−k</code> 可能為 0，<code>dp[0]=0</code> 正好代表「只取這一個」。
+      <code>(i − k &gt;= 0)</code> 的判斷只在 <code>k &gt; i</code> 時擋掉負索引（其餘情況一定成立）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>讀入</td><td>讀 N 個 a[i]</td><td class="mono">O(N)</td></tr>
+        <tr><td>轉移</td><td>每個 i 做一次 max、一次加法、一次查 dp[i−K]</td><td class="mono">O(1)</td></tr>
+        <tr><td>掃完整列</td><td>N 個元素各一次</td><td class="mono">O(N)</td></tr>
+        <tr><td>全部 T 筆</td><td>—</td><td class="mono">O(T · N)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">每筆 O(N)，總 <strong>O(T · N)</strong></div>
+      <div class="sc-formula__hint">T ≤ 10、N ≤ 1000 ⇒ 約 10⁴ 次運算，秒過</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N)</strong> 每筆</td><td>單遍掃描</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>查 dp[i−K] ⇒ 留整條 dp[]（可壓到 O(K) 環狀緩衝）</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純迴圈</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>一次 max + 一次加法</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>接 dp[i−K] 而非 dp[i−2]</strong></td>
+          <td>這是和「取數字1」唯一的差別。距離 ≥ K ⇒ 上一個被取的 index ≤ i−K ⇒ 接 <code>dp[i−K]</code>。寫成 dp[i−2] 只在 K=2 時對。</td>
+        </tr>
+        <tr>
+          <td><strong>i − K 可能 ≤ 0</strong></td>
+          <td>當 K &gt; i 時 <code>i−K</code> 為負；要回退到 <code>dp[0]=0</code>（等於只取這一個）。用 <code>(i−k&gt;=0)?dp[i−k]:0</code> 守住。</td>
+        </tr>
+        <tr>
+          <td><strong>不能用滾動兩變數</strong></td>
+          <td>取數字1 只看前兩格可滾動；這裡 K 任意 ⇒ 至少要留 dp[i−K]。直接開整條 dp[] 最穩（也可 O(K) 環狀緩衝）。</td>
+        </tr>
+        <tr>
+          <td><strong>K = 1（無限制）</strong></td>
+          <td>取 a[i] 接 dp[i−1]，skip 也是 dp[i−1] ⇒ dp[i]=dp[i−1]+a[i] = 全取總和。轉移自動涵蓋，不必特判。</td>
+        </tr>
+        <tr>
+          <td><strong>多筆要重置嗎？</strong></td>
+          <td>每筆都從 i=1 重填 dp[1..n]、且只讀到 dp[n]，<strong>不必清空</strong>（不會用到上一筆的殘值）。dp[0] 每筆設 0 即可。</td>
+        </tr>
+        <tr>
+          <td><strong>總和型別</strong></td>
+          <td>aᵢ ≤ 1000、N ≤ 1000 ⇒ 和最大 10⁶，int 綽綽有餘；仍用 <code>long long</code> 保險、習慣。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 狀態定義（1-indexed）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// state</span>
+dp[i] = 只看 a[1..i]、任兩個被取的距離 >= K 時的最大和
+dp[0] = 0  // 空前綴，當 base
+答案 = dp[n]</pre>
+
+    <p><strong>② 轉移（兩個選擇取大）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// transition</span>
+skip = dp[i-1]              // 不取 a[i] → 沿用上一格
+take = dp[i-K] + a[i]       // 取 a[i] → 上一個被取的在 <= i-K
+dp[i] = max(skip, take)
+// i-K <= 0 時 take 接 dp[0]=0 → 等於「只取 a[i] 一個」</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      「距離 ≥ K」⇒ 若取了 a[i]，前一個被取的 index j 滿足 i − j ≥ K，即 j ≤ i − K，
+      其最佳和已濃縮在 dp[i−K]（dp 為前綴最大、單調不減）。</p>
+
+    <p><strong>③ 與「取數字1」的對應</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// equivalence</span>
+取數字1（不相鄰）= 距離 >= 2  → dp[i] = max(dp[i-1], dp[i-2] + a[i])
+取數字2（距離 >= K）          → dp[i] = max(dp[i-1], dp[i-K] + a[i])
+把「2」換成「K」即可，其餘完全相同
+K=2 退化回取數字1；K=1 變成全取</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">留整條 dp[]：skip=dp[i−1]、take=dp[i−K]+a[i]，dp[i]=max 兩者，O(N)。</div>
+    <div class="sc-summary-bar__detail">取就接 dp[i−K]（不是 dp[i−2]）；i−K≤0 回退 dp[0]=0。K=1 全取、K=2 退回取數字1。</div>
+  </div>
+
+</body>
+</html>
