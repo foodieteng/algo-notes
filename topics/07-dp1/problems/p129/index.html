@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P129 · 01 概念 // 合成円円 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P129
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/129/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.02
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">合成円円</h1>
+    <p class="sc-mast__subtitle">// 區間 DP · 相鄰合併最小成本（石子合併）</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 區間 DP（matrix-chain / 石子合併）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N³)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>N 隻円円排成一列，各有「糟糕值」<code>a₁, …, a_N</code>。<strong>只有相鄰兩隻能合成</strong>；
+      每次合成前，一隻円円要吃掉「等於自己糟糕值」的高棕櫚，所以一次合成的高棕櫚成本 =
+      <strong>被合的兩隻糟糕值之和</strong>，合成後新円円的糟糕值 = 兩者之和。</p>
+      <p style="margin-top:6px;">把全部 N 隻合成成一隻，求<strong>最小總高棕櫚</strong>。
+      多筆 <code>T ≤ 10</code>，<code>1 ≤ N ≤ 100</code>，<code>1 ≤ aᵢ ≤ 1000</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      這是經典的「<strong>石子合併 / matrix-chain</strong>」：最終糟糕值固定 = 總和（與順序無關），
+      但每次合成付的成本會疊加，<strong>合成順序</strong>決定總成本。範例 <code>[1,2,3] → 9</code>：
+      先合 1+2（付 3）得 3，再合 3+3（付 6）⇒ 3+6 = 9（比先合 2+3 的 11 省）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用區間 DP
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用區間 DP<span class="sc-section__title-en">// Why Interval DP</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉所有合成順序</span>
+            <span class="sc-ko-card__o">O(卡塔蘭)</span>
+          </div>
+          <div class="sc-ko-card__body">N−1 次合成的二元樹形狀數 = 卡塔蘭數，指數級爆炸 ⇒ N=100 完全不可能。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">貪心合最小相鄰對</span>
+            <span class="sc-ko-card__o">O(N²)</span>
+          </div>
+          <div class="sc-ko-card__body">「每次合當前最小的相鄰兩隻」<strong>會選錯</strong>：不能任意重排、相鄰限制下貪心非最佳（≠ Huffman）。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">區間 DP</span>
+          <span class="sc-ko-card__o">O(N³)</span>
+        </div>
+        <div class="sc-ko-card__body">合成 [i..j] 的最後一步一定切在某個 k：左半 [i..k]、右半 [k+1..j] 先各自合好，再合兩者。枚舉 k 取最小。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼貪心錯？</strong> 因為「相鄰才能合」⇒ 不像 Huffman 可任意配對。
+      最小相鄰對未必該先合（合了會改變後續相鄰結構）。DP 對每個區間枚舉所有切點，才不漏最佳。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 狀態與轉移
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">狀態與轉移<span class="sc-section__title-en">// State & Transition</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>dp[i][j]</code> = 把 <code>a[i..j]</code> 合成成「一隻」所需的最小總高棕櫚。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">dp[i][j] = min<sub>i≤k&lt;j</sub>( <strong>dp[i][k] + dp[k+1][j]</strong> ) + <strong>sum(i..j)</strong></div>
+      <div class="sc-formula__hint">
+        切點 k：左半 [i..k]、右半 [k+1..j] 各自合好（子問題）；最後把兩隻合起來那一步要付 <strong>sum(i..j)</strong>（兩隻糟糕值之和 = 整段總和）
+      </div>
+    </div>
+
+    <ol style="margin-top:10px;">
+      <li><strong>base</strong> · <code>dp[i][i] = 0</code>（單一隻不必合成）。</li>
+      <li><strong>關鍵觀察</strong> · 不論 k 切哪裡，最後一步合 [i..j] 都要付 <code>sum(i..j)</code> ⇒ 這項是常數，只需最小化兩個子區間之和。</li>
+      <li><strong>填表順序</strong> · 按<strong>區間長度 len 由小到大</strong>填（先短後長），保證用到的子區間已算好。</li>
+      <li><strong>答案</strong> · <code>dp[1][N]</code>。</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · dp 表按區間長度填<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>a = [1, 2, 3]</code>（答案 9）。左邊是 <code>dp[i][j]</code> 上三角表，
+    綠色對角線是 base；每算一格就枚舉切點 <code>k</code>，右邊顯示
+    <span style="color:#6f93b4">左 dp[i][k]</span> +
+    <span style="color:#b07c2f">右 dp[k+1][j]</span> +
+    <span style="color:#a8830d">sum(i..j)</span> 的拆解，取最小：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · INTERVAL DP (a = [1,2,3])</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="360" style="height:360px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 準備填 dp 表
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#5fa866">■</span> base 對角線 / 已定案的最佳格 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> 正在計算的 dp[i][j] &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 左子區間 dp[i][k] &nbsp;·&nbsp;
+      <span style="color:#d4a868">■</span> 右子區間 dp[k+1][j]
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 正確性
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼這個轉移是對的<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 最後一步切點 + 成本與順序的關係</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>把 [i..j] 合成成一隻的整個過程，最後<strong>一定有「最後一次合成」</strong>：它把某個 [i..k] 已合成的一隻、與 [k+1..j] 已合成的一隻合在一起。</li>
+          <li>因為只能合相鄰、且結果是連續區段，這個 k 必落在 <code>i ≤ k &lt; j</code>。枚舉所有 k 就涵蓋所有可能的最後一步。</li>
+          <li>最後一步的成本 = 兩隻糟糕值之和 = <strong>sum(i..j)</strong>（合成不改變總糟糕值，整段加起來就是 sum）。<strong>與 k 無關</strong>。</li>
+          <li>左右兩半的合成彼此獨立、且只動到自己區段 ⇒ 子問題最佳和能拼出大區間最佳（<strong>最優子結構</strong>）。</li>
+          <li>所以 <code>dp[i][j] = sum(i..j) + min_k( dp[i][k] + dp[k+1][j] )</code>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      換個角度：每個原始 aₓ 對總成本的貢獻 = <code>aₓ ×（它在合成樹中的深度）</code>。
+      合成順序就是在決定這棵<strong>二元合成樹的形狀</strong>，DP 等於在所有合法（相鄰）樹形中找加權路徑和最小者。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">O(N²) 個區間 × 每個枚舉 O(N) 個切點 = <strong>O(N³)</strong></div>
+      <div class="sc-formula__hint">N ≤ 100 ⇒ ~10⁶ 次、T ≤ 10 ⇒ ~10⁷，秒過；用前綴和讓 sum(i..j) 是 O(1)</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N³)</strong></td><td>區間數 O(N²) × 切點 O(N)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N²)</strong></td><td>dp[i][j] 表 + O(N) 前綴和</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代填表）</td><td>按 len 由小到大</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每步一次加法一次比較</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>合成 [i..j] 的最後一步一定切在某個 k，且那一步固定付 sum(i..j)。</strong><br/>
+      所以只要枚舉切點、最小化左右子區間成本之和 —<br/>
+      <strong>dp[i][j] = min_k(dp[i][k] + dp[k+1][j]) + sum(i..j)，按區間長度填表 O(N³)。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">石子合併區間 DP：dp[i][j]=min_k(dp[i][k]+dp[k+1][j])+sum(i..j)，按長度填表 O(N³)。</div>
+    <div class="sc-summary-bar__detail">最後一步切點 k、固定付 sum(i..j)；貪心不行（相鄰限制 ≠ Huffman）。前綴和讓 sum 為 O(1)。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p129-merge.js"></script>
+</body>
+</html>

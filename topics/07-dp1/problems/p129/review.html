@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P129 · 03 Review // 合成円円 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P129
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/129/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.02
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">合成円円</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>相鄰合併最小成本 = 經典「石子合併 / matrix-chain」區間 DP。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>dp[i][j]</code> = 把 a[i..j] 合成一隻的最小總高棕櫚。</td></tr>
+        <tr><td>轉移</td>
+            <td><code>dp[i][j] = min_k(dp[i][k]+dp[k+1][j]) + sum(i..j)</code>。</td></tr>
+        <tr><td>核心觀察</td>
+            <td>最後一步合 [i..j] 固定付 <code>sum(i..j)</code>，與切點 k 無關。</td></tr>
+        <tr><td>填表順序</td>
+            <td>區間長度 len 由小到大（無後效性）。</td></tr>
+        <tr><td>複雜度</td>
+            <td>O(N³)；前綴和讓 sum(i..j) O(1)。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">轉移推導</span>
+      <h4>解釋 <code>dp[i][j]=min_k(dp[i][k]+dp[k+1][j])+sum(i..j)</code>：k 代表什麼？為什麼要加 sum(i..j)？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">為何貪心錯</span>
+      <h4>「每次合當前最小的相鄰兩隻」是貪心。為什麼這題不能用？和 Huffman 編碼差在哪？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">填表順序</span>
+      <h4>為什麼一定要按「區間長度由小到大」填？直接 <code>for i for j</code> 會出什麼問題？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">前綴和</span>
+      <h4>若每次都用迴圈重算 sum(i..j) 而非前綴和，複雜度變成多少？會超時嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">成本本質</span>
+      <h4>為什麼總成本 = 每個 aₓ 乘上「它在合成樹中的深度」？這對最佳化有什麼啟發？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 填 dp 表 [1,2,3]<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>1-indexed，<code>dp[i][i]=0</code>，prefix = [0,1,3,6]。按長度填：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>3
+1 2 3       // a[1]=1 a[2]=2 a[3]=3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// len = 2</span>
+dp[1][2]: sum=a1+a2=3, k=1 → dp[1][1]+dp[2][2]+3 = 0+0+3 = 3
+dp[2][3]: sum=a2+a3=5, k=2 → dp[2][2]+dp[3][3]+5 = 0+0+5 = 5</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// len = 3  (整段 [1..3], sum=6)</span>
+k=1: dp[1][1]+dp[2][3]+6 = 0 + 5 + 6 = 11
+k=2: dp[1][2]+dp[3][3]+6 = 3 + 0 + 6 = 9   ← 較小
+dp[1][3] = 9   (最佳切點 k=2)</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>dp[1][3] = 9</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：兩種切法都要付最後一步的 <code>sum=6</code>；差別在子問題 —
+      <code>k=2</code> 先合 [1,2]（付 3）比 <code>k=1</code> 先合 [2,3]（付 5）省。
+      對應題目：<strong>先合 1+2 再合 (3)+3 = 3+6 = 9</strong>，比先合 2+3 的 5+6=11 更省。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">較大例</span>
+      <h4>對 <code>[1,4,2,5,3]</code>（答案 35），dp[1][5] 的最佳切點 k 是多少？對應怎麼拆？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">環形版</span>
+      <h4>若円円排成<strong>環</strong>（首尾也相鄰可合），怎麼用同一套 DP 解？複雜度變多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">加速</span>
+      <h4>O(N³) 對更大的 N（如 N=2000）會太慢。有什麼經典優化能降到 O(N²)？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 轉移推導</span>
+      <p>
+        <code>k</code> 是「<strong>最後一次合成</strong>」的切點：把 [i..j] 合成一隻的過程，最後一步必是把
+        左段 [i..k] 已合成的一隻、與右段 [k+1..j] 已合成的一隻合起來。
+      </p>
+      <p>
+        加 <code>sum(i..j)</code>，因為這最後一步合的兩隻糟糕值之和 = 整段總和（合成不改變總糟糕值）。
+        左右兩半各自合成的最小成本就是子問題 <code>dp[i][k]</code>、<code>dp[k+1][j]</code>，枚舉 k 取最小即得。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 為何貪心錯</span>
+      <p>
+        Huffman 能把<strong>任意</strong>兩個節點配對（不限相鄰）⇒ 貪心合最小兩個最佳。
+        本題<strong>只能合相鄰</strong>，合了還會改變剩下序列的相鄰結構，
+        「眼前最小相鄰對」先合未必導向全域最小。
+      </p>
+      <p>
+        反例可構造：相鄰限制下被迫多次搬動大數，使某些大數深度被拉高。一定要 DP 對每個區間枚舉切點。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 填表順序</span>
+      <p>
+        算 <code>dp[i][j]</code> 依賴<strong>更短</strong>的子區間 <code>dp[i][k]</code>（長度 k−i+1 &lt; len）與
+        <code>dp[k+1][j]</code>（長度 j−k &lt; len）。
+      </p>
+      <p>
+        若直接 <code>for i=1..n for j=i..n</code> 順序填，算 dp[i][j] 時 <code>dp[k+1][j]</code>（同 j、起點較大）
+        <strong>可能還沒算</strong> ⇒ 讀到 0 而出錯。按長度由小到大（或記憶化遞迴）才保證依賴都先就緒。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 前綴和</span>
+      <p>
+        每個 (i, j, k) 三元組都需要 sum(i..j)。若每次用迴圈重算是 O(N)，三層迴圈外再乘一層 ⇒
+        <strong>O(N⁴)</strong>。N=100 時 ~10⁸、T≤10 ⇒ 10⁹，<strong>有超時風險</strong>。
+      </p>
+      <p>
+        前綴和把 sum(i..j)=prefix[j]−prefix[i−1] 降到 O(1)，總複雜度回到 O(N³) ≈ 10⁶，穩過。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 成本本質</span>
+      <p>
+        把合成過程看成一棵<strong>二元樹</strong>：葉子是原始 aₓ，每個內部節點是一次合成。
+        一個 aₓ 每被「往上合一層」就再被計入一次成本 ⇒ 它對總成本的貢獻 = <code>aₓ × 深度</code>。
+        總成本 = Σ aₓ × depth(x)。
+      </p>
+      <p>
+        啟發：最佳化就是<strong>讓大的 aₓ 深度盡量小</strong>（少被重複加）。若無相鄰限制這就是 Huffman；
+        有相鄰限制則只能在合法樹形中用區間 DP 找最小加權路徑和。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 較大例</span>
+      <p>
+        <code>[1,4,2,5,3]</code>：dp[1][5] = 35，最佳切點 <strong>k = 3</strong> ⇒
+        左 <code>dp[1][3] = 12</code>（合 [1,4,2]）+ 右 <code>dp[4][5] = 8</code>（合 [5,3]）+ sum(1..5)=15 ⇒ 12+8+15 = 35。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 關鍵子表</span>
+dp[1][2]=5  dp[2][3]=6  dp[3][4]=7  dp[4][5]=8
+dp[1][3]=12 dp[2][4]=17 dp[3][5]=17
+dp[1][4]=24 dp[2][5]=28
+dp[1][5]=35 (k=3)</pre>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 環形版</span>
+      <p>
+        標準技巧：<strong>把陣列複製一份接在後面</strong>（長度 2N），在這條長為 2N 的序列上跑同一套區間 DP，
+        答案 = <code>min over 起點 i of dp[i][i+N−1]</code>（每個長度 N 的連續視窗 = 一種「斷開環的方式」）。
+      </p>
+      <p>複雜度 O((2N)³) = O(N³)（常數變大）。本題未提環形，僅作延伸。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 加速</span>
+      <p>
+        經典「<strong>四邊形不等式（Knuth–Yao）優化</strong>」：本題滿足區間單調性，最佳切點
+        <code>opt[i][j]</code> 對 i、j 單調 ⇒ 內層 k 的搜尋範圍可限制在 <code>opt[i][j−1] ≤ k ≤ opt[i+1][j]</code>，
+        把 O(N³) 降到 <strong>O(N²)</strong>。
+      </p>
+      <p>
+        本題 N ≤ 100 不需要；但面對 N 上千的石子合併變體，這是標準加速法。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W07 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會石子合併區間 DP 與「最後一步切點」框架。</div>
+    <div class="sc-summary-bar__detail">[1,2,3]→9（先合 1+2 再合）；環形複製 2N、大 N 用四邊形不等式降 O(N²)。</div>
+  </div>
+
+</body>
+</html>

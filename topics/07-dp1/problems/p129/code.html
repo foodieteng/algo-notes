@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P129 · 02 Code // 合成円円 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P129
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/129/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.02
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">合成円円</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 區間 DP（前綴和）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N³)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N²)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 區間 DP 按長度填表<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      1-indexed。先算前綴和讓 <code>sum(i..j)</code> O(1)；外層跑<strong>區間長度 len</strong>由小到大，
+      內層枚舉左端 i（右端 j = i+len−1），最內層枚舉切點 k。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p129.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">105</span><span class="p">;</span>
+<span class="t">long long</span> a<span class="p">[</span>MAXN<span class="p">];</span>            <span class="c">// a[1..n] 各円円糟糕值</span>
+<span class="t">long long</span> prefix<span class="p">[</span>MAXN<span class="p">];</span>       <span class="c">// prefix[i] = a[1]+...+a[i]</span>
+<span class="t">long long</span> dp<span class="p">[</span>MAXN<span class="p">][</span>MAXN<span class="p">];</span>     <span class="c">// dp[i][j] = 合成 a[i..j] 的最小高棕櫚</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    <span class="t">int</span> n<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> n<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> n<span class="p">;</span> i<span class="p">++)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
+
+    prefix<span class="p">[</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> n<span class="p">;</span> i<span class="p">++)</span> prefix<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> prefix<span class="p">[</span>i <span class="p">-</span> <span class="n">1</span><span class="p">]</span> <span class="p">+</span> a<span class="p">[</span>i<span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> n<span class="p">;</span> i<span class="p">++)</span> dp<span class="p">[</span>i<span class="p">][</span>i<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>   <span class="c">// 單一円円不必合成</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> len <span class="p">=</span> <span class="n">2</span><span class="p">;</span> len <span class="p">&lt;=</span> n<span class="p">;</span> len<span class="p">++)</span> <span class="p">{</span>        <span class="c">// 區間長度由小到大</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">+</span> len <span class="p">-</span> <span class="n">1</span> <span class="p">&lt;=</span> n<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+            <span class="t">int</span> j <span class="p">=</span> i <span class="p">+</span> len <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
+            <span class="t">long long</span> sum <span class="p">=</span> prefix<span class="p">[</span>j<span class="p">]</span> <span class="p">-</span> prefix<span class="p">[</span>i <span class="p">-</span> <span class="n">1</span><span class="p">];</span>  <span class="c">// 合 [i..j] 那一步固定付的成本</span>
+            <span class="t">long long</span> best <span class="p">=</span> LLONG_MAX<span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> k <span class="p">=</span> i<span class="p">;</span> k <span class="p">&lt;</span> j<span class="p">;</span> k<span class="p">++)</span> <span class="p">{</span>          <span class="c">// 枚舉最後一步的切點</span>
+                <span class="t">long long</span> cand <span class="p">=</span> dp<span class="p">[</span>i<span class="p">][</span>k<span class="p">]</span> <span class="p">+</span> dp<span class="p">[</span>k <span class="p">+</span> <span class="n">1</span><span class="p">][</span>j<span class="p">]</span> <span class="p">+</span> sum<span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span>cand <span class="p">&lt;</span> best<span class="p">)</span> best <span class="p">=</span> cand<span class="p">;</span>
+            <span class="p">}</span>
+            dp<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">=</span> best<span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> dp<span class="p">[</span><span class="n">1</span><span class="p">][</span>n<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="f">solve</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>填表順序為何用 len？</strong> 算 <code>dp[i][j]</code> 需要更短的子區間 <code>dp[i][k]</code>、<code>dp[k+1][j]</code>（長度都 &lt; len），
+      所以先把所有<strong>較短</strong>區間算完，長區間才能正確取用 — 這正是「由小到大」的無後效性。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>前綴和</td><td>一遍掃出 prefix[]</td><td class="mono">O(N)</td></tr>
+        <tr><td>區間數</td><td>(len, i) 對 ≈ N²/2 個</td><td class="mono">O(N²)</td></tr>
+        <tr><td>每個區間枚舉切點</td><td>k 從 i 到 j−1，最多 N 個</td><td class="mono">O(N)</td></tr>
+        <tr><td>sum(i..j)</td><td>前綴和相減</td><td class="mono">O(1)</td></tr>
+        <tr><td>全部 T 筆</td><td>—</td><td class="mono">O(T · N³)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">O(N²) 區間 × O(N) 切點 = <strong>O(N³)</strong> 每筆</div>
+      <div class="sc-formula__hint">N ≤ 100 ⇒ ~10⁶、T ≤ 10 ⇒ ~10⁷，秒過</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N³)</strong> 每筆</td><td>三層迴圈 len / i / k</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N²)</strong></td><td>dp 表；前綴和 O(N)</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每步一次加法一次比較</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>填表順序必須按 len</strong></td>
+          <td>若直接 <code>for i for j</code> 順序填，算 dp[i][j] 時 dp[k+1][j] 可能還沒算好 ⇒ 錯。一定要<strong>由短到長</strong>（或記憶化遞迴）。</td>
+        </tr>
+        <tr>
+          <td><strong>sum 加在外層、與 k 無關</strong></td>
+          <td>「合 [i..j] 那一步付 sum(i..j)」是固定的，<strong>對每個 k 都要加</strong>。常見錯誤是漏加或只在某些 k 加。</td>
+        </tr>
+        <tr>
+          <td><strong>切點範圍 i ≤ k &lt; j</strong></td>
+          <td>k=j 會讓右半 [j+1..j] 空、左半就是整段 ⇒ 無效切。k 必須 <code>&lt; j</code> 才能真的二分。</td>
+        </tr>
+        <tr>
+          <td><strong>用前綴和</strong></td>
+          <td>每個 (i,j,k) 都要 sum(i..j)。若每次重算 O(N) ⇒ 總 O(N⁴) 可能超時。前綴和讓它 O(1)。</td>
+        </tr>
+        <tr>
+          <td><strong>貪心不可</strong></td>
+          <td>「相鄰才能合」≠ Huffman（可任意配對）。最小相鄰對先合未必最佳，務必 DP。</td>
+        </tr>
+        <tr>
+          <td><strong>型別</strong></td>
+          <td>aᵢ ≤ 1000、N ≤ 100 ⇒ 總和 ≤ 10⁵，成本上界約 N×總和 ≈ 10⁷，int 夠；用 <code>long long</code> 保險。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 狀態定義</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// state</span>
+dp[i][j] = 把連續區段 a[i..j] 全部合成成「一隻」的最小總高棕櫚
+dp[i][i] = 0          // 單一隻，不必合
+答案 = dp[1][n]</pre>
+
+    <p><strong>② 轉移（枚舉最後一步切點 k）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// transition</span>
+sum = prefix[j] - prefix[i-1]            // 合 [i..j] 那步必付
+dp[i][j] = min over k in [i, j-1] of
+             dp[i][k] + dp[k+1][j] + sum
+// 左半先合成一隻、右半先合成一隻、再合兩者(付 sum)</pre>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      sum 與 k 無關 ⇒ 也可寫成 <code>sum + min_k(dp[i][k]+dp[k+1][j])</code>，一樣的意思。</p>
+
+    <p><strong>③ 為什麼按長度填</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// fill order</span>
+len = 2,3,...,n            // 先短後長
+  i = 1..n-len+1, j = i+len-1
+算 dp[i][j] 用到的 dp[i][k]、dp[k+1][j]
+長度都 < len → 已經算好 → 無後效性成立</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">前綴和 + 區間 DP：len 由小到大填，dp[i][j]=min_k(dp[i][k]+dp[k+1][j])+sum(i..j)，O(N³)。</div>
+    <div class="sc-summary-bar__detail">填表務必按長度；sum 對每個 k 都加；k 範圍 [i,j−1]；前綴和讓 sum 為 O(1)。</div>
+  </div>
+
+</body>
+</html>
