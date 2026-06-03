@@ -123,29 +123,35 @@
   function geom() {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
-    const padTop = 56, padLeft = 70;
-    const cell = Math.min(64, (Math.min(w * 0.52, h - padTop - 40)) / N);
-    const gx0 = padLeft;
-    const gy0 = padTop;
-    // right panel for the array + candidate breakdown
-    const panelX = gx0 + cell * N + 56;
-    return { w, h, cell, gx0, gy0, panelX };
+    // Two bands: left = dp matrix, right = array + breakdown panel.
+    // Give the matrix the left ~46% and a comfortable row-label gutter.
+    const labelGutter = 42;                 // room for "i=1" row labels
+    const leftBandX = 24 + labelGutter;     // matrix grid origin x
+    const leftBandW = w * 0.46 - labelGutter;
+    const cell = Math.min(78, leftBandW / N, (h - 110) / N);
+    const gridH = cell * N;
+    const gx0 = leftBandX;
+    // vertically center the matrix in the canvas (leave room for the title row)
+    const gy0 = Math.max(54, (h - gridH) / 2 + 14);
+    // right panel starts past the matrix with a clear ~64px gap
+    const panelX = Math.max(gx0 + cell * N + 64, w * 0.52);
+    return { w, h, cell, gx0, gy0, panelX, gridH, labelGutter };
   }
 
   function draw() {
     const s = steps[step];
     const g = geom();
-    const { w, h, cell, gx0, gy0, panelX } = g;
+    const { w, h, cell, gx0, gy0, panelX, labelGutter } = g;
 
     ctx.fillStyle = COLOR.paper;
     ctx.fillRect(0, 0, w, h);
 
-    // title for matrix
+    // title for matrix — lifted well above the column headers
     ctx.fillStyle = COLOR.dim;
     ctx.font = '600 12px "JetBrains Mono", monospace';
     ctx.textAlign = 'left';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText('dp[i][j]  (i = 列, j = 行)', gx0, gy0 - 10);
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('dp[i][j]   i = 列 · j = 行', gx0 - labelGutter + 2, gy0 - 30);
 
     const key = (i, j) => i + ',' + j;
 
@@ -154,7 +160,7 @@
     for (let j = 1; j <= N; j++) {
       ctx.fillStyle = COLOR.dim;
       ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-      ctx.fillText('j=' + j, gx0 + (j - 1) * cell + cell / 2, gy0 - 1);
+      ctx.fillText('j=' + j, gx0 + (j - 1) * cell + cell / 2, gy0 - 5);
     }
     for (let i = 1; i <= N; i++) {
       ctx.fillStyle = COLOR.dim;
@@ -200,16 +206,18 @@
       }
     }
 
-    // ── right panel: array + split breakdown ──
-    let py = gy0 + 2;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    // ── right panel: array (top band) + split breakdown (mid band) ──
+    const panelW = w - panelX - 24;
+    // ARRAY BAND — sits near the matrix's top edge
+    let py = gy0;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = COLOR.dim;
     ctx.font = '600 12px "JetBrains Mono", monospace';
-    ctx.fillText('a[1..' + N + ']', panelX, py);
-    py += 18;
+    ctx.fillText('a[1..' + N + ']', panelX, py + 2);
+    py += 14;
 
-    // array cells
-    const ac = Math.min(48, ( w - panelX - 24) / N);
+    const ac = Math.min(52, panelW / N);
+    const arrTop = py;
     for (let i = 1; i <= N; i++) {
       const x = panelX + (i - 1) * ac;
       let inActive = s.active && i >= s.active[0] && i <= s.active[1];
@@ -219,62 +227,74 @@
       if (inLeft)  fill = 'rgba(143,179,212,0.55)';
       if (inRight) fill = 'rgba(212,168,104,0.55)';
       ctx.fillStyle = fill;
-      ctx.fillRect(x, py, ac - 3, ac - 3);
+      ctx.fillRect(x, arrTop, ac - 4, ac - 4);
       ctx.strokeStyle = inActive ? COLOR.active : COLOR.arrStroke;
       ctx.lineWidth = inActive ? 2 : 1;
-      ctx.strokeRect(x + 0.5, py + 0.5, ac - 4, ac - 4);
+      ctx.strokeRect(x + 0.5, arrTop + 0.5, ac - 5, ac - 5);
       ctx.fillStyle = COLOR.text;
-      ctx.font = '700 ' + Math.round(ac * 0.36) + 'px "JetBrains Mono", monospace';
+      ctx.font = '700 ' + Math.round(ac * 0.34) + 'px "JetBrains Mono", monospace';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(A[i]), x + (ac - 3) / 2, py + (ac - 3) / 2);
+      ctx.fillText(String(A[i]), x + (ac - 4) / 2, arrTop + (ac - 4) / 2);
       ctx.fillStyle = COLOR.dim;
       ctx.font = '500 9px "JetBrains Mono", monospace';
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(String(i), x + (ac - 3) / 2, py + ac);
+      ctx.fillText(String(i), x + (ac - 4) / 2, arrTop + ac - 2);
     }
-    py += ac + 24;
 
-    // split breakdown chips
+    // BREAKDOWN BAND — generous gap below the array, roomy line spacing
+    py = arrTop + ac + 30;
+    const valX = panelX + Math.min(210, panelW - 70);   // right-aligned value column
+    const LH = 27;                                       // line height
+
     if (s.phase === 'compare' || s.phase === 'settle' || s.phase === 'answer') {
       const [i, j] = s.active;
+      // header
       ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = COLOR.ink;
+      ctx.font = '700 14px "JetBrains Mono", monospace';
+      ctx.fillText('dp[' + i + '][' + j + ']'
+        + (s.phase === 'compare' ? '   試切點 k=' + s.k : '   k=' + s.k), panelX, py);
+      py += LH + 4;
+
       const line = (label, val, color) => {
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
         ctx.fillStyle = color; ctx.font = '700 13px "JetBrains Mono", monospace';
         ctx.fillText(label, panelX, py);
         ctx.fillStyle = COLOR.ink;
-        ctx.fillText('= ' + val, panelX + 190, py);
-        py += 24;
+        ctx.textAlign = 'right';
+        ctx.fillText('= ' + val, valX, py);
+        py += LH;
       };
-      ctx.fillStyle = COLOR.ink;
-      ctx.font = '700 13px "JetBrains Mono", monospace';
-      ctx.fillText('dp[' + i + '][' + j + ']' + (s.phase === 'compare' ? '  試 k=' + s.k : '  k=' + s.k), panelX, py);
-      py += 26;
+
       if (s.phase === 'compare') {
         line('左 dp[' + i + '][' + s.k + ']', s.leftV, '#6f93b4');
         line('右 dp[' + (s.k + 1) + '][' + j + ']', s.rightV, '#b07c2f');
         line('+ sum[' + i + '..' + j + ']', s.sum, '#a8830d');
+        // divider then total
+        py += 4;
         ctx.strokeStyle = COLOR.grid; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(panelX, py - 6); ctx.lineTo(panelX + 250, py - 6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(panelX, py); ctx.lineTo(valX + 20, py); ctx.stroke();
+        py += LH;
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
         ctx.fillStyle = s.isBest ? COLOR.chosen : COLOR.ink;
-        ctx.font = '700 15px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText('合計 = ' + s.candV + (s.isBest ? '  ✓ 最佳' : ''), panelX, py + 6);
+        ctx.font = '700 16px "JetBrains Mono", monospace';
+        ctx.fillText('合計 = ' + s.candV + (s.isBest ? '   ✓ 最佳' : ''), panelX, py);
       } else {
-        ctx.fillStyle = COLOR.chosen;
-        ctx.font = '700 15px "JetBrains Mono", monospace';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText('dp[' + i + '][' + j + '] = ' + dp[i][j], panelX, py + 2);
-        py += 26;
+        ctx.fillStyle = COLOR.chosen;
+        ctx.font = '700 16px "JetBrains Mono", monospace';
+        ctx.fillText('dp[' + i + '][' + j + '] = ' + dp[i][j], panelX, py);
+        py += LH + 6;
         ctx.fillStyle = COLOR.dim;
-        ctx.font = '500 11px "Noto Sans TC", sans-serif';
-        ctx.fillText('每次合成 [' + i + '..' + j + '] 必付 sum=' + s.sum, panelX, py + 2);
+        ctx.font = '500 12px "Noto Sans TC", sans-serif';
+        ctx.fillText('每次合成 [' + i + '..' + j + '] 必付 sum = ' + s.sum, panelX, py);
       }
     } else {
       ctx.fillStyle = COLOR.dim;
-      ctx.font = '500 12px "Noto Sans TC", sans-serif';
-      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.font = '500 13px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
       ctx.fillText('dp[i][j] = min over k of', panelX, py);
-      ctx.fillText('  dp[i][k] + dp[k+1][j] + sum(i..j)', panelX, py + 18);
+      ctx.fillText('dp[i][k] + dp[k+1][j] + sum(i..j)', panelX, py + 24);
     }
   }
 
