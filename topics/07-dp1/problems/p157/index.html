@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P157 · 01 概念 // 分送高棕櫚 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P157
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/157/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.03
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">分送高棕櫚</h1>
+    <p class="sc-mast__subtitle">// 組合計數 · 容斥原理（Inclusion–Exclusion）</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 容斥 + 巴斯卡三角預處理 C(n,k)
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(M·N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>高棕櫚分成 <code>N</code> 類，第 i 類有 <code>aᵢ</code> 個（<strong>同類視為相同</strong>）。要分送給
+      <code>M</code> 位鄰居（<strong>每位鄰居是不同個體</strong>），且：</p>
+      <ul style="margin:6px 0 0 0;">
+        <li><strong>每位鄰居至少分到一個</strong>高棕櫚（任何一類都算）。</li>
+        <li><strong>同一位鄰居不會拿到兩個同類</strong>的高棕櫚。</li>
+      </ul>
+      <p style="margin-top:6px;">問共有幾種分配方式？輸出 <strong>mod 1000007</strong>。
+      多筆 <code>T ≤ 10</code>，<code>1 ≤ N, M ≤ 100</code>，<code>1 ≤ aᵢ ≤ M</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      關鍵轉譯：第 i 類有 aᵢ 個、每位鄰居最多拿 1 個同類 ⇒ <strong>第 i 類就是「從 M 位鄰居中選 aᵢ 位來給」</strong>，
+      共 <code>C(M, aᵢ)</code> 種。各類獨立 ⇒ 若不管「每人至少一個」，總數是
+      <code>∏ C(M, aᵢ)</code>。但這會把<strong>有人完全沒拿到</strong>的分法也算進去 — 那正是要扣掉的。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用容斥
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用容斥<span class="sc-section__title-en">// Why Inclusion–Exclusion</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉每位鄰居拿哪些類</span>
+            <span class="sc-ko-card__o">O(2^(NM))</span>
+          </div>
+          <div class="sc-ko-card__body">每個 (類, 鄰居) 格子要不要給是 0/1，共 NM 個格子 ⇒ 2^(NM) 種，再驗證限制。N=M=100 完全爆炸。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">直接算 ∏ C(M, aᵢ)</span>
+            <span class="sc-ko-card__o">O(N)</span>
+          </div>
+          <div class="sc-ko-card__body">忽略「每人至少一個」⇒ <strong>多算</strong>了某些鄰居完全沒被選到的分法。少了下界限制，答案偏大。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · OVERCOUNT</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">容斥扣掉「有人沒拿到」</span>
+          <span class="sc-ko-card__o">O(M·N)</span>
+        </div>
+        <div class="sc-ko-card__body">以「被排除的鄰居數 j」做容斥：硬性<strong>不給某 j 位</strong>，剩 M−j 位自由分 = <code>∏ C(M−j, aᵢ)</code>；交錯加減把重複扣回來。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為何要容斥而非直接扣？</strong> 「至少 1 位沒拿到」的分法們彼此<strong>重疊</strong>（A 沒拿到、B 沒拿到的情況會重複計），
+      不能單純減一次。容斥的交錯正負號正是把這些重複精確抵銷的標準工具。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Strategy</span></h2>
+    </div>
+
+    <p style="font-size:14px;">設 <code>U</code> = 所有分法（不管至少一個），<code>A_t</code> = 「鄰居 t 完全沒拿到」的分法集合。
+    要算的是<strong>不落入任何 A_t</strong> 的分法數。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">答案 = Σ<sub>j=0</sub><sup>M</sup> (−1)<sup>j</sup> · <strong>C(M, j)</strong> · <strong>∏<sub>i</sub> C(M−j, aᵢ)</strong></div>
+      <div class="sc-formula__hint">
+        固定<strong>排除 j 位鄰居</strong>（哪 j 位有 C(M,j) 種選法）；剩 M−j 位裡，第 i 類選 aᵢ 位 = C(M−j, aᵢ)；
+        各類相乘。交錯正負號 (−1)ʲ 即容斥。
+      </div>
+    </div>
+
+    <ol style="margin-top:10px;">
+      <li><strong>預處理</strong> · 用<strong>巴斯卡三角</strong>建 C(n,k) 表（n,k ≤ 100），全程 mod 1000007。</li>
+      <li><strong>枚舉 j</strong> = 0..M：算這一項 <code>C(M,j) · ∏ C(M−j, aᵢ)</code>，若某 <code>aᵢ &gt; M−j</code> 則 C=0，整項歸零。</li>
+      <li><strong>交錯累加</strong> · j 為偶數加、奇數減（減完 <code>+MOD</code> 再取模，避免負數）。</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 容斥逐項加減<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>N=3, M=3, a=[1,2,2]</code>（答案 21）。上方是 M=3 位鄰居與三類高棕櫚；
+    每一步固定<strong>排除 j 位鄰居</strong>（灰掉），算這一項各因子，再依正負號累加到右下角的總和：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · INCLUSION–EXCLUSION (N=3, M=3, a=[1,2,2])</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="430" style="height:430px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 準備用容斥計數
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">■</span> 仍可分配的鄰居（M−j 位）&nbsp;·&nbsp;
+      <span style="color:#cfcfcf">■</span> 本項被排除的鄰居（j 位）&nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 加項（j 偶）&nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> 減項（j 奇）
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼容斥是對的
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼這個式子是對的<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// INCLUSION–EXCLUSION · 扣掉「有人完全沒拿到」</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>令 <code>A_t</code> = 「鄰居 t 完全沒分到任何高棕櫚」的分法集合。我們要的是<strong>不在任何 A_t 裡</strong>的分法數，即 <code>|U| − |A₁∪…∪A_M|</code>。</li>
+          <li>容斥：<code>|A₁∪…∪A_M| = Σ|A_t| − Σ|A_t∩A_s| + …</code>。第 j 項是「指定 j 位鄰居全沒拿到」的所有組合之和。</li>
+          <li>「指定某 j 位鄰居全沒拿到」⇒ 每一類只能分給<strong>剩下的 M−j 位</strong> ⇒ 第 i 類有 <code>C(M−j, aᵢ)</code> 種；各類獨立相乘 = <code>∏ C(M−j, aᵢ)</code>。</li>
+          <li>「哪 j 位被指定」有 <code>C(M, j)</code> 種，且每一種貢獻相同（對稱）⇒ 第 j 項總和 = <code>C(M,j) · ∏ C(M−j, aᵢ)</code>。</li>
+          <li>合併符號：把 |U| 視為 j=0 那一項（<code>C(M,0)·∏C(M,aᵢ)</code>），整體就是 <code>Σ (−1)ʲ C(M,j) ∏ C(M−j, aᵢ)</code>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      <strong>邊界自洽</strong>：當 <code>aᵢ &gt; M−j</code> 時 <code>C(M−j, aᵢ)=0</code>，整項自動歸零 —
+      因為「只剩 M−j 位卻要從中選出 aᵢ 位」根本不可能，符合直覺。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">M+1 項 × 每項算 N 個 C 相乘 = <strong>O(M·N)</strong> 每筆</div>
+      <div class="sc-formula__hint">C(n,k) 表用巴斯卡三角一次 O(M²) 建好（全測資共用）；N,M ≤ 100 ⇒ 每筆 ~10⁴，T≤10 秒過</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(M·N)</strong> 每筆</td><td>建表 O(M²) 全程一次</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(M²)</strong></td><td>C[n][k] 巴斯卡三角表</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純枚舉 j</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每項一次乘法鏈</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>⚠ 模數陷阱</strong>：<code>1000007 = 29 × 34483</code> <strong>不是質數</strong> ⇒ 不能用「除法 = 乘逆元」算 C(n,k)！
+      必須用<strong>巴斯卡三角加法遞推</strong> <code>C[n][k]=C[n−1][k−1]+C[n−1][k]</code>（只用加法，永遠合法）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>每類獨立選 aᵢ 位鄰居 ⇒ 不限「至少一個」的總數是 ∏ C(M, aᵢ)；</strong><br/>
+      用容斥「排除 j 位鄰居」把多算的扣掉 —<br/>
+      <strong>答案 = Σ (−1)ʲ C(M,j) ∏ C(M−j, aᵢ)，且因模數非質數，C(n,k) 必用巴斯卡三角。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">容斥計數：答案 = Σ (−1)ʲ C(M,j) ∏ C(M−j, aᵢ)，巴斯卡三角預處理 C(n,k)，O(M·N)。</div>
+    <div class="sc-summary-bar__detail">每類選 aᵢ 位 ⇒ ∏C(M,aᵢ) 多算了有人沒拿到；容斥扣回。模 1000007 非質數，禁用逆元。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p157-incexc.js"></script>
+</body>
+</html>
