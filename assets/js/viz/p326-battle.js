@@ -110,12 +110,17 @@
   let step = 0, timer = null;
 
   function fitCanvas() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const rect = canvas.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height || 440;
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
+    const w = rect.width || canvas.clientWidth;
+    const h = rect.height || canvas.clientHeight || 440;
+    const bw = Math.round(w * dpr);
+    const bh = Math.round(h * dpr);
+    // only resize the backing store when it actually changed (avoids clearing mid-frame)
+    if (canvas.width !== bw || canvas.height !== bh) {
+      canvas.width  = bw;
+      canvas.height = bh;
+    }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
@@ -130,6 +135,7 @@
   }
 
   function draw() {
+    fitCanvas();                       // re-fit each frame: backing store stays crisp after fonts/layout settle
     const s = steps[step];
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
@@ -147,7 +153,7 @@
     ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     ctx.fillText('BAND 1 · 大魔王生命值（上限 M = 100）', PAD, band1Y);
 
-    const barX = PAD, barW = w - PAD * 2, barTop = band1Y + 26, barH = 46;
+    const barX = PAD, barW = w - PAD * 2, barTop = band1Y + 38, barH = 46;
     // track
     rr(barX, barTop, barW, barH, 4);
     ctx.fillStyle = COLOR.barBg; ctx.fill();
@@ -168,8 +174,9 @@
     if (frac > 0.18) { ctx.fillStyle = '#ffffff'; ctx.fillText(hpLabel, barX + 10, barTop + barH / 2); }
     else { ctx.fillStyle = COLOR.ink; ctx.fillText(hpLabel, barX + barW * frac + 10, barTop + barH / 2); }
 
-    // threshold ticks (spell p_i -> x position = p%*barW). Drawn above the bar with label.
-    SP.forEach((sp) => {
+    // threshold ticks (spell p_i -> x position = p%*barW). Labels stacked on two rows
+    // (by spell index) so nearby thresholds never collide, and clamped inside the canvas.
+    SP.forEach((sp, idx) => {
       const x = barX + barW * (sp.p / 100);
       ctx.strokeStyle = COLOR.thr; ctx.lineWidth = 2;
       ctx.setLineDash([4, 3]);
@@ -178,13 +185,12 @@
       ctx.fillStyle = COLOR.thr;
       ctx.font = '600 10px "JetBrains Mono", monospace';
       ctx.textBaseline = 'bottom';
-      // keep the label fully inside the canvas: right-align near the right edge,
-      // left-align near the left edge, else center on the tick.
+      const labelY = barTop - 10 - (idx % 2) * 13;   // row 0 higher, row 1 lower
       const lbl = sp.name + ' 門檻 ' + sp.p + '%';
       const tw = ctx.measureText(lbl).width;
-      if (x + tw / 2 > w - PAD) { ctx.textAlign = 'right'; ctx.fillText(lbl, x, barTop - 10); }
-      else if (x - tw / 2 < PAD) { ctx.textAlign = 'left'; ctx.fillText(lbl, x, barTop - 10); }
-      else { ctx.textAlign = 'center'; ctx.fillText(lbl, x, barTop - 10); }
+      if (x + tw / 2 > w - PAD) { ctx.textAlign = 'right'; ctx.fillText(lbl, x, labelY); }
+      else if (x - tw / 2 < PAD) { ctx.textAlign = 'left'; ctx.fillText(lbl, x, labelY); }
+      else { ctx.textAlign = 'center'; ctx.fillText(lbl, x, labelY); }
     });
     // 0 line caption
     ctx.fillStyle = COLOR.dim;
@@ -342,6 +348,8 @@
   btnReset && btnReset.addEventListener('click', reset);
 
   window.addEventListener('resize', () => { fitCanvas(); draw(); });
+  // web fonts load after first paint → text metrics shift; redraw once they're ready
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
   fitCanvas();
   update();
 })();

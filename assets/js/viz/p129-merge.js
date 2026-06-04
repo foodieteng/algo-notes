@@ -111,12 +111,16 @@
   let timer = null;
 
   function fitCanvas() {
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const rect = canvas.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height || 360;
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
+    const w = rect.width || canvas.clientWidth;
+    const h = rect.height || canvas.clientHeight || 360;
+    const bw = Math.round(w * dpr);
+    const bh = Math.round(h * dpr);
+    if (canvas.width !== bw || canvas.height !== bh) {
+      canvas.width  = bw;
+      canvas.height = bh;
+    }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
@@ -139,6 +143,7 @@
   }
 
   function draw() {
+    fitCanvas();                       // re-fit each frame: backing store stays crisp after fonts/layout settle
     const s = steps[step];
     const g = geom();
     const { w, h, cell, gx0, gy0, panelX, labelGutter } = g;
@@ -330,6 +335,7 @@
   btnReset && btnReset.addEventListener('click', reset);
 
   window.addEventListener('resize', () => { fitCanvas(); draw(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
   fitCanvas();
   update();
 })();
