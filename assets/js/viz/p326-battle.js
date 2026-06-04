@@ -259,7 +259,7 @@
     ctx.fillText('BAND 3 · 咒術狀態 · 當前 dps · 時間', PAD, band3Y);
 
     const r = roster(s.cast, s.ready);
-    const cw = 150, ch = 56, cgap = 22;
+    const cw = 168, ch = 74, cgap = 22;
     const ry = band3Y + 16;
     let rx = PAD;
     r.forEach((sp) => {
@@ -270,17 +270,17 @@
       rr(rx, ry, cw, ch, 4);
       ctx.fillStyle = bg; ctx.fill();
       ctx.strokeStyle = st; ctx.lineWidth = 1.5; ctx.stroke();
+      // three clean left-aligned rows: name / p,c / status — no overlap
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
       ctx.fillStyle = COLOR.ink;
       ctx.font = '700 15px "JetBrains Mono", monospace';
-      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText('咒術 ' + sp.name, rx + 12, ry + 8);
+      ctx.fillText('咒術 ' + sp.name, rx + 12, ry + 10);
       ctx.fillStyle = COLOR.text;
       ctx.font = '600 12px "JetBrains Mono", monospace';
-      ctx.fillText('p=' + sp.p + '%  c=' + sp.c, rx + 12, ry + 28);
+      ctx.fillText('p=' + sp.p + '%  c=' + sp.c, rx + 12, ry + 32);
       ctx.fillStyle = st;
       ctx.font = '700 11px "JetBrains Mono", monospace';
-      ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-      ctx.fillText(tag, rx + cw - 10, ry + ch - 8);
+      ctx.fillText(tag, rx + 12, ry + 54);
       rx += cw + cgap;
     });
 
