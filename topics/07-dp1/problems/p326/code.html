@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P326 · 02 Code // 實實打怪獸 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P326
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/326/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.04
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">實實打怪獸</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 貪心模擬 + 最大堆
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O((M+N) log N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 排序 + 逐秒模擬<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      咒術用平行陣列存（門檻 <code>need[i]=pᵢ·M</code>、傷害 <code>dealt[i]=cᵢ</code>），依門檻由大到小排序。
+      逐秒模擬，已解鎖的咒術丟進最大堆，每秒彈最強來放。題目<strong>每筆一組 N M R</strong>（無測資數），讀到 EOF 為止。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p326.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<span class="k">typedef</span> <span class="t">long long</span> ll<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">100005</span><span class="p">;</span>
+ll need<span class="p">[</span>MAXN<span class="p">];</span>      <span class="c">// need[i] = pᵢ × M：當 hp×100 ≤ need[i] 時可施放</span>
+ll dealt<span class="p">[</span>MAXN<span class="p">];</span>     <span class="c">// dealt[i] = cᵢ：每秒造成的傷害</span>
+<span class="t">int</span> order<span class="p">[</span>MAXN<span class="p">];</span>     <span class="c">// 咒術索引，依 need 由大到小排</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> N<span class="p">;</span>
+    ll M<span class="p">,</span> R<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M <span class="p">&gt;&gt;</span> R<span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+            ll pi<span class="p">,</span> ci<span class="p">;</span>
+            cin <span class="p">&gt;&gt;</span> pi <span class="p">&gt;&gt;</span> ci<span class="p">;</span>
+            need<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> pi <span class="p">*</span> M<span class="p">;</span>
+            dealt<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> ci<span class="p">;</span>
+            order<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> i<span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c">// 依解鎖門檻由大到小：pᵢ 大者血量還高時就能放</span>
+        <span class="f">sort</span><span class="p">(</span>order<span class="p">,</span> order <span class="p">+</span> N<span class="p">,</span>
+             <span class="p">[](</span><span class="t">int</span> a<span class="p">,</span> <span class="t">int</span> b<span class="p">)</span> <span class="p">{</span> <span class="k">return</span> need<span class="p">[</span>a<span class="p">]</span> <span class="p">&gt;</span> need<span class="p">[</span>b<span class="p">];</span> <span class="p">});</span>
+
+        priority_queue<span class="p">&lt;</span>ll<span class="p">&gt;</span> ready<span class="p">;</span>   <span class="c">// 已解鎖、未施放的咒術，以 c 為鍵的最大堆</span>
+        <span class="t">int</span> ptr <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        ll hp <span class="p">=</span> M<span class="p">,</span> dps <span class="p">=</span> <span class="n">0</span><span class="p">,</span> sec <span class="p">=</span> <span class="n">0</span><span class="p">,</span> answer <span class="p">=</span> <span class="p">-</span><span class="n">1</span><span class="p">;</span>
+        ll guard <span class="p">=</span> M <span class="p">+</span> N <span class="p">+</span> <span class="n">5</span><span class="p">;</span>          <span class="c">// 有限答案 ≤ M+N，超過即視為打不死</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="k">true</span><span class="p">)</span> <span class="p">{</span>
+            hp <span class="p">-=</span> dps<span class="p">;</span>                       <span class="c">// ① 已施放咒術一起扣血</span>
+            hp <span class="p">+=</span> R<span class="p">;</span> <span class="k">if</span> <span class="p">(</span>hp <span class="p">&gt;</span> M<span class="p">)</span> hp <span class="p">=</span> M<span class="p">;</span>   <span class="c">// ② 回血，封頂 M</span>
+            <span class="k">if</span> <span class="p">(</span>hp <span class="p">&lt;=</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span> answer <span class="p">=</span> sec<span class="p">;</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>   <span class="c">// ③ 判死</span>
+
+            <span class="c">// 血量已降到門檻的咒術，全部解鎖進堆</span>
+            <span class="k">while</span> <span class="p">(</span>ptr <span class="p">&lt;</span> N <span class="p">&amp;&amp;</span> need<span class="p">[</span>order<span class="p">[</span>ptr<span class="p">]]</span> <span class="p">&gt;=</span> hp <span class="p">*</span> <span class="n">100</span><span class="p">)</span> <span class="p">{</span>
+                ready<span class="p">.</span><span class="f">push</span><span class="p">(</span>dealt<span class="p">[</span>order<span class="p">[</span>ptr<span class="p">]]);</span>
+                ptr<span class="p">++;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(!</span>ready<span class="p">.</span><span class="f">empty</span><span class="p">())</span> <span class="p">{</span>              <span class="c">// ④ 放最強的</span>
+                dps <span class="p">+=</span> ready<span class="p">.</span><span class="f">top</span><span class="p">();</span>
+                ready<span class="p">.</span><span class="f">pop</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span>dps <span class="p">&lt;=</span> R<span class="p">)</span> <span class="p">{</span>          <span class="c">// 沒咒可放且扣血≤回血 ⇒ 永遠打不死</span>
+                answer <span class="p">=</span> <span class="p">-</span><span class="n">1</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            sec<span class="p">++;</span>
+            <span class="k">if</span> <span class="p">(</span>sec <span class="p">&gt;</span> guard<span class="p">)</span> <span class="p">{</span> answer <span class="p">=</span> <span class="p">-</span><span class="n">1</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+        <span class="p">}</span>
+        cout <span class="p">&lt;&lt;</span> answer <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼用 ptr 單調掃描？</strong> 血量只在 dps&gt;R 後單調下降，門檻已排序 ⇒ 每個咒術一生只會被 <code>ptr</code> 掃過、進堆<strong>一次</strong>，
+      整體解鎖成本 O(N)。堆只負責「在已解鎖的之中挑最強」。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>排序咒術</td><td>依 need 由大到小</td><td class="mono">O(N log N)</td></tr>
+        <tr><td>逐秒模擬</td><td>秒數 ≤ M+N</td><td class="mono">O(M+N)</td></tr>
+        <tr><td>解鎖進堆</td><td>每咒一生進出堆一次</td><td class="mono">O(N log N)</td></tr>
+        <tr><td>每秒彈最強</td><td>堆 top/pop</td><td class="mono">O(log N)</td></tr>
+        <tr><td>單筆合計</td><td>—</td><td class="mono">O((M+N) log N)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">排序 + 模擬 (M+N) 秒 × 堆 O(log N) = <strong>O((M+N) log N)</strong></div>
+      <div class="sc-formula__hint">N,M ≤ 10⁵ ⇒ ~2×10⁶，遠在時限內</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O((M+N) log N)</strong></td><td>逐秒 + 堆</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>need / dealt / order + 堆</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純逐秒迴圈</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每秒至多一次 push + 一次 pop</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>門檻方向</strong></td>
+          <td>是「生命值 <strong>≤</strong> pᵢ%·M 才可放」（題目說生命值<em>大於</em> pᵢ% 時無法施放）。別寫反成 ≥。</td>
+        </tr>
+        <tr>
+          <td><strong>百分比用整數比較</strong></td>
+          <td>用 <code>hp × 100 ≤ pᵢ × M</code>，不要 <code>hp ≤ pᵢ/100 × M</code>（浮點誤差會在邊界出錯）。</td>
+        </tr>
+        <tr>
+          <td><strong>第 0 秒就能放</strong></td>
+          <td>流程從第 0 秒起：扣血(此時 dps 可能=0)→回血→判死→施放。滿血時 p=100 的咒術即可放（hp×100 = 100M ≤ 100·M）。</td>
+        </tr>
+        <tr>
+          <td><strong>判 −1</strong></td>
+          <td>沒咒可放且 <code>dps ≤ R</code> ⇒ 血量不再下降，永遠打不死。漏判會死迴圈。<code>guard=M+N</code> 是雙保險。</td>
+        </tr>
+        <tr>
+          <td><strong>回血封頂</strong></td>
+          <td>回血後 <code>hp = min(hp, M)</code>；早期 dps 小時血會頂在 M，別讓它超過。</td>
+        </tr>
+        <tr>
+          <td><strong>型別</strong></td>
+          <td>dps 累加可達 N·c ≈ 10¹⁰、need=pᵢ·M ≈ 10⁷ ⇒ 一律 <code>long long</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>輸入格式</strong></td>
+          <td>本題<strong>沒有測資數 T</strong>，第一行直接是 N M R；用 <code>while(cin&gt;&gt;N&gt;&gt;M&gt;&gt;R)</code> 讀到 EOF。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 每秒的四步順序</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// per second</span>
+hp -= dps            // 1. 已施放咒術扣血
+hp = min(hp+R, M)    // 2. 回血、封頂
+if hp <= 0: 打敗於 sec// 3. 判死
+解鎖 need >= hp*100 的咒術進堆；放堆中 c 最大者 // 4. 施放</pre>
+
+    <p><strong>② 解鎖：單調指標 + 最大堆</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// unlock</span>
+咒術依 need(=pᵢ·M) 由大到小排序
+血量下降時，ptr 往後把所有 need >= hp*100 的推進堆
+堆以 c 為鍵 → top() 就是當前可放的最強咒術</pre>
+
+    <p><strong>③ 終止：打敗 / −1 / guard</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// terminate</span>
+hp<=0            → 答案 = sec
+無咒可放且 dps<=R → 答案 = -1（血不再降）
+sec > M+N        → -1（保險；有限答案必 <= M+N）</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">排序 + 逐秒模擬 + 最大堆：每秒扣血→回血→判死→放已解鎖最強咒，O((M+N) log N)。</div>
+    <div class="sc-summary-bar__detail">門檻 hp×100 ≤ pᵢ×M；無咒可放且 dps≤R 即 −1；long long 防溢位；無 T，讀到 EOF。</div>
+  </div>
+
+</body>
+</html>

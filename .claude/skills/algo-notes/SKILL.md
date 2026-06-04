@@ -77,9 +77,25 @@ It rewrites every `topics/<NN>-<slug>/index.html` chapter page and refreshes the
    - Special / blocked / important cell distinguished from regular cells
    - If a page needs TWO animations (base case + general case, like P507), use prefixed IDs `viz-base` / `vb-*` and `viz-general` / `vg-*`
 
-6. **Flip status to `'done'`** in PROBLEMS, then `python3 scripts/generate_chapters.py`.
+6. **🟠 MANDATORY: screenshot-verify the animation layout before flipping to done.** The user cares a lot that the canvas is *整齊好看、不被切到* (tidy, well-aligned, nothing clipped). Eyeballing the JS is not enough — you MUST render every animation step in headless Chrome and look at the image. Do it in the scratch dir:
+   ```bash
+   # 1. Make a copy of the viz that draws ALL steps stacked, or one frame per file.
+   #    Wrap the IIFE so it exposes a (canvas, step) draw fn (see the P157 harness for the pattern).
+   # 2. Build an HTML page that loads study-card-equivalent fonts + the viz, renders each step.
+   # 3. Screenshot with the installed browser at a realistic canvas width AND a narrow one:
+   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --no-sandbox \
+     --screenshot=/tmp/algo-check/render.png --window-size=980,5200 --virtual-time-budget=4000 \
+     "file:///tmp/algo-check/render.html"
+   # 4. Read the PNG and CHECK: no text/cells clipped at any edge, no two elements overlapping,
+   #    no dead zone > ~80px, every step visibly changes something. Test ~920px AND ~720px widths.
+   ```
+   - The cheap text-bbox stub (counting `string.length`) is **unreliable for CJK** — it mis-measures multibyte widths and lies about overflow. Trust the actual rendered PNG, not the stub.
+   - Also screenshot the real `index.html` once (the viz embedded with study-card.css) to confirm the script tag resolves and the canvas sits inside its section.
+   - If anything is clipped/overlapping/has a big dead zone, **fix the JS geometry and re-render** before moving on. Repacking into clear horizontal bands (see `p157-incexc.js`) is the reliable fix.
 
-7. **Commit:**
+7. **Flip status to `'done'`** in PROBLEMS, then `python3 scripts/generate_chapters.py`.
+
+8. **Commit:**
    ```
    feat(W<NN>/P<XXX>): <title> — <one-line algorithm summary>
    ```
@@ -152,6 +168,8 @@ Every problem gets a `.sc-viz` block on PAGE 1, even ones without obvious geomet
    - "Bad"/"rejected" → pale pink `#f0d4d4`
    - Inactive/excluded → light gray `#cfcfcf`
    These are intentionally muted so the coral accents pop. **Don't introduce new tints** without a reason.
+
+6. **Screenshot-verify, don't eyeball.** Layout bugs (clipped text at a canvas edge, two labels overlapping, a band that runs off the bottom, a huge dead zone) are invisible when reading the JS but obvious in a rendered PNG. Before calling an animation done, render every step in headless Chrome at both a wide (~920px) and a narrow (~720px) canvas width and *look at the image* — the user has repeatedly flagged 排版被切到 / 不整齊. The `string.length`-based bbox stub does NOT work for CJK text; only the real screenshot is trustworthy. The reliable layout that survives this check is **clear horizontal bands** with a title row each, generous gaps, and `textAlign`/`textBaseline` set consistently (see `p157-incexc.js`). This is Integration step 6 — it is mandatory, not optional.
 
 ## Required `<head>` includes per page (study-card variant)
 
@@ -283,6 +301,7 @@ Verdict / label text in this variant is **always** uppercase mono with `letter-s
 8. **No wobble filter** in the study-card variant. `filter: url(#sn-wobble)` and decorative pseudo-elements (`'∑'`, `'』'`, `'✦'`) belong to the abandoned sketchnote experiment — don't reintroduce them.
 9. **Never ship unverified C++.** The code on `code.html` must have been compiled and run against every sample (see Integration step 4). No dead `if (!(cond && 1)) {}` placeholders, no "probably correct" code. If the page's `// OUTPUT` trace or hand-trace disagrees with the verified binary, the page is wrong.
 10. **SVG `<text>` cannot contain `<strong>`/HTML tags** — use `<tspan font-weight="700">`. An HTML tag inside SVG severs the SVG at that point (the rest leaks out as plain text and half the figure vanishes). This bit P124's STEP 1 figure. Screenshot-check figures, don't just tag-balance them.
+11. **Animation layout MUST be screenshot-verified (整齊、不被切到).** Render every canvas step in headless Chrome and read the PNG at ~920px and ~720px widths before marking the problem done — see Integration step 6. The CJK-unaware `string.length` bbox stub gives false overflow reports; trust the rendered image. Clear horizontal bands (à la `p157-incexc.js`) are the layout that reliably passes. The user has flagged clipped/cramped animations more than once — this check is not skippable.
 
 ## Git workflow
 

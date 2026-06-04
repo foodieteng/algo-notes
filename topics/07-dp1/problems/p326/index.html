@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P326 · 01 概念 // 實實打怪獸 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W07 · DP 1</a>
+      &nbsp;/&nbsp;
+      P326
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/24/problems/326/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.04
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">實實打怪獸</h1>
+    <p class="sc-mast__subtitle">// 貪心模擬 · 每秒施放當前可用最強咒術</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 貪心 + 逐秒模擬（堆加速）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O((M+N) log N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>大魔王生命值上限 <code>M</code>、每秒回復 <code>R</code>（不超過 M），<strong>沒有攻擊力</strong>。實實有 <code>N</code> 種咒術，
+      每種<strong>只能施放一次</strong>：第 i 種<strong>當大魔王生命值 ≤ pᵢ% × M 時</strong>才可施放，施放後<strong>每秒</strong>固定造成 <code>cᵢ</code> 點傷害。</p>
+      <p style="margin-top:6px;">每秒流程（從第 0 秒起）：① 已施放的咒術一起扣血 → ② 大魔王回血 R（封頂 M）→ ③ 若生命值 ≤ 0 即被打敗 → ④ 實實可選擇施放<strong>至多一種</strong>咒術。
+      求<strong>最快第幾秒</strong>能打敗，或輸出 <code>−1</code>。</p>
+      <p style="margin-top:6px;font-size:13px;color:var(--sc-ink-dim);"><code>1 ≤ N,M,R ≤ 10⁵</code>，<code>0 ≤ cᵢ ≤ 10⁵</code>，<code>0 ≤ pᵢ ≤ 100</code>。範例：M=100,R=10，咒術(100,11)、(90,9) ⇒ 答案 <strong>19</strong>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      兩個關鍵：咒術傷害是<strong>持續的</strong>（一旦施放每秒都扣 cᵢ，所以越早放越好）；低 pᵢ 的咒術被<strong>鎖住</strong>，
+      要等生命值掉到門檻才能放。所以策略是「<strong>能放就放、放最強的</strong>」，靠強咒把血壓低去解鎖更多咒術。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用貪心模擬
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用貪心模擬<span class="sc-section__title-en">// Why Greedy Simulation</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉施放順序 / 時間</span>
+            <span class="sc-ko-card__o">O(N! · …)</span>
+          </div>
+          <div class="sc-ko-card__body">「每種何時放」的組合是階乘級；N=10⁵ 完全不可能列舉。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">每秒重掃 N 個咒術找最強</span>
+            <span class="sc-ko-card__o">O(N · 答案)</span>
+          </div>
+          <div class="sc-ko-card__body">答案可達 ~M=10⁵ 秒，每秒掃 N=10⁵ ⇒ 10¹⁰ 次，會 TLE。邏輯對但太慢。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · TLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">貪心逐秒模擬 + 堆加速</span>
+          <span class="sc-ko-card__o">O((M+N) log N)</span>
+        </div>
+        <div class="sc-ko-card__body">咒術按門檻排序；血量下降時把新解鎖的丟進<strong>最大堆（以 c 為鍵）</strong>，每秒彈出最強來放。早停判 −1。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼貪心對？</strong> 傷害是持續累加、且只增不減：多放一個咒術、或更早放，<strong>絕不會讓打敗時間變晚</strong>（無後效、單調）。
+      所以「每秒在可放的咒術裡放 c 最大的」就是最佳；不需 DP。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Strategy</span></h2>
+    </div>
+
+    <ol style="margin-top:4px;">
+      <li><strong>排序</strong> · 咒術按解鎖門檻 <code>pᵢ·M</code> 由大到小（pᵢ 大 ⇒ 血量還高時就能放）。</li>
+      <li><strong>逐秒模擬</strong> · 每秒：扣血(dps) → 回血(封頂 M) → 判死 → 把所有「血量已達門檻」的咒術推進最大堆，彈出 <strong>c 最大</strong>者施放，dps 累加。</li>
+      <li><strong>判 −1</strong> · 若某秒<strong>沒有可放的咒術且 dps ≤ R</strong>，血量不會再下降 ⇒ 永遠打不死，輸出 −1。</li>
+    </ol>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">每秒：hp ← min(M, hp − dps + R)；可放時 <strong>dps += max c</strong>（解鎖的咒術裡）</div>
+      <div class="sc-formula__hint">
+        有限答案 ≤ <strong>M + N</strong>（dps&gt;R 後每秒至少掉 1，最多 M 秒死；放咒至多 N 次）⇒ 可當作迴圈上界 / 早停依據
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 逐秒戰鬥模擬<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>M=100, R=10</code>，咒術 <code>A(p=100,c=11)</code>、<code>B(p=90,c=9)</code>（答案 19）。
+    上方是生命值條與兩個門檻線；中間是每秒的 <span style="color:#d96e4e">扣血</span> → <span style="color:#5fa866">回血</span> → 判死 → 施放；
+    下方追蹤已施放咒術與當前 dps：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · BATTLE SIMULATION (M=100, R=10)</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="440" style="height:440px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 大魔王滿血 100，準備開戰
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#5fa866">■</span> 生命值條 / 回血 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> 扣血量 dps / 死亡 &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 已解鎖待放（堆中）&nbsp;·&nbsp;
+      <span style="color:#d4a868">■</span> 仍鎖住的咒術
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼貪心最佳
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼「能放就放最強」最佳<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// GREEDY EXCHANGE · 早放、放強都不吃虧</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li><strong>傷害只增不減</strong>：咒術一旦施放，往後每秒都扣 cᵢ。所以任何一個咒術，<strong>越早施放</strong>，到任何時刻累積的傷害都 ≥ 晚放。</li>
+          <li><strong>把某次施放提前不會更糟</strong>：若最佳解在第 t 秒才放某可用咒術，把它提前到「最早可放的那秒」，每一秒的生命值都 ≤ 原解 ⇒ 打敗時間不會變晚（交換論證）。</li>
+          <li><strong>同一秒該放最強</strong>：那一秒只能放一個，選 c 最大的能讓往後每秒扣最多、血掉最快，解鎖後續咒術也最快 ⇒ 不會比放較弱的差。</li>
+          <li>合起來：<strong>每秒在已解鎖的咒術裡放 c 最大的</strong>，就得到最早打敗時間。</li>
+          <li><strong>判 −1</strong>：若某秒無咒可放且 <code>dps ≤ R</code>，扣血 ≤ 回血 ⇒ 生命值不再下降，永遠到不了更低門檻、也死不了。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      注意門檻條件是<strong>「生命值 ≤ pᵢ%·M 才可放」</strong>（題目：生命值<em>大於</em> pᵢ% 時<strong>無法</strong>施放）。
+      整數判斷用 <code>hp × 100 ≤ pᵢ × M</code> 最穩，避免百分比除法誤差。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">排序 O(N log N) + 模擬 ≤ (M+N) 秒，每秒堆操作 O(log N) = <strong>O((M+N) log N)</strong></div>
+      <div class="sc-formula__hint">N,M ≤ 10⁵ ⇒ ~10⁵·17 ≈ 2×10⁶，瞬間完成；每個咒術一生只進出堆一次</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O((M+N) log N)</strong></td><td>逐秒模擬 + 最大堆</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>咒術陣列 + 堆</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純逐秒迴圈</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每秒一次堆 push/pop</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>傷害持續且只增不減 ⇒ 每秒在已解鎖咒術裡放 c 最大的就是最佳。</strong><br/>
+      用最大堆隨血量下降逐步解鎖，逐秒模擬 —<br/>
+      <strong>沒咒可放且 dps ≤ R 即 −1；有限答案 ≤ M+N，O((M+N) log N)。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">貪心逐秒模擬：每秒放已解鎖咒術中 c 最大者（最大堆），扣血→回血→判死，O((M+N) log N)。</div>
+    <div class="sc-summary-bar__detail">傷害持續只增不減 ⇒ 早放、放強都不吃虧；無咒可放且 dps≤R 即 −1；門檻用 hp×100 ≤ pᵢ×M。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p326-battle.js"></script>
+</body>
+</html>
