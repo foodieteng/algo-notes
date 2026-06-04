@@ -110,7 +110,8 @@
   let step = 0, timer = null;
 
   function fitCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    // supersample: render at >=2x even on 1x monitors so it stays crisp everywhere
+    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
     const rect = canvas.getBoundingClientRect();
     const w = rect.width || canvas.clientWidth;
     const h = rect.height || canvas.clientHeight || 440;
