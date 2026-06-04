@@ -348,6 +348,11 @@
   btnReset && btnReset.addEventListener('click', reset);
 
   window.addEventListener('resize', () => { fitCanvas(); draw(); });
+  // re-fit + redraw the instant the container gets its real width (kills first-paint blur)
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => { fitCanvas(); draw(); });
+    ro.observe(canvas);
+  }
   // web fonts load after first paint → text metrics shift; redraw once they're ready
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
   fitCanvas();

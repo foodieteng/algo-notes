@@ -335,6 +335,10 @@
   btnReset && btnReset.addEventListener('click', reset);
 
   window.addEventListener('resize', () => { fitCanvas(); draw(); });
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => { fitCanvas(); draw(); });
+    ro.observe(canvas);
+  }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
   fitCanvas();
   update();
