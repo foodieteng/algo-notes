@@ -193,11 +193,74 @@
   </section>
 
   <!-- ============================================================
-       SECTION 05 — 為什麼容斥是對的
+       SECTION 05 — 白癡版：球放盒子
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">白癡版：球放盒子（先懂這個就懂高棕櫚）<span class="sc-section__title-en">// Warm-up</span></h2>
+    </div>
+
+    <p style="font-size:14px;">先用一個小到能用手數的例子把排容講清楚，再回頭看公式怎麼長出來。
+    <strong>4 顆不同的球（1,2,3,4）放進 3 個不同的盒子（A,B,C），每個盒子都不能空</strong>，問幾種放法？</p>
+
+    <p style="font-size:13.5px;margin-top:8px;"><strong>① 先別管「不能空」</strong>：每顆球可選 A/B/C 共 3 種，4 顆獨立 ⇒
+    <code>3⁴ = 81</code> 種。但這裡面混進了「有盒子空」的壞情況（如 4 顆全進 A）。</p>
+
+    <p style="font-size:13.5px;margin-top:8px;"><strong>② 天真地扣「某盒空」</strong>：A 空 ⇒ 球只能進 B/C ⇒ <code>2⁴=16</code>；B 空、C 空同理。
+    天真算法 <code>81 − 16×3 = 33</code> — <strong>但這是錯的！</strong></p>
+
+    <div class="sc-dark-box" style="margin-top:10px;">
+      <div class="sc-dark-box__title">// 重複扣的陷阱（排容的核心）</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>「A 空」那 16 種裡，<strong>包含了「A、B 同時空」</strong>（4 顆全進 C）；「B 空」那 16 種裡也包含它。</li>
+          <li>所以減「A 空」又減「B 空」時，「A、B 同時空」<strong>被扣了兩次</strong> ⇒ 多扣了 ⇒ 要<strong>加回來一次</strong>。</li>
+          <li>「兩個指定盒子空」⇒ 球全進剩下 1 個 ⇒ <code>1⁴=1</code>；挑哪 2 個盒子空有 <code>C(3,2)=3</code> 種 ⇒ 加回 <code>3×1=3</code>。</li>
+          <li>「三個盒子全空」⇒ 沒地方放 4 顆球 ⇒ <code>0⁴=0</code>，不可能。</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="sc-formula" style="margin-top:12px;">
+      <div class="sc-formula__main">81 − <strong>3×16</strong> + <strong>3×1</strong> − 1×0 = 81 − 48 + 3 − 0 = <strong>36</strong></div>
+      <div class="sc-formula__hint">減太多就加回、加太多再減掉 ⇒ 正負交錯，讓每個「合法放法」剛好被算 1 次、每個「有空盒」剛好 0 次 — 這就是<strong>排容原理</strong></div>
+    </div>
+
+    <p style="font-size:13.5px;margin-top:12px;">把四項用統一寫法（令 <code>k</code> = 強制幾個盒子空）：</p>
+
+    <table class="sc-table" style="margin-top:6px;">
+      <thead>
+        <tr><th>k（強制空）</th><th>挑哪 k 個空</th><th>每球剩幾種</th><th>該項值</th><th>符號</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">0</td><td class="mono">C(3,0)=1</td><td class="mono">3</td><td class="mono">3⁴ = 81</td><td class="mono">+</td></tr>
+        <tr><td class="mono">1</td><td class="mono">C(3,1)=3</td><td class="mono">2</td><td class="mono">2⁴ = 16</td><td class="mono">−</td></tr>
+        <tr><td class="mono">2</td><td class="mono">C(3,2)=3</td><td class="mono">1</td><td class="mono">1⁴ = 1</td><td class="mono">+</td></tr>
+        <tr><td class="mono">3</td><td class="mono">C(3,3)=1</td><td class="mono">0</td><td class="mono">0⁴ = 0</td><td class="mono">−</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula" style="margin-top:12px;">
+      <div class="sc-formula__main">每項 = <strong>(−1)ᵏ</strong> × <strong>C(3,k)</strong> × <strong>(3−k)⁴</strong>　⇒　Σ<sub>k=0</sub><sup>3</sup> (−1)ᵏ C(3,k)(3−k)⁴ = 36</div>
+      <div class="sc-formula__hint">
+        (−1)ᵏ = 減/加交錯的符號 · C(3,k) = 挑哪 k 個盒子強制空 · (3−k)⁴ = 4 顆球各自只能在剩 3−k 個盒子裡選
+      </div>
+    </div>
+
+    <div class="sc-insight" style="margin-top:12px;">
+      <strong>和高棕櫚一模一樣，只換掉「每顆球的放法數」：</strong><br/>
+      球放盒子：每球在剩盒有 (3−k) 種 → 連乘 <code>(3−k)⁴</code><br/>
+      高棕櫚：每類在剩 M−k 位鄰居有 <code>C(M−k, aᵢ)</code> 種 → 連乘 <code>∏ C(M−k, aᵢ)</code>。同一招、換個外衣而已。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 為什麼容斥是對的
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
       <h2 class="sc-section__title">為什麼這個式子是對的<span class="sc-section__title-en">// Correctness</span></h2>
     </div>
 
@@ -221,11 +284,11 @@
   </section>
 
   <!-- ============================================================
-       SECTION 06 — 複雜度
+       SECTION 07 — 複雜度
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">06</span>
+      <span class="sc-section__num">07</span>
       <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
 
@@ -251,11 +314,11 @@
   </section>
 
   <!-- ============================================================
-       SECTION 07 — 一句洞察
+       SECTION 08 — 一句洞察
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">07</span>
+      <span class="sc-section__num">08</span>
       <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
     </div>
 
