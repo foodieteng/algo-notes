@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P143 · 02 Code // 高棕櫚農場 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P143
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/143/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.06
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">高棕櫚農場</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 0/1 背包（一維滾動）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N·M)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 一維 0/1 背包<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      一維 <code>dp[]</code>。容量上界取 <code>cap = min(M, ΣAᵢ)</code>。外層逐物品、內層 <strong>w 由 cap 倒掃到 Aᵢ</strong>。
+      答案是 <code>dp[cap]</code>。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p143.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXM <span class="p">=</span> <span class="n">1000005</span><span class="p">;</span>
+<span class="t">long long</span> dp<span class="p">[</span>MAXM<span class="p">];</span>        <span class="c">// dp[w] = 飽足感 ≤ w 時的最大滿足感</span>
+<span class="t">int</span> satiety<span class="p">[</span><span class="n">105</span><span class="p">];</span>         <span class="c">// satiety[i] = 第 i 個的飽足感 Aᵢ（重量）</span>
+<span class="t">int</span> joy<span class="p">[</span><span class="n">105</span><span class="p">];</span>             <span class="c">// joy[i]     = 第 i 個的滿足感 Bᵢ（價值）</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    <span class="t">int</span> N<span class="p">;</span>
+    <span class="t">long long</span> M<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M<span class="p">;</span>
+
+    <span class="t">long long</span> sumSat <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        cin <span class="p">&gt;&gt;</span> satiety<span class="p">[</span>i<span class="p">]</span> <span class="p">&gt;&gt;</span> joy<span class="p">[</span>i<span class="p">];</span>
+        sumSat <span class="p">+=</span> satiety<span class="p">[</span>i<span class="p">];</span>
+    <span class="p">}</span>
+    <span class="t">long long</span> cap <span class="p">=</span> <span class="f">min</span><span class="p">(</span>M<span class="p">,</span> sumSat<span class="p">);</span>      <span class="c">// 容量超過總重量沒意義</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> w <span class="p">=</span> <span class="n">0</span><span class="p">;</span> w <span class="p">&lt;=</span> cap<span class="p">;</span> w<span class="p">++)</span> dp<span class="p">[</span>w<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="c">// w 由大到小 ⇒ dp[w − satiety[i]] 仍是「沒放第 i 個」的值 ⇒ 每個只拿一次</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> w <span class="p">=</span> cap<span class="p">;</span> w <span class="p">&gt;=</span> satiety<span class="p">[</span>i<span class="p">];</span> w<span class="p">--)</span>
+            dp<span class="p">[</span>w<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>dp<span class="p">[</span>w<span class="p">],</span> dp<span class="p">[</span>w <span class="p">-</span> satiety<span class="p">[</span>i<span class="p">]]</span> <span class="p">+</span> joy<span class="p">[</span>i<span class="p">]);</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> dp<span class="p">[</span>cap<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="f">solve</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>cap=min(M,ΣAᵢ) 的好處</strong>：當所有高棕櫚的飽足感加起來都 &lt; M 時，胃根本撐不滿，dp 表只需開到 ΣAᵢ，省時又省記憶體。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>初始化 dp</td><td>歸零 cap+1 格</td><td class="mono">O(M)</td></tr>
+        <tr><td>外層物品</td><td>i = 0..N−1</td><td class="mono">O(N)</td></tr>
+        <tr><td>內層容量倒掃</td><td>w = cap..Aᵢ</td><td class="mono">O(M)</td></tr>
+        <tr><td>每格轉移</td><td>一次 max</td><td class="mono">O(1)</td></tr>
+        <tr><td>單筆合計</td><td>—</td><td class="mono">O(N·M)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">N 物品 × cap 容量 = <strong>O(N · min(M, ΣAᵢ))</strong></div>
+      <div class="sc-formula__hint">最壞 N=100、M=10⁶ ⇒ 10⁸，但每格只一次 max，實測 < 0.5s</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N·M)</strong> 每筆</td><td>兩層迴圈</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(M)</strong></td><td>一維 dp[]（二維會 MLE）</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每格一次比較取大</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>容量方向</strong></td>
+          <td>內層 w 必須<strong>由大到小</strong>。寫成由小到大會變「完全背包」，每個物品被重複拿 ⇒ 答案偏大、錯。</td>
+        </tr>
+        <tr>
+          <td><strong>二維會 MLE</strong></td>
+          <td><code>dp[100][10⁶]</code> = 10⁸ 個 long long ≈ 800MB，爆記憶體。一定要壓成一維滾動。</td>
+        </tr>
+        <tr>
+          <td><strong>容量上界</strong></td>
+          <td>開 <code>dp[M]</code> 沒錯，但用 <code>cap=min(M,ΣAᵢ)</code> 當上界更省；別忘了答案輸出 <code>dp[cap]</code> 不是 dp[M]。</td>
+        </tr>
+        <tr>
+          <td><strong>每筆重置 dp</strong></td>
+          <td>多筆測資要重新歸零 dp[0..cap]；只清到 cap 即可（前一筆若 cap 更大要小心殘值，保險可清到上一輪用過的範圍）。</td>
+        </tr>
+        <tr>
+          <td><strong>型別</strong></td>
+          <td>M 可達 10⁶ 用 <code>long long</code> 當索引安全；滿足感總和 ≤ N·100 = 10⁴，int 也夠，但統一 long long 省心。</td>
+        </tr>
+        <tr>
+          <td><strong>多筆 T</strong></td>
+          <td>第一行是 T，之後每筆 N M + N 行。別漏讀 T 或把第一筆的 N 當成 T。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 狀態定義</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// state</span>
+dp[w] = 在飽足感(重量) ≤ w 的限制下，能拿到的最大滿足感(價值)
+初值 dp[w] = 0（什麼都沒吃）
+答案 = dp[cap]，cap = min(M, ΣAᵢ)</pre>
+
+    <p><strong>② 轉移（拿 or 不拿第 i 個）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// transition</span>
+for i in 0..N-1:
+  for w from cap down to A[i]:        // 倒序！
+    dp[w] = max( dp[w],               // 不吃第 i 個
+                 dp[w - A[i]] + B[i] )// 吃第 i 個</pre>
+
+    <p><strong>③ 為什麼倒序</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// 0/1 vs 完全</span>
+倒序：dp[w-A[i]] 還沒被本輪改 → 是「沒放第 i 個」的值 → 只拿一次（0/1）✓
+正序：dp[w-A[i]] 本輪已被改 → 可能含第 i 個 → 重複拿（完全背包）✗</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">一維 0/1 背包：dp[w]=max(dp[w], dp[w−Aᵢ]+Bᵢ)，w 倒掃，cap=min(M,ΣAᵢ)，輸出 dp[cap]。</div>
+    <div class="sc-summary-bar__detail">倒序保證每物只拿一次；二維會 MLE；多筆記得重置 dp；long long 防索引溢位。</div>
+  </div>
+
+</body>
+</html>

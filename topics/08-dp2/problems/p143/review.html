@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P143 · 03 Review // 高棕櫚農場 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P143
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/143/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.06
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">高棕櫚農場</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題轉譯</td>
+            <td>飽足感 = 重量、滿足感 = 價值、胃容量 M = 背包 ⇒ <strong>0/1 背包</strong>。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>dp[w]</code> = 飽足感 ≤ w 時的最大滿足感。</td></tr>
+        <tr><td>轉移</td>
+            <td><code>dp[w] = max(dp[w], dp[w−Aᵢ]+Bᵢ)</code>，w 由大到小。</td></tr>
+        <tr><td>倒序原因</td>
+            <td>確保 dp[w−Aᵢ] 是「沒放第 i 個」的值 ⇒ 每物只拿一次。</td></tr>
+        <tr><td>容量上界</td>
+            <td><code>cap = min(M, ΣAᵢ)</code>，答案 <code>dp[cap]</code>。</td></tr>
+        <tr><td>複雜度</td>
+            <td>O(N·M) 時間、O(M) 空間（一維滾動）。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">建模</span>
+      <h4>把這題對應到 0/1 背包：背包容量、物品重量、物品價值分別是題目的哪三個量？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">倒序 vs 正序</span>
+      <h4>內層 w 由大到小掃和由小到大掃，結果差在哪？為什麼正序會把一個物品重複拿？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">壓維</span>
+      <h4>二維 <code>dp[i][w]</code> 為什麼能壓成一維 <code>dp[w]</code>？它只依賴上一列的哪些格子？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">容量上界</span>
+      <h4>為什麼可以用 <code>cap = min(M, ΣAᵢ)</code> 取代 M？什麼情況下這個優化省很多？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">轉移意義</span>
+      <h4>轉移式裡 <code>dp[w]</code>（保留）與 <code>dp[w−Aᵢ]+Bᵢ</code>（更新）分別代表什麼決策？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · M=5, 物品 (2,4)(3,3)<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>cap = min(5, 2+3) = 5。dp 一條長度 6（索引 0..5），逐物品 <strong>w 由 5 倒掃</strong>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>2 5
+2 4         // 物品0：飽足 A=2、滿足 B=4
+3 3         // 物品1：飽足 A=3、滿足 B=3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// init</span>
+索引 w :  0   1   2   3   4   5
+dp[w] :  0   0   0   0   0   0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 物品0 (A=2,B=4)  w: 5→2</span>
+w=5: max(dp[5], dp[3]+4)=max(0,4)=4
+w=4: max(dp[4], dp[2]+4)=max(0,4)=4
+w=3: max(dp[3], dp[1]+4)=max(0,4)=4
+w=2: max(dp[2], dp[0]+4)=max(0,4)=4
+dp :  0   0   4   4   4   4</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 物品1 (A=3,B=3)  w: 5→3</span>
+w=5: max(dp[5], dp[2]+3)=max(4, 4+3)=7   ← 兩個都吃！
+w=4: max(dp[4], dp[1]+3)=max(4, 0+3)=4
+w=3: max(dp[3], dp[0]+3)=max(4, 0+3)=4
+dp :  0   0   4   4   4   7</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>dp[cap=5] = 7</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：<code>w=5</code> 那格用 <code>dp[2]+3</code>，而 dp[2]=4 是「只吃物品0」的值（飽足 2、滿足 4）；
+      再吃物品1（飽足 +3 剛好到 5、滿足 +3）⇒ 4+3=<strong>7</strong>。倒序讓 dp[2] 還停在「沒吃物品1」的狀態，物品1 才沒被重複加。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">第二筆</span>
+      <h4>範例第二筆 <code>M=4</code>、同樣物品 (2,4)(3,3)，答案為何是 4 而非 7？手動跑一次 dp。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">完全背包</span>
+      <h4>若每個高棕櫚可以<strong>無限吃</strong>（吃幾次都行），程式要怎麼改？只動一個地方。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">小 A 限制</span>
+      <h4>30% 測資保證 <code>Aᵢ ≤ 100</code>。這對複雜度或解法有什麼啟發（部分分怎麼拿）？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 建模</span>
+      <p>
+        背包容量 = 胃容量 <code>M</code>（飽足感上限）；物品重量 = 飽足感 <code>Aᵢ</code>；物品價值 = 滿足感 <code>Bᵢ</code>。
+        每個高棕櫚只能吃一次 ⇒ 每個物品拿/不拿，正是 <strong>0/1 背包</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 倒序 vs 正序</span>
+      <p>
+        <strong>倒序</strong>（w 大→小）：更新 dp[w] 時 dp[w−Aᵢ]（較小索引）本輪還沒被改 ⇒ 是「沒放第 i 個」的值 ⇒ 物品只被拿一次（0/1）。
+      </p>
+      <p>
+        <strong>正序</strong>（w 小→大）：dp[w−Aᵢ] 本輪已先被更新、可能已含第 i 個 ⇒ 再拿一次第 i 個 ⇒ 同一物品重複計入，變成「<strong>完全背包</strong>」，這題會答錯。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 壓維</span>
+      <p>
+        二維 <code>dp[i][w] = max(dp[i−1][w], dp[i−1][w−Aᵢ]+Bᵢ)</code> 只依賴<strong>上一列 i−1</strong> 的兩個格子。
+        既然只用前一列，就不必保留整張表，用一條 <code>dp[w]</code> 原地更新即可，空間從 O(N·M) 降到 O(M)。
+      </p>
+      <p>原地更新的代價是必須<strong>倒序</strong>，才能讓被讀的 dp[w−Aᵢ] 維持「上一列」的語意。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 容量上界</span>
+      <p>
+        全部高棕櫚的飽足感加起來才 <code>ΣAᵢ</code>，胃容量再大也吃不超過這個總和 ⇒ 容量超過 ΣAᵢ 的部分永遠用不到，
+        答案 <code>dp[min(M,ΣAᵢ)]</code> 等於 <code>dp[M]</code>。
+      </p>
+      <p>
+        當 <code>ΣAᵢ ≪ M</code>（東西不多但 M 開很大）時，dp 表從 M 縮到 ΣAᵢ，<strong>時間與記憶體都大省</strong>。本題 ΣAᵢ ≤ 100×10⁵ = 10⁷，但 M ≤ 10⁶，故 cap ≤ 10⁶。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 轉移意義</span>
+      <p>
+        <code>dp[w]</code>（等號右邊的舊值）= <strong>不吃</strong>第 i 個高棕櫚，沿用上一輪在容量 w 下的最佳滿足感。
+      </p>
+      <p>
+        <code>dp[w−Aᵢ]+Bᵢ</code> = <strong>吃</strong>第 i 個：先在剩餘容量 <code>w−Aᵢ</code> 拿到最佳滿足感，再加上這顆的 Bᵢ。兩者取大 = 這格的最佳決策。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 第二筆 M=4</span>
+      <pre class="sc-trace"><span class="sc-trace__head">// cap = min(4, 5) = 4</span>
+init:            dp = [0,0,0,0,0]
+物品0(A=2,B=4):  w=4..2 → dp = [0,0,4,4,4]
+物品1(A=3,B=3):  w=4: max(dp[4],dp[1]+3)=max(4,3)=4
+                 w=3: max(dp[3],dp[0]+3)=max(4,3)=4
+                 dp = [0,0,4,4,4]
+答案 dp[4] = 4</pre>
+      <p>容量只有 4，吃不下「飽足 2+3=5」的組合，只能擇一 ⇒ 取較大的滿足感 max(4,3)=<strong>4</strong>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 完全背包</span>
+      <p>
+        把內層迴圈方向<strong>從倒序改成正序</strong>（<code>for w = Aᵢ to cap</code>）即可。
+        正序時 dp[w−Aᵢ] 已可能含第 i 個，於是同一物品能被重複拿 ⇒ 正好是「無限吃」的完全背包。其餘程式不變。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 小 A 限制</span>
+      <p>
+        <code>Aᵢ ≤ 100</code> ⇒ 總飽足 <code>ΣAᵢ ≤ 100×100 = 10⁴</code>，於是 <code>cap = min(M, ΣAᵢ) ≤ 10⁴</code>。
+        dp 表只需開到 10⁴、複雜度降到 <code>O(N·ΣAᵢ) ≤ 100×10⁴ = 10⁶</code>，輕鬆過。
+      </p>
+      <p>
+        啟發：<strong>容量上界用 min(M, ΣAᵢ)</strong> 的寫法天生就吃下這個部分分——同一份程式在 Aᵢ 小時自動變快，不必特判。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W08 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會一維 0/1 背包與「倒序 = 只拿一次」框架。</div>
+    <div class="sc-summary-bar__detail">範例 7（兩個都吃）；M=4 只能擇一得 4；正序改完全背包；cap=min(M,ΣAᵢ) 吃部分分。</div>
+  </div>
+
+</body>
+</html>

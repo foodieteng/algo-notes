@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P143 · 01 概念 // 高棕櫚農場 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P143
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/143/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.06
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">高棕櫚農場</h1>
+    <p class="sc-mast__subtitle">// 0/1 背包 · 一維滾動陣列（容量倒序）</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 0/1 背包（飽足感=重量、滿足感=價值）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N·M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>吃到飽農場有 <code>N</code> 個高棕櫚，第 i 個吃掉會得到「<strong>飽足感</strong> <code>Aᵢ</code>」與「<strong>滿足感</strong> <code>Bᵢ</code>」。
+      円円的胃容量有限：<strong>總飽足感不能超過 M</strong>。每個高棕櫚<strong>只能吃一次</strong>（拿或不拿）。</p>
+      <p style="margin-top:6px;">問在飽足感 ≤ M 的前提下，<strong>滿足感總和最大是多少</strong>？
+      多筆 <code>T ≤ 10</code>，<code>1 ≤ N ≤ 100</code>，<code>1 ≤ M ≤ 10⁶</code>，<code>1 ≤ Aᵢ ≤ 10⁵</code>，<code>1 ≤ Bᵢ ≤ 100</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      換個說法就是<strong>經典 0/1 背包</strong>：背包容量 = 胃容量 <code>M</code>、物品重量 = 飽足感 <code>Aᵢ</code>、物品價值 = 滿足感 <code>Bᵢ</code>。
+      範例 <code>M=5</code>、物品 (2,4)、(3,3)：兩個都吃飽足 2+3=5 ≤ 5、滿足 4+3=<strong>7</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 0/1 背包 DP
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 0/1 背包 DP<span class="sc-section__title-en">// Why Knapsack DP</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉每個吃不吃</span>
+            <span class="sc-ko-card__o">O(2ᴺ)</span>
+          </div>
+          <div class="sc-ko-card__body">每個高棕櫚拿/不拿是 2 種，N=100 ⇒ 2¹⁰⁰ 種子集，天荒地老也跑不完。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">二維 dp[i][w]</span>
+            <span class="sc-ko-card__o">O(N·M) 空間</span>
+          </div>
+          <div class="sc-ko-card__body">dp[i][w] 表大小 100×10⁶ = 10⁸ 格 ⇒ 記憶體爆掉（~400MB+）。時間對、空間不行。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · MLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">一維滾動陣列（容量倒序）</span>
+          <span class="sc-ko-card__o">O(N·M) 時間 · O(M) 空間</span>
+        </div>
+        <div class="sc-ko-card__body">只留一條 <code>dp[w]</code>，逐物品更新；<strong>w 由大到小</strong>掃，保證每個物品只被拿一次。容量上界取 <code>min(M, ΣAᵢ)</code>。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼一維就夠？</strong> 二維的 <code>dp[i][w]</code> 只依賴上一列 <code>dp[i−1][·]</code>，把列壓掉、原地更新即可。
+      關鍵是 <strong>w 倒序</strong>——這樣更新 <code>dp[w]</code> 用到的 <code>dp[w−Aᵢ]</code> 還是「上一輪（沒放第 i 個）」的值，物品才不會被重複拿。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 狀態與轉移
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">狀態與轉移<span class="sc-section__title-en">// State & Transition</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>dp[w]</code> = 在飽足感<strong>恰好用 ≤ w</strong> 的限制下，能得到的最大滿足感。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">dp[w] = max( <strong>dp[w]</strong> , <strong>dp[w − Aᵢ] + Bᵢ</strong> )　（w 由大到小，w ≥ Aᵢ）</div>
+      <div class="sc-formula__hint">
+        <strong>dp[w]</strong> = 不吃第 i 個（沿用上一輪）；<strong>dp[w−Aᵢ]+Bᵢ</strong> = 吃第 i 個（先騰出 Aᵢ 空間再加 Bᵢ）。取較大者。
+      </div>
+    </div>
+
+    <ol style="margin-top:10px;">
+      <li><strong>初始</strong> · <code>dp[w] = 0</code>（什麼都沒吃，滿足感 0）。</li>
+      <li><strong>容量上界</strong> · <code>cap = min(M, ΣAᵢ)</code>——容量超過所有東西的總重量沒意義，可縮小表。</li>
+      <li><strong>逐物品 × 倒序容量</strong> · 外層跑 i，內層 <code>w 從 cap 到 Aᵢ</code> 更新。</li>
+      <li><strong>答案</strong> · <code>dp[cap]</code>。</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 一維 dp 倒序更新<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>M=5</code>、物品 <code>A(2,4)</code>、<code>B(3,3)</code>（答案 7）。上方是物品；中間是 <code>dp[0..5]</code> 一條陣列，
+    處理每個物品時 <strong>w 由大到小</strong>掃，每格比較「不拿」與「拿（取 dp[w−A]+B）」取大：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · 0/1 KNAPSACK 1-D (M=5, items (2,4)(3,3))</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="440" style="height:440px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · dp 全部歸零，準備逐物品更新
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#d96e4e">■</span> 正在更新的 dp[w] &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 來源 dp[w−Aᵢ] &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 被「拿」更新（變大）&nbsp;·&nbsp;
+      <span style="color:#cfcfcf">■</span> w &lt; Aᵢ 放不下、保持不變
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼倒序
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼 w 一定要由大到小<span class="sc-section__title-en">// Why Descending</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 倒序 = 每個物品只拿一次（0/1 的關鍵）</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>一維 <code>dp[w]</code> 在更新第 i 個物品時，<code>dp[w−Aᵢ]</code> 應該代表「<strong>還沒考慮第 i 個</strong>」的最佳值（即二維的 dp[i−1][w−Aᵢ]）。</li>
+          <li><strong>倒序</strong>（w 從大到小）：更新 dp[w] 時，dp[w−Aᵢ]（較小的 w）<strong>本輪還沒被改到</strong> ⇒ 仍是上一輪的值 ⇒ 第 i 個只被拿一次。✓</li>
+          <li><strong>正序</strong>（w 從小到大）：更新 dp[w] 前，dp[w−Aᵢ] <strong>本輪已被改過</strong>（可能已含第 i 個）⇒ 第 i 個會被<strong>重複拿</strong> ⇒ 變成「完全背包」，答案錯。✗</li>
+          <li>所以「倒序 = 0/1 背包、正序 = 完全背包」——差一個迴圈方向，意義完全不同。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      記法：<strong>0/1 背包倒著掃、完全背包順著掃</strong>。這題每個高棕櫚只能吃一次，所以倒序。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">N 個物品 × 容量 cap = <strong>O(N · min(M, ΣAᵢ))</strong> 每筆</div>
+      <div class="sc-formula__hint">N ≤ 100、cap ≤ M ≤ 10⁶ ⇒ ~10⁸；T ≤ 10 但常數極小（一次加法一次比較），實測 < 0.5s</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N·M)</strong> 每筆</td><td>兩層迴圈 i / w</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(M)</strong></td><td>一維 dp[] 滾動；二維會 MLE</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每格一次 max</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>飽足感 = 重量、滿足感 = 價值、胃容量 = 背包 ⇒ 標準 0/1 背包。</strong><br/>
+      一維滾動 dp[w] = max(dp[w], dp[w−Aᵢ]+Bᵢ)，<strong>w 由大到小</strong>保證每個只拿一次 —<br/>
+      <strong>容量上界取 min(M, ΣAᵢ)，O(N·M) 時間、O(M) 空間。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">0/1 背包：dp[w]=max(dp[w], dp[w−Aᵢ]+Bᵢ)，w 由大到小，cap=min(M,ΣAᵢ)，O(N·M)。</div>
+    <div class="sc-summary-bar__detail">飽足感=重量、滿足感=價值；一維滾動省記憶體；倒序=0/1、正序=完全背包（會重複拿）。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p143-knapsack.js"></script>
+</body>
+</html>
