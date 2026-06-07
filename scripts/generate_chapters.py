@@ -39,7 +39,7 @@ CHAPTERS = [
     ('05', '05-greedy',             'Greedy',               '貪心策略與正確性論證',                            5),
     ('06', '06-divide-conquer',     'Divide & Conquer',     '分治、倍增、主定理',                              7),
     ('07', '07-dp1',                'DP 1',                 'DP 入門、狀態設計、最佳化',                       6),
-    ('08', '08-dp2',                'DP 2',                 '區間 DP、樹 DP',                                  4),
+    ('08', '08-dp2',                'DP 2',                 '區間 DP、樹 DP',                                  5),
     ('09', '09-dp3',                'DP 3',                 '狀態壓縮、位元 DP、進階技巧',                     7),
     ('10', '10-mst-shortest',       'MST · Shortest',       '拓樸排序、最小生成樹、最短路徑',                  7),
     ('11', '11-string-trie-kmp',    'Trie · KMP',           '字串匹配、Trie、KMP',                            4),
@@ -82,6 +82,13 @@ PROBLEMS = {
         ('p157', '分送高棕櫚',                      'bonus', 'done'),
         ('p326', '實實打怪獸',                      'bonus', 'done'),
     ],
+    '08': [
+        ('p143', '高棕櫚農場',                      'main',  'todo'),
+        ('p144', '高棕櫚農場2',                     'main',  'todo'),
+        ('p369', '玩電梯',                          'main',  'todo'),
+        ('p373', '取名字好困難QQ',                  'main',  'todo'),
+        ('p122', '邪惡收集大作戰',                  'bonus', 'todo'),
+    ],
 }
 
 CATEGORY_NAMES = {
@@ -98,6 +105,7 @@ WEEK_CONTEST = {
     '03': 11,
     '06': 20,
     '07': 24,
+    '08': 26,
 }
 DEFAULT_CONTEST = 20
 

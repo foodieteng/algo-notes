@@ -38,7 +38,7 @@
     <div class="meta-row">
       <span><span class="dot"></span>CHAPTER 08</span>
       <span>WEEK 08</span>
-      <span>04 PROBLEMS</span>
+      <span>05 PROBLEMS</span>
     </div>
     <h1 class="workshop-title">DP 2.</h1>
     <p class="workshop-subtitle">
@@ -59,7 +59,7 @@
           <li><a href="../../topics/05-greedy/index.html">W05 · Greedy <span class="tag">05</span></a></li>
           <li><a href="../../topics/06-divide-conquer/index.html">W06 · Divide & Conquer <span class="tag">07</span></a></li>
           <li><a href="../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
-          <li><a href="../../topics/08-dp2/index.html" class="is-active">W08 · DP 2 <span class="tag">04</span></a></li>
+          <li><a href="../../topics/08-dp2/index.html" class="is-active">W08 · DP 2 <span class="tag">05</span></a></li>
           <li><a href="../../topics/09-dp3/index.html">W09 · DP 3 <span class="tag">07</span></a></li>
           <li><a href="../../topics/10-mst-shortest/index.html">W10 · MST · Shortest <span class="tag">07</span></a></li>
           <li><a href="../../topics/11-string-trie-kmp/index.html">W11 · Trie · KMP <span class="tag">04</span></a></li>
@@ -93,14 +93,48 @@
         <h2>本章節大綱</h2>
         <div class="article-meta">
           <span>W08</span>
-          <span>04 PROBLEMS</span>
+          <span>05 PROBLEMS</span>
         </div>
 
         <ul class="notes-list">
+          <li><a href="#sec-quick-index">⚡ 快速索引</a></li>
           <li><a href="#sec-concept">08.1 · 核心概念</a></li>
-          <li><a href="#sec-problems">08.2 · 題目列表</a></li>
-          <li><a href="#sec-notes">08.3 · 筆記與補充</a></li>
+          <li><a href="#sec-main">08.2 · 上機作業</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P143 · 高棕櫚農場 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/143/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P144 · 高棕櫚農場2 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/144/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P369 · 玩電梯 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P373 · 取名字好困難QQ <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-bonus">08.3 · Bonus</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P122 · 邪惡收集大作戰 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/122/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-notes">08.4 · 筆記與補充</a></li>
         </ul>
+      </article>
+
+      <article id="sec-quick-index">
+        <span class="stamp">▼ QUICK INDEX</span>
+        <h2>題目快速索引</h2>
+        <div class="article-meta">
+          <span>SUMMARY</span>
+          <span>5 PROBLEMS</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>類別</th><th>題號</th><th>題目</th><th>原題</th><th>狀態</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P143</td><td><span style="color:var(--concrete)">高棕櫚農場</span></td><td><a href="https://tioj.sprout.tw/contests/26/problems/143/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P144</td><td><span style="color:var(--concrete)">高棕櫚農場2</span></td><td><a href="https://tioj.sprout.tw/contests/26/problems/144/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P369</td><td><span style="color:var(--concrete)">玩電梯</span></td><td><a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P373</td><td><span style="color:var(--concrete)">取名字好困難QQ</span></td><td><a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">Bonus</span></td><td style="font-family:var(--font-mono);">P122</td><td><span style="color:var(--concrete)">邪惡收集大作戰</span></td><td><a href="https://tioj.sprout.tw/contests/26/problems/122/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+          </tbody>
+        </table>
       </article>
 
       <article id="sec-concept">
@@ -112,19 +146,33 @@
         <p>—— 待補 ——</p>
       </article>
 
-      <article id="sec-problems">
+      <article id="sec-main">
         <span class="stamp">▼ 08.2</span>
-        <h2>題目列表</h2>
+        <h2>上機作業</h2>
         <div class="article-meta">
-          <span>PROBLEMS</span>
+          <span>4 PROBLEMS</span>
         </div>
         <ul class="notes-list">
-          <li><span style="color:var(--concrete)">—— 待新增題目 ——</span></li>
+          <li><span style="color:var(--concrete)">P143 · 高棕櫚農場 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/143/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P144 · 高棕櫚農場2 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/144/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P369 · 玩電梯 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P373 · 取名字好困難QQ <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+        </ul>
+      </article>
+
+      <article id="sec-bonus">
+        <span class="stamp">▼ 08.3</span>
+        <h2>Bonus</h2>
+        <div class="article-meta">
+          <span>1 PROBLEM</span>
+        </div>
+        <ul class="notes-list">
+          <li><span style="color:var(--concrete)">P122 · 邪惡收集大作戰 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/26/problems/122/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
         </ul>
       </article>
 
       <article id="sec-notes">
-        <span class="stamp">▼ 08.3</span>
+        <span class="stamp">▼ 08.4</span>
         <h2>筆記與補充</h2>
         <div class="article-meta">
           <span>NOTES</span>
