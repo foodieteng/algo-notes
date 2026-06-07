@@ -81,7 +81,7 @@
     const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
     const rect = canvas.getBoundingClientRect();
     const w = rect.width || canvas.clientWidth;
-    const h = rect.height || canvas.clientHeight || 440;
+    const h = rect.height || canvas.clientHeight || 480;
     const bw = Math.round(w * dpr), bh = Math.round(h * dpr);
     if (canvas.width !== bw || canvas.height !== bh) { canvas.width = bw; canvas.height = bh; }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -107,8 +107,8 @@
 
     const PAD = 26;
     const band1Y = 34;     // items title
-    const band2Y = 168;    // dp array title
-    const band3Y = 320;    // transition title
+    const band2Y = 162;    // dp array title
+    const band3Y = 348;    // transition title (pushed down to clear the arrow band)
 
     // ───────────────── BAND 1 · items ─────────────────
     ctx.fillStyle = COLOR.dim;
@@ -149,10 +149,10 @@
     ctx.fillText('BAND 2 · dp[w] = 飽足感 ≤ w 時的最大滿足感（w 由大到小更新）', PAD, band2Y);
 
     const n = cap + 1;
-    const cell = Math.min(70, (w - PAD * 2) / n);
+    const cell = Math.min(62, (w - PAD * 2) / n);
     const gridW = cell * n;
     const gx = (w - gridW) / 2;
-    const gy = band2Y + 30;
+    const gy = band2Y + 34;
     for (let wi = 0; wi <= cap; wi++) {
       const x = gx + wi * cell;
       const isActive = s.w === wi;
