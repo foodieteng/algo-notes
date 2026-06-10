@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P369 · 03 Review // 玩電梯 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P369
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">玩電梯</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>數樓層序列：每步 <code>|y−x| &lt; |b−x|</code>，求長度 K 的序列數。</td></tr>
+        <tr><td>關鍵觀察</td>
+            <td>合法落點 <code>y ∈ [x−d+1, x+d−1]</code>（d=|x−b|）是<strong>連續區間且碰不到 b</strong>。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>cur[f]</code> = 搭到目前、停在樓層 f 的方法數。</td></tr>
+        <tr><td>加速</td>
+            <td>區間加 ⇒ <strong>差分陣列</strong>，每趟 O(n)。</td></tr>
+        <tr><td>細節</td>
+            <td>扣 y=x 自身、減法補 MOD、答案 Σ cur[f]。</td></tr>
+        <tr><td>複雜度</td>
+            <td>O(N·K)；MOD 1e9+7（質數，但只用加減）。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">建模</span>
+      <h4>條件 <code>|y−x| &lt; |b−x|</code> 展開後，合法落點 y 是什麼形狀？為什麼這保證跳不到禁止樓層 b？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">為何差分</span>
+      <h4>樸素 DP 每趟為什麼是 O(n²)？差分陣列怎麼把它降到 O(n)？關鍵前提是什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">扣自身</span>
+      <h4>為什麼前綴和算完後要把每個 <code>nxt[x] −= cur[x]</code>？不扣會多算什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">嚴格不等</span>
+      <h4>條件是嚴格 <code>&lt;</code> 還是 <code>≤</code>？若不小心寫成 ≤，會發生什麼？（提示：想 y=b）</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">答案位置</span>
+      <h4>為什麼答案是 <code>Σ cur[f]</code> 而不是某一個 cur[?]？搭完 K 趟後可以停在哪些樓層？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · n=8, a=2, b=5, K=2<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>cur[f] 從起點 a=2 出發。樓層 5 是禁止的（紅）。每趟把每個 cur[x] 灑到 <code>[x−d+1, x+d−1]</code>（扣 y=x）：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>8 2 5 2     // n=8, a=2, b=5, K=2</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// init (s=0)</span>
+樓層 f :  1   2   3   4  [5]  6   7   8
+cur    :  0   1   0   0   -   0   0   0     ← 只有 a=2 有 1 種</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 第 1 趟：從 x=2 散播</span>
+x=2: d=|2-5|=3 → 落點 [2-2, 2+2]=[0,4] 夾成 [1,4]，扣掉 y=2
+   → 加到 {1,3,4} 各 +1
+cur    :  1   0   1   1   -   0   0   0     （sum 還沒當答案，繼續第 2 趟）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 第 2 趟：從 x=1,3,4 各自散播</span>
+x=1: d=|1-5|=4 → [1-3,1+3]=[-2,4]→[1,4]，扣 y=1 → 加 {2,3,4}
+x=3: d=|3-5|=2 → [3-1,3+1]=[2,4]，扣 y=3 → 加 {2,4}
+x=4: d=|4-5|=1 → [4-0,4+0]=[4,4]，扣 y=4 → 加 {} （唯一落點就是自己，無效）
+累加：
+cur    :  0   2   1   2   -   0   0   0
+              ↑   ↑   ↑
+            f=2:從1,3   f=3:從1   f=4:從1,3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>Σ cur[f] = 2 + 1 + 2 = 5</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：第 2 趟時 x=4 的 d=1，合法區間只剩它自己 ⇒ 扣掉後沒有任何落點，這條路「卡住」了。
+      離 b 越近、d 越小、可走的範圍越窄，這正是 <code>|y−x| &lt; |b−x|</code> 的幾何意義。最終 5 種搭法。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">為何 0</span>
+      <h4>範例2 <code>n=7, a=1, b=2, K=2</code> 答案是 0。為什麼從 a=1 連一趟都搭不出去？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">前綴和重建</span>
+      <h4>差分陣列 diff 做完所有區間加後，要怎麼還原出真正的 nxt[]？這一步的複雜度？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變體</span>
+      <h4>若把條件改成 <code>|y−x| ≤ |b−x|</code>（允許等於、但仍 y≠b），落點區間會變怎樣？要多加什麼特判？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 建模</span>
+      <p>
+        <code>|y−x| &lt; d</code>（d=|x−b|）展開為 <code>−d &lt; y−x &lt; d</code> ⟺ <code>y ∈ [x−d+1, x+d−1]</code>，
+        是<strong>以 x 為中心、半徑 d−1 的連續整數區間</strong>。
+      </p>
+      <p>
+        b 在距離 x 恰好 d 的位置，而區間最遠只到 d−1 ⇒ <strong>b 永遠落在區間外</strong>，所以每趟自動跳不到也跳不過 b，不用特別排除。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 為何差分</span>
+      <p>
+        樸素轉移：對每個 x，要把 cur[x] 加到 O(n) 個合法 y ⇒ 每趟 O(n²)、K 趟 O(n²K)=1.6×10¹⁰，TLE。
+      </p>
+      <p>
+        關鍵前提：合法 y 是<strong>連續區間</strong>。於是「把一個值加到一段區間」可用差分 <code>diff[lo]+=v, diff[hi+1]−=v</code> 做到 O(1)，
+        全部加完再一次前綴和 O(n) 還原 ⇒ 每趟 O(n)，總 O(nK)。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 扣自身</span>
+      <p>
+        合法區間 <code>[x−d+1, x+d−1]</code> <strong>包含 x 本身</strong>（|x−x|=0 &lt; d）。但電梯要動、<code>y ≠ x</code>，
+        所以區間加會多算一份「停在原地」的假搭法。
+      </p>
+      <p>
+        前綴和算完後，對每個出發樓層 x 做 <code>nxt[x] −= cur[x]</code> 把這份多算的扣掉。不扣的話每趟都會灌水。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 嚴格不等</span>
+      <p>
+        是<strong>嚴格 &lt;</strong>。所以區間右端是 <code>x+d−1</code>（不含 d）。
+      </p>
+      <p>
+        若寫成 ≤，區間會延伸到 <code>x±d</code>，<strong>剛好包含 b</strong>（b 在距離 d 處）⇒ 會允許跳到禁止樓層、且 d=1 時還會允許停原地的相鄰，答案整個錯。範例2 用 ≤ 會算出非 0。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 答案位置</span>
+      <p>
+        題目只要求「連續搭 K 趟」，<strong>沒有規定終點</strong>。所以搭完 K 趟後停在任何樓層都算一種合法搭法。
+      </p>
+      <p>
+        因此答案是把 cur[] 全部加起來 <code>Σ_f cur[f]</code>，代表「所有可能終點的方法數總和」。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 為何 0</span>
+      <p>
+        a=1、b=2，距離 <code>d = |1−2| = 1</code>。合法落點區間 <code>[1−0, 1+0] = [1,1]</code> ＝ 只有樓層 1 自己。
+        扣掉 y=x 後<strong>沒有任何合法落點</strong> ⇒ 第一趟就搭不出去 ⇒ 0 種。
+      </p>
+      <p>直覺：你緊貼著禁止樓層（距離 1），任何移動都會碰到或越過它，所以動彈不得。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 前綴和重建</span>
+      <p>
+        差分還原就是做<strong>前綴和</strong>：<code>nxt[y] = nxt[y−1] + diff[y]</code>（從 y=1 掃到 n，邊掃邊累加 run）。
+        這樣每個 diff[lo]+=v / diff[hi+1]−=v 的「區間加」效果就被展開成 [lo,hi] 每格都 +v。
+      </p>
+      <p>複雜度 O(n)：一次線性掃描即可還原整條 nxt[]。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 變體</span>
+      <p>
+        改成 <code>|y−x| ≤ d</code> ⇒ 區間變 <code>[x−d, x+d]</code>（兩端各多 1 格）。但 <code>x−d</code> 或 <code>x+d</code> 其中一個<strong>正好是 b</strong>。
+      </p>
+      <p>
+        所以要<strong>多一個特判把 y=b 那格扣掉</strong>（像扣 y=x 一樣，再做一次 <code>nxt[b] −= cur[x]</code>，但只在 b 落在該 x 的區間內時）。
+        本題用嚴格 &lt; 就天生避開 b，不必這個特判 — 這也是原題刻意設計成嚴格不等的原因。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W08 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「區間轉移 → 差分加速」的計數 DP 框架。</div>
+    <div class="sc-summary-bar__detail">範例 5（x=4 時 d=1 卡住）；a 緊貼 b → 0；嚴格 &lt; 天生避開 b；答案 Σcur[f]。</div>
+  </div>
+
+</body>
+</html>

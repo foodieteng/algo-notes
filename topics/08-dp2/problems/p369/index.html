@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P369 · 01 概念 // 玩電梯 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P369
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">玩電梯</h1>
+    <p class="sc-mast__subtitle">// 計數 DP · 區間轉移用差分陣列加速</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 dp[趟數][樓層] + 差分區間加
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N·K)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>n 層樓，你在樓層 <code>a</code>，樓層 <code>b</code> 是禁止進入的研究室。你想<strong>連續搭 K 趟超級電梯</strong>。
+      每趟從樓層 x 搭到 y，要求 <strong><code>|y − x| &lt; |b − x|</code></strong>（搭乘距離<strong>小於</strong>你到 b 的距離 ⇒ 永遠跳不到也跳不過 b）。</p>
+      <p style="margin-top:6px;">第 i+1 趟的起點 = 第 i 趟的終點（連續鏈接）。兩種搭法<strong>視為相同 ⟺ 每一趟所在樓層都一樣</strong>。
+      問有幾種不同搭法，<strong>mod 1000000007</strong>。<code>2 ≤ n ≤ 2000</code>，<code>a ≠ b</code>，<code>1 ≤ K ≤ 2000</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      白話：一個「搭法」就是樓層序列 <code>a = f₀, f₁, …, f_K</code>，每步 <code>|fᵢ − fᵢ₋₁| &lt; |b − fᵢ₋₁|</code>。
+      這條件保證每趟都跳不到 b（若 y=b 則 |y−x|=|b−x| 不 &lt;），所以<strong>自動避開禁止樓層</strong>。求序列數。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 DP + 差分
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用計數 DP + 差分<span class="sc-section__title-en">// Why DP + Diff Array</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉所有樓層序列</span>
+            <span class="sc-ko-card__o">O(nᴷ)</span>
+          </div>
+          <div class="sc-ko-card__body">每趟都有近 n 種落點，K 趟 ⇒ 指數爆炸；n,K=2000 完全不可能。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">樸素 DP，每步逐對轉移</span>
+            <span class="sc-ko-card__o">O(N²·K)</span>
+          </div>
+          <div class="sc-ko-card__body"><code>dp[s][f]</code> 對，但每步對每個 x 掃所有 y ⇒ n²·K = 2000²·2000 ≈ 1.6×10¹⁰，TLE。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · TLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">DP + 差分陣列做區間加</span>
+          <span class="sc-ko-card__o">O(N·K)</span>
+        </div>
+        <div class="sc-ko-card__body">關鍵觀察：從 x 出發的合法落點 y 是<strong>一段連續區間</strong> <code>[x−d+1, x+d−1]</code>（d=|x−b|）。用<strong>差分陣列</strong>一次 O(1) 加整段，每步 O(n)。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>核心觀察</strong>：<code>|y − x| &lt; d</code>（d = |x − b|）⟺ <code>y ∈ [x−d+1, x+d−1]</code>，是<strong>以 x 為中心的連續區間</strong>（再扣掉 y=x）。
+      「把一個值加到一段連續區間」正是差分陣列的拿手好戲，把每步從 O(n²) 壓到 O(n)。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Strategy</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>cur[f]</code> = 搭完目前這 s 趟後，停在樓層 f 的方法數。每趟做一次轉移：</p>
+
+    <ol style="margin-top:8px;">
+      <li><strong>算區間</strong> · 對每個樓層 x，落點範圍是 <code>[max(1, x−d+1), min(n, x+d−1)]</code>，其中 <code>d = |x − b|</code>。</li>
+      <li><strong>差分加</strong> · 把 <code>cur[x]</code> 加到該區間：<code>diff[lo] += cur[x]</code>、<code>diff[hi+1] −= cur[x]</code>。</li>
+      <li><strong>前綴和 + 扣自身</strong> · 對 diff 取前綴和得 <code>nxt[]</code>；再把每個 <code>nxt[x] −= cur[x]</code>（因為電梯要動，<code>y ≠ x</code>）。</li>
+    </ol>
+
+    <div class="sc-formula" style="margin-top:10px;">
+      <div class="sc-formula__main">nxt[y] = Σ<sub>x : |y−x| &lt; |b−x|, y≠x</sub> cur[x]　（用差分 O(n) 完成整步）</div>
+      <div class="sc-formula__hint">重複 K 趟；答案 = <strong>Σ_f cur[f]</strong>（停在任一樓層都算一種搭法）。MOD = 1000000007（質數）。</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 區間轉移逐趟更新<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>n=8, a=2, b=5, K=2</code>（答案 5）。上方是 8 層樓的 <code>cur[]</code>；每趟對每個有值的樓層 x，
+    把 cur[x] 灑到合法落點區間 <code>[x−d+1, x+d−1]</code>（紅虛線是禁止樓層 b）：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · COUNTING DP RANGE TRANSITION (n=8, a=2, b=5, K=2)</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="480" style="height:480px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 只有起點樓層 a=2 有 1 種方法
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#d96e4e">■</span> 正在散播的來源 x &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 合法落點區間 [x−d+1, x+d−1] &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 本趟累積結果 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">┊</span> 禁止樓層 b（跳不到）
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼是連續區間
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼合法落點是一段連續區間<span class="sc-section__title-en">// Why a Contiguous Range</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 條件 |y−x| < |b−x| 展開 = 區間</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>令 <code>d = |x − b|</code>（x 到禁止樓層的距離）。條件 <code>|y − x| &lt; d</code> 就是「y 離 x 的距離 &lt; d」。</li>
+          <li>展開：<code>−d &lt; y − x &lt; d</code> ⟺ <code>x − d &lt; y &lt; x + d</code> ⟺ <code>y ∈ [x−d+1, x+d−1]</code>（整數）。<strong>一段以 x 為中心的連續區間</strong>。</li>
+          <li>這區間<strong>不會碰到 b</strong>：b 在距離 d 處，而區間最遠只到 d−1，所以 b 永遠在區間外 ⇒ 自動避開禁止樓層，不必特判。</li>
+          <li>區間內<strong>含 x 自己</strong>（|x−x|=0&lt;d），但電梯要動 ⇒ 最後把 y=x 的貢獻扣掉。</li>
+          <li>「把 cur[x] 加到一段連續區間」⇒ 用<strong>差分陣列</strong>：<code>diff[lo]+=v, diff[hi+1]−=v</code>，全部加完再前綴和，每步 O(n)。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      沒有差分的話，每個 x 要逐一加到 O(n) 個 y，整步 O(n²)；差分把「區間加」變 O(1)，整步降到 O(n)，<strong>K 趟總共 O(N·K)</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">K 趟 × 每趟 O(n)（差分 + 前綴和）= <strong>O(N·K)</strong></div>
+      <div class="sc-formula__hint">n,K ≤ 2000 ⇒ 4×10⁶，瞬殺；樸素 O(N²·K)=1.6×10¹⁰ 會 TLE</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N·K)</strong></td><td>差分讓區間轉移 O(n)/趟</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>cur / nxt / diff 三條陣列滾動</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>逐趟前進</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每步兩次線性掃</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      MOD = <code>1000000007</code> 是<strong>質數</strong>，但本題只用加減、沒有除法，所以不涉及逆元；減法記得 <code>+MOD</code> 防負。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>條件 |y−x| &lt; |b−x| ⟺ y 落在以 x 為中心、碰不到 b 的連續區間。</strong><br/>
+      計數 DP <code>cur[f]</code> 逐趟把值灑到區間，用<strong>差分陣列</strong>把區間加做成 O(n) —<br/>
+      <strong>每步 O(n)、K 趟 O(N·K)，記得扣掉 y=x 自身、答案是 Σ cur[f]。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">計數 DP：cur[f] 逐趟灑到合法區間 [x−d+1,x+d−1]，差分陣列做區間加，O(N·K)。</div>
+    <div class="sc-summary-bar__detail">|y−x|<|b−x| ⟺ 連續區間且碰不到 b；扣 y=x 自身；答案 Σcur[f]；減法補 MOD 防負。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p369-elevator.js"></script>
+</body>
+</html>
