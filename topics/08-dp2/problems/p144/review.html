@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P144 · 03 Review // 高棕櫚農場2 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P144
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/144/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">高棕櫚農場2</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>0/1 背包 + 「最多 K 件」⇒ 多開一維記已選個數。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>dp[j][l]</code> = 選 ≤ j 個、飽足 ≤ l 的最大滿足感。</td></tr>
+        <tr><td>轉移</td>
+            <td><code>dp[j][l] = max(dp[j][l], dp[j−1][l−Aᵢ]+Bᵢ)</code>。</td></tr>
+        <tr><td>來源 j−1</td>
+            <td>吃一個 ⇒ 用掉 1 個名額 + Aᵢ 飽足 ⇒ 從 dp[j−1][l−Aᵢ] 轉移。</td></tr>
+        <tr><td>兩維倒序</td>
+            <td>j、l 都由大到小，保證每物只拿一次。</td></tr>
+        <tr><td>複雜度</td>
+            <td>O(N·K·M) 時間、O(K·M) 空間；答案 dp[K][M]。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">為何多一維</span>
+      <h4>原題（P143）的一維 <code>dp[l]</code> 為什麼沒辦法處理「最多 K 個」？要記什麼才補得起來？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">轉移推導</span>
+      <h4>轉移式裡「吃」這項為什麼是 <code>dp[j−1][l−Aᵢ]+Bᵢ</code>？j−1 和 l−Aᵢ 各對應什麼資源被消耗？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">兩維倒序</span>
+      <h4>為什麼 j 和 l <strong>兩維都</strong>要倒序？只有一維倒序、另一維正序會發生什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">答案位置</span>
+      <h4>為什麼答案直接取 <code>dp[K][M]</code>，而不用對 j、l 取 max 掃一遍？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">退化</span>
+      <h4>當 <code>K = N</code> 時這題等於什麼？同一份二維程式還會正確嗎？為什麼？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · M=6, K=3, 物品 (2,4)(3,5)(4,6)<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>dp 是 <code>(K+1)×(M+1)</code> 表（列 j = 已選個數、行 l = 飽足）。逐物品 j、l 兩維倒序：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>3 6 3
+2 4         // 物品0：A=2 B=4
+3 5         // 物品1：A=3 B=5
+4 6         // 物品2：A=4 B=6</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 處理物品0 (A=2,B=4)  每列 l: 6→2</span>
+        l=0  1  2  3  4  5  6
+j=0  :  0  0  0  0  0  0  0
+j=1  :  0  0  4  4  4  4  4
+j=2  :  0  0  4  4  4  4  4
+j=3  :  0  0  4  4  4  4  4</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 處理物品1 (A=3,B=5)</span>
+        l=0  1  2  3  4  5  6
+j=0  :  0  0  0  0  0  0  0
+j=1  :  0  0  4  5  5  5  5
+j=2  :  0  0  4  5  5  9  9    ← j=2,l=5: dp[1][2]+5 = 4+5 = 9（吃物品0+1）
+j=3  :  0  0  4  5  5  9  9</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 處理物品2 (A=4,B=6)</span>
+        l=0  1  2  3  4  5  6
+j=0  :  0  0  0  0  0  0  0
+j=1  :  0  0  4  5  6  6  6
+j=2  :  0  0  4  5  6  9 10    ← j=2,l=6: dp[1][2]+6 = 4+6 = 10（吃物品0+2）
+j=3  :  0  0  4  5  6  9 10</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>dp[K=3][M=6] = 10</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：答案 10 來自 <code>dp[2][6]</code> = 吃物品0(A=2,B=4) + 物品2(A=4,B=6)：飽足 2+4=6 ≤ 6、用 <strong>2 個 ≤ K=3</strong>、滿足 4+6=<strong>10</strong>。
+      雖然 K 容許 3 個，但第三個塞不進剩餘容量，所以最佳只用 2 個。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">K 變小</span>
+      <h4>若同物品但 <code>K=1</code>（只能吃一個），答案是多少？從 trace 的哪一列讀得出來？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">壓維</span>
+      <h4>這題的二維 dp 能不能壓成一維（像 P143）？提示：要保留哪一維、犧牲哪一維？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">恰好 K 個</span>
+      <h4>若改成「<strong>恰好</strong>吃 K 個」（不是最多），dp 初始化與答案讀取要怎麼改？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 為何多一維</span>
+      <p>
+        一維 <code>dp[l]</code> 只記「容量 l 下的最大價值」，<strong>不知道用了幾個物品</strong>，所以無法限制「最多 K 個」——
+        它會把能塞進容量的全部拿走，可能超過 K 個。
+      </p>
+      <p>
+        補法：多開一維 <code>j</code> 記「<strong>已選個數</strong>」，狀態變 <code>dp[j][l]</code>，就能把「件數」也當成一種有限資源來管理。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 轉移推導</span>
+      <p>
+        「吃第 i 個」會同時消耗<strong>兩種資源</strong>：用掉 <strong>1 個名額</strong>（j → j−1）與 <strong>Aᵢ 飽足</strong>（l → l−Aᵢ）。
+      </p>
+      <p>
+        所以「吃之後的 <code>dp[j][l]</code>」要從「吃之前、少一個名額又少 Aᵢ 飽足」的狀態 <code>dp[j−1][l−Aᵢ]</code> 轉移，再加上這顆的 <code>Bᵢ</code>。
+        和「不吃」（保留舊 dp[j][l]）取大。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 兩維倒序</span>
+      <p>
+        轉移用到的 <code>dp[j−1][l−Aᵢ]</code> 必須是「<strong>還沒考慮第 i 個物品</strong>」的值（上一輪的表），第 i 個才不會被重複拿。
+      </p>
+      <p>
+        <strong>j 倒序</strong>讓 dp[j−1] 本輪還沒被改；<strong>l 倒序</strong>讓 dp[·][l−Aᵢ] 本輪還沒被改。
+        若任一維正序，對應的來源格<strong>已被本輪更新過、可能已含第 i 個</strong> ⇒ 同物品重複計入，答案偏大、錯。所以兩維都倒序。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 答案位置</span>
+      <p>
+        因為 dp 定義是「選 <strong>≤ j</strong> 個、飽足 <strong>≤ l</strong>」（不是恰好），這個「≤」讓 dp 對 j、l 都是<strong>單調不減</strong>的——
+        放寬上限不會讓最佳值變小。
+      </p>
+      <p>
+        所以最寬鬆的格子 <code>dp[K][M]</code> 已經涵蓋所有「≤ K 個、≤ M 飽足」的選法，直接取它即可，不必再掃 max。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 退化</span>
+      <p>
+        <code>K = N</code> 表示「最多吃 N 個」= 沒有件數限制（本來就只有 N 個可吃）⇒ 退化成原題 P143 的純 0/1 背包。
+      </p>
+      <p>
+        同一份二維程式仍正確：j 維可以一路加到 N 都不受限，dp[N][M] 等於一維背包的答案。只是多花了 O(K) 倍時間（K=N），對 N≤100 無妨。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · K=1</span>
+      <p>
+        K=1 ⇒ 只能吃一個，答案讀 <code>dp[1][6]</code>。從 trace 最後一張表的 <strong>j=1 那列</strong>：
+        <code>dp[1][6] = 6</code>（單吃物品2，A=4≤6、B=6 最大）。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// j=1 列（最後狀態）</span>
+l :  0  1  2  3  4  5  6
+   :  0  0  4  5  6  6  6      → dp[1][6] = 6</pre>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 壓維</span>
+      <p>
+        可以壓掉「物品 i 這一層」（本來就只用滾動陣列、沒展開成 dp[i][..]），但 <strong>j 和 l 兩維都得保留</strong>——
+        它們是真正的狀態（已選個數、已用飽足），少了任一維就無法表達限制。
+      </p>
+      <p>
+        也就是說空間已經是 O(K·M)（最省），<strong>不能再壓成一維</strong>；倒序的寫法本身就是「物品維被滾動掉」的結果。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 恰好 K 個</span>
+      <p>
+        改「恰好」要區分「不可達」狀態：初始化 <code>dp[0][0]=0</code>、<strong>其餘全設 −∞</strong>（表示「還沒湊到那個個數」是不合法的）。
+        轉移不變。
+      </p>
+      <p>
+        答案讀 <code>dp[K][l]</code> 對 <code>l = 0..M</code> 取 max（恰好 K 個、飽足任意 ≤ M 的最大值）；
+        若 dp[K][·] 全是 −∞ 代表湊不出 K 個，輸出無解。本題是「最多」所以用 0 初始化、直接 dp[K][M]，較單純。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W08 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 dp trace — 學會「件數限制 → 多開一維」的背包擴充框架。</div>
+    <div class="sc-summary-bar__detail">範例 10（吃物品0+2、用 2 個）；K=1 → 6；兩維都倒序；恰好 K 個要用 −∞ 初始化。</div>
+  </div>
+
+</body>
+</html>

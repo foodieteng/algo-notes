@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P144 · 01 概念 // 高棕櫚農場2 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P144
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/144/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">高棕櫚農場2</h1>
+    <p class="sc-mast__subtitle">// 有數量上限的 0/1 背包 · 加一維「已選個數」</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 二維背包 dp[已選幾個][飽足]
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N·K·M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>承<a href="../p143/index.html" style="color:var(--sc-coral)">「高棕櫚農場」</a>：吃高棕櫚，第 i 個有飽足感 <code>Aᵢ</code>（重量）、滿足感 <code>Bᵢ</code>（價值），
+      總飽足感不能超過 <code>M</code>。<strong>這次多一個限制：最多只能吃 <code>K</code> 個</strong>。</p>
+      <p style="margin-top:6px;">求滿足感最大值。多筆 <code>T ≤ 10</code>，<code>1 ≤ K ≤ N ≤ 100</code>，<code>1 ≤ M ≤ 1000</code>，
+      <code>1 ≤ Aᵢ ≤ 100</code>，<code>1 ≤ Bᵢ ≤ 10⁶</code>。（30% 測資 <code>K = N</code>，即退化回原題）</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      就是 <strong>0/1 背包再多一條「件數上限」</strong>。範例 <code>M=6, K=3</code>、物品 (2,4)(3,5)(4,6)：
+      選 (2,4)+(4,6) 飽足 6≤6、用 2 個 ≤ 3、滿足 <strong>10</strong>。若 <code>K=2</code> 不變仍可（剛好 2 個）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼加一維
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼要多一維「已選個數」<span class="sc-section__title-en">// Why an Extra Dim</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉吃哪些</span>
+            <span class="sc-ko-card__o">O(2ᴺ)</span>
+          </div>
+          <div class="sc-ko-card__body">每個拿/不拿、再數個數是否 ≤ K，N=100 ⇒ 2¹⁰⁰ 子集，爆炸。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">直接套原題一維 dp[l]</span>
+            <span class="sc-ko-card__o">O(N·M)</span>
+          </div>
+          <div class="sc-ko-card__body">一維 dp[l] <strong>沒辦法限制件數</strong>——它會把能塞進容量的全拿，可能超過 K 個。少了「選幾個」這個狀態。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">二維 dp[已選 j 個][飽足 l]</span>
+          <span class="sc-ko-card__o">O(N·K·M)</span>
+        </div>
+        <div class="sc-ko-card__body">多開一維記「已選幾個」。轉移 <code>dp[j][l] = max(dp[j][l], dp[j−1][l−Aᵢ]+Bᵢ)</code>，<strong>j、l 都倒序</strong>，答案 dp[K][M]。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>核心思想</strong>：背包問題遇到「額外的計數限制」就<strong>多開一維去記那個計數</strong>。
+      這裡限制「件數 ≤ K」⇒ 多一維 j（已選個數），其餘和 0/1 背包一模一樣。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 狀態與轉移
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">狀態與轉移<span class="sc-section__title-en">// State & Transition</span></h2>
+    </div>
+
+    <p style="font-size:14px;"><code>dp[j][l]</code> = 選 <strong>≤ j 個</strong>、飽足感 <strong>≤ l</strong> 時的最大滿足感。</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">dp[j][l] = max( <strong>dp[j][l]</strong> , <strong>dp[j−1][l−Aᵢ] + Bᵢ</strong> )</div>
+      <div class="sc-formula__hint">
+        <strong>dp[j][l]</strong> = 不吃第 i 個；<strong>dp[j−1][l−Aᵢ]+Bᵢ</strong> = 吃第 i 個（<strong>個數 −1、飽足 −Aᵢ</strong> 再加 Bᵢ）。j、l 都由大到小。
+      </div>
+    </div>
+
+    <ol style="margin-top:10px;">
+      <li><strong>初始</strong> · <code>dp[j][l] = 0</code>（什麼都沒選）。</li>
+      <li><strong>逐物品</strong> · 外層 i；對每個物品，<code>j 從 K 到 1</code>、<code>l 從 M 到 Aᵢ</code>（兩維都倒序）。</li>
+      <li><strong>兩維倒序的理由</strong> · 和一維背包同理——保證 <code>dp[j−1][l−Aᵢ]</code> 還是「沒考慮第 i 個」的值 ⇒ 每個物品只被拿一次。</li>
+      <li><strong>答案</strong> · <code>dp[K][M]</code>（dp 定義是 ≤，所以直接取上界即可）。</li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 二維 dp 逐物品更新<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>M=6, K=3</code>、物品 (2,4)(3,5)(4,6)（答案 10）。dp 是 <code>(K+1)×(M+1)</code> 的表（列 = 已選個數 j，行 = 飽足 l）。
+    每處理一個物品，<strong>j、l 都由大到小</strong>，每格取「不吃」與「吃（看左上方 dp[j−1][l−A]）」的大者：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · 2-D KNAPSACK WITH COUNT (M=6, K=3)</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="480" style="height:480px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · dp 全部歸零，準備逐物品更新
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#d96e4e">■</span> 正在更新的 dp[j][l] &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 來源 dp[j−1][l−Aᵢ] &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 被「吃」更新（變大）&nbsp;·&nbsp;
+      <span style="color:#cfcfcf">■</span> 未變動
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼兩維倒序
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼 j、l 都要倒序<span class="sc-section__title-en">// Why Both Descending</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 兩維倒序 = 每個物品只拿一次</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>更新第 i 個物品時，<code>dp[j−1][l−Aᵢ]</code> 必須是「<strong>還沒考慮第 i 個</strong>」的值（即上一輪的表），否則同一物品會被重複拿。</li>
+          <li><strong>j 倒序</strong>（K→1）：更新 dp[j] 時，dp[j−1]（較小的 j）本輪還沒被改 ⇒ 仍是上一輪值。✓</li>
+          <li><strong>l 倒序</strong>（M→Aᵢ）：同一維背包的理由，dp[·][l−Aᵢ] 還沒被本輪改到。✓</li>
+          <li>兩維只要有一維寫成正序，<code>dp[j−1][l−Aᵢ]</code> 就可能已含第 i 個 ⇒ 重複拿、答案錯。所以<strong>兩維都倒序</strong>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      其實「個數維 j」和「容量維 l」在這裡角色一樣：都是<strong>有限資源</strong>（最多 K 個、最多 M 飽足），
+      拿一個物品同時消耗「1 個名額」和「Aᵢ 飽足」，所以兩維一起 −1 / −Aᵢ、一起倒序。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">N 物品 × K 個數 × M 容量 = <strong>O(N·K·M)</strong></div>
+      <div class="sc-formula__hint">N,K ≤ 100、M ≤ 1000 ⇒ 10⁷ 每筆、T ≤ 10 ⇒ 10⁸，但每格一次 max，實測 < 0.05s</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N·K·M)</strong> 每筆</td><td>三層迴圈 i / j / l</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(K·M)</strong></td><td>二維 dp[K+1][M+1]</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每格一次 max</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>注意型別</strong>：<code>Bᵢ ≤ 10⁶</code>、最多選 K ≤ 100 個 ⇒ 滿足感總和 ≤ 10⁸，雖然 int 勉強夠，用 <code>long long</code> 最保險。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>多一個「最多 K 件」限制 ⇒ 背包多開一維記「已選個數」。</strong><br/>
+      dp[j][l] = max(dp[j][l], dp[j−1][l−Aᵢ]+Bᵢ)，<strong>j、l 兩維都倒序</strong> —<br/>
+      <strong>拿物品同時吃掉「1 個名額 + Aᵢ 飽足」，答案 dp[K][M]，O(N·K·M)。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">有件數上限的 0/1 背包：dp[j][l]=max(dp[j][l], dp[j−1][l−Aᵢ]+Bᵢ)，j、l 倒序，答案 dp[K][M]。</div>
+    <div class="sc-summary-bar__detail">多「最多 K 件」限制 ⇒ 多開一維記已選個數；拿一個同消耗 1 名額 + Aᵢ 飽足；O(N·K·M)。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p144-knapsack2d.js"></script>
+</body>
+</html>

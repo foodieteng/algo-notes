@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P144 · 02 Code // 高棕櫚農場2 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P144
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/144/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">高棕櫚農場2</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 二維背包（件數 + 容量）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N·K·M)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(K·M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 二維 0/1 背包<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      二維 <code>dp[j][l]</code>（j = 已選個數、l = 飽足）。逐物品，內層 <strong>j 從 K 倒到 1</strong>、<strong>l 從 M 倒到 Aᵢ</strong>。
+      每筆測資先把 dp 歸零，答案 <code>dp[K][M]</code>。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p144.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">const</span> <span class="t">int</span> MAXK <span class="p">=</span> <span class="n">105</span><span class="p">;</span>
+<span class="k">const</span> <span class="t">int</span> MAXM <span class="p">=</span> <span class="n">1005</span><span class="p">;</span>
+<span class="t">long long</span> dp<span class="p">[</span>MAXK<span class="p">][</span>MAXM<span class="p">];</span>   <span class="c">// dp[j][l] = 選 ≤ j 個、飽足 ≤ l 的最大滿足感</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    <span class="t">int</span> N<span class="p">,</span> M<span class="p">,</span> K<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M <span class="p">&gt;&gt;</span> K<span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">0</span><span class="p">;</span> j <span class="p">&lt;=</span> K<span class="p">;</span> j<span class="p">++)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> l <span class="p">=</span> <span class="n">0</span><span class="p">;</span> l <span class="p">&lt;=</span> M<span class="p">;</span> l<span class="p">++)</span> dp<span class="p">[</span>j<span class="p">][</span>l<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">int</span> satiety<span class="p">,</span> joy<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> satiety <span class="p">&gt;&gt;</span> joy<span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> K<span class="p">;</span> j <span class="p">&gt;=</span> <span class="n">1</span><span class="p">;</span> j<span class="p">--)</span>              <span class="c">// 已選個數倒序</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> l <span class="p">=</span> M<span class="p">;</span> l <span class="p">&gt;=</span> satiety<span class="p">;</span> l<span class="p">--)</span>      <span class="c">// 飽足感倒序</span>
+                dp<span class="p">[</span>j<span class="p">][</span>l<span class="p">]</span> <span class="p">=</span> <span class="f">max</span><span class="p">(</span>dp<span class="p">[</span>j<span class="p">][</span>l<span class="p">],</span> dp<span class="p">[</span>j <span class="p">-</span> <span class="n">1</span><span class="p">][</span>l <span class="p">-</span> satiety<span class="p">]</span> <span class="p">+</span> joy<span class="p">);</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> dp<span class="p">[</span>K<span class="p">][</span>M<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="f">solve</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>和 P143 的差別</strong>：只是把一維 <code>dp[l]</code> 變成二維 <code>dp[j][l]</code>，內層多一層 j（從 K 倒掃）、轉移看 <code>dp[j−1][·]</code>。
+      其餘（倒序、max 轉移）完全一樣。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>初始化 dp</td><td>歸零 (K+1)(M+1) 格</td><td class="mono">O(K·M)</td></tr>
+        <tr><td>外層物品</td><td>i = 0..N−1</td><td class="mono">O(N)</td></tr>
+        <tr><td>個數維倒掃</td><td>j = K..1</td><td class="mono">O(K)</td></tr>
+        <tr><td>容量維倒掃</td><td>l = M..Aᵢ</td><td class="mono">O(M)</td></tr>
+        <tr><td>單筆合計</td><td>—</td><td class="mono">O(N·K·M)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">N × K × M = <strong>O(N·K·M)</strong> 每筆</div>
+      <div class="sc-formula__hint">100×100×1000 = 10⁷ 每筆、T≤10 ⇒ 10⁸，每格一次 max，實測 < 0.05s</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N·K·M)</strong> 每筆</td><td>三層迴圈</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(K·M)</strong></td><td>dp[K+1][M+1]；可再壓但沒必要</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>純填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每格一次比較取大</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>兩維都要倒序</strong></td>
+          <td>j 和 l <strong>都</strong>由大到小。任一維寫成正序，<code>dp[j−1][l−Aᵢ]</code> 可能已含本物品 ⇒ 重複拿、答錯。</td>
+        </tr>
+        <tr>
+          <td><strong>別漏讀 K</strong></td>
+          <td>每筆第一行是 <strong>三個</strong>整數 <code>N M K</code>（原題只有 N M）。漏讀 K 會整個對不上。</td>
+        </tr>
+        <tr>
+          <td><strong>答案是 dp[K][M]</strong></td>
+          <td>dp 定義為「≤ j 個、≤ l 飽足」，所以直接取上界 dp[K][M] 就是「最多 K 個、最多 M 飽足」的最佳。</td>
+        </tr>
+        <tr>
+          <td><strong>每筆重置 dp</strong></td>
+          <td>多筆測資 K、M 會變，務必每筆把 dp[0..K][0..M] 歸零，別讓上一筆殘值汙染。</td>
+        </tr>
+        <tr>
+          <td><strong>型別</strong></td>
+          <td><code>Bᵢ ≤ 10⁶</code>、選 ≤ 100 個 ⇒ 總和 ≤ 10⁸。int 上限 ~2.1×10⁹ 雖夠，<code>long long</code> 最保險。</td>
+        </tr>
+        <tr>
+          <td><strong>K = N 退化</strong></td>
+          <td>30% 測資 K=N，等於沒件數限制 ⇒ 退化回原題（P143）。同一份二維程式照樣正確。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 狀態定義</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// state</span>
+dp[j][l] = 選 ≤ j 個高棕櫚、飽足感 ≤ l 時的最大滿足感
+初值 dp[j][l] = 0
+答案 = dp[K][M]</pre>
+
+    <p><strong>② 轉移（吃 or 不吃第 i 個）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// transition</span>
+for i in 0..N-1:
+  for j from K down to 1:           // 個數維倒序
+    for l from M down to A[i]:       // 容量維倒序
+      dp[j][l] = max( dp[j][l],                  // 不吃
+                      dp[j-1][l-A[i]] + B[i] )   // 吃（用掉 1 名額 + A[i] 飽足）</pre>
+
+    <p><strong>③ 為什麼來源是 dp[j−1][l−A]</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// 為何 j-1</span>
+吃下第 i 個 ⇒ 已選個數 +1、飽足 +A[i]
+所以「吃之後的 dp[j][l]」要從「吃之前、少一個名額少 A[i] 飽足」轉移
+  → dp[j-1][l-A[i]]，再加上這顆的 B[i]</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">二維背包：dp[j][l]=max(dp[j][l], dp[j−1][l−Aᵢ]+Bᵢ)，j、l 倒序，答案 dp[K][M]，O(N·K·M)。</div>
+    <div class="sc-summary-bar__detail">和 P143 只差多一維 j；兩維都倒序；別漏讀 K；long long 保險；K=N 退化回原題。</div>
+  </div>
+
+</body>
+</html>
