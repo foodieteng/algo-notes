@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P122 · 01 概念 // 邪惡收集大作戰 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P122
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">邪惡收集大作戰</h1>
+    <p class="sc-mast__subtitle">// 折半枚舉 Meet in the Middle · 子集和湊出 K</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 折半 + 排序 + 二分搜
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(2^(N/2) · N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>有 N 件邪惡物品，第 i 件的邪惡指數為 <code>A[i]</code>（每件恰一個）。你想<strong>選出一個子集</strong>，
+      使被選物品的邪惡指數<strong>總和恰好等於目標邪惡度 K</strong>。題目保證有解，請回報任一組合法選法。</p>
+      <p style="margin-top:6px;">互動式：實作 <code>void solve(int N, long long K, long long A[])</code>，
+      用 <code>Report(id)</code>（<code>1 ≤ id ≤ N</code>）回報選中的物品，全部選完後呼叫 <code>Report(-1)</code> 結束。
+      回報順序不影響判定。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      範圍：<code>1 ≤ N ≤ 40</code>，<code>1 ≤ K ≤ 10¹⁸</code>，<code>ΣA[i] ≤ 10¹⁸</code>。
+      白話：這就是<strong>子集和（subset-sum）= K 的存在 + 構造</strong>。N 最大 40，是「折半枚舉」的招牌尺寸。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用折半枚舉
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用折半枚舉<span class="sc-section__title-en">// Why Meet in the Middle</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉所有子集</span>
+            <span class="sc-ko-card__o">O(2ᴺ)</span>
+          </div>
+          <div class="sc-ko-card__body">2⁴⁰ ≈ 1.1×10¹² 個子集，逐一檢查 ⇒ 完全跑不完。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">背包 DP（值當容量）</span>
+            <span class="sc-ko-card__o">O(N·K)</span>
+          </div>
+          <div class="sc-ko-card__body">K 高達 10¹⁸，無法開 dp[K] 的表，也無法逐格轉移 ⇒ 記憶體 + 時間都爆。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · MLE</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">折半枚舉 Meet in the Middle</span>
+          <span class="sc-ko-card__o">O(2^(N/2)·N)</span>
+        </div>
+        <div class="sc-ko-card__body">把 N 件切兩半（各 ≤20）。左半枚舉 <code>2²⁰</code> 個子集和並排序；右半每個子集和 s，<strong>二分搜左半是否有 K−s</strong>。2²⁰≈10⁶，可行。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>核心觀察</strong>：任一合法選法的物品，必定「一部分在左半、一部分在右半」。
+      固定右半選法（和為 s）後，左半只要湊出 <code>K − s</code> 即可 ⇒ 兩半各自枚舉 <code>2^(N/2)</code>，再用<strong>排序 + 二分搜</strong>把兩半拼起來。
+      指數從 N 砍成 N/2，是 subset-sum 在 N≤40 的標準解。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Strategy</span></h2>
+    </div>
+
+    <ol style="margin-top:8px;">
+      <li><strong>切兩半</strong> · 左半 = 物品 <code>[0, N/2)</code>，右半 = <code>[N/2, N)</code>，各至多 20 件。</li>
+      <li><strong>左半建表</strong> · 枚舉左半 <code>2^(N/2)</code> 個子集，記下 <code>(子集和 s, 選法 bitmask)</code>，依 s <strong>排序</strong>。</li>
+      <li><strong>右半配對</strong> · 枚舉右半每個子集（和 s'），在左半表中<strong>二分搜 <code>K − s'</code></strong>。找到 ⇒ 兩邊 bitmask 合起來就是答案，逐位 <code>Report</code>。</li>
+    </ol>
+
+    <div class="sc-formula" style="margin-top:10px;">
+      <div class="sc-formula__main">存在子集和 = K　⟺　∃ 右半和 s'　使得　K − s' 出現在左半的子集和集合中</div>
+      <div class="sc-formula__hint">左半排序後二分搜每個 K−s' 是 O(log)；總 <strong>O(2^(N/2)·N)</strong>（建表帶 N 的列舉成本）。</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 折半 → 排序 → 二分搜<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例 <code>solve(3, 17, {6, 8, 9})</code>。N=3 ⇒ 左半 = {物品1=6}，右半 = {物品2=8, 物品3=9}。
+    左半枚舉所有子集和並排序，右半每個子集和 s' 去左半二分搜 <code>17 − s'</code>：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · MEET IN THE MIDDLE (N=3, K=17, A={6,8,9})</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="500" style="height:500px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 物品 {6, 8, 9}，目標 K=17。切成左半 {6} 與右半 {8, 9}
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">■</span> 左半子集（建表＋排序） &nbsp;·&nbsp;
+      <span style="color:#d4a868">■</span> 右半子集 s'（正在配對） &nbsp;·&nbsp;
+      <span style="color:#d96e4e">■</span> 二分搜的目標 K−s' &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 命中 ⇒ 組成答案
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼折半就夠
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼「折半 + 二分搜」就把指數砍一半<span class="sc-section__title-en">// Why It Works</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// MEET IN THE MIDDLE</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>任何一組合法選法 S，把它拆成「落在左半的部分 <code>S_L</code>」與「落在右半的部分 <code>S_R</code>」，兩者互斥且聯集 = S。</li>
+          <li>於是 <code>sum(S_L) + sum(S_R) = K</code>。固定 <code>S_R</code>（和為 s'）後，左半只需湊出 <strong><code>K − s'</code></strong>。</li>
+          <li>把<strong>左半所有子集和</strong>先算好、排序成一張查找表（<code>2^(N/2)</code> 筆）；右半枚舉每個 s' 時，只要在表中<strong>二分搜 K − s'</strong> 是否存在。</li>
+          <li>命中就還原兩半的 bitmask、合併輸出。任一合法解都會在某次右半枚舉被找到 ⇒ <strong>不漏解</strong>。</li>
+          <li>成本：兩半各 <code>2^(N/2)</code> 個子集（2²⁰≈10⁶），加上排序 <code>O(2^(N/2)·N/2)</code> 與每次二分搜 <code>O(N/2)</code> ⇒ 指數從 N 變 N/2。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      關鍵是「把問題切成兩個獨立可枚舉的一半，再用一張<strong>排序好的表</strong>把兩半 O(log) 拼起來」。
+      這個「列一半、查一半」的套路，就是 Meet in the Middle。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">建表 O(2^(N/2)·N/2) + 排序 O(2^(N/2)·N/2) + 配對 O(2^(N/2)·log) = <strong>O(2^(N/2)·N)</strong></div>
+      <div class="sc-formula__hint">N=40 ⇒ 2²⁰≈10⁶，乘上 N 仍是 ~10⁷～10⁸ 級，1 秒內可解；樸素 O(2⁴⁰)≈10¹² 會 TLE</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(2^(N/2)·N)</strong></td><td>折半把指數 N 砍成 N/2</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(2^(N/2))</strong></td><td>左半 (和, mask) 查找表</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>位元遮罩枚舉，無遞迴</td></tr>
+        <tr><td>Constant factor</td><td>中</td><td>排序 + 二分搜常數</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      值與 K 都到 10¹⁸ ⇒ 全程用 <code>long long</code>；和不會溢位（ΣA ≤ 10¹⁸ &lt; 9.2×10¹⁸）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>N ≤ 40 + 子集和 = K + K 超大 ⇒ 折半枚舉。</strong><br/>
+      左半列出所有子集和排序成表，右半每個和 s' 去<strong>二分搜 K − s'</strong> —<br/>
+      <strong>把 O(2ᴺ) 砍成 O(2^(N/2)·N)，命中後合併兩半 bitmask 逐件 Report。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">折半枚舉：左半子集和排序成表，右半每個 s' 二分搜 K−s'，O(2^(N/2)·N)。</div>
+    <div class="sc-summary-bar__detail">N≤40 + K≤10¹⁸ ⇒ 不能 2ᴺ 也不能背包；命中後合併兩半 bitmask 逐件 Report。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p122-mitm.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P122 · 02 Code // 邪惡收集大作戰 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P122
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">邪惡收集大作戰</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · 折半枚舉 + 排序二分搜
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(2^(N/2)·N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(2^(N/2))</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 折半 + 二分搜<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      互動題：只需實作 <code>solve</code>，<code>Report(id)</code> 由評分程式提供。左半枚舉 <code>2^(N/2)</code> 個子集和
+      存成 <code>(和, mask)</code> 並排序；右半每個子集和 <code>s</code> 去左半二分搜 <code>K − s</code>，命中就把兩半的 bitmask 逐位 Report。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p122.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="k">void</span> <span class="f">Report</span><span class="p">(</span><span class="t">int</span> id<span class="p">);</span>   <span class="c">// 評分程式提供：回報選中的物品 id</span>
+
+<span class="k">void</span> <span class="f">solve</span><span class="p">(</span><span class="t">int</span> N<span class="p">,</span> <span class="t">long long</span> K<span class="p">,</span> <span class="t">long long</span> A<span class="p">[])</span> <span class="p">{</span>
+    <span class="t">int</span> half <span class="p">=</span> N <span class="p">/</span> <span class="n">2</span><span class="p">;</span>            <span class="c">// 左半 [0, half)，右半 [half, N)</span>
+    <span class="t">int</span> rest <span class="p">=</span> N <span class="p">-</span> half<span class="p">;</span>
+
+    <span class="c">// 左半：枚舉 2^half 個子集，記錄 (子集和, bitmask)</span>
+    <span class="t">int</span> leftCnt <span class="p">=</span> <span class="n">1</span> <span class="p">&lt;&lt;</span> half<span class="p">;</span>
+    vector<span class="p">&lt;</span>pair<span class="p">&lt;</span><span class="t">long long</span><span class="p">,</span> <span class="t">int</span><span class="p">&gt;&gt;</span> <span class="f">leftSum</span><span class="p">(</span>leftCnt<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> mask <span class="p">=</span> <span class="n">0</span><span class="p">;</span> mask <span class="p">&lt;</span> leftCnt<span class="p">;</span> mask<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">long long</span> s <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> b <span class="p">=</span> <span class="n">0</span><span class="p">;</span> b <span class="p">&lt;</span> half<span class="p">;</span> b<span class="p">++)</span>
+            <span class="k">if</span> <span class="p">(</span>mask <span class="p">&gt;&gt;</span> b <span class="p">&amp;</span> <span class="n">1</span><span class="p">)</span> s <span class="p">+=</span> A<span class="p">[</span>b<span class="p">];</span>
+        leftSum<span class="p">[</span>mask<span class="p">]</span> <span class="p">=</span> <span class="p">{</span>s<span class="p">,</span> mask<span class="p">};</span>
+    <span class="p">}</span>
+    <span class="f">sort</span><span class="p">(</span>leftSum<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> leftSum<span class="p">.</span><span class="f">end</span><span class="p">());</span>   <span class="c">// 依和排序，之後二分搜</span>
+
+    <span class="c">// 右半：枚舉 2^rest 個子集，對每個找左半是否有 K - s</span>
+    <span class="t">int</span> rightCnt <span class="p">=</span> <span class="n">1</span> <span class="p">&lt;&lt;</span> rest<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> mask <span class="p">=</span> <span class="n">0</span><span class="p">;</span> mask <span class="p">&lt;</span> rightCnt<span class="p">;</span> mask<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">long long</span> s <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> b <span class="p">=</span> <span class="n">0</span><span class="p">;</span> b <span class="p">&lt;</span> rest<span class="p">;</span> b<span class="p">++)</span>
+            <span class="k">if</span> <span class="p">(</span>mask <span class="p">&gt;&gt;</span> b <span class="p">&amp;</span> <span class="n">1</span><span class="p">)</span> s <span class="p">+=</span> A<span class="p">[</span>half <span class="p">+</span> b<span class="p">];</span>
+        <span class="t">long long</span> need <span class="p">=</span> K <span class="p">-</span> s<span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span>need <span class="p">&lt;</span> <span class="n">0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>             <span class="c">// 右半已超過 K，跳過</span>
+
+        <span class="c">// 在排序後的左半子集和裡二分搜 need</span>
+        <span class="t">int</span> lo <span class="p">=</span> <span class="n">0</span><span class="p">,</span> hi <span class="p">=</span> leftCnt <span class="p">-</span> <span class="n">1</span><span class="p">,</span> found <span class="p">=</span> <span class="n">-1</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span>lo <span class="p">&lt;=</span> hi<span class="p">)</span> <span class="p">{</span>
+            <span class="t">int</span> mid <span class="p">=</span> <span class="p">(</span>lo <span class="p">+</span> hi<span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span>leftSum<span class="p">[</span>mid<span class="p">].</span>first <span class="p">==</span> need<span class="p">)</span> <span class="p">{</span> found <span class="p">=</span> mid<span class="p">;</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span>leftSum<span class="p">[</span>mid<span class="p">].</span>first <span class="p">&lt;</span> need<span class="p">)</span> lo <span class="p">=</span> mid <span class="p">+</span> <span class="n">1</span><span class="p">;</span>
+            <span class="k">else</span> hi <span class="p">=</span> mid <span class="p">-</span> <span class="n">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span>found <span class="p">==</span> <span class="n">-1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>          <span class="c">// 左半湊不出 need，換下一個右半子集</span>
+
+        <span class="c">// 找到：回報左半 + 右半選中的物品（1-indexed）</span>
+        <span class="t">int</span> leftMask <span class="p">=</span> leftSum<span class="p">[</span>found<span class="p">].</span>second<span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> b <span class="p">=</span> <span class="n">0</span><span class="p">;</span> b <span class="p">&lt;</span> half<span class="p">;</span> b<span class="p">++)</span>
+            <span class="k">if</span> <span class="p">(</span>leftMask <span class="p">&gt;&gt;</span> b <span class="p">&amp;</span> <span class="n">1</span><span class="p">)</span> <span class="f">Report</span><span class="p">(</span>b <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> b <span class="p">=</span> <span class="n">0</span><span class="p">;</span> b <span class="p">&lt;</span> rest<span class="p">;</span> b<span class="p">++)</span>
+            <span class="k">if</span> <span class="p">(</span>mask <span class="p">&gt;&gt;</span> b <span class="p">&amp;</span> <span class="n">1</span><span class="p">)</span> <span class="f">Report</span><span class="p">(</span>half <span class="p">+</span> b <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
+        <span class="f">Report</span><span class="p">(</span><span class="n">-1</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="f">Report</span><span class="p">(</span><span class="n">-1</span><span class="p">);</span>   <span class="c">// 題目保證有解；保險用</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為什麼存 bitmask？</strong> 二分搜只比「和」，但回報要知道<strong>具體選了哪幾件</strong>。
+      所以 leftSum 同時記 <code>(和, mask)</code>，命中後用 mask 的位元還原左半選法，右半的 mask 當下就有 ⇒ 兩半合併輸出。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>左半建表</td><td>2^half 個子集，各掃 half 位</td><td class="mono">O(2^(N/2)·N)</td></tr>
+        <tr><td>排序</td><td>對 2^half 筆 (和,mask) 排序</td><td class="mono">O(2^(N/2)·N)</td></tr>
+        <tr><td>右半配對</td><td>2^rest 個子集，各二分搜 O(N)</td><td class="mono">O(2^(N/2)·N)</td></tr>
+        <tr><td>還原回報</td><td>命中一次，逐位 Report</td><td class="mono">O(N)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">總計 = <strong>O(2^(N/2) · N)</strong></div>
+      <div class="sc-formula__hint">N=40 ⇒ 2²⁰≈10⁶，× N ≈ 4×10⁷，秒內可解；樸素 O(2⁴⁰)≈1.1×10¹² 直接 TLE</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(2^(N/2)·N)</strong></td><td>折半把指數砍成一半</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(2^(N/2))</strong></td><td>左半 (和,mask) 表，2²⁰ 筆</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>位元枚舉，無遞迴</td></tr>
+        <tr><td>Constant factor</td><td>中</td><td>排序 + 二分搜常數</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>全程 long long</strong></td>
+          <td>K、A[i]、子集和都到 10¹⁸ ⇒ 一律 <code>long long</code>。ΣA ≤ 10¹⁸ &lt; 9.2×10¹⁸，和不溢位。</td>
+        </tr>
+        <tr>
+          <td><strong>1-indexed 回報</strong></td>
+          <td>陣列 0-indexed，但 <code>Report(id)</code> 要 1..N ⇒ 回報時都 <code>+1</code>。左半 <code>b+1</code>、右半 <code>half+b+1</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>need &lt; 0 要跳過</strong></td>
+          <td>右半和 s 已超過 K 時 <code>need=K−s&lt;0</code>，左半子集和非負，不可能命中 ⇒ <code>continue</code> 省一次二分搜。</td>
+        </tr>
+        <tr>
+          <td><strong>記得存 mask</strong></td>
+          <td>只存「和」無法還原選法。leftSum 要存 <code>(和, mask)</code>，命中後用 mask 還原左半。</td>
+        </tr>
+        <tr>
+          <td><strong>找到就 return</strong></td>
+          <td>題目只要任一組解 ⇒ 第一次命中就回報並 <code>return</code>，別繼續枚舉（也避免重複 Report）。</td>
+        </tr>
+        <tr>
+          <td><strong>空子集 mask=0</strong></td>
+          <td>枚舉含 mask=0（空集、和 0）是對的：例如 K 全靠另一半湊出時，這半就選空集。別跳過 0。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 切兩半</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// split</span>
+half = N/2,  rest = N - half          // 例 N=3 → half=1, rest=2
+左半 = 物品索引 [0, half)             // {A[0]}
+右半 = 物品索引 [half, N)             // {A[1], A[2]}</pre>
+
+    <p><strong>② 左半建表 + 排序</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// build left table</span>
+對 mask = 0 .. 2^half − 1：
+  s = Σ A[b]  (b 在 mask 中)
+  leftSum[mask] = (s, mask)           // 同時記和與選法
+sort(leftSum)                          // 依 s 排序，準備二分搜</pre>
+
+    <p><strong>③ 右半配對（二分搜 K − s）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// pair right half</span>
+對 mask = 0 .. 2^rest − 1：
+  s = Σ A[half+b]  (b 在 mask 中)
+  need = K − s;  if (need &lt; 0) continue
+  在 leftSum 二分搜 first == need
+  命中 → 回報左半 mask 的位 + 右半 mask 的位（皆 +1），Report(-1)，return</pre>
+
+    <p><strong>④ 為什麼不漏解</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// completeness</span>
+任一合法解 S：S_L = S∩左半，S_R = S∩右半
+當右半枚舉到 mask = S_R 時，need = K − sum(S_R) = sum(S_L)
+而 sum(S_L) 一定在左半表中（S_L 是左半的某個子集）⇒ 必被找到。</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">左半枚舉 (和,mask) 排序，右半每個 s 二分搜 K−s，命中合併兩半 bitmask Report。</div>
+    <div class="sc-summary-bar__detail">全程 long long；回報 +1（1-indexed）；need&lt;0 跳過；存 mask 才能還原；找到就 return。</div>
+  </div>
+
+</body>
+</html>

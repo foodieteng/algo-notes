@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P122 · 03 Review // 邪惡收集大作戰 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P122
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">邪惡收集大作戰</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>子集和（subset-sum）：找一組物品使邪惡指數總和 = K，並構造出選法。</td></tr>
+        <tr><td>為何折半</td>
+            <td>N≤40 ⇒ 2ᴺ 太大；K≤10¹⁸ ⇒ 不能背包。<strong>折半枚舉</strong>把指數砍成 N/2。</td></tr>
+        <tr><td>左半</td>
+            <td>枚舉 2^(N/2) 個子集，存 <code>(和, mask)</code> 並<strong>排序</strong>成查找表。</td></tr>
+        <tr><td>右半</td>
+            <td>枚舉每個子集和 s，在左半<strong>二分搜 K − s</strong>。</td></tr>
+        <tr><td>構造</td>
+            <td>命中時用兩半的 bitmask 還原選法，逐件 <code>Report(id+1)</code>，最後 <code>Report(-1)</code>。</td></tr>
+        <tr><td>複雜度</td>
+            <td>O(2^(N/2)·N) 時間、O(2^(N/2)) 空間；全程 long long。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">為何折半</span>
+      <h4>看到哪些線索就該想到折半枚舉？為什麼這題不能用 O(2ᴺ) 暴力，也不能用容量 K 的背包 DP？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">配對原理</span>
+      <h4>把物品切成左右兩半後，為什麼「固定右半子集和 s、在左半找 K−s」就能找出所有合法解？怎麼確定不漏解？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">排序+二分</span>
+      <h4>為什麼左半要<strong>排序</strong>？排序後配對階段的單次查詢複雜度是多少？不排序會退化成什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">構造解</span>
+      <h4>二分搜只比「和」，為什麼還要在表裡存 <code>mask</code>？回報時左右兩半的 id 分別怎麼算？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>整體時間/空間複雜度是多少？N=40 時各階段大概多少次運算？為什麼能在時限內？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · solve(3, 17, {6, 8, 9})<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>N=3 ⇒ <code>half=1</code>（左半 = 物品1=6）、<code>rest=2</code>（右半 = 物品2=8、物品3=9）。目標 K=17。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 左半建表（2^1 = 2 個子集），依和排序</span>
+mask=0 → 選 {}        和 0
+mask=1 → 選 {物品1}   和 6
+排序後 leftSum = [ (和0, mask0),  (和6, mask1) ]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 右半枚舉（2^2 = 4 個子集），二分搜 K − s</span>
+mask=0 {}            s=0   need=17−0 =17  二分搜 {0,6} → 沒有
+mask=1 {物品2=8}     s=8   need=17−8 = 9  二分搜 {0,6} → 沒有
+mask=2 {物品3=9}     s=9   need=17−9 = 8  二分搜 {0,6} → 沒有
+mask=3 {物品2,物品3} s=17  need=17−17= 0  二分搜 {0,6} → <strong>命中！</strong>（左半 mask0 = 空集）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 還原 + 回報</span>
+左半 mask=0 → 沒選任何物品
+右半 mask=3 → 物品2(=half+0+1)、物品3(=half+1+1)
+Report(2);  Report(3);  Report(-1);</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>Report(2)  Report(3)  Report(-1)     // 8 + 9 = 17 ✓</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：這個範例答案完全落在右半（左半選空集）。折半枚舉之所以對，正因為它<strong>允許某一半選空集</strong> —
+      mask=0 代表「這半不貢獻」，K 全由另一半湊出。逐一試右半 4 個子集，第 4 個 s=17 時左半只需湊 0（空集即可），命中。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">為何 +1</span>
+      <h4>陣列是 0-indexed，但 <code>Report</code> 要 1..N。右半第 b 個被選物品，回報的 id 是多少？為什麼是 <code>half+b+1</code>？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">溢位</span>
+      <h4>為什麼一定要用 <code>long long</code>？子集和最大會到多少？會不會溢位？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變體</span>
+      <h4>若題目改問「子集和 ≤ K 的最大和」（而非恰好 =K），折半枚舉怎麼改？二分搜改找什麼？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 為何折半</span>
+      <p>
+        線索：<strong>N ≤ 40</strong>（剛好是 2^(N/2)=2²⁰≈10⁶ 可枚舉的尺寸）+ 子集和問題 + <strong>目標值 K 很大</strong>。
+      </p>
+      <ul>
+        <li>O(2ᴺ)：2⁴⁰≈1.1×10¹²，逐一檢查跑不完。</li>
+        <li>背包 DP：狀態是「能否湊出和 v」，v 可達 10¹⁸ ⇒ 開不了 dp[v] 的表，時間 O(N·K) 也爆。</li>
+      </ul>
+      <p>折半枚舉把指數從 N 變 N/2，是 N≤40 子集和的標準解。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 配對原理</span>
+      <p>
+        任一合法解 S 被切成 <code>S_L = S∩左半</code> 與 <code>S_R = S∩右半</code>，互斥且 <code>sum(S_L)+sum(S_R)=K</code>。
+      </p>
+      <p>
+        當右半枚舉到 <code>mask = S_R</code> 時，<code>need = K − sum(S_R) = sum(S_L)</code>，
+        而 <code>S_L</code> 是左半的某個子集，其和<strong>一定在左半表裡</strong> ⇒ 必被二分搜找到。
+        因為每個合法解的右半部分都會被枚舉到，所以<strong>不漏解</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 排序+二分</span>
+      <p>
+        左半排序後，配對階段對每個右半和 s 只要 <strong>O(log 2^(N/2)) = O(N/2)</strong> 二分搜 <code>K−s</code> 是否存在。
+      </p>
+      <p>
+        不排序就得線性掃左半每筆，單次 O(2^(N/2)) ⇒ 總體退化成 O(2^(N/2)·2^(N/2)) = O(2ᴺ)，折半就白做了。
+        （也可改用 hash set，但排序 + 二分常數穩定、好寫。）
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 構造解</span>
+      <p>
+        二分搜只比「和」相不相等，但題目要回報<strong>具體選了哪幾件</strong>，光知道和不夠。
+        所以 leftSum 存 <code>(和, mask)</code>，命中後用 mask 的位元還原左半選法。
+      </p>
+      <p>
+        右半的選法就是當下枚舉的 mask。回報 id（1-indexed）：左半第 b 位 ⇒ <code>Report(b+1)</code>；
+        右半第 b 位 ⇒ <code>Report(half+b+1)</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 複雜度</span>
+      <p>
+        時間 <strong>O(2^(N/2)·N)</strong>：建表 2^(N/2) 個子集（各掃 N/2 位）、排序 O(2^(N/2)·N/2)、配對 2^(N/2) 次二分搜（各 O(N/2)）。
+        空間 <strong>O(2^(N/2))</strong>（左半表）。
+      </p>
+      <p>
+        N=40：左半 2²⁰≈10⁶ 筆建表 + 排序、右半 2²⁰ 次二分搜，各乘上 ~20 ⇒ 總約 10⁷～10⁸ 級運算，1 秒內可完成。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 為何 +1</span>
+      <p>
+        右半的物品索引是 <code>half + b</code>（0-indexed，b 是右半內第幾個），對應原物品編號（1-indexed）就是 <code>half + b + 1</code>。
+      </p>
+      <p>
+        例：範例 half=1，右半 b=0 是物品 <code>1+0+1=2</code>、b=1 是物品 <code>1+1+1=3</code>。所以回報 Report(2)、Report(3)。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · 溢位</span>
+      <p>
+        K、A[i] 都可到 10¹⁸，<code>int</code>（上限 ~2.1×10⁹）裝不下 ⇒ 全程 <code>long long</code>。
+      </p>
+      <p>
+        子集和最大 = ΣA[i] ≤ 10¹⁸，而 long long 上限 ≈ 9.2×10¹⁸，<strong>不會溢位</strong>。
+        （這也是題目特意保證 ΣA ≤ 10¹⁸ 的原因。）
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 變體</span>
+      <p>
+        改問「子集和 ≤ K 的最大和」：左半一樣建表排序。右半枚舉每個和 s 後，在左半二分搜
+        <strong>「≤ K − s 的最大值」</strong>（用 <code>upper_bound</code> 後退一格），取 <code>s + 該值</code> 更新答案最大值。
+      </p>
+      <p>
+        差別：本題找<strong>恰好相等</strong>（lower_bound + 比對），變體找<strong>不超過的最大</strong>（upper_bound − 1）。
+        兩者都靠「左半排序表 + 二分搜」這個骨架，只換查詢方式。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W08 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「折半枚舉 + 排序二分搜」湊子集和。</div>
+    <div class="sc-summary-bar__detail">範例 {6,8,9} K=17 → 右半 {8,9} 命中、左半選空集 → Report(2),(3),(-1)。</div>
+  </div>
+
+</body>
+</html>
