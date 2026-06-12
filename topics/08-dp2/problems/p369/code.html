@@ -24,7 +24,7 @@
     </span>
     <span>
       <a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener">原題 ↗</a>
-      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
     </span>
   </div>
 
@@ -35,11 +35,11 @@
     <p class="sc-mast__subtitle">// Code + Complexity</p>
     <div class="sc-mast__meta">
       <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
-      C++17 · 計數 DP + 差分區間加
+      C++17 · 距離狀態 DP + 後綴和
       <span class="sc-mast__sep">·</span>
-      時間 <strong>O(N·K)</strong>
+      時間 <strong>O(L·K)</strong>
       <span class="sc-mast__sep">·</span>
-      空間 <strong>O(N)</strong>
+      空間 <strong>O(L)</strong>
     </div>
   </header>
 
@@ -59,12 +59,12 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">01</span>
-      <h2 class="sc-section__title">完整實作 · 差分區間轉移<span class="sc-section__title-en">// Full C++</span></h2>
+      <h2 class="sc-section__title">完整實作 · 距離狀態 + 後綴和<span class="sc-section__title-en">// Full C++</span></h2>
     </div>
 
     <p style="font-size:13.5px;margin-bottom:10px;">
-      輸入只有一行 <code>n a b k</code>。<code>cur[f]</code> 是當前方法數。每趟用 <strong>差分陣列</strong>把 cur[x] 加到合法區間，
-      前綴和還原成 nxt[]，再扣掉 y=x 自身。答案是 Σ cur[f]。
+      輸入一行 <code>N S B K</code>。狀態不是「樓層」而是「<strong>到禁止層 b 的距離 a = |x−b|</strong>」（因為永遠跨不過 b，只有 S 那一側有關）。
+      <code>f[a]</code> 是停在距離 a 的方法數。每趟轉移 <code>nf[a'] = (Σ_{a ≥ amin} f[a]) − f[a']</code>，用<strong>後綴和</strong> O(L) 完成整趟。
     </p>
 
     <div class="sc-codewindow">
@@ -77,64 +77,54 @@
       </div>
 <pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
-
 <span class="k">const</span> <span class="t">long long</span> MOD <span class="p">=</span> <span class="n">1000000007</span><span class="p">;</span>
-<span class="k">const</span> <span class="t">int</span> MAXN <span class="p">=</span> <span class="n">2005</span><span class="p">;</span>
-
-<span class="t">long long</span> cur<span class="p">[</span>MAXN<span class="p">];</span>     <span class="c">// cur[f] = 搭完目前趟數後，停在樓層 f 的方法數</span>
-<span class="t">long long</span> nxt<span class="p">[</span>MAXN<span class="p">];</span>
-<span class="t">long long</span> diff<span class="p">[</span>MAXN<span class="p">];</span>    <span class="c">// 差分陣列，把「區間加」變 O(1)</span>
 
 <span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
-    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    ios_base<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
     cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
 
-    <span class="t">int</span> n<span class="p">,</span> a<span class="p">,</span> b<span class="p">,</span> k<span class="p">;</span>
-    cin <span class="p">&gt;&gt;</span> n <span class="p">&gt;&gt;</span> a <span class="p">&gt;&gt;</span> b <span class="p">&gt;&gt;</span> k<span class="p">;</span>
+    <span class="t">long long</span> N<span class="p">,</span> S<span class="p">,</span> B<span class="p">,</span> K<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> S <span class="p">&gt;&gt;</span> B <span class="p">&gt;&gt;</span> K<span class="p">;</span>        <span class="c">// 輸入順序：N S B K</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> f <span class="p">=</span> <span class="n">0</span><span class="p">;</span> f <span class="p">&lt;=</span> n <span class="p">+</span> <span class="n">1</span><span class="p">;</span> f<span class="p">++)</span> cur<span class="p">[</span>f<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-    cur<span class="p">[</span>a<span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>S <span class="p">==</span> B<span class="p">)</span> <span class="p">{</span> cout <span class="p">&lt;&lt;</span> <span class="n">0</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span>   <span class="c">// 起點就是禁止層</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> s <span class="p">=</span> <span class="n">0</span><span class="p">;</span> s <span class="p">&lt;</span> k<span class="p">;</span> s<span class="p">++)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> f <span class="p">=</span> <span class="n">0</span><span class="p">;</span> f <span class="p">&lt;=</span> n <span class="p">+</span> <span class="n">1</span><span class="p">;</span> f<span class="p">++)</span> diff<span class="p">[</span>f<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="c">// 每趟都跨不過 B，所以只跟 S 那一側有關。</span>
+    <span class="c">// 狀態 = 到 B 的距離 a ∈ [1, L]。</span>
+    <span class="t">long long</span> L<span class="p">,</span> a0<span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>S <span class="p">&lt;</span> B<span class="p">)</span> <span class="p">{</span> L <span class="p">=</span> B <span class="p">-</span> <span class="n">1</span><span class="p">;</span> a0 <span class="p">=</span> B <span class="p">-</span> S<span class="p">;</span> <span class="p">}</span>   <span class="c">// 下側 floors 1..B-1</span>
+    <span class="k">else</span>       <span class="p">{</span> L <span class="p">=</span> N <span class="p">-</span> B<span class="p">;</span> a0 <span class="p">=</span> S <span class="p">-</span> B<span class="p">;</span> <span class="p">}</span>   <span class="c">// 上側 floors B+1..N</span>
 
-        <span class="c">// 每個樓層 x 把 cur[x] 加到合法落點區間 [x-d+1, x+d-1]，d = |x-b|</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> x <span class="p">=</span> <span class="n">1</span><span class="p">;</span> x <span class="p">&lt;=</span> n<span class="p">;</span> x<span class="p">++)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(!</span>cur<span class="p">[</span>x<span class="p">])</span> <span class="k">continue</span><span class="p">;</span>
-            <span class="t">int</span> distB <span class="p">=</span> <span class="f">abs</span><span class="p">(</span>x <span class="p">-</span> b<span class="p">);</span>           <span class="c">// x 到禁止樓層 b 的距離</span>
-            <span class="k">if</span> <span class="p">(</span>distB <span class="p">&lt;=</span> <span class="n">0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>        <span class="c">// x==b 到不了，略過</span>
-            <span class="t">int</span> lo <span class="p">=</span> <span class="f">max</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> x <span class="p">-</span> distB <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
-            <span class="t">int</span> hi <span class="p">=</span> <span class="f">min</span><span class="p">(</span>n<span class="p">,</span> x <span class="p">+</span> distB <span class="p">-</span> <span class="n">1</span><span class="p">);</span>
-            diff<span class="p">[</span>lo<span class="p">]</span>     <span class="p">=</span> <span class="p">(</span>diff<span class="p">[</span>lo<span class="p">]</span>     <span class="p">+</span> cur<span class="p">[</span>x<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
-            diff<span class="p">[</span>hi <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="p">(</span>diff<span class="p">[</span>hi <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">-</span> cur<span class="p">[</span>x<span class="p">]</span> <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>K <span class="p">==</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span> cout <span class="p">&lt;&lt;</span> <span class="n">1</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span>    <span class="c">// 沒跳就只有 1 種</span>
+
+    <span class="c">// 滾動陣列：f 是目前這排，nf 是下一排，suf 是後綴和</span>
+    vector<span class="p">&lt;</span><span class="t">long long</span><span class="p">&gt;</span> <span class="f">f</span><span class="p">(</span>L <span class="p">+</span> <span class="n">2</span><span class="p">,</span> <span class="n">0</span><span class="p">),</span> <span class="f">nf</span><span class="p">(</span>L <span class="p">+</span> <span class="n">2</span><span class="p">,</span> <span class="n">0</span><span class="p">),</span> <span class="f">suf</span><span class="p">(</span>L <span class="p">+</span> <span class="n">2</span><span class="p">,</span> <span class="n">0</span><span class="p">);</span>
+    f<span class="p">[</span>a0<span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>                                       <span class="c">// f_0：起點在距離 a0</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> step <span class="p">=</span> <span class="n">0</span><span class="p">;</span> step <span class="p">&lt;</span> K<span class="p">;</span> <span class="p">++</span>step<span class="p">)</span> <span class="p">{</span>
+        <span class="c">// (1) 後綴和 suf[j] = Σ_{a&gt;=j} f[a]</span>
+        suf<span class="p">[</span>L <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> j <span class="p">=</span> L<span class="p">;</span> j <span class="p">&gt;=</span> <span class="n">1</span><span class="p">;</span> <span class="p">--</span>j<span class="p">)</span>
+            suf<span class="p">[</span>j<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>suf<span class="p">[</span>j <span class="p">+</span> <span class="n">1</span><span class="p">]</span> <span class="p">+</span> f<span class="p">[</span>j<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
+
+        <span class="c">// (2) 轉移 f_{t+1}(a') = suf[門檻] - f(a')</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> b <span class="p">=</span> <span class="n">1</span><span class="p">;</span> b <span class="p">&lt;=</span> L<span class="p">;</span> <span class="p">++</span>b<span class="p">)</span> <span class="p">{</span>
+            <span class="t">long long</span> amin <span class="p">=</span> <span class="p">(</span>b <span class="p">+</span> <span class="n">2</span><span class="p">)</span> <span class="p">/</span> <span class="n">2</span><span class="p">;</span>            <span class="c">// = ceil((b+1)/2)</span>
+            nf<span class="p">[</span>b<span class="p">]</span> <span class="p">=</span> <span class="p">((</span>suf<span class="p">[</span>amin<span class="p">]</span> <span class="p">-</span> f<span class="p">[</span>b<span class="p">])</span> <span class="p">%</span> MOD <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
         <span class="p">}</span>
-
-        <span class="c">// 前綴和還原 nxt[]</span>
-        <span class="t">long long</span> run <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> y <span class="p">=</span> <span class="n">1</span><span class="p">;</span> y <span class="p">&lt;=</span> n<span class="p">;</span> y<span class="p">++)</span> <span class="p">{</span>
-            run <span class="p">=</span> <span class="p">(</span>run <span class="p">+</span> diff<span class="p">[</span>y<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
-            nxt<span class="p">[</span>y<span class="p">]</span> <span class="p">=</span> run<span class="p">;</span>
-        <span class="p">}</span>
-        <span class="c">// 扣掉 y==x 的自身貢獻（電梯要動，x != y）</span>
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> x <span class="p">=</span> <span class="n">1</span><span class="p">;</span> x <span class="p">&lt;=</span> n<span class="p">;</span> x<span class="p">++)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(!</span>cur<span class="p">[</span>x<span class="p">])</span> <span class="k">continue</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="f">abs</span><span class="p">(</span>x <span class="p">-</span> b<span class="p">)</span> <span class="p">&lt;=</span> <span class="n">0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
-            nxt<span class="p">[</span>x<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>nxt<span class="p">[</span>x<span class="p">]</span> <span class="p">-</span> cur<span class="p">[</span>x<span class="p">]</span> <span class="p">+</span> MOD<span class="p">)</span> <span class="p">%</span> MOD<span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> f <span class="p">=</span> <span class="n">1</span><span class="p">;</span> f <span class="p">&lt;=</span> n<span class="p">;</span> f<span class="p">++)</span> cur<span class="p">[</span>f<span class="p">]</span> <span class="p">=</span> nxt<span class="p">[</span>f<span class="p">];</span>
+        <span class="f">swap</span><span class="p">(</span>f<span class="p">,</span> nf<span class="p">);</span>                                 <span class="c">// 滾動到下一步</span>
     <span class="p">}</span>
 
     <span class="t">long long</span> ans <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> f <span class="p">=</span> <span class="n">1</span><span class="p">;</span> f <span class="p">&lt;=</span> n<span class="p">;</span> f<span class="p">++)</span> ans <span class="p">=</span> <span class="p">(</span>ans <span class="p">+</span> cur<span class="p">[</span>f<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> b <span class="p">=</span> <span class="n">1</span><span class="p">;</span> b <span class="p">&lt;=</span> L<span class="p">;</span> <span class="p">++</span>b<span class="p">)</span> ans <span class="p">=</span> <span class="p">(</span>ans <span class="p">+</span> f<span class="p">[</span>b<span class="p">])</span> <span class="p">%</span> MOD<span class="p">;</span>
     cout <span class="p">&lt;&lt;</span> ans <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
 <span class="p">}</span></pre>
     </div>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>為什麼最後要扣 y=x？</strong> 區間 [x−d+1, x+d−1] 含 x 自己（距離 0），但電梯不能停在原地（x ≠ y），
-      所以前綴和後把每個 <code>nxt[x] −= cur[x]</code> 修正掉。
+      <strong>為什麼門檻是 amin = ceil((a'+1)/2)？</strong> 從距離 a 跳到距離 a'，合法條件 <code>|y−x| &lt; |b−x|</code> 化簡成
+      <code>a' &lt; 2a</code>（同側、嚴格小於）。反解出來源 a：<code>a &gt; a'/2</code> ⟺ <code>a ≥ ⌈(a'+1)/2⌉</code>。所以 a' 接收的是
+      <strong>所有距離 ≥ amin 的 f[a]</strong>，正好是一段後綴。最後扣 <code>f[a']</code> 是因為電梯要動（a≠a'）。
     </p>
   </section>
 
@@ -152,26 +142,25 @@
         <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
       </thead>
       <tbody>
-        <tr><td>每趟差分加</td><td>每個 x 一次 O(1) 區間加</td><td class="mono">O(N)</td></tr>
-        <tr><td>每趟前綴和</td><td>掃一遍還原 nxt</td><td class="mono">O(N)</td></tr>
-        <tr><td>每趟扣自身</td><td>掃一遍修正 y=x</td><td class="mono">O(N)</td></tr>
-        <tr><td>共 K 趟</td><td>—</td><td class="mono">O(N·K)</td></tr>
-        <tr><td>最後加總</td><td>Σ cur[f]</td><td class="mono">O(N)</td></tr>
+        <tr><td>每趟後綴和</td><td>從 L 掃到 1 累加 suf[]</td><td class="mono">O(L)</td></tr>
+        <tr><td>每趟轉移</td><td>每個 a' 一次 <code>suf[amin]−f[a']</code></td><td class="mono">O(L)</td></tr>
+        <tr><td>共 K 趟</td><td>—</td><td class="mono">O(L·K)</td></tr>
+        <tr><td>最後加總</td><td>Σ f[a]</td><td class="mono">O(L)</td></tr>
       </tbody>
     </table>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">K 趟 × O(N)/趟 = <strong>O(N·K)</strong></div>
-      <div class="sc-formula__hint">2000×2000 = 4×10⁶，遠快於樸素 O(N²·K)=1.6×10¹⁰</div>
+      <div class="sc-formula__main">K 趟 × O(L)/趟 = <strong>O(L·K) ≤ O(N·K)</strong></div>
+      <div class="sc-formula__hint">L &lt; N（只取一側）；2000×2000 = 4×10⁶，遠快於樸素 O(N²·K)=1.6×10¹⁰</div>
     </div>
 
     <table class="sc-table">
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>O(N·K)</strong></td><td>差分把區間轉移 O(N)/趟</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>cur / nxt / diff</td></tr>
-        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>逐趟前進</td></tr>
-        <tr><td>Constant factor</td><td>低</td><td>每趟三次線性掃</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O(L·K)</strong></td><td>後綴和把整趟轉移降到 O(L)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(L)</strong></td><td>f / nf / suf 三條滾動陣列</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>逐趟前進，swap 滾動</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每趟兩次線性掃</td></tr>
       </tbody>
     </table>
   </section>
@@ -189,28 +178,32 @@
       <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
       <tbody>
         <tr>
-          <td><strong>別忘了扣 y=x</strong></td>
-          <td>區間含 x 自己，但電梯要動 ⇒ 前綴和後每個 <code>nxt[x] −= cur[x]</code>。漏扣會多算「停原地」的假搭法。</td>
+          <td><strong>輸入順序 N S B K</strong></td>
+          <td>這版用 <code>N S B K</code>（起點 S 在禁止層 B 之前）。別跟其它版本的 <code>n a b k</code> 搞混。</td>
         </tr>
         <tr>
-          <td><strong>區間 clamp 到 [1,n]</strong></td>
-          <td><code>lo=max(1,x−d+1)</code>、<code>hi=min(n,x+d−1)</code>。不夾範圍會寫到陣列外。</td>
+          <td><strong>只取一側</strong></td>
+          <td>S&lt;B ⇒ 下側 <code>L=B−1, a0=B−S</code>；S&gt;B ⇒ 上側 <code>L=N−B, a0=S−B</code>。另一側永遠到不了，根本不用建。</td>
         </tr>
         <tr>
-          <td><strong>條件是嚴格 &lt;</strong></td>
-          <td><code>|y−x| &lt; |b−x|</code> 是<strong>嚴格小於</strong>，所以 hi = x+d−1（不是 x+d）。寫成 ≤ 會跨過 b、答案錯。</td>
+          <td><strong>門檻取整</strong></td>
+          <td><code>amin=(b+2)/2</code> 是整數除法，恰等於 <code>⌈(b+1)/2⌉</code>。寫成 <code>(b+1)/2</code> 會少一格、把不合法來源算進去。</td>
+        </tr>
+        <tr>
+          <td><strong>別忘扣 f[a']</strong></td>
+          <td>後綴 <code>suf[amin]</code> 含 a'=a 自己（距離不變的「停原地」），但電梯要動 ⇒ <code>nf[a']=suf[amin]−f[a']</code>。</td>
         </tr>
         <tr>
           <td><strong>減法補 MOD</strong></td>
-          <td>差分的 <code>diff[hi+1] −= cur[x]</code> 與扣自身都可能為負 ⇒ <code>(… + MOD) % MOD</code>。</td>
+          <td><code>suf[amin]−f[a']</code> 可能為負 ⇒ <code>((… )%MOD+MOD)%MOD</code>。</td>
         </tr>
         <tr>
-          <td><strong>輸入只有一行</strong></td>
-          <td>沒有測資數 T，直接讀 <code>n a b k</code> 四個數。別套 while(T--)。</td>
+          <td><strong>K=0 / S=B 特判</strong></td>
+          <td>K=0：沒跳，答案 1。S=B：起點就在禁止層，答案 0。兩者都先擋掉。</td>
         </tr>
         <tr>
-          <td><strong>答案是 Σ cur[f]</strong></td>
-          <td>搭完 K 趟後停在<strong>任一</strong>樓層都算一種搭法，要全部加起來，不是只取某一格。</td>
+          <td><strong>答案是 Σ f[a]</strong></td>
+          <td>搭完 K 趟停在<strong>任一</strong>距離都算一種搭法，全部加起來。</td>
         </tr>
       </tbody>
     </table>
@@ -225,26 +218,34 @@
       <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
     </div>
 
-    <p><strong>① 狀態定義</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// state</span>
-cur[f] = 搭完目前 s 趟後，停在樓層 f 的方法數
-初值 cur[a] = 1（起點），其餘 0
-答案 = Σ_f cur[f]（搭完 K 趟後）</pre>
+    <p><strong>① 換軸：樓層 → 到 b 的距離</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// reframe</span>
+條件 |y−x| &lt; |b−x| ⇒ 每趟都跳不到也跳不過 b。
+所以 S 在哪一側就永遠在那一側 → 另一側整段砍掉。
+令 a = |x − b| ∈ [1, L]，f[a] = 停在距離 a 的方法數。
+  S &lt; B：L = B−1，   a0 = B − S
+  S &gt; B：L = N − B，  a0 = S − B</pre>
 
-    <p><strong>② 一趟的轉移（區間 + 差分）</strong></p>
+    <p><strong>② 把條件化簡成 a' 的範圍</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// derive threshold</span>
+同側兩點：|y−x| = |a − a'|，而 |b−x| = a。
+合法 |a−a'| &lt; a ⟺ 0 &lt; a' &lt; 2a ⟺ a' ∈ [1, 2a−1]。
+反過來問「哪些來源 a 能到 a'」：a' ≤ 2a−1 ⟺ a ≥ ⌈(a'+1)/2⌉ = amin。
+⇒ a' 收下「所有距離 ≥ amin 的 f[a]」= 一段後綴。</pre>
+
+    <p><strong>③ 一趟轉移（後綴和 O(L)）</strong></p>
     <pre class="sc-trace"><span class="sc-trace__head">// one ride</span>
-對每個 cur[x] > 0：
-  d  = |x - b|
-  lo = max(1, x-d+1),  hi = min(n, x+d-1)   // 合法落點區間
-  diff[lo] += cur[x];  diff[hi+1] -= cur[x] // 差分區間加
-前綴和 diff → nxt[]
-每個 nxt[x] -= cur[x]                         // 扣掉 y=x（電梯要動）</pre>
+suf[j] = Σ_{a≥j} f[a]          // 後綴和，從 L 倒掃到 1
+對每個目標 a' = 1..L：
+  amin = (a'+2)/2
+  nf[a'] = suf[amin] − f[a']    // 扣 a'=a 自身（電梯要動）
+swap(f, nf)                     // 滾動到下一趟</pre>
 
-    <p><strong>③ 為什麼差分能加速</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// why diff</span>
-樸素：每個 x 逐一加到 O(n) 個 y → 每趟 O(n²)
-差分：每個 x 只動兩格 diff[lo], diff[hi+1] → O(1) 區間加
-      最後一次前綴和 O(n) 還原 → 每趟 O(n)，K 趟 O(nK)</pre>
+    <p><strong>④ 為什麼這比差分版更省</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// vs diff-array</span>
+差分版：在樓層軸上，每個 x 把 cur[x] 灑到區間 [x−d+1,x+d−1]（O(L) 攤）。
+距離版：a' 只是「收一段後綴」，連差分都不用，直接後綴和一次到位。
+兩者都 O(L)/趟，但距離版陣列長度只有單側 L，常數更小、更好寫。</pre>
   </section>
 
   <!-- ============================================================
@@ -264,8 +265,8 @@ cur[f] = 搭完目前 s 趟後，停在樓層 f 的方法數
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">計數 DP + 差分：每趟把 cur[x] 區間加到 [x−d+1,x+d−1]，前綴和後扣 y=x，O(N·K)。</div>
-    <div class="sc-summary-bar__detail">嚴格 &lt; ⇒ hi=x+d−1；clamp [1,n]；減法補 MOD；輸入一行 n a b k；答案 Σcur[f]。</div>
+    <div class="sc-summary-bar__body">換軸成「到 b 的距離」a，f[a'] = (Σ_{a≥amin} f[a]) − f[a']，後綴和 O(L·K)。</div>
+    <div class="sc-summary-bar__detail">amin=⌈(a'+1)/2⌉=(a'+2)/2；只取 S 一側；扣 f[a'] 自身；減法補 MOD；答案 Σf[a]。</div>
   </div>
 
 </body>

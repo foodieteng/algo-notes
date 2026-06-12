@@ -24,7 +24,7 @@
     </span>
     <span>
       <a href="https://tioj.sprout.tw/contests/26/problems/369/" target="_blank" rel="noopener">原題 ↗</a>
-      &nbsp;·&nbsp; STUDY CARD · 2026.06.10
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
     </span>
   </div>
 
@@ -68,17 +68,19 @@
       </thead>
       <tbody>
         <tr><td>問題本質</td>
-            <td>數樓層序列：每步 <code>|y−x| &lt; |b−x|</code>，求長度 K 的序列數。</td></tr>
-        <tr><td>關鍵觀察</td>
-            <td>合法落點 <code>y ∈ [x−d+1, x+d−1]</code>（d=|x−b|）是<strong>連續區間且碰不到 b</strong>。</td></tr>
+            <td>數樓層序列：每步 <code>|y−x| &lt; |B−x|</code>，求長度 K 的序列數。</td></tr>
+        <tr><td>換軸</td>
+            <td>跨不過 B ⇒ 只留 S 那一側，狀態改成<strong>到 B 的距離</strong> <code>a=|x−B| ∈ [1,L]</code>。</td></tr>
         <tr><td>狀態</td>
-            <td><code>cur[f]</code> = 搭到目前、停在樓層 f 的方法數。</td></tr>
+            <td><code>f[a]</code> = 搭到目前、停在距離 a 的方法數。初值 <code>f[a0]=1</code>。</td></tr>
+        <tr><td>轉移</td>
+            <td><code>nf[a'] = suf[amin] − f[a']</code>，<code>amin=⌈(a'+1)/2⌉</code>（收一段<strong>後綴</strong>）。</td></tr>
         <tr><td>加速</td>
-            <td>區間加 ⇒ <strong>差分陣列</strong>，每趟 O(n)。</td></tr>
+            <td>每個 a' 收一段後綴 ⇒ <strong>後綴和</strong>，每趟 O(L)。</td></tr>
         <tr><td>細節</td>
-            <td>扣 y=x 自身、減法補 MOD、答案 Σ cur[f]。</td></tr>
+            <td>扣 f[a'] 自身、減法補 MOD、答案 Σ f[a]、K=0/S=B 特判。</td></tr>
         <tr><td>複雜度</td>
-            <td>O(N·K)；MOD 1e9+7（質數，但只用加減）。</td></tr>
+            <td>O(L·K) ≤ O(N·K)；MOD 1e9+7（質數，但只用加減）。</td></tr>
       </tbody>
     </table>
   </section>
@@ -94,32 +96,32 @@
 
     <div class="qa">
       <span class="qa__id">Q1</span>
-      <span class="qa__tag">建模</span>
-      <h4>條件 <code>|y−x| &lt; |b−x|</code> 展開後，合法落點 y 是什麼形狀？為什麼這保證跳不到禁止樓層 b？</h4>
+      <span class="qa__tag">換軸</span>
+      <h4>為什麼可以只保留 S 那一側、把狀態從「樓層」換成「到 B 的距離 a」？另一側發生了什麼？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q2</span>
-      <span class="qa__tag">為何差分</span>
-      <h4>樸素 DP 每趟為什麼是 O(n²)？差分陣列怎麼把它降到 O(n)？關鍵前提是什麼？</h4>
+      <span class="qa__tag">門檻推導</span>
+      <h4>從距離 a 出發，合法落點 a' 的範圍是什麼？反過來，目標 a' 能收到哪些來源 a？門檻 amin 怎麼來的？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q3</span>
-      <span class="qa__tag">扣自身</span>
-      <h4>為什麼前綴和算完後要把每個 <code>nxt[x] −= cur[x]</code>？不扣會多算什麼？</h4>
+      <span class="qa__tag">為何後綴和</span>
+      <h4>為什麼這版用「後綴和」而不是差分？兩者各 O(L)/趟，差別在哪？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q4</span>
-      <span class="qa__tag">嚴格不等</span>
-      <h4>條件是嚴格 <code>&lt;</code> 還是 <code>≤</code>？若不小心寫成 ≤，會發生什麼？（提示：想 y=b）</h4>
+      <span class="qa__tag">扣自身</span>
+      <h4>為什麼算完 <code>suf[amin]</code> 還要 <code>− f[a']</code>？不扣會多算什麼？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">Q5</span>
       <span class="qa__tag">答案位置</span>
-      <h4>為什麼答案是 <code>Σ cur[f]</code> 而不是某一個 cur[?]？搭完 K 趟後可以停在哪些樓層？</h4>
+      <h4>為什麼答案是 <code>Σ f[a]</code> 而不是某一個 f[?]？K=0 與 S=B 兩個特判分別回什麼？</h4>
     </div>
   </section>
 
@@ -129,36 +131,39 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">03</span>
-      <h2 class="sc-section__title">範例 Trace · n=8, a=2, b=5, K=2<span class="sc-section__title-en">// Worked Trace</span></h2>
+      <h2 class="sc-section__title">範例 Trace · N=8, S=2, B=5, K=2<span class="sc-section__title-en">// Worked Trace</span></h2>
     </div>
 
-    <p>cur[f] 從起點 a=2 出發。樓層 5 是禁止的（紅）。每趟把每個 cur[x] 灑到 <code>[x−d+1, x+d−1]</code>（扣 y=x）：</p>
+    <p>S=2 在 B=5 下側 ⇒ 只留下側 <code>L=B−1=4</code> 層，距離軸 a=1..4（a=1 最靠 B、a=4 最遠）。
+    起點距離 <code>a0=B−S=3</code>。<code>amin=⌈(a'+1)/2⌉</code>：a'=1→1, a'=2→2, a'=3→2, a'=4→3。</p>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>8 2 5 2     // n=8, a=2, b=5, K=2</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>8 2 5 2     // N=8, S=2, B=5, K=2</pre>
 
     <pre class="sc-trace"><span class="sc-trace__head">// init (s=0)</span>
-樓層 f :  1   2   3   4  [5]  6   7   8
-cur    :  0   1   0   0   -   0   0   0     ← 只有 a=2 有 1 種</pre>
+距離 a :  1    2    3    4         （a=|樓層−5|；a=3 ⟺ 樓層 2）
+f[a]   :  0    0    1    0         ← 起點 a0=3 有 1 種</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// 第 1 趟：從 x=2 散播</span>
-x=2: d=|2-5|=3 → 落點 [2-2, 2+2]=[0,4] 夾成 [1,4]，扣掉 y=2
-   → 加到 {1,3,4} 各 +1
-cur    :  1   0   1   1   -   0   0   0     （sum 還沒當答案，繼續第 2 趟）</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// 第 1 趟：suf = 後綴和 of [0,0,1,0]</span>
+suf[4]=0  suf[3]=1  suf[2]=1  suf[1]=1
+nf[1] = suf[amin=1] − f[1] = 1 − 0 = 1
+nf[2] = suf[amin=2] − f[2] = 1 − 0 = 1
+nf[3] = suf[amin=2] − f[3] = 1 − 1 = 0   ← 唯一來源是自己，扣掉 → 0
+nf[4] = suf[amin=3] − f[4] = 1 − 0 = 1
+f[a]   :  1    1    0    1</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// 第 2 趟：從 x=1,3,4 各自散播</span>
-x=1: d=|1-5|=4 → [1-3,1+3]=[-2,4]→[1,4]，扣 y=1 → 加 {2,3,4}
-x=3: d=|3-5|=2 → [3-1,3+1]=[2,4]，扣 y=3 → 加 {2,4}
-x=4: d=|4-5|=1 → [4-0,4+0]=[4,4]，扣 y=4 → 加 {} （唯一落點就是自己，無效）
-累加：
-cur    :  0   2   1   2   -   0   0   0
-              ↑   ↑   ↑
-            f=2:從1,3   f=3:從1   f=4:從1,3</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// 第 2 趟：suf = 後綴和 of [1,1,0,1]</span>
+suf[4]=1  suf[3]=1  suf[2]=2  suf[1]=3
+nf[1] = suf[1] − f[1] = 3 − 1 = 2
+nf[2] = suf[2] − f[2] = 2 − 1 = 1
+nf[3] = suf[2] − f[3] = 2 − 0 = 2
+nf[4] = suf[3] − f[4] = 1 − 1 = 0   ← 唯一來源是自己，扣掉 → 0
+f[a]   :  2    1    2    0</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>Σ cur[f] = 2 + 1 + 2 = 5</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>Σ f[a] = 2 + 1 + 2 + 0 = 5</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：第 2 趟時 x=4 的 d=1，合法區間只剩它自己 ⇒ 扣掉後沒有任何落點，這條路「卡住」了。
-      離 b 越近、d 越小、可走的範圍越窄，這正是 <code>|y−x| &lt; |b−x|</code> 的幾何意義。最終 5 種搭法。
+      <strong>觀察</strong>：第 2 趟的 a'=4（離 B 最遠的那格）門檻 amin=3，後綴只剩 {3,4}，
+      而其中能貢獻的只有它自己 ⇒ 扣掉後變 0 — 離 B 越遠、要從更遠處跳來，來源越稀少。最終 5 種搭法，和差分版完全一致。
     </div>
   </section>
 
@@ -174,19 +179,19 @@ cur    :  0   2   1   2   -   0   0   0
     <div class="qa">
       <span class="qa__id">App 1</span>
       <span class="qa__tag">為何 0</span>
-      <h4>範例2 <code>n=7, a=1, b=2, K=2</code> 答案是 0。為什麼從 a=1 連一趟都搭不出去？</h4>
+      <h4>範例2 <code>N=7, S=1, B=2, K=2</code> 答案是 0。用距離軸解釋：L、a0 各是多少？為什麼第一趟就卡住？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">App 2</span>
-      <span class="qa__tag">前綴和重建</span>
-      <h4>差分陣列 diff 做完所有區間加後，要怎麼還原出真正的 nxt[]？這一步的複雜度？</h4>
+      <span class="qa__tag">整數門檻</span>
+      <h4>為什麼程式裡 <code>amin=(a'+2)/2</code>（整數除法）剛好等於 <code>⌈(a'+1)/2⌉</code>？寫成 <code>(a'+1)/2</code> 會錯在哪？</h4>
     </div>
 
     <div class="qa">
       <span class="qa__id">App 3</span>
-      <span class="qa__tag">變體</span>
-      <h4>若把條件改成 <code>|y−x| ≤ |b−x|</code>（允許等於、但仍 y≠b），落點區間會變怎樣？要多加什麼特判？</h4>
+      <span class="qa__tag">兩版對照</span>
+      <h4>差分版（樓層軸、區間加）和這版（距離軸、後綴和）哪裡本質相同、哪裡不同？為什麼距離版常數更小？</h4>
     </div>
   </section>
 
@@ -196,84 +201,96 @@ cur    :  0   2   1   2   -   0   0   0
   <section class="sc-section">
 
     <div class="qa qa--answer">
-      <span class="qa__id">Q1 · 建模</span>
+      <span class="qa__id">Q1 · 換軸</span>
       <p>
-        <code>|y−x| &lt; d</code>（d=|x−b|）展開為 <code>−d &lt; y−x &lt; d</code> ⟺ <code>y ∈ [x−d+1, x+d−1]</code>，
-        是<strong>以 x 為中心、半徑 d−1 的連續整數區間</strong>。
+        條件 <code>|y−x| &lt; |B−x|</code> 保證每趟搭乘距離 &lt; 到 B 的距離 ⇒ <strong>永遠跳不到也跳不過 B</strong>。
+        所以從 S 出發後，你會永遠待在 B 的同一側，另一側的樓層<strong>完全到不了</strong>，根本不用建。
       </p>
       <p>
-        b 在距離 x 恰好 d 的位置，而區間最遠只到 d−1 ⇒ <strong>b 永遠落在區間外</strong>，所以每趟自動跳不到也跳不過 b，不用特別排除。
-      </p>
-    </div>
-
-    <div class="qa qa--answer">
-      <span class="qa__id">Q2 · 為何差分</span>
-      <p>
-        樸素轉移：對每個 x，要把 cur[x] 加到 O(n) 個合法 y ⇒ 每趟 O(n²)、K 趟 O(n²K)=1.6×10¹⁰，TLE。
-      </p>
-      <p>
-        關鍵前提：合法 y 是<strong>連續區間</strong>。於是「把一個值加到一段區間」可用差分 <code>diff[lo]+=v, diff[hi+1]−=v</code> 做到 O(1)，
-        全部加完再一次前綴和 O(n) 還原 ⇒ 每趟 O(n)，總 O(nK)。
+        把那一側的樓層用「到 B 的距離 <code>a=|x−B|</code>」重新編號（a=1 緊鄰 B、a=L 最遠），距離成了唯一有意義的狀態，
+        陣列長度從 N 縮成單側 <code>L</code>。
       </p>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">Q3 · 扣自身</span>
+      <span class="qa__id">Q2 · 門檻推導</span>
       <p>
-        合法區間 <code>[x−d+1, x+d−1]</code> <strong>包含 x 本身</strong>（|x−x|=0 &lt; d）。但電梯要動、<code>y ≠ x</code>，
-        所以區間加會多算一份「停在原地」的假搭法。
+        同側兩點距離 <code>a, a'</code>，搭乘距離 <code>|y−x| = |a−a'|</code>，到 B 距離 <code>|B−x| = a</code>。
+        合法 <code>|a−a'| &lt; a</code> ⟺ <code>0 &lt; a' &lt; 2a</code> ⟺ 從 a 能到 <strong>a' ∈ [1, 2a−1]</strong>。
       </p>
       <p>
-        前綴和算完後，對每個出發樓層 x 做 <code>nxt[x] −= cur[x]</code> 把這份多算的扣掉。不扣的話每趟都會灌水。
+        反問「目標 a' 收得到哪些來源 a」：需 <code>a' ≤ 2a−1</code> ⟺ <code>a ≥ (a'+1)/2</code> ⟺
+        <strong><code>a ≥ ⌈(a'+1)/2⌉ = amin</code></strong>。所以 a' 收下的是 f[] 的<strong>後綴 [amin, L]</strong>。
       </p>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">Q4 · 嚴格不等</span>
+      <span class="qa__id">Q3 · 為何後綴和</span>
       <p>
-        是<strong>嚴格 &lt;</strong>。所以區間右端是 <code>x+d−1</code>（不含 d）。
+        兩版本質相同：都把「每步逐對轉移 O(L²)」壓成 O(L)。差別在<strong>查詢形狀</strong>：
+      </p>
+      <ul>
+        <li><strong>差分版（樓層軸）</strong>：每個來源 x 把值灑到一段<em>區間</em> [x−d+1, x+d−1] ⇒ 用差分做區間加，最後前綴和還原。</li>
+        <li><strong>後綴和版（距離軸）</strong>：換軸後每個目標 a' 收的是一段<em>後綴</em> [amin, L] ⇒ 直接後綴和，連差分都不必。</li>
+      </ul>
+      <p>距離版只掃單側、陣列短、運算單純（一次後綴和 + 一輪相減），<strong>常數更小也更好寫</strong>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 扣自身</span>
+      <p>
+        後綴 <code>[amin, L]</code> 一定包含 a'=a 自己（因為合法範圍 a'∈[1,2a−1]，當 a=a' 也成立），
+        但那代表「停在原地、距離不變」，而電梯<strong>必須移動</strong>（y≠x）。
       </p>
       <p>
-        若寫成 ≤，區間會延伸到 <code>x±d</code>，<strong>剛好包含 b</strong>（b 在距離 d 處）⇒ 會允許跳到禁止樓層、且 d=1 時還會允許停原地的相鄰，答案整個錯。範例2 用 ≤ 會算出非 0。
+        所以 <code>nf[a'] = suf[amin] − f[a']</code> 把這份「停原地」的貢獻扣掉。不扣的話每趟都會灌進假搭法。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">Q5 · 答案位置</span>
       <p>
-        題目只要求「連續搭 K 趟」，<strong>沒有規定終點</strong>。所以搭完 K 趟後停在任何樓層都算一種合法搭法。
+        題目只要「連續搭 K 趟」，<strong>沒規定終點</strong> ⇒ 停在任何距離都算一種，答案 <code>Σ_a f[a]</code>。
       </p>
       <p>
-        因此答案是把 cur[] 全部加起來 <code>Σ_f cur[f]</code>，代表「所有可能終點的方法數總和」。
+        兩個特判：<code>K=0</code> ⇒ 沒搭電梯，序列只有起點本身，<strong>答案 1</strong>；
+        <code>S=B</code> ⇒ 起點就在禁止層（題目其實保證 S≠B，但防呆），<strong>答案 0</strong>。
       </p>
     </div>
 
     <div class="qa qa--answer">
       <span class="qa__id">App 1 · 為何 0</span>
       <p>
-        a=1、b=2，距離 <code>d = |1−2| = 1</code>。合法落點區間 <code>[1−0, 1+0] = [1,1]</code> ＝ 只有樓層 1 自己。
-        扣掉 y=x 後<strong>沒有任何合法落點</strong> ⇒ 第一趟就搭不出去 ⇒ 0 種。
+        S=1 &lt; B=2 ⇒ 下側 <code>L=B−1=1</code>，<code>a0=B−S=1</code>。整個距離軸只有一格 a=1。
       </p>
-      <p>直覺：你緊貼著禁止樓層（距離 1），任何移動都會碰到或越過它，所以動彈不得。</p>
+      <p>
+        從 a=1 出發，合法目標 <code>a'∈[1, 2·1−1]=[1,1]</code>＝只有自己；扣掉停原地後<strong>沒有任何合法落點</strong>
+        ⇒ 第一趟就搭不出去 ⇒ 0 種。直覺：你緊貼禁止層（距離 1），任何移動都會碰到或越過它。
+      </p>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">App 2 · 前綴和重建</span>
+      <span class="qa__id">App 2 · 整數門檻</span>
       <p>
-        差分還原就是做<strong>前綴和</strong>：<code>nxt[y] = nxt[y−1] + diff[y]</code>（從 y=1 掃到 n，邊掃邊累加 run）。
-        這樣每個 diff[lo]+=v / diff[hi+1]−=v 的「區間加」效果就被展開成 [lo,hi] 每格都 +v。
+        要的是 <code>⌈(a'+1)/2⌉</code>。對整數除法（向下取整）有恆等式
+        <code>⌈p/2⌉ = ⌊(p+1)/2⌋</code>，代入 <code>p=a'+1</code> 得 <code>⌈(a'+1)/2⌉ = ⌊(a'+2)/2⌋ = (a'+2)/2</code>（整數除）。
       </p>
-      <p>複雜度 O(n)：一次線性掃描即可還原整條 nxt[]。</p>
+      <p>
+        若寫成 <code>(a'+1)/2</code>（=⌊(a'+1)/2⌋），對偶數 a' 會<strong>少 1</strong>（門檻太低），
+        把「a 還不夠大、跳不到 a'」的來源也算進去 ⇒ 多算、答案偏大。例如 a'=2 應為 amin=2，寫錯會變 1。
+      </p>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">App 3 · 變體</span>
+      <span class="qa__id">App 3 · 兩版對照</span>
       <p>
-        改成 <code>|y−x| ≤ d</code> ⇒ 區間變 <code>[x−d, x+d]</code>（兩端各多 1 格）。但 <code>x−d</code> 或 <code>x+d</code> 其中一個<strong>正好是 b</strong>。
+        <strong>本質相同</strong>：都是計數 DP，逐趟把方法數從「能跳過來的來源」聚到每個目標，並用前綴/後綴技巧把整趟降到 O(L)；
+        兩版在所有測資答案一致（範例 5）。
       </p>
       <p>
-        所以要<strong>多一個特判把 y=b 那格扣掉</strong>（像扣 y=x 一樣，再做一次 <code>nxt[b] −= cur[x]</code>，但只在 b 落在該 x 的區間內時）。
-        本題用嚴格 &lt; 就天生避開 b，不必這個特判 — 這也是原題刻意設計成嚴格不等的原因。
+        <strong>不同</strong>：差分版留在樓層軸、長度 N、合法集合是<em>區間</em>（要差分 + 前綴和兩步）；
+        距離版換軸後長度只剩單側 L、合法集合是<em>後綴</em>（一次後綴和即可）。少了另一側、少了差分這層間接，
+        距離版<strong>常數更小、程式更短</strong>，是這題更乾淨的寫法。
       </p>
     </div>
 
@@ -296,8 +313,8 @@ cur    :  0   2   1   2   -   0   0   0
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「區間轉移 → 差分加速」的計數 DP 框架。</div>
-    <div class="sc-summary-bar__detail">範例 5（x=4 時 d=1 卡住）；a 緊貼 b → 0；嚴格 &lt; 天生避開 b；答案 Σcur[f]。</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「換軸到距離 → 後綴和」的計數 DP。</div>
+    <div class="sc-summary-bar__detail">範例 5（a'=3/4 時來源只剩自己 → 0）；S 緊貼 B → 0；amin=(a'+2)/2；答案 Σf[a]。</div>
   </div>
 
 </body>
