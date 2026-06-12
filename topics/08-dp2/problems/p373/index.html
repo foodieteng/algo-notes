@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P373 · 01 概念 // 取名字好困難QQ // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P373
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">取名字好困難QQ</h1>
+    <p class="sc-mast__subtitle">// 變體 LIS · 每個數字有兩個候選值（×1 或 ×2）</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 dp[i][c] 最長非遞減鏈
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N²)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>給長度 N 的正整數序列 <code>a₁, a₂, …, a_N</code>。對每個數字你可以三選一：
+      <strong>變成原本的兩倍</strong>（×2）、<strong>從序列中移除</strong>、或<strong>維持原樣</strong>。</p>
+      <p style="margin-top:6px;">你希望操作後的序列是一個<strong>每個數字都不小於 M 的非遞減序列</strong>（非嚴格遞增 ⇒ 允許相等）。
+      問這樣的序列<strong>最長可以多長</strong>？</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      範圍：<code>1 ≤ N ≤ 10⁵</code>（≥99% 測資 <code>N ≤ 1000</code>）、<code>M ≤ 10⁹</code>、<code>aᵢ ≤ 10⁹</code>，共 <code>T ≤ 1000</code> 筆測資。
+      白話：每個 aᵢ 提供<strong>兩個候選值</strong> <code>{aᵢ, 2aᵢ}</code>（且須 ≥ M），保留順序挑一條<strong>最長非遞減子序列</strong>。是 LIS 的變體。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼是變體 LIS
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼是「兩候選值的非遞減 LIS」<span class="sc-section__title-en">// Why a Variant LIS</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉每個數字 ×1/×2/刪</span>
+            <span class="sc-ko-card__o">O(3ᴺ)</span>
+          </div>
+          <div class="sc-ko-card__body">每個位置三選一，N 個位置 ⇒ 3ᴺ 種組合，N=1000 完全爆。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">忽略「兩倍」，只做普通 LIS</span>
+            <span class="sc-ko-card__o">—</span>
+          </div>
+          <div class="sc-ko-card__body">沒考慮每個數可 ×2 ⇒ 漏掉用兩倍才接得上的鏈，答案偏小、<strong>會 WA</strong>。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">DP：每個數字攜帶兩個候選值</span>
+          <span class="sc-ko-card__o">O(N²)</span>
+        </div>
+        <div class="sc-ko-card__body">每個 aᵢ 的可用值是 <code>{aᵢ, 2aᵢ}</code> 中 ≥ M 的那些。<code>dp[i][c]</code> = 以「第 i 個數用候選 c」結尾的最長非遞減鏈，從前面所有<strong>值不超過它</strong>的狀態接上 +1。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵轉換</strong>：「刪除」= 不選；「維持/兩倍」= 這個數字的<strong>實際值</strong>取 aᵢ 或 2aᵢ。
+      於是問題變成「每個元素有最多兩個可選值，求保留順序的最長非遞減子序列」——標準 LIS 加一層「候選值」維度。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 核心策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Strategy</span></h2>
+    </div>
+
+    <ol style="margin-top:8px;">
+      <li><strong>列候選值</strong> · 第 i 個數的候選值 <code>v[i][0]=aᵢ</code>、<code>v[i][1]=2aᵢ</code>，只有 <code>≥ M</code> 的才可用。</li>
+      <li><strong>定義狀態</strong> · <code>dp[i][c]</code> = 以「第 i 個數、用候選值 v[i][c]」結尾的最長非遞減鏈長度。</li>
+      <li><strong>轉移</strong> · <code>dp[i][c] = 1 + max{ dp[j][c'] : j&lt;i, v[j][c'] ≤ v[i][c] }</code>，答案取所有 dp 的最大值。</li>
+    </ol>
+
+    <div class="sc-formula" style="margin-top:10px;">
+      <div class="sc-formula__main">dp[i][c] = 1 + max<sub>j&lt;i, c'∈{0,1}</sub> { dp[j][c'] : v[j][c'] ≤ v[i][c] }　（v[i][c] ≥ M 才有效）</div>
+      <div class="sc-formula__hint">答案 = max dp[i][c]（沒有任何候選值 ≥ M ⇒ 答案 0）。非遞減 ⇒ 條件是 ≤（允許相等）。</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 兩候選值的非遞減鏈<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用範例第 1 筆 <code>N=3, M=1, a=[2, 1, 3]</code>（答案 3）。每個數字有上下兩個候選值（<code>aᵢ</code> 與 <code>2aᵢ</code>）；
+    逐個算 <code>dp[i][c]</code>，從前面值 ≤ 自己的狀態接最長鏈：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · TWO-CANDIDATE NON-DECREASING LIS (N=3, M=1, a=[2,1,3])</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="500" style="height:500px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 每個數字兩個候選值：a₁=2→{2,4}、a₂=1→{1,2}、a₃=3→{3,6}
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#d96e4e">■</span> 正在計算的候選 v[i][c] &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> 可接上的前驅（值 ≤ 它） &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> 算好的 dp 值 / 最佳鏈 &nbsp;·&nbsp;
+      <span style="color:#cfcfcf">■</span> &lt;M 不可用
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為什麼兩個候選值就夠
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為什麼只要兩個候選值、為什麼貪心不行<span class="sc-section__title-en">// Why Two Candidates</span></h2>
+    </div>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">// 操作 ⇒ 候選值</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>「移除」⇒ 這個數字不在子序列裡（不選）。</li>
+          <li>「維持」⇒ 實際值 = <code>aᵢ</code>；「變兩倍」⇒ 實際值 = <code>2aᵢ</code>。每個數字<strong>最多兩種實際值</strong>，不會更多。</li>
+          <li>必須 <code>實際值 ≥ M</code> 才合法 ⇒ 候選值先用 M 過濾；若 <code>2aᵢ &lt; M</code> 則這個數字完全不能用。</li>
+          <li>目標「非遞減且最長」⇒ 保留原順序、值不下降的最長子序列 = LIS（非嚴格）。每個位置多了「選哪個候選值」的選擇 ⇒ 狀態加一維 c∈{0,1}。</li>
+          <li><strong>為何不能貪心取小值？</strong> 取 aᵢ（較小）雖然好接後面，但有時必須取 2aᵢ 才接得上<strong>前面</strong>較大的鏈。兩種都要試 ⇒ DP 枚舉 c，不能貪心固定。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:14px;">
+      範例就是證據：<code>a=[2,1,3]</code>，a₂=1 若維持原樣（值 1）接不到前面的 2；改成 <strong>×2=2</strong> 才能接上 a₁=2，湊出 <code>[2, 2, 3]</code> 長度 3。
+      這正是「每個數字保留兩個候選值、用 DP 試」的必要性。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">每個狀態 dp[i][c] 掃前面所有 O(N) 個狀態 ⇒ <strong>O(N²)</strong>（狀態數 2N、每個轉移 O(N)）</div>
+      <div class="sc-formula__hint">99% 測資 N ≤ 1000 ⇒ 10⁶，秒解。想吃滿 N=10⁵ ⇒ 用 BIT 把轉移降到 O(log N)，總 O(N log N)（見 Code 頁）。</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N²)</strong></td><td>BIT 版可降到 O(N log N)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>dp[i][2] 兩條候選值</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>由左往右填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>內層常數 ×2（兩候選）</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      值到 2×10⁹ &gt; int 上限 ⇒ 候選值與比較用 <code>long long</code>；T 筆測資每筆獨立清空 dp。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「×2 / 刪 / 維持」⇒ 每個數字攜帶兩個候選值 {aᵢ, 2aᵢ}（須 ≥ M）。</strong><br/>
+      問題化為「保留順序的最長<strong>非遞減</strong>子序列」，狀態加一維挑候選值 —<br/>
+      <strong>dp[i][c] = 1 + max 前面值 ≤ 它的 dp；O(N²)，要快就上 BIT 變 O(N log N)。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">每個數字兩候選值 {aᵢ,2aᵢ}(≥M)，求最長非遞減子序列：dp[i][c]=1+max前面≤它的dp。</div>
+    <div class="sc-summary-bar__detail">×2/刪/維持 → 兩候選值；非遞減用 ≤；無候選≥M 則 0；O(N²)，BIT 可降 O(N log N)。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p373-twocand.js"></script>
+</body>
+</html>

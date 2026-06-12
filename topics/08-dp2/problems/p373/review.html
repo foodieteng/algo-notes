@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P373 · 03 Review // 取名字好困難QQ // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P373
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">取名字好困難QQ</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>每個數字 ×2 / 刪 / 維持，求最長「非遞減且每項 ≥ M」的子序列 = 變體 LIS。</td></tr>
+        <tr><td>候選值</td>
+            <td>每個 aᵢ 攜帶 <code>{aᵢ, 2aᵢ}</code>，只有 ≥ M 的可用。</td></tr>
+        <tr><td>狀態</td>
+            <td><code>dp[i][c]</code> = 以「第 i 個數用候選 c」結尾的最長非遞減鏈。</td></tr>
+        <tr><td>轉移</td>
+            <td><code>dp[i][c] = 1 + max{dp[j][cc] : j&lt;i, v[j][cc] ≤ v[i][c]}</code>。</td></tr>
+        <tr><td>細節</td>
+            <td>非遞減用 <code>≤</code>；候選 ≥ M；long long；答案可能 0。</td></tr>
+        <tr><td>複雜度</td>
+            <td>O(N²)；BIT 升級 O(N log N)（吃滿 N=10⁵）。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">建模</span>
+      <h4>「×2 / 刪除 / 維持」這三種操作，如何轉成「每個數字最多兩個候選值」的 LIS 模型？「刪除」對應到什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">為何不貪心</span>
+      <h4>為什麼每個數字不能「一律取較小的 aᵢ」或「一律取較大的 2aᵢ」？舉例說明為何兩種都要保留、用 DP 試。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">非遞減</span>
+      <h4>題目要「非嚴格遞增（非遞減）」，轉移時比較該用 <code>≤</code> 還是 <code>&lt;</code>？寫錯會怎樣？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">下界 M</span>
+      <h4>M 這個下界在哪裡用到？什麼情況下答案會是 0？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>樸素 DP 為什麼是 O(N²)？要吃滿 N=10⁵ 該怎麼加速？加速後是多少？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · N=3, M=1, a=[2, 1, 3]<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>每個數字兩個候選值（皆 ≥ M=1，全部可用）：a₁=2→{2,4}、a₂=1→{1,2}、a₃=3→{3,6}。逐個算 <code>dp[i][c]</code>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>3 1        // N=3, M=1
+2 1 3      // a = [2, 1, 3]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// i=0 (a=2)，候選 {2, 4}</span>
+dp[0][0] (值2) = 1     // 前面沒東西，自己一個
+dp[0][1] (值4) = 1</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// i=1 (a=1)，候選 {1, 2}</span>
+dp[1][0] (值1) = 1     // 前面值都 &gt; 1（2,4），接不上 → 只有自己
+dp[1][1] (值2) = 2     // 可接 dp[0][0]=值2 (2 ≤ 2) → 1+1 = 2  ★用兩倍才接得上</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// i=2 (a=3)，候選 {3, 6}</span>
+dp[2][0] (值3) = 3     // 接 dp[1][1]=值2 (2 ≤ 3)，鏈長 2+1 = 3
+dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>max dp = 3      // 鏈 [2(a₁維持), 2(a₂×2), 3(a₃維持)] = [2, 2, 3]</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：a₂=1 若<strong>維持原樣</strong>（值 1）接不到前面的 2；改成 <strong>×2=2</strong> 才湊出 <code>[2, 2, 3]</code>。
+      這正是「兩個候選值都要保留、用 DP 試」的精髓 —— 取較大值有時反而讓鏈更長。最終答案 3。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">為何 0</span>
+      <h4>範例2 <code>N=3, M=42, a=[7,8,9]</code> 答案是 0。用候選值解釋：每個數字最大能到多少？為什麼全不可用？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">BIT 細節</span>
+      <h4>用 BIT 加速時，為什麼要把一個數字的兩個候選值「先都 query、再都 update」？邊查邊改會出什麼錯？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變體</span>
+      <h4>若操作改成「可乘 1、2 或 3 倍」（三個候選值），DP 要怎麼改？複雜度變化？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q1 · 建模</span>
+      <p>
+        「刪除」= 這個數字<strong>不進子序列</strong>（不選）。「維持」= 實際值 aᵢ；「變兩倍」= 實際值 2aᵢ。
+        所以每個數字最多兩個<strong>可選的實際值</strong> <code>{aᵢ, 2aᵢ}</code>。
+      </p>
+      <p>
+        目標「非遞減且最長」就是保留原順序、值不下降的最長子序列（非嚴格 LIS），
+        只是每個位置多了「選哪個候選值」的選擇 ⇒ 狀態加一維 <code>c ∈ {0,1}</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q2 · 為何不貪心</span>
+      <p>
+        取較小值（aᵢ）比較好接<strong>後面</strong>，但有時必須取較大值（2aᵢ）才接得上<strong>前面</strong>較大的鏈；
+        反之亦然。哪個更優取決於前後文，無法局部決定 ⇒ 兩種都得試，這正是 DP。
+      </p>
+      <p>
+        範例就是反例：a₂=1 取原值 1 接不到前面的 2，<strong>取 2×1=2</strong> 才接得上，最終鏈才能到 3。
+        若貪心一律取小值就會漏掉這條更長的鏈。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q3 · 非遞減</span>
+      <p>
+        非嚴格遞增（非遞減）<strong>允許相等</strong> ⇒ 轉移條件用 <code>v[j][cc] ≤ v[i][c]</code>。
+      </p>
+      <p>
+        若誤寫嚴格 <code>&lt;</code>，就變成「嚴格遞增」，會把像範例 <code>[2, 2, 3]</code> 這種含相等的合法鏈排除，答案偏小 → WA。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q4 · 下界 M</span>
+      <p>
+        每個候選值必須 <code>≥ M</code> 才可用：<code>if (v[i][c] &lt; M) dp[i][c]=0;</code> 把不夠大的候選值直接作廢。
+      </p>
+      <p>
+        當<strong>所有</strong>數字的<strong>所有</strong>候選值都 &lt; M（連 2aᵢ 都不夠），就沒有任何可用元素 ⇒ 答案 0。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">Q5 · 複雜度</span>
+      <p>
+        樸素 DP：狀態 2N 個，每個要掃前面所有 O(N) 個狀態取 max ⇒ <strong>O(N²)</strong>。N ≤ 1000 時 10⁶，秒解。
+      </p>
+      <p>
+        加速：內層其實是「值域上 ≤ v[i][c] 的 dp 前綴最大值」。離散化候選值後用 <strong>BIT（Fenwick）存前綴 max</strong>，
+        query/update 各 O(log N) ⇒ 總 <strong>O(N log N)</strong>，可吃滿 N=10⁵。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 1 · 為何 0</span>
+      <p>
+        a=[7,8,9]，每個數字最大候選值是 2aᵢ：14、16、18，<strong>全部 &lt; M=42</strong>。
+      </p>
+      <p>
+        沒有任何候選值能達到 M ⇒ 每個 dp[i][c] 都被作廢（=0），子序列一個都湊不出 ⇒ 答案 0。
+        直覺：再怎麼乘兩倍都太小，整個序列無法滿足「每項 ≥ 42」。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 2 · BIT 細節</span>
+      <p>
+        BIT 存「以某個值結尾的最大鏈長」。處理第 i 個數時，它的兩個候選值若「邊 query 邊 update」，
+        小候選值先 update 進 BIT 後，大候選值的 query 會把<strong>同一個 i 的小候選值</strong>也算進去。
+      </p>
+      <p>
+        那等於把同一個數字串進鏈裡兩次（用了兩個候選值），是非法的。
+        所以要<strong>先把兩個候選值都 query 完，再一起 update</strong>，確保 query 看到的只有 <code>j &lt; i</code> 的狀態。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">App 3 · 變體</span>
+      <p>
+        三個候選值 <code>{aᵢ, 2aᵢ, 3aᵢ}</code>：狀態維度 c ∈ {0,1,2}，dp[i][c]、轉移內層也對三個候選取 max。
+      </p>
+      <p>
+        樸素仍是 <strong>O(N² · K)</strong>（K=候選數，這裡 3，當常數）；BIT 版 <strong>O(N · K · log N)</strong>。
+        一般化：每個數字 K 個候選值，模型不變，只是把 c 的範圍從 2 擴到 K。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W08 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「兩候選值的非遞減 LIS」DP。</div>
+    <div class="sc-summary-bar__detail">範例 [2,1,3] M=1 → a₂×2 湊出 [2,2,3] 長 3；M=42 全不可用 → 0；非遞減用 ≤。</div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P373 · 02 Code // 取名字好困難QQ // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W08 · DP 2</a>
+      &nbsp;/&nbsp;
+      P373
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">取名字好困難QQ</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · 兩候選值 DP（非遞減 LIS）
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N²)</strong>
+      <span class="sc-mast__sep">·</span>
+      可升級 <strong>O(N log N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作 · 兩候選值 DP<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <p style="font-size:13.5px;margin-bottom:10px;">
+      每筆測資讀 <code>N M</code> 與 N 個數。每個數字有兩個候選值 <code>v[i][0]=aᵢ</code>、<code>v[i][1]=2aᵢ</code>（只有 ≥ M 可用）。
+      <code>dp[i][c]</code> = 以第 i 個數用候選 c 結尾的最長非遞減鏈，從前面所有值 ≤ 它的狀態接 +1。答案是所有 dp 的最大值。
+    </p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p373.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="p">{</span>
+        <span class="t">int</span> N<span class="p">;</span>
+        <span class="t">long long</span> M<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M<span class="p">;</span>
+
+        vector<span class="p">&lt;</span><span class="t">long long</span><span class="p">&gt;</span> <span class="f">a</span><span class="p">(</span>N<span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
+
+        <span class="c">// v[i][0] = a[i]（維持），v[i][1] = 2*a[i]（變兩倍）</span>
+        <span class="c">// dp[i][c] = 以「第 i 個數、用候選值 v[i][c]」結尾的最長非遞減鏈</span>
+        vector<span class="p">&lt;</span>array<span class="p">&lt;</span><span class="t">long long</span><span class="p">,</span> <span class="n">2</span><span class="p">&gt;&gt;</span> <span class="f">v</span><span class="p">(</span>N<span class="p">);</span>
+        vector<span class="p">&lt;</span>array<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> <span class="n">2</span><span class="p">&gt;&gt;</span>      <span class="f">dp</span><span class="p">(</span>N<span class="p">,</span> <span class="p">{</span><span class="n">0</span><span class="p">,</span> <span class="n">0</span><span class="p">});</span>
+        <span class="t">int</span> ans <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+            v<span class="p">[</span>i<span class="p">][</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> a<span class="p">[</span>i<span class="p">];</span>
+            v<span class="p">[</span>i<span class="p">][</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> a<span class="p">[</span>i<span class="p">];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> c <span class="p">=</span> <span class="n">0</span><span class="p">;</span> c <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> c<span class="p">++)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span>v<span class="p">[</span>i<span class="p">][</span>c<span class="p">]</span> <span class="p">&lt;</span> M<span class="p">)</span> <span class="p">{</span> dp<span class="p">[</span>i<span class="p">][</span>c<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>   <span class="c">// 此候選值 &lt; M，不可用</span>
+                <span class="t">int</span> best <span class="p">=</span> <span class="n">1</span><span class="p">;</span>                                  <span class="c">// 至少自己一個</span>
+                <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">0</span><span class="p">;</span> j <span class="p">&lt;</span> i<span class="p">;</span> j<span class="p">++)</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> cc <span class="p">=</span> <span class="n">0</span><span class="p">;</span> cc <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> cc<span class="p">++)</span>
+                        <span class="k">if</span> <span class="p">(</span>dp<span class="p">[</span>j<span class="p">][</span>cc<span class="p">]</span> <span class="p">&gt;</span> <span class="n">0</span> <span class="p">&amp;&amp;</span> v<span class="p">[</span>j<span class="p">][</span>cc<span class="p">]</span> <span class="p">&lt;=</span> v<span class="p">[</span>i<span class="p">][</span>c<span class="p">])</span>
+                            best <span class="p">=</span> <span class="f">max</span><span class="p">(</span>best<span class="p">,</span> dp<span class="p">[</span>j<span class="p">][</span>cc<span class="p">]</span> <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
+                dp<span class="p">[</span>i<span class="p">][</span>c<span class="p">]</span> <span class="p">=</span> best<span class="p">;</span>
+                ans <span class="p">=</span> <span class="f">max</span><span class="p">(</span>ans<span class="p">,</span> best<span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        cout <span class="p">&lt;&lt;</span> ans <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
+<span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>非遞減 ⇒ 比較用 <code>≤</code></strong>：允許相鄰相等（例如範例的 <code>[2, 2, 3]</code>）。若寫成嚴格 <code>&lt;</code> 就變成「嚴格遞增」，會把合法的相等鏈排除、答案偏小。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>狀態數</td><td>每個數兩個候選 ⇒ 2N 個 dp 狀態</td><td class="mono">O(N)</td></tr>
+        <tr><td>單狀態轉移</td><td>掃前面 i 個位置 × 2 候選</td><td class="mono">O(N)</td></tr>
+        <tr><td>填整張表</td><td>2N 個狀態 × O(N)</td><td class="mono">O(N²)</td></tr>
+        <tr><td>多筆測資</td><td>T 筆各自獨立</td><td class="mono">O(T·N²)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">單筆 = 2N 狀態 × O(N) 轉移 = <strong>O(N²)</strong></div>
+      <div class="sc-formula__hint">99% 測資 N ≤ 1000 ⇒ 10⁶，秒解。吃滿 N=10⁵ ⇒ 用 BIT 把「max 前面值 ≤ 它的 dp」降到 O(log N)（見下方走讀）。</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N²)</strong></td><td>BIT 版 O(N log N)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>v[i][2]、dp[i][2]</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>左到右填表</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>內外層各帶 ×2 候選</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>非遞減用 ≤</strong></td>
+          <td>題目是「非嚴格遞增」⇒ 允許相等。轉移條件 <code>v[j][cc] ≤ v[i][c]</code>，寫成 <code>&lt;</code> 會少算相等鏈、WA。</td>
+        </tr>
+        <tr>
+          <td><strong>候選值要 ≥ M</strong></td>
+          <td>只有 ≥ M 的候選值能用。若 <code>2aᵢ &lt; M</code> 連兩倍都不夠 ⇒ 這個數字完全不可用，兩個 dp 都 0。</td>
+        </tr>
+        <tr>
+          <td><strong>全程 long long</strong></td>
+          <td><code>2aᵢ</code> 最大 2×10⁹ &gt; int 上限（~2.1×10⁹ 也很接近）⇒ 候選值與比較一律 <code>long long</code>。</td>
+        </tr>
+        <tr>
+          <td><strong>答案可能是 0</strong></td>
+          <td>若沒有任何數字的任何候選值 ≥ M（如範例2 a=[7,8,9], M=42，最大 2×9=18&lt;42）⇒ 答案 0。</td>
+        </tr>
+        <tr>
+          <td><strong>T 筆要清空</strong></td>
+          <td>每筆測資 dp/v 重新配置或清零；用 vector 每筆新建最省事。</td>
+        </tr>
+        <tr>
+          <td><strong>同一數字不能用兩次</strong></td>
+          <td>dp[i][c] 只從 <code>j &lt; i</code> 轉移，天生不會把同一個 i 的兩個候選串進同一條鏈。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 操作 → 候選值</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// candidates</span>
+維持原樣 → 值 = a[i]
+變成兩倍 → 值 = 2*a[i]
+移除     → 不選（不進子序列）
+⇒ 每個數字最多兩個「可用值」：{a[i], 2a[i]} ∩ [M, ∞)</pre>
+
+    <p><strong>② 狀態與轉移</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// dp</span>
+dp[i][c] = 以「第 i 個數、用 v[i][c]」結尾的最長非遞減鏈
+dp[i][c] = 1 + max{ dp[j][cc] : j&lt;i, v[j][cc] ≤ v[i][c] }   (v[i][c] ≥ M)
+答案 = max over all dp[i][c]</pre>
+
+    <p><strong>③ 升級到 O(N log N)：BIT 取代內層掃描</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// speedup (N up to 1e5)</span>
+內層「max 前面值 ≤ v[i][c] 的 dp」= 值域上的前綴最大值查詢。
+把所有候選值離散化，開一棵 BIT（Fenwick）存「該值結尾的最大鏈長」。
+處理 i 時：對它的兩個候選值先各 query 一次（前綴 max +1），
+          再把兩個結果各 update 回 BIT（先查後改，避免同 i 自我串接）。
+每次 query/update O(log N) ⇒ 總 O(N log N)，可吃滿 N=1e5。</pre>
+
+    <p><strong>④ 為什麼「先查兩個、再改兩個」</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// batch update</span>
+若邊查邊改，第 i 個數的小候選值 update 後，
+它的大候選值 query 會把「自己」算進去 → 同一數字被串兩次（錯）。
+所以兩個候選值都 query 完，才一起 update。</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">dp[i][c]=1+max{前面值≤v[i][c]的dp}，每數兩候選值(≥M)，O(N²)；BIT 升級 O(N log N)。</div>
+    <div class="sc-summary-bar__detail">非遞減用 ≤；2aᵢ 用 long long；無候選≥M→0；BIT 版先查兩候選再一起 update。</div>
+  </div>
+
+</body>
+</html>
