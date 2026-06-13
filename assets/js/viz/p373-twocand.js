@@ -229,8 +229,18 @@
 
     window.addEventListener('resize', () => { fit(); draw(); });
     if (window.ResizeObserver) { const ro = new ResizeObserver(() => { fit(); draw(); }); ro.observe(canvas); }
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
-    fit(); update();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { fit(); draw(); });
+
+    // First paint can hit a canvas whose layout width is still 0 (script runs
+    // before the browser has flushed layout). Retry on rAF until it has a real
+    // width, otherwise the canvas backing store stays 0×0 and shows nothing.
+    let tries = 0;
+    (function firstPaint() {
+      fit();
+      const w = canvas.getBoundingClientRect().width || canvas.clientWidth;
+      update();
+      if (w < 2 && tries++ < 60) requestAnimationFrame(firstPaint);
+    })();
   }
 
   // ===== VIZ A · BASE CASE — single element, two candidates =====
