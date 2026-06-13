@@ -146,47 +146,80 @@
   </section>
 
   <!-- ============================================================
-       SECTION 04 — 動畫
+       SECTION 04 — Base case 動畫
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">04</span>
-      <h2 class="sc-section__title">動畫演示 · 兩候選值的非遞減鏈<span class="sc-section__title-en">// Animation</span></h2>
+      <h2 class="sc-section__title">Base case 動畫 · 一個數字怎麼更新 tails<span class="sc-section__title-en">// Animation A</span></h2>
     </div>
 
-    <p>用範例第 1 筆 <code>N=3, M=1, a=[2, 1, 3]</code>（答案 3）。每個數字有上下兩個候選值（<code>aᵢ</code> 與 <code>2aᵢ</code>）；
-    逐個算 <code>dp[i][c]</code>，從前面值 ≤ 自己的狀態接最長鏈：</p>
+    <p>最小非平凡輸入：<strong>只有一個數字</strong> <code>a₁=3</code>（M=1）。它的兩個候選值 <code>{6, 3}</code>
+    <strong>大先小後</strong>各進 tails 一次。看清楚「push 到空陣列」與「小候選把大候選壓小（同一數字只算一次）」：</p>
 
     <div class="sc-viz">
-      <div class="sc-viz__title">// VIZ · TWO-CANDIDATE NON-DECREASING LIS (N=3, M=1, a=[2,1,3])</div>
-      <canvas id="viz-canvas" class="sc-viz__canvas" height="500" style="height:500px"></canvas>
+      <div class="sc-viz__title">// VIZ A · BASE CASE (N=1, a=[3], M=1)</div>
+      <canvas id="viz-base" class="sc-viz__canvas" height="280" style="height:280px"></canvas>
       <div class="sc-viz__controls">
-        <button class="sc-btn" id="viz-reset">Reset</button>
-        <button class="sc-btn" id="viz-prev">Prev</button>
-        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
-        <button class="sc-btn" id="viz-next">Next</button>
-        <span class="sc-viz__step" id="viz-step">-- / --</span>
+        <button class="sc-btn" id="vb-reset">Reset</button>
+        <button class="sc-btn" id="vb-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vb-play">Play</button>
+        <button class="sc-btn" id="vb-next">Next</button>
+        <span class="sc-viz__step" id="vb-step">-- / --</span>
       </div>
-      <div class="sc-viz__label" id="viz-label">
-        <strong>INITIAL</strong> · 每個數字兩個候選值：a₁=2→{2,4}、a₂=1→{1,2}、a₃=3→{3,6}
+      <div class="sc-viz__label" id="vb-label">
+        <strong>INITIAL</strong> · 一個數字 a₁=3，候選 {6, 3}，tails 空
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--sc-ink-dim);">
+      重點：先 push 6（tails=[6]），再用小候選 3 做 <code>upper_bound</code> ⇒ 第一個 &gt; 3 的是 6 ⇒ <strong>壓小成 [3]</strong>，
+      不是接成 [3,6]。<strong>「大先小後」確保同一個數字最多只貢獻長度 1。</strong>
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — General case 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">General case 動畫 · 完整 tails 走法<span class="sc-section__title-en">// Animation B</span></h2>
+    </div>
+
+    <p>範例第 1 筆 <code>N=3, M=1, a=[2, 1, 3]</code>（答案 3）。每個數字大先小後更新 tails，用 <code>upper_bound</code> 決定
+    「push 接長」或「壓小某個 tail」。tails 一路走 <code>[4]→[2]→[2,2]→[1,2]→[1,2,6]→[1,2,3]</code>：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ B · GENERAL CASE (N=3, M=1, a=[2,1,3])</div>
+      <canvas id="viz-general" class="sc-viz__canvas" height="280" style="height:280px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="vg-reset">Reset</button>
+        <button class="sc-btn" id="vg-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="vg-play">Play</button>
+        <button class="sc-btn" id="vg-next">Next</button>
+        <span class="sc-viz__step" id="vg-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="vg-label">
+        <strong>INITIAL</strong> · a=[2,1,3]，M=1，逐一更新 tails
       </div>
     </div>
 
     <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
       <strong>顏色說明</strong>：
-      <span style="color:#d96e4e">■</span> 正在計算的候選 v[i][c] &nbsp;·&nbsp;
-      <span style="color:#8fb3d4">■</span> 可接上的前驅（值 ≤ 它） &nbsp;·&nbsp;
-      <span style="color:#5fa866">■</span> 算好的 dp 值 / 最佳鏈 &nbsp;·&nbsp;
-      <span style="color:#cfcfcf">■</span> &lt;M 不可用
+      <span style="color:#d96e4e">■</span> 正在處理的候選 x &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">■</span> tails 陣列 &nbsp;·&nbsp;
+      <span style="color:#5fa866">■</span> push（接長 +1） &nbsp;·&nbsp;
+      <span style="color:#d4a868">■</span> 壓小（替換某個 tail）
     </p>
   </section>
 
   <!-- ============================================================
-       SECTION 05 — 為什麼兩個候選值就夠
+       SECTION 06 — 為什麼兩個候選值就夠
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">05</span>
+      <span class="sc-section__num">06</span>
       <h2 class="sc-section__title">為什麼只要兩個候選值、為什麼貪心不行<span class="sc-section__title-en">// Why Two Candidates</span></h2>
     </div>
 
@@ -210,11 +243,11 @@
   </section>
 
   <!-- ============================================================
-       SECTION 06 — 複雜度
+       SECTION 07 — 複雜度
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">06</span>
+      <span class="sc-section__num">07</span>
       <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
 
@@ -239,11 +272,11 @@
   </section>
 
   <!-- ============================================================
-       SECTION 07 — 一句洞察
+       SECTION 08 — 一句洞察
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">07</span>
+      <span class="sc-section__num">08</span>
       <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
     </div>
 
