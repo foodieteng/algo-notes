@@ -24,7 +24,7 @@
     </span>
     <span>
       <a href="https://tioj.sprout.tw/contests/26/problems/373/" target="_blank" rel="noopener">原題 ↗</a>
-      &nbsp;·&nbsp; STUDY CARD · 2026.06.12
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.13
     </span>
   </div>
 
@@ -35,11 +35,11 @@
     <p class="sc-mast__subtitle">// Code + Complexity</p>
     <div class="sc-mast__meta">
       <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
-      C++17 · 兩候選值 DP（非遞減 LIS）
+      C++17 · tails + upper_bound（非遞減 LIS）
       <span class="sc-mast__sep">·</span>
-      時間 <strong>O(N²)</strong>
+      時間 <strong>O(N log N)</strong>
       <span class="sc-mast__sep">·</span>
-      可升級 <strong>O(N log N)</strong>
+      空間 <strong>O(N)</strong>
     </div>
   </header>
 
@@ -59,12 +59,13 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">01</span>
-      <h2 class="sc-section__title">完整實作 · 兩候選值 DP<span class="sc-section__title-en">// Full C++</span></h2>
+      <h2 class="sc-section__title">完整實作 · tails + upper_bound<span class="sc-section__title-en">// Full C++</span></h2>
     </div>
 
     <p style="font-size:13.5px;margin-bottom:10px;">
-      每筆測資讀 <code>N M</code> 與 N 個數。每個數字有兩個候選值 <code>v[i][0]=aᵢ</code>、<code>v[i][1]=2aᵢ</code>（只有 ≥ M 可用）。
-      <code>dp[i][c]</code> = 以第 i 個數用候選 c 結尾的最長非遞減鏈，從前面所有值 ≤ 它的狀態接 +1。答案是所有 dp 的最大值。
+      <strong>這是能 AC 的寫法</strong>：用 LIS 的 <code>tails</code> 技巧（耐心排序）。
+      <code>tails[k]</code> = 長度 k+1 的非遞減子序列裡「最小的結尾值」。每個數字有兩個候選值 <code>{2aᵢ, aᵢ}</code>（須 ≥ M），
+      <strong>大的先放、小的後放</strong>，各做一次 <code>upper_bound</code>：能接長就 push、否則把對應 tail 壓小。答案 = <code>tails.size()</code>。
     </p>
 
     <div class="sc-codewindow">
@@ -92,34 +93,29 @@
         vector<span class="p">&lt;</span><span class="t">long long</span><span class="p">&gt;</span> <span class="f">a</span><span class="p">(</span>N<span class="p">);</span>
         <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> cin <span class="p">&gt;&gt;</span> a<span class="p">[</span>i<span class="p">];</span>
 
-        <span class="c">// v[i][0] = a[i]（維持），v[i][1] = 2*a[i]（變兩倍）</span>
-        <span class="c">// dp[i][c] = 以「第 i 個數、用候選值 v[i][c]」結尾的最長非遞減鏈</span>
-        vector<span class="p">&lt;</span>array<span class="p">&lt;</span><span class="t">long long</span><span class="p">,</span> <span class="n">2</span><span class="p">&gt;&gt;</span> <span class="f">v</span><span class="p">(</span>N<span class="p">);</span>
-        vector<span class="p">&lt;</span>array<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> <span class="n">2</span><span class="p">&gt;&gt;</span>      <span class="f">dp</span><span class="p">(</span>N<span class="p">,</span> <span class="p">{</span><span class="n">0</span><span class="p">,</span> <span class="n">0</span><span class="p">});</span>
-        <span class="t">int</span> ans <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
-
+        <span class="c">// tails[k] = 長度為 k+1 的非遞減子序列，所有結尾值裡「最小的那個」</span>
+        <span class="c">// 每個數字有兩個候選值 {2*a[i], a[i]}（須 &gt;= M）。</span>
+        <span class="c">// 先放「大候選 2*a[i]」再放「小候選 a[i]」，避免同一個數字被串兩次。</span>
+        vector<span class="p">&lt;</span><span class="t">long long</span><span class="p">&gt;</span> tails<span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
-            v<span class="p">[</span>i<span class="p">][</span><span class="n">0</span><span class="p">]</span> <span class="p">=</span> a<span class="p">[</span>i<span class="p">];</span>
-            v<span class="p">[</span>i<span class="p">][</span><span class="n">1</span><span class="p">]</span> <span class="p">=</span> <span class="n">2</span> <span class="p">*</span> a<span class="p">[</span>i<span class="p">];</span>
-            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> c <span class="p">=</span> <span class="n">0</span><span class="p">;</span> c <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> c<span class="p">++)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span>v<span class="p">[</span>i<span class="p">][</span>c<span class="p">]</span> <span class="p">&lt;</span> M<span class="p">)</span> <span class="p">{</span> dp<span class="p">[</span>i<span class="p">][</span>c<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>   <span class="c">// 此候選值 &lt; M，不可用</span>
-                <span class="t">int</span> best <span class="p">=</span> <span class="n">1</span><span class="p">;</span>                                  <span class="c">// 至少自己一個</span>
-                <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">0</span><span class="p">;</span> j <span class="p">&lt;</span> i<span class="p">;</span> j<span class="p">++)</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> cc <span class="p">=</span> <span class="n">0</span><span class="p">;</span> cc <span class="p">&lt;</span> <span class="n">2</span><span class="p">;</span> cc<span class="p">++)</span>
-                        <span class="k">if</span> <span class="p">(</span>dp<span class="p">[</span>j<span class="p">][</span>cc<span class="p">]</span> <span class="p">&gt;</span> <span class="n">0</span> <span class="p">&amp;&amp;</span> v<span class="p">[</span>j<span class="p">][</span>cc<span class="p">]</span> <span class="p">&lt;=</span> v<span class="p">[</span>i<span class="p">][</span>c<span class="p">])</span>
-                            best <span class="p">=</span> <span class="f">max</span><span class="p">(</span>best<span class="p">,</span> dp<span class="p">[</span>j<span class="p">][</span>cc<span class="p">]</span> <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
-                dp<span class="p">[</span>i<span class="p">][</span>c<span class="p">]</span> <span class="p">=</span> best<span class="p">;</span>
-                ans <span class="p">=</span> <span class="f">max</span><span class="p">(</span>ans<span class="p">,</span> best<span class="p">);</span>
+            <span class="t">long long</span> cand<span class="p">[</span><span class="n">2</span><span class="p">]</span> <span class="p">=</span> <span class="p">{</span> <span class="n">2</span> <span class="p">*</span> a<span class="p">[</span>i<span class="p">],</span> a<span class="p">[</span>i<span class="p">]</span> <span class="p">};</span>   <span class="c">// 大的先、小的後</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">long long</span> x <span class="p">:</span> cand<span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span>x <span class="p">&lt;</span> M<span class="p">)</span> <span class="k">continue</span><span class="p">;</span>                  <span class="c">// 此候選值 &lt; M，不可用</span>
+                <span class="c">// 非遞減 =&gt; upper_bound：找第一個「嚴格大於 x」的位置</span>
+                <span class="k">auto</span> it <span class="p">=</span> <span class="f">upper_bound</span><span class="p">(</span>tails<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> tails<span class="p">.</span><span class="f">end</span><span class="p">(),</span> x<span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span>it <span class="p">==</span> tails<span class="p">.</span><span class="f">end</span><span class="p">())</span> tails<span class="p">.</span><span class="f">push_back</span><span class="p">(</span>x<span class="p">);</span>   <span class="c">// x 比所有 tail 都大 =&gt; 接長</span>
+                <span class="k">else</span> <span class="p">*</span>it <span class="p">=</span> x<span class="p">;</span>                                <span class="c">// 否則把那個 tail 壓小成 x</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        cout <span class="p">&lt;&lt;</span> ans <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+        cout <span class="p">&lt;&lt;</span> tails<span class="p">.</span><span class="f">size</span><span class="p">()</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">0</span><span class="p">;</span>
 <span class="p">}</span></pre>
     </div>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>非遞減 ⇒ 比較用 <code>≤</code></strong>：允許相鄰相等（例如範例的 <code>[2, 2, 3]</code>）。若寫成嚴格 <code>&lt;</code> 就變成「嚴格遞增」，會把合法的相等鏈排除、答案偏小。
+      <strong>為什麼是 upper_bound 不是 lower_bound？</strong> 非遞減（允許相等）⇒ 一個值 x 可以接在「等於它」的結尾後面，
+      所以要替換的是第一個<strong>嚴格大於</strong> x 的 tail ⇒ <code>upper_bound</code>。若改 <code>lower_bound</code> 就變成<strong>嚴格遞增</strong>，相等鏈被排除、答案偏小。
     </p>
   </section>
 
@@ -137,25 +133,25 @@
         <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
       </thead>
       <tbody>
-        <tr><td>狀態數</td><td>每個數兩個候選 ⇒ 2N 個 dp 狀態</td><td class="mono">O(N)</td></tr>
-        <tr><td>單狀態轉移</td><td>掃前面 i 個位置 × 2 候選</td><td class="mono">O(N)</td></tr>
-        <tr><td>填整張表</td><td>2N 個狀態 × O(N)</td><td class="mono">O(N²)</td></tr>
-        <tr><td>多筆測資</td><td>T 筆各自獨立</td><td class="mono">O(T·N²)</td></tr>
+        <tr><td>每個數字</td><td>兩個候選值，各一次 upper_bound</td><td class="mono">O(log N)</td></tr>
+        <tr><td>掃完 N 個數字</td><td>2N 次二分搜 + 改寫 tails</td><td class="mono">O(N log N)</td></tr>
+        <tr><td>多筆測資</td><td>T 筆各自獨立（tails 重建）</td><td class="mono">O(T·N log N)</td></tr>
+        <tr><td>答案</td><td>tails 的長度</td><td class="mono">O(1)</td></tr>
       </tbody>
     </table>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">單筆 = 2N 狀態 × O(N) 轉移 = <strong>O(N²)</strong></div>
-      <div class="sc-formula__hint">99% 測資 N ≤ 1000 ⇒ 10⁶，秒解。吃滿 N=10⁵ ⇒ 用 BIT 把「max 前面值 ≤ 它的 dp」降到 O(log N)（見下方走讀）。</div>
+      <div class="sc-formula__main">2N 次 upper_bound × O(log N) = <strong>O(N log N)</strong></div>
+      <div class="sc-formula__hint">N=10⁵ ⇒ ~2×10⁵×17 ≈ 3×10⁶，遠快於 O(N²)=10¹⁰。這才吃得滿 N=10⁵ 的測資。</div>
     </div>
 
     <table class="sc-table">
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>O(N²)</strong></td><td>BIT 版 O(N log N)</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>v[i][2]、dp[i][2]</td></tr>
-        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>左到右填表</td></tr>
-        <tr><td>Constant factor</td><td>低</td><td>內外層各帶 ×2 候選</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>tails + 二分搜，吃滿 N=10⁵</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>tails 陣列（≤ 2N 次更新）</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>左到右掃一遍</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每數字 2 次二分搜</td></tr>
       </tbody>
     </table>
   </section>
@@ -173,28 +169,28 @@
       <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
       <tbody>
         <tr>
-          <td><strong>非遞減用 ≤</strong></td>
-          <td>題目是「非嚴格遞增」⇒ 允許相等。轉移條件 <code>v[j][cc] ≤ v[i][c]</code>，寫成 <code>&lt;</code> 會少算相等鏈、WA。</td>
+          <td><strong>upper_bound 不是 lower_bound</strong></td>
+          <td>非遞減（允許相等）⇒ 用 <code>upper_bound</code>（替換第一個嚴格大於 x 的 tail）。用 lower_bound 會變嚴格遞增、WA。</td>
+        </tr>
+        <tr>
+          <td><strong>大候選先、小候選後</strong></td>
+          <td>同一個數字的兩個候選值 <code>{2aᵢ, aᵢ}</code> 要<strong>先放大的再放小的</strong>，避免同一數字被串進同一條鏈兩次。</td>
         </tr>
         <tr>
           <td><strong>候選值要 ≥ M</strong></td>
-          <td>只有 ≥ M 的候選值能用。若 <code>2aᵢ &lt; M</code> 連兩倍都不夠 ⇒ 這個數字完全不可用，兩個 dp 都 0。</td>
+          <td>只有 ≥ M 的候選能進 tails。若 <code>2aᵢ &lt; M</code> 連兩倍都不夠 ⇒ 兩個候選都 skip。</td>
         </tr>
         <tr>
           <td><strong>全程 long long</strong></td>
-          <td><code>2aᵢ</code> 最大 2×10⁹ &gt; int 上限（~2.1×10⁹ 也很接近）⇒ 候選值與比較一律 <code>long long</code>。</td>
+          <td><code>2aᵢ</code> 最大 2×10⁹ &gt; int 上限 ⇒ 候選值、tails、比較一律 <code>long long</code>。</td>
         </tr>
         <tr>
-          <td><strong>答案可能是 0</strong></td>
-          <td>若沒有任何數字的任何候選值 ≥ M（如範例2 a=[7,8,9], M=42，最大 2×9=18&lt;42）⇒ 答案 0。</td>
+          <td><strong>答案可能 0</strong></td>
+          <td>若所有候選值都 &lt; M（如範例2 a=[7,8,9], M=42），tails 一直空 ⇒ size()=0。</td>
         </tr>
         <tr>
           <td><strong>T 筆要清空</strong></td>
-          <td>每筆測資 dp/v 重新配置或清零；用 vector 每筆新建最省事。</td>
-        </tr>
-        <tr>
-          <td><strong>同一數字不能用兩次</strong></td>
-          <td>dp[i][c] 只從 <code>j &lt; i</code> 轉移，天生不會把同一個 i 的兩個候選串進同一條鏈。</td>
+          <td>每筆測資 <code>tails</code> 重新宣告（或 clear）；用區域 vector 每筆新建最省事。</td>
         </tr>
       </tbody>
     </table>
@@ -209,32 +205,33 @@
       <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
     </div>
 
-    <p><strong>① 操作 → 候選值</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// candidates</span>
-維持原樣 → 值 = a[i]
-變成兩倍 → 值 = 2*a[i]
-移除     → 不選（不進子序列）
-⇒ 每個數字最多兩個「可用值」：{a[i], 2a[i]} ∩ [M, ∞)</pre>
+    <p><strong>① tails 是什麼</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// tails meaning</span>
+tails[k] = 「長度為 k+1 的非遞減子序列」中，所有可能結尾值裡最小的那個。
+tails 永遠是遞增的（嚴格遞增），長度 = 目前能組出的最長鏈。
+直覺：結尾越小，後面越容易接 → 貪心地讓每種長度的結尾都最小。</pre>
 
-    <p><strong>② 狀態與轉移</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// dp</span>
-dp[i][c] = 以「第 i 個數、用 v[i][c]」結尾的最長非遞減鏈
-dp[i][c] = 1 + max{ dp[j][cc] : j&lt;i, v[j][cc] ≤ v[i][c] }   (v[i][c] ≥ M)
-答案 = max over all dp[i][c]</pre>
+    <p><strong>② 一個值 x 怎麼更新 tails</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// one value</span>
+it = upper_bound(tails, x)        // 第一個 > x 的位置
+if (it == end) tails.push_back(x) // x ≥ 所有 tail → 接出更長一格
+else           *it = x            // 把第一個 &gt; x 的 tail 壓小成 x
+非遞減用 upper_bound：x 可接在「= x」的結尾後，所以只動「嚴格大於」的。</pre>
 
-    <p><strong>③ 升級到 O(N log N)：BIT 取代內層掃描</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// speedup (N up to 1e5)</span>
-內層「max 前面值 ≤ v[i][c] 的 dp」= 值域上的前綴最大值查詢。
-把所有候選值離散化，開一棵 BIT（Fenwick）存「該值結尾的最大鏈長」。
-處理 i 時：對它的兩個候選值先各 query 一次（前綴 max +1），
-          再把兩個結果各 update 回 BIT（先查後改，避免同 i 自我串接）。
-每次 query/update O(log N) ⇒ 總 O(N log N)，可吃滿 N=1e5。</pre>
+    <p><strong>③ 兩候選值：大先小後</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// two candidates</span>
+cand = {2*a[i], a[i]}             // 大的先
+對每個 ≥ M 的候選做一次上面的更新。
+為何大先小後？小候選 a[i] 之後處理時，雖然會看到剛放進去的 2*a[i]，
+但 2*a[i] ≥ a[i]，upper_bound(a[i]) 只會動到「&gt; a[i]」的位置，
+不會把同一數字的大候選接到小候選之後 → 同一數字不被串兩次。</pre>
 
-    <p><strong>④ 為什麼「先查兩個、再改兩個」</strong></p>
-    <pre class="sc-trace"><span class="sc-trace__head">// batch update</span>
-若邊查邊改，第 i 個數的小候選值 update 後，
-它的大候選值 query 會把「自己」算進去 → 同一數字被串兩次（錯）。
-所以兩個候選值都 query 完，才一起 update。</pre>
+    <p><strong>④ 從 O(N²) DP 到這裡</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// from the DP</span>
+概念頁的 dp[i][c] = 1 + max{前面值 ≤ 它的 dp} 是 O(N²)。
+tails 是同一個「最長非遞減鏈」問題的 O(N log N) 標準寫法：
+不記每個位置的 dp，而是維護「每種長度的最小結尾」，二分搜定位。
+兩者答案一定相同（已對拍驗證），tails 版才吃得滿 N=10⁵。</pre>
   </section>
 
   <!-- ============================================================
@@ -254,8 +251,8 @@ dp[i][c] = 1 + max{ dp[j][cc] : j&lt;i, v[j][cc] ≤ v[i][c] }   (v[i][c] ≥ M)
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">dp[i][c]=1+max{前面值≤v[i][c]的dp}，每數兩候選值(≥M)，O(N²)；BIT 升級 O(N log N)。</div>
-    <div class="sc-summary-bar__detail">非遞減用 ≤；2aᵢ 用 long long；無候選≥M→0；BIT 版先查兩候選再一起 update。</div>
+    <div class="sc-summary-bar__body">tails[k]=長度k+1鏈的最小結尾；每數字兩候選(大先小後)各一次 upper_bound，O(N log N)。</div>
+    <div class="sc-summary-bar__detail">非遞減用 upper_bound；大候選先放；候選 ≥ M；long long；答案 tails.size()。</div>
   </div>
 
 </body>

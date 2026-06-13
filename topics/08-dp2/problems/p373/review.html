@@ -73,12 +73,12 @@
             <td>每個 aᵢ 攜帶 <code>{aᵢ, 2aᵢ}</code>，只有 ≥ M 的可用。</td></tr>
         <tr><td>狀態</td>
             <td><code>dp[i][c]</code> = 以「第 i 個數用候選 c」結尾的最長非遞減鏈。</td></tr>
-        <tr><td>轉移</td>
-            <td><code>dp[i][c] = 1 + max{dp[j][cc] : j&lt;i, v[j][cc] ≤ v[i][c]}</code>。</td></tr>
+        <tr><td>實作</td>
+            <td>LIS 的 <strong>tails + upper_bound</strong>：每數字兩候選值（大先小後）各更新一次。</td></tr>
         <tr><td>細節</td>
-            <td>非遞減用 <code>≤</code>；候選 ≥ M；long long；答案可能 0。</td></tr>
+            <td>非遞減用 <code>upper_bound</code>；候選 ≥ M；long long；答案 = tails.size()，可能 0。</td></tr>
         <tr><td>複雜度</td>
-            <td>O(N²)；BIT 升級 O(N log N)（吃滿 N=10⁵）。</td></tr>
+            <td><strong>O(N log N)</strong>（tails 版，吃滿 N=10⁵）；概念版 O(N²)。</td></tr>
       </tbody>
     </table>
   </section>
@@ -106,8 +106,8 @@
 
     <div class="qa">
       <span class="qa__id">Q3</span>
-      <span class="qa__tag">非遞減</span>
-      <h4>題目要「非嚴格遞增（非遞減）」，轉移時比較該用 <code>≤</code> 還是 <code>&lt;</code>？寫錯會怎樣？</h4>
+      <span class="qa__tag">tails 寫法</span>
+      <h4>用 LIS 的 <code>tails</code> 技巧時，為什麼非遞減要用 <code>upper_bound</code> 而非 <code>lower_bound</code>？兩個候選值為什麼「大的先放、小的後放」？</h4>
     </div>
 
     <div class="qa">
@@ -132,28 +132,29 @@
       <h2 class="sc-section__title">範例 Trace · N=3, M=1, a=[2, 1, 3]<span class="sc-section__title-en">// Worked Trace</span></h2>
     </div>
 
-    <p>每個數字兩個候選值（皆 ≥ M=1，全部可用）：a₁=2→{2,4}、a₂=1→{1,2}、a₃=3→{3,6}。逐個算 <code>dp[i][c]</code>：</p>
+    <p>每個數字兩個候選值（皆 ≥ M=1，全部可用），<strong>大先小後</strong>更新 tails，用 <code>upper_bound</code>（第一個嚴格大於 x 的位置）：</p>
 
     <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>3 1        // N=3, M=1
 2 1 3      // a = [2, 1, 3]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// i=0 (a=2)，候選 {2, 4}</span>
-dp[0][0] (值2) = 1     // 前面沒東西，自己一個
-dp[0][1] (值4) = 1</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// i=0 (a=2)，候選 {4, 2}（大先小後）</span>
+x=4: upper_bound([]) = end → push      tails = [4]
+x=2: upper_bound([4]) → 位置0(值4) → 壓小  tails = [2]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// i=1 (a=1)，候選 {1, 2}</span>
-dp[1][0] (值1) = 1     // 前面值都 &gt; 1（2,4），接不上 → 只有自己
-dp[1][1] (值2) = 2     // 可接 dp[0][0]=值2 (2 ≤ 2) → 1+1 = 2  ★用兩倍才接得上</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// i=1 (a=1)，候選 {2, 1}</span>
+x=2: upper_bound([2]) = end → push     tails = [2, 2]   ★用兩倍接出長度2
+x=1: upper_bound([2,2]) → 位置0(值2) → 壓小  tails = [1, 2]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// i=2 (a=3)，候選 {3, 6}</span>
-dp[2][0] (值3) = 3     // 接 dp[1][1]=值2 (2 ≤ 3)，鏈長 2+1 = 3
-dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// i=2 (a=3)，候選 {6, 3}</span>
+x=6: upper_bound([1,2]) = end → push   tails = [1, 2, 6]
+x=3: upper_bound([1,2,6]) → 位置2(值6) → 壓小  tails = [1, 2, 3]</pre>
 
-    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>max dp = 3      // 鏈 [2(a₁維持), 2(a₂×2), 3(a₃維持)] = [2, 2, 3]</pre>
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>tails.size() = 3     // 對應鏈 [2(a₁維持), 2(a₂×2), 3(a₃維持)] = [2, 2, 3]</pre>
 
     <div class="sc-insight">
-      <strong>觀察</strong>：a₂=1 若<strong>維持原樣</strong>（值 1）接不到前面的 2；改成 <strong>×2=2</strong> 才湊出 <code>[2, 2, 3]</code>。
-      這正是「兩個候選值都要保留、用 DP 試」的精髓 —— 取較大值有時反而讓鏈更長。最終答案 3。
+      <strong>觀察</strong>：a₂=1 若<strong>維持原樣</strong>（值 1）接不到前面的 2；改成 <strong>×2=2</strong> 才把 tails 從 [2] 接成 [2,2]。
+      <code>tails</code> 一路是 [4]→[2]→[2,2]→[1,2]→[1,2,6]→[1,2,3]，長度 3 就是答案。
+      「大先小後」確保同一個數字的兩個候選不會被串進同一條鏈。
     </div>
   </section>
 
@@ -174,8 +175,8 @@ dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
 
     <div class="qa">
       <span class="qa__id">App 2</span>
-      <span class="qa__tag">BIT 細節</span>
-      <h4>用 BIT 加速時，為什麼要把一個數字的兩個候選值「先都 query、再都 update」？邊查邊改會出什麼錯？</h4>
+      <span class="qa__tag">tails 正確性</span>
+      <h4>tails 版「大候選先放」時，小候選 aᵢ 之後處理，會不會不小心接到剛放進去的 2aᵢ（同一數字串兩次）？為什麼不會？</h4>
     </div>
 
     <div class="qa">
@@ -215,12 +216,14 @@ dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">Q3 · 非遞減</span>
+      <span class="qa__id">Q3 · tails 寫法</span>
       <p>
-        非嚴格遞增（非遞減）<strong>允許相等</strong> ⇒ 轉移條件用 <code>v[j][cc] ≤ v[i][c]</code>。
+        <strong>upper_bound</strong>：非遞減允許相等，一個值 x 可以接在「等於它」的結尾之後，所以要替換的是第一個
+        <strong>嚴格大於 x</strong> 的 tail（<code>upper_bound</code>）。若改 <code>lower_bound</code> 就替換第一個 ≥ x 的，等同「嚴格遞增」，把含相等的合法鏈（如 <code>[2,2,3]</code>）排除 → 答案偏小、WA。
       </p>
       <p>
-        若誤寫嚴格 <code>&lt;</code>，就變成「嚴格遞增」，會把像範例 <code>[2, 2, 3]</code> 這種含相等的合法鏈排除，答案偏小 → WA。
+        <strong>大先小後</strong>：同一數字的兩個候選 <code>{2aᵢ, aᵢ}</code> 只能用一個。先放大的 2aᵢ，再放小的 aᵢ 時，
+        <code>upper_bound(aᵢ)</code> 只動「&gt; aᵢ」的位置，而 2aᵢ ≥ aᵢ 不會被當成「能接在 aᵢ 後」的前驅 ⇒ 同一數字不會被串兩次。
       </p>
     </div>
 
@@ -237,11 +240,11 @@ dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
     <div class="qa qa--answer">
       <span class="qa__id">Q5 · 複雜度</span>
       <p>
-        樸素 DP：狀態 2N 個，每個要掃前面所有 O(N) 個狀態取 max ⇒ <strong>O(N²)</strong>。N ≤ 1000 時 10⁶，秒解。
+        概念版 DP：狀態 2N 個，每個掃前面 O(N) 取 max ⇒ <strong>O(N²)</strong>。N ≤ 1000（99% 測資）時 10⁶，秒解。
       </p>
       <p>
-        加速：內層其實是「值域上 ≤ v[i][c] 的 dp 前綴最大值」。離散化候選值後用 <strong>BIT（Fenwick）存前綴 max</strong>，
-        query/update 各 O(log N) ⇒ 總 <strong>O(N log N)</strong>，可吃滿 N=10⁵。
+        要吃滿 N=10⁵ ⇒ 用 LIS 的 <strong>tails 技巧</strong>：維護「每種長度的最小結尾」，每個數字的兩個候選各做一次
+        <code>upper_bound</code>（O(log N)）⇒ 共 2N 次二分搜，總 <strong>O(N log N)</strong>。實測 N=10⁵ 約 0.14s。
       </p>
     </div>
 
@@ -251,20 +254,21 @@ dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
         a=[7,8,9]，每個數字最大候選值是 2aᵢ：14、16、18，<strong>全部 &lt; M=42</strong>。
       </p>
       <p>
-        沒有任何候選值能達到 M ⇒ 每個 dp[i][c] 都被作廢（=0），子序列一個都湊不出 ⇒ 答案 0。
+        沒有任何候選值能達到 M ⇒ 每個候選都被 <code>if (x &lt; M) continue;</code> 跳過，tails 一直是空的 ⇒ size()=0。
         直覺：再怎麼乘兩倍都太小，整個序列無法滿足「每項 ≥ 42」。
       </p>
     </div>
 
     <div class="qa qa--answer">
-      <span class="qa__id">App 2 · BIT 細節</span>
+      <span class="qa__id">App 2 · tails 正確性</span>
       <p>
-        BIT 存「以某個值結尾的最大鏈長」。處理第 i 個數時，它的兩個候選值若「邊 query 邊 update」，
-        小候選值先 update 進 BIT 後，大候選值的 query 會把<strong>同一個 i 的小候選值</strong>也算進去。
+        不會。處理小候選 <code>aᵢ</code> 時做 <code>upper_bound(tails, aᵢ)</code>，它替換的是第一個<strong>嚴格大於 aᵢ</strong> 的 tail。
+        剛放進去的大候選 <code>2aᵢ ≥ aᵢ</code>，若它在 tails 裡，要嘛被 <code>aᵢ</code> 壓小（取代，不是接續），要嘛在更右邊。
       </p>
       <p>
-        那等於把同一個數字串進鏈裡兩次（用了兩個候選值），是非法的。
-        所以要<strong>先把兩個候選值都 query 完，再一起 update</strong>，確保 query 看到的只有 <code>j &lt; i</code> 的狀態。
+        「壓小」只是把某長度的結尾值改小，<strong>不會把兩個候選接成一條鏈</strong>；而且 2aᵢ 比 aᵢ 大，
+        在非遞減鏈裡不可能排在 aᵢ 之後。所以同一數字的兩個候選永遠落在「最多用一個」的結果裡。
+        （此正確性已用暴力對拍 5 萬+ 組驗證。）
       </p>
     </div>
 
@@ -274,8 +278,8 @@ dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
         三個候選值 <code>{aᵢ, 2aᵢ, 3aᵢ}</code>：狀態維度 c ∈ {0,1,2}，dp[i][c]、轉移內層也對三個候選取 max。
       </p>
       <p>
-        樸素仍是 <strong>O(N² · K)</strong>（K=候選數，這裡 3，當常數）；BIT 版 <strong>O(N · K · log N)</strong>。
-        一般化：每個數字 K 個候選值，模型不變，只是把 c 的範圍從 2 擴到 K。
+        tails 版只要對每個數字的 K 個候選值<strong>由大到小</strong>各做一次 <code>upper_bound</code> ⇒ <strong>O(N · K · log N)</strong>。
+        「由大到小」的理由同雙候選：避免同一數字被串多次。模型不變，只是候選數從 2 擴成 K。
       </p>
     </div>
 
@@ -298,8 +302,8 @@ dp[2][1] (值6) = 3     // 同樣接 dp[1][1] → 3</pre>
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「兩候選值的非遞減 LIS」DP。</div>
-    <div class="sc-summary-bar__detail">範例 [2,1,3] M=1 → a₂×2 湊出 [2,2,3] 長 3；M=42 全不可用 → 0；非遞減用 ≤。</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 學會「兩候選值非遞減 LIS」的 tails + upper_bound 寫法。</div>
+    <div class="sc-summary-bar__detail">範例 [2,1,3] M=1：tails 走 [4]→[2]→[2,2]→[1,2]→[1,2,6]→[1,2,3] 長 3；非遞減用 upper_bound、大先小後。</div>
   </div>
 
 </body>

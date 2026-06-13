@@ -35,9 +35,9 @@
     <p class="sc-mast__subtitle">// 變體 LIS · 每個數字有兩個候選值（×1 或 ×2）</p>
     <div class="sc-mast__meta">
       <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
-      核心 dp[i][c] 最長非遞減鏈
+      核心 兩候選值最長非遞減鏈
       <span class="sc-mast__sep">·</span>
-      時間 <strong>O(N²)</strong>
+      時間 <strong>O(N log N)</strong>（tails）
     </div>
   </header>
 
@@ -110,10 +110,10 @@
       <div class="sc-ko-card sc-ko-card--good">
         <div class="sc-ko-card__head">
           <span class="sc-ko-card__badge">C</span>
-          <span class="sc-ko-card__title">DP：每個數字攜帶兩個候選值</span>
-          <span class="sc-ko-card__o">O(N²)</span>
+          <span class="sc-ko-card__title">兩候選值的最長非遞減鏈（tails + upper_bound）</span>
+          <span class="sc-ko-card__o">O(N log N)</span>
         </div>
-        <div class="sc-ko-card__body">每個 aᵢ 的可用值是 <code>{aᵢ, 2aᵢ}</code> 中 ≥ M 的那些。<code>dp[i][c]</code> = 以「第 i 個數用候選 c」結尾的最長非遞減鏈，從前面所有<strong>值不超過它</strong>的狀態接上 +1。</div>
+        <div class="sc-ko-card__body">每個 aᵢ 攜帶兩個候選值 <code>{aᵢ, 2aᵢ}</code>（須 ≥ M），求最長<strong>非遞減</strong>子序列。概念上 <code>dp[i][c]</code> 接前面值 ≤ 它的鏈（O(N²)）；<strong>實作用 LIS 的 tails 技巧 + upper_bound</strong> 降到 O(N log N)，才吃得滿 N=10⁵。</div>
         <div class="sc-ko-card__verdict">● ADOPT · STABLE</div>
       </div>
     </div>
@@ -219,17 +219,17 @@
     </div>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">每個狀態 dp[i][c] 掃前面所有 O(N) 個狀態 ⇒ <strong>O(N²)</strong>（狀態數 2N、每個轉移 O(N)）</div>
-      <div class="sc-formula__hint">99% 測資 N ≤ 1000 ⇒ 10⁶，秒解。想吃滿 N=10⁵ ⇒ 用 BIT 把轉移降到 O(log N)，總 O(N log N)（見 Code 頁）。</div>
+      <div class="sc-formula__main">概念 O(N²)（dp[i][c] 掃前面）⇒ <strong>實作用 tails + upper_bound 降到 O(N log N)</strong></div>
+      <div class="sc-formula__hint">99% 測資 N ≤ 1000 連 O(N²) 都秒解；要吃滿 N=10⁵ 就用 tails 版（每數字兩候選各一次二分搜），見 Code 頁。</div>
     </div>
 
     <table class="sc-table">
       <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>Time</td><td class="mono"><strong>O(N²)</strong></td><td>BIT 版可降到 O(N log N)</td></tr>
-        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>dp[i][2] 兩條候選值</td></tr>
-        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>由左往右填表</td></tr>
-        <tr><td>Constant factor</td><td>低</td><td>內層常數 ×2（兩候選）</td></tr>
+        <tr><td>Time</td><td class="mono"><strong>O(N log N)</strong></td><td>tails + upper_bound；概念版 O(N²)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N)</strong></td><td>tails 陣列</td></tr>
+        <tr><td>遞迴深度</td><td class="mono">0（迭代）</td><td>由左往右掃一遍</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>每數字 2 次二分搜（兩候選）</td></tr>
       </tbody>
     </table>
 
@@ -249,8 +249,8 @@
 
     <div class="sc-insight">
       <strong>「×2 / 刪 / 維持」⇒ 每個數字攜帶兩個候選值 {aᵢ, 2aᵢ}（須 ≥ M）。</strong><br/>
-      問題化為「保留順序的最長<strong>非遞減</strong>子序列」，狀態加一維挑候選值 —<br/>
-      <strong>dp[i][c] = 1 + max 前面值 ≤ 它的 dp；O(N²)，要快就上 BIT 變 O(N log N)。</strong>
+      問題化為「保留順序的最長<strong>非遞減</strong>子序列」——<br/>
+      <strong>用 LIS 的 tails + upper_bound（大候選先放）一次掃過，O(N log N) 才能 AC。</strong>
     </div>
   </section>
 
@@ -271,8 +271,8 @@
   <!-- Summary bar -->
   <div class="sc-summary-bar">
     <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
-    <div class="sc-summary-bar__body">每個數字兩候選值 {aᵢ,2aᵢ}(≥M)，求最長非遞減子序列：dp[i][c]=1+max前面≤它的dp。</div>
-    <div class="sc-summary-bar__detail">×2/刪/維持 → 兩候選值；非遞減用 ≤；無候選≥M 則 0；O(N²)，BIT 可降 O(N log N)。</div>
+    <div class="sc-summary-bar__body">每個數字兩候選值 {aᵢ,2aᵢ}(≥M)，求最長非遞減子序列：tails + upper_bound，O(N log N)。</div>
+    <div class="sc-summary-bar__detail">×2/刪/維持 → 兩候選值；非遞減用 upper_bound；大候選先放；無候選≥M 則 0。</div>
   </div>
 
   <script src="../../../../assets/js/viz/p373-twocand.js"></script>
