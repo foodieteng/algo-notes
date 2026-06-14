@@ -38,7 +38,7 @@
     <div class="meta-row">
       <span><span class="dot"></span>CHAPTER 09</span>
       <span>WEEK 09</span>
-      <span>07 PROBLEMS</span>
+      <span>10 PROBLEMS</span>
     </div>
     <h1 class="workshop-title">DP 3.</h1>
     <p class="workshop-subtitle">
@@ -60,7 +60,7 @@
           <li><a href="../../topics/06-divide-conquer/index.html">W06 · Divide & Conquer <span class="tag">07</span></a></li>
           <li><a href="../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
           <li><a href="../../topics/08-dp2/index.html">W08 · DP 2 <span class="tag">05</span></a></li>
-          <li><a href="../../topics/09-dp3/index.html" class="is-active">W09 · DP 3 <span class="tag">07</span></a></li>
+          <li><a href="../../topics/09-dp3/index.html" class="is-active">W09 · DP 3 <span class="tag">10</span></a></li>
           <li><a href="../../topics/10-mst-shortest/index.html">W10 · MST · Shortest <span class="tag">07</span></a></li>
           <li><a href="../../topics/11-string-trie-kmp/index.html">W11 · Trie · KMP <span class="tag">04</span></a></li>
           <li><a href="../../topics/12-geometry-math-game/index.html">W12 · Geom · Math · Game <span class="tag">10</span></a></li>
@@ -93,14 +93,62 @@
         <h2>本章節大綱</h2>
         <div class="article-meta">
           <span>W09</span>
-          <span>07 PROBLEMS</span>
+          <span>10 PROBLEMS</span>
         </div>
 
         <ul class="notes-list">
+          <li><a href="#sec-quick-index">⚡ 快速索引</a></li>
           <li><a href="#sec-concept">09.1 · 核心概念</a></li>
-          <li><a href="#sec-problems">09.2 · 題目列表</a></li>
-          <li><a href="#sec-notes">09.3 · 筆記與補充</a></li>
+          <li><a href="#sec-main">09.2 · 上機作業</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P499 · P499 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/499/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P171 · P171 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/171/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P172 · P172 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/172/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P145 · P145 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/145/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-bonus">09.3 · Bonus</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P233 · P233 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/233/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P169 · P169 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/169/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-practice">09.4 · 自由練習</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P375 · P375 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/375/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P234 · P234 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/234/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P374 · P374 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/374/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P170 · P170 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/170/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-notes">09.5 · 筆記與補充</a></li>
         </ul>
+      </article>
+
+      <article id="sec-quick-index">
+        <span class="stamp">▼ QUICK INDEX</span>
+        <h2>題目快速索引</h2>
+        <div class="article-meta">
+          <span>SUMMARY</span>
+          <span>10 PROBLEMS</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>類別</th><th>題號</th><th>題目</th><th>原題</th><th>狀態</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P499</td><td><span style="color:var(--concrete)">P499</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/499/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P171</td><td><span style="color:var(--concrete)">P171</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/171/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P172</td><td><span style="color:var(--concrete)">P172</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/172/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P145</td><td><span style="color:var(--concrete)">P145</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/145/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">Bonus</span></td><td style="font-family:var(--font-mono);">P233</td><td><span style="color:var(--concrete)">P233</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/233/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">Bonus</span></td><td style="font-family:var(--font-mono);">P169</td><td><span style="color:var(--concrete)">P169</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/169/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P375</td><td><span style="color:var(--concrete)">P375</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/375/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P234</td><td><span style="color:var(--concrete)">P234</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/234/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P374</td><td><span style="color:var(--concrete)">P374</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/374/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P170</td><td><span style="color:var(--concrete)">P170</span></td><td><a href="https://tioj.sprout.tw/contests/28/problems/170/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+          </tbody>
+        </table>
       </article>
 
       <article id="sec-concept">
@@ -112,19 +160,48 @@
         <p>—— 待補 ——</p>
       </article>
 
-      <article id="sec-problems">
+      <article id="sec-main">
         <span class="stamp">▼ 09.2</span>
-        <h2>題目列表</h2>
+        <h2>上機作業</h2>
         <div class="article-meta">
-          <span>PROBLEMS</span>
+          <span>4 PROBLEMS</span>
         </div>
         <ul class="notes-list">
-          <li><span style="color:var(--concrete)">—— 待新增題目 ——</span></li>
+          <li><span style="color:var(--concrete)">P499 · P499 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/499/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P171 · P171 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/171/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P172 · P172 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/172/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P145 · P145 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/145/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+        </ul>
+      </article>
+
+      <article id="sec-bonus">
+        <span class="stamp">▼ 09.3</span>
+        <h2>Bonus</h2>
+        <div class="article-meta">
+          <span>2 PROBLEMS</span>
+        </div>
+        <ul class="notes-list">
+          <li><span style="color:var(--concrete)">P233 · P233 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/233/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P169 · P169 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/169/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+        </ul>
+      </article>
+
+      <article id="sec-practice">
+        <span class="stamp">▼ 09.4</span>
+        <h2>自由練習</h2>
+        <div class="article-meta">
+          <span>4 PROBLEMS</span>
+        </div>
+        <ul class="notes-list">
+          <li><span style="color:var(--concrete)">P375 · P375 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/375/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P234 · P234 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/234/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P374 · P374 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/374/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P170 · P170 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/28/problems/170/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
         </ul>
       </article>
 
       <article id="sec-notes">
-        <span class="stamp">▼ 09.3</span>
+        <span class="stamp">▼ 09.5</span>
         <h2>筆記與補充</h2>
         <div class="article-meta">
           <span>NOTES</span>
