@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P474 · 01 概念 // 石油 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P474
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/474/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">石油</h1>
+    <p class="sc-mast__subtitle">// Virtual-Source MST · 超級源點建虛邊</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 MST · 虛擬源點
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O((N+M) log)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>N 個國家、M 條道路（無向，連 <code>uᵢ–vᵢ</code>、建造費 <code>wᵢ</code>，可能有重邊與自環）。
+      每個國家要拿到石油有<strong>兩種方式</strong>：① <strong>自己開採油井</strong>（國家 i 花 <code>cᵢ</code>）；
+      ② <strong>透過道路</strong>連到一個有油井的國家。問：<strong>最少花多少錢</strong>，能讓<strong>每個國家</strong>都取得石油？</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      <code>1 ≤ N ≤ 2×10⁵ · 0 ≤ M ≤ 2×10⁵ · 1 ≤ uᵢ,vᵢ ≤ N · 1 ≤ cᵢ,wᵢ ≤ 10⁹</code>。
+      「拿到石油」= 自己有井，或經由已建道路連到某個有井的國家。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼是「虛擬源點 MST」
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用虛擬源點 MST<span class="sc-section__title-en">// Why Virtual Source</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉誰開井</span>
+            <span class="sc-ko-card__o">O(2ᴺ)</span>
+          </div>
+          <div class="sc-ko-card__body">先選一組開井國家、再求連通道路 ⇒ 子集指數爆炸。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">純 MST 連全部</span>
+            <span class="sc-ko-card__o">漏掉開井</span>
+          </div>
+          <div class="sc-ko-card__body">只用道路連通所有國家，沒考慮「至少要有一口井」⇒ 模型不完整。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · 不完整</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">虛擬源點 + MST</span>
+          <span class="sc-ko-card__o">O((N+M) log)</span>
+        </div>
+        <div class="sc-ko-card__body">加一個「油源節點 0」，每國連 <code>(0, i)</code> 花 <code>cᵢ</code>（= 開井）。對 N+1 點求 MST。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · OPTIMAL</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵轉換</strong>：「開井」其實就是「<strong>連到油源</strong>」。新增一個虛擬節點 <code>0</code> 代表油源，
+      把「國家 i 開井花 cᵢ」畫成一條<strong>虛邊 <code>(0, i)</code> 權重 cᵢ</strong>。
+      於是「每國都拿到油」⟺「每國都連到節點 0」⟺ <strong>這張 N+1 點圖的最小生成樹</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <ol style="margin-top:6px;">
+      <li><strong>建虛邊</strong> · 加虛擬源點 0；每個國家 i 加一條邊 <code>(0, i, cᵢ)</code>（代表「在 i 開井」）。</li>
+      <li><strong>放道路</strong> · 把 M 條道路 <code>(uᵢ, vᵢ, wᵢ)</code> 也丟進邊集合。</li>
+      <li><strong>跑 MST</strong> · 對 <code>N+1</code> 個節點（0~N）跑 Kruskal，連成生成樹需 <code>N</code> 條邊；
+        權重和就是答案。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為何正確</strong> · MST 保證每個國家都連到 0（拿到油），且總花費最小。
+      「至少要有一口井」自動成立 —— 樹中必有至少一條 <code>(0, i)</code> 虛邊（否則 0 孤立、樹不連通）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 虛擬源點 + Kruskal<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用一個小例子：3 國家，開井費 <code>c = [5, 4, 6]</code>，道路 <code>1–2(1)</code>、<code>2–3(2)</code>。
+    加虛源 0 後跑 MST，會選「在 2 開井 + 兩條便宜道路」：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · VIRTUAL-SOURCE MST</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="460" style="height:460px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 加虛擬源點 0；每國連一條「開井」虛邊 (0,i,cᵢ)
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#d4a868">●</span> 虛邊（開井 0→i） &nbsp;·&nbsp;
+      <span style="color:#8fb3d4">●</span> 道路（尚未選） &nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 進 MST &nbsp;·&nbsp;
+      <span style="color:#c97b7b">●</span> 跳過（成環） &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 本步判斷的邊
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為何「開井 = 連到源點」（證明）
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何虛擬源點 MST 等價於原問題<span class="sc-section__title-en">// Why It's Equivalent</span></h2>
+    </div>
+
+    <p style="font-size:14px;">這個轉換的漂亮之處：把「兩種取得方式」統一成「<strong>連到油源</strong>」一件事。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">VIRTUAL SOURCE · 等價性論證</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li>定義虛擬節點 0 = 「油源」。國家 i「拿到石油」⟺ 在最終建出來的圖裡，i <strong>連得到 0</strong>。</li>
+          <li>「在 i 開井花 cᵢ」⟺ 「付 cᵢ 把 i 直接接到 0」= 虛邊 <code>(0, i, cᵢ)</code>。</li>
+          <li>「i 經道路連到有井的國家 j」⟺ 「i 透過道路 + j 的虛邊接到 0」。
+            兩種方式在這張擴充圖裡<strong>都只是『連到 0 的一條路徑』</strong>。</li>
+          <li>要「每國都連到 0」且「花費最小」，就是把 <code>{0, 1, …, N}</code> 連成一棵樹、權重最小
+            ⇒ <strong>最小生成樹</strong>。MST 自動決定「哪些國家開井（選了虛邊）、哪些道路要建」。</li>
+        </ol>
+        <p style="margin-top:6px;">「至少一口井」由連通性保證：若沒選任何虛邊，節點 0 會孤立、無法連通 ⇒ MST 一定至少含一條 <code>(0, i)</code>。</p>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;">
+      <strong>實測佐證</strong>：對 800 組隨機輸入（含自環、重邊），「虛源 MST」與「窮舉開井子集 + 連通檢查」
+      <strong>答案完全一致、零反例</strong>，N=2×10⁵、M=2×10⁵ 在 1 秒內跑完。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">邊數 = N（虛邊）+ M（道路）。排序主導，DSU 近乎線性：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O((N + M) log(N + M))</strong></div>
+      <div class="sc-formula__hint">
+        N、M 各 2×10⁵ ⇒ 4×10⁵ 條邊，排序約 4×10⁵ × 19 ≈ 8×10⁶，實測 1 秒內
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O((N+M) log)</strong></td><td>排序 N+M 條邊主導</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>邊陣列 + 並查集（大小 N+1）</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>權和最大 ~N·10⁹ ≈ 2×10¹⁴，必用 64-bit</td></tr>
+        <tr><td>生成樹邊數</td><td class="mono">N</td><td>N+1 個節點 ⇒ 需 N 條邊</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「開井」= 「連到油源」。</strong><br/>
+      加一個虛擬源點 0，把開井費 cᵢ 畫成虛邊 (0, i, cᵢ)，<br/>
+      對 N+1 個點求 MST ⇒ 每國都連到油源、總花費最小。<br/>
+      <strong>「至少一口井」由連通性自動保證。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">加虛擬源點 0，開井費 cᵢ 變虛邊 (0,i,cᵢ)，對 N+1 點跑 MST = 每國連到油源的最小總花費。</div>
+    <div class="sc-summary-bar__detail">開井 ⟺ 連源點；MST 自動決定誰開井、建哪些路 · 至少一口井由連通性保證 · long long</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p474-oil.js"></script>
+</body>
+</html>

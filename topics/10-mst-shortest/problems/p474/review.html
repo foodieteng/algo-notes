@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P474 · 03 Review // 石油 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P474
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/474/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">石油</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>核心轉換</td>
+            <td>「開井」⟺「連到油源」。加虛擬節點 0 當油源。</td></tr>
+        <tr><td>虛邊</td>
+            <td>國家 i 開井費 cᵢ ⇒ 虛邊 <code>(0, i, cᵢ)</code>。</td></tr>
+        <tr><td>道路</td>
+            <td>M 條 (u, v, w) 照常放進邊集合（重邊、自環無妨）。</td></tr>
+        <tr><td>解</td>
+            <td>對 N+1 個節點求 <strong>MST</strong>，權和即答案；需 N 條邊。</td></tr>
+        <tr><td>至少一口井</td>
+            <td>由連通性保證：MST 必含至少一條 (0, i) 虛邊。</td></tr>
+        <tr><td>數值</td>
+            <td>權和達 2×10¹⁴ ⇒ <code>total</code> 用 long long。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">核心轉換</span>
+      <h4>為什麼「開井」可以畫成「連到一個虛擬源點 0 的邊」？這個轉換把兩種取油方式統一成什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">至少一口井</span>
+      <h4>題目要求「每國都能取得石油」，但沒明說至少要開幾口井。為什麼 MST 會自動保證至少一口井？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">邊數</span>
+      <h4>為什麼生成樹要取 <code>N</code> 條邊而不是 <code>N−1</code> 條？並查集要開多大？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">自環重邊</span>
+      <h4>道路允許 <code>u = v</code>（自環）與同一對多條道路。需要特別處理嗎？Kruskal 怎麼自然應付？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">資料型別</span>
+      <h4>哪個變數最容易忘了開 <code>long long</code>？給一個會溢位的數量級。</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用小例子：<code>N=3</code>，開井費 <code>c=[5,4,6]</code>，道路 <code>1–2(1)</code>、<code>2–3(2)</code>。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>3 2
+5 4 6
+1 2 1
+2 3 2</pre>
+
+    <p><strong>STEP 1 · 建邊（虛邊 + 道路）</strong>，加虛源 0：</p>
+    <table class="sc-table">
+      <thead><tr><th>邊</th><th>權重</th><th>類型</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1—2</td><td class="mono">1</td><td>道路</td></tr>
+        <tr><td class="mono">2—3</td><td class="mono">2</td><td>道路</td></tr>
+        <tr><td class="mono">0—2</td><td class="mono">4</td><td>虛邊（在 2 開井）</td></tr>
+        <tr><td class="mono">0—1</td><td class="mono">5</td><td>虛邊（在 1 開井）</td></tr>
+        <tr><td class="mono">0—3</td><td class="mono">6</td><td>虛邊（在 3 開井）</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>STEP 2 · Kruskal（取 N=3 條邊）</strong>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// EDGE 1 · (1—2, w=1)</span>
+1, 2 不同塊 → union {1,2}
+total = 1, used = 1</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// EDGE 2 · (2—3, w=2)</span>
+{1,2} 與 3 不同塊 → union {1,2,3}
+total = 3, used = 2</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// EDGE 3 · (0—2, w=4)</span>
+源點 0 與 {1,2,3} 不同塊 → union {0,1,2,3}
+total = 7, used = 3 = N ⇒ break ✓
+（選 0—2 = 在國家 2 開井；全部國家都連到油源了）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// (0—1, 0—3 不會處理：已連滿)</span>
+若處理：0 與該國已同塊 ⇒ 成環 ⇒ 跳過</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>7</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：最佳解是「<strong>只在國家 2 開一口井（4）</strong>，再用兩條便宜道路（1+2）把 1、3 接上」=
+      4+1+2 = <strong>7</strong>。比「每國各開井」（5+4+6=15）省很多。MST 自動權衡<strong>開井 vs 修路</strong>，挑最划算的組合。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>樣本 1：<code>N=1, M=0, c=[1]</code>。手算答案。若 <code>M=0</code> 但 <code>N=3, c=[5,4,6]</code> 又是多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">極端</span>
+      <h4>若所有道路都超貴（w 遠大於任何 cᵢ），最佳解會長什麼樣？答案是多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形</span>
+      <h4>若改成「最多只能開 1 口井」，這個虛源 MST 還對嗎？該怎麼調整思路？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 核心轉換</span>
+      <p>
+        把「油源」具象成一個虛擬節點 0。「在國家 i 開井花 cᵢ」=「付 cᵢ 把 i 直接接到油源 0」=
+        虛邊 <code>(0, i, cᵢ)</code>。
+      </p>
+      <p>
+        這樣兩種取油方式統一成<strong>同一件事：連到節點 0</strong> ——「自己開井」是直接連 0、
+        「經道路連到有井的國家」是間接連 0。要每國都連到 0 且花費最小 ⇒ 最小生成樹。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 至少一口井</span>
+      <p>
+        MST 必須讓<strong>所有節點連通</strong>，包含虛擬源點 0。若一條虛邊 (0, i) 都沒選，
+        節點 0 就會<strong>孤立</strong>，整張圖不連通 ⇒ 不是生成樹。
+      </p>
+      <p>
+        所以 MST 一定至少含一條 (0, i) 虛邊 = 至少開一口井。這個約束<strong>免寫程式、由連通性自動成立</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 邊數</span>
+      <p>
+        節點是 <code>0, 1, …, N</code> 共 <strong>N+1 個</strong>。生成樹連通 K 個節點需 K−1 條邊 ⇒
+        N+1 個節點需 <strong>N 條邊</strong>。
+      </p>
+      <p>
+        並查集要開 <strong>N+1</strong>（索引 0~N），並初始化 <code>par[0..N]</code>。
+        若沿用「N−1 條」或忘了節點 0，會少連一塊或越界。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 自環重邊</span>
+      <p>
+        <strong>不必特別處理。</strong> 自環 <code>u=v</code>：<code>find(u)==find(v)</code> 永遠成立 ⇒ 直接被跳過。
+      </p>
+      <p>
+        同一對的多條道路：第一條（最便宜的，因已排序）會 union，其餘變成同塊 ⇒ 後面的自動跳過。
+        Kruskal 的「同塊就跳過」機制天生吃得下重邊與自環。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 資料型別</span>
+      <p>
+        最容易忘的是<strong>累加權和 <code>total</code></strong>（與排序鍵 w）。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 溢位量級</span>
+最多 N 條邊 ≈ 2×10⁵
+每條 c 或 w 最大 10⁹
+權和最大 ≈ 2×10⁵ × 10⁹ = 2×10¹⁴
+int 上限 ≈ 2.1×10⁹  ⇒  必爆 ❌
+long long 上限 ≈ 9.2×10¹⁸  ⇒  OK ✓</pre>
+      <p>單一 c/w ≤ 10⁹ 雖塞得進 int，但累加會爆 ⇒ <code>total</code> 一定要 ll。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        <strong>樣本 1</strong>：N=1、沒有道路 ⇒ 唯一辦法是在國家 1 開井 ⇒ 答案 = c₁ = <strong>1</strong>
+        （MST 只有一條虛邊 0—1）。
+      </p>
+      <p>
+        <strong>N=3, M=0, c=[5,4,6]</strong>：沒有道路 ⇒ 每國只能各自開井 ⇒ 三條虛邊全選 ⇒
+        5+4+6 = <strong>15</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        若所有道路都比任何 cᵢ 貴，Kruskal 會優先把<strong>所有虛邊（開井）</strong>排在道路前面選 ⇒
+        每個國家各自開井、不修任何路。
+      </p>
+      <p>
+        答案就是 <strong>所有 cᵢ 的總和</strong>（Σcᵢ）。直覺：路太貴就不如各挖各的井。MST 自動做出這個判斷。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        「<strong>最多只能開 1 口井</strong>」就<strong>不再是單純 MST</strong>了。此時所有國家必須靠唯一一口井 + 道路連通，
+        相當於：枚舉「井開在哪個國家 k」，其餘國家必須全靠道路連到 k。
+      </p>
+      <ul>
+        <li>固定唯一井在 k ⇒ 需要「用道路把全部 N 國連成一棵樹」(道路 MST) + <code>cₖ</code>。</li>
+        <li>道路 MST 與 k 無關（只要全國用道路連通），所以答案 = <code>道路連通全國的 MST 權和 + min cₖ</code>
+          （前提是道路本身能連通全國，否則無解）。</li>
+      </ul>
+      <p>關鍵差異：原題「開幾口井都行」⇒ 虛源 MST 一次解決；「限 1 口井」⇒ 退化成「道路全連 + 挑最便宜的井」。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 Kruskal trace — 看懂「開井 = 連虛源」與 MST 自動權衡。</div>
+    <div class="sc-summary-bar__detail">範例輸出 7（在國家 2 開井 4 + 兩條路 1+2，勝過各自開井 15）· 節點 0~N、取 N 條邊</div>
+  </div>
+
+</body>
+</html>

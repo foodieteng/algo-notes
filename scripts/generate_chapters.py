@@ -108,7 +108,7 @@ PROBLEMS = {
         ('p472', '最小生成樹',                      'main',     'done'),
         ('p351', '慘字道路規劃',                    'bonus',    'done'),
         ('p473', '道路工程',                        'bonus',    'done'),
-        ('p474', '石油',                            'bonus',    'todo'),
+        ('p474', '石油',                            'bonus',    'done'),
         ('p150', '關鍵邏輯閘',                      'practice', 'todo'),
         ('p352', '次短距離',                        'practice', 'todo'),
         ('p370', '邪教的咒語',                      'practice', 'todo'),
