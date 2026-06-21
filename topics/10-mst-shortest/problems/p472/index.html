@@ -123,9 +123,8 @@
     </p>
 
     <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
-      <strong>註</strong>：被淘汰的是<strong>樸素 O(N²) Prim</strong>（鄰接矩陣，N=2×10⁵ 開不下）。
-      換成 <strong>min-heap 版 Prim（O(M log N)）</strong>同樣正確、同樣能過 —— 它也靠 cut property，只是改成「以點為中心、從一點長出樹」。
-      Code 頁<strong>兩種寫法都附上</strong>，可對照學習。
+      <strong>註</strong>：被淘汰的只是<strong>樸素 O(N²) Prim</strong>（鄰接矩陣，N=2×10⁵ 開不下）。
+      <strong>min-heap 版 Prim（O(M log N)）同樣正確、同樣能過</strong> —— 詳見下方 <a href="#prim-view" style="color:var(--sc-coral);">第 06 節「另一個視角 · Prim」</a>。
     </p>
   </section>
 
@@ -223,21 +222,68 @@
   </section>
 
   <!-- ============================================================
-       SECTION 06 — 複雜度
+       SECTION 06 — Prim 的視角
+       ============================================================ -->
+  <section class="sc-section" id="prim-view">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">另一個視角 · Prim<span class="sc-section__title-en">// Prim's View</span></h2>
+    </div>
+
+    <p style="font-size:14px;">Kruskal 以<strong>邊</strong>為中心（全域由小到大掃邊）；<strong>Prim 以「點」為中心</strong>：
+    維護一棵<strong>正在長大的樹</strong>，每一步把「離樹最近的點」併進來。兩者都正確 —— 因為它們<strong>用的是同一個 cut property</strong>。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">PRIM · 從一點長出樹，每步選最近的點</div>
+      <div class="sc-dark-box__body">
+        <p>把已在樹裡的點當作集合 <code>A</code>、其餘當 <code>B</code>。Prim 每一步做的事：</p>
+        <ol>
+          <li><strong>找跨切最小邊</strong> · 在所有「一端在樹 A、一端在外面 B」的邊裡，挑<strong>權重最小</strong>的那條，
+            把它另一端的新點併進樹。</li>
+          <li><strong>正確性 = cut property</strong> · 這條邊正是切口 <code>(A, B)</code> 的最小跨切邊 ⇒ 由 cut property，
+            它<strong>一定屬於某棵 MST</strong> ⇒ 安全地加入。</li>
+          <li><strong>怎麼快速找最近點</strong> · 用 <strong>min-heap</strong>：把樹上每個點的鄰邊丟進堆，
+            堆頂就是當前最小跨切邊。取出時若另一端已在樹裡（過期條目）就跳過。</li>
+          <li>重複到 N 個點全進樹 ⇒ 得到 MST。圖保證連通 ⇒ 一定長得滿。</li>
+        </ol>
+        <p style="margin-top:6px;">⇒ Kruskal「全域挑最小邊」、Prim「樹邊界挑最小邊」，兩條路殊途同歸，背後都是同一條 cut property。</p>
+      </div>
+    </div>
+
+    <table class="sc-table" style="margin-top:14px;">
+      <thead><tr><th>面向</th><th>Kruskal</th><th>Prim（min-heap）</th></tr></thead>
+      <tbody>
+        <tr><td>中心思想</td><td>以<strong>邊</strong>為主：全域由小到大加邊</td><td>以<strong>點</strong>為主：從一點長出樹</td></tr>
+        <tr><td>每步選什麼</td><td>全圖當前最小、且不成環的邊</td><td>樹邊界上最小的跨切邊</td></tr>
+        <tr><td>正確性依據</td><td>cut property（切口最小邊安全）</td><td><strong>同樣</strong>是 cut property</td></tr>
+        <tr><td>主要結構</td><td>邊陣列 + 並查集 DSU</td><td>鄰接表 + min-heap</td></tr>
+        <tr><td>複雜度</td><td class="mono">O(M log M)</td><td class="mono">O(M log N)</td></tr>
+        <tr><td>適合</td><td>稀疏圖、題目給邊表</td><td>稠密圖、已有鄰接表</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      本題給的是<strong>邊表 + 稀疏圖</strong>，Kruskal 寫起來最短最直覺；但 Prim 同樣能過。
+      <strong>兩種完整程式碼都在 Code 頁</strong>，建議對照著看「邊視角 vs 點視角」。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 複雜度
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">06</span>
+      <span class="sc-section__num">07</span>
       <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
     </div>
 
-    <p style="font-size:14px;">瓶頸是<strong>排序</strong> <code>O(M log M)</code>；DSU 的 M 次 find/union 近乎線性
-    <code>O(M α(N))</code>，可視為常數倍。</p>
+    <p style="font-size:14px;"><strong>Kruskal</strong> 瓶頸是<strong>排序</strong> <code>O(M log M)</code>；DSU 的 M 次 find/union 近乎線性
+    <code>O(M α(N))</code>，可視為常數倍。<strong>Prim（min-heap）</strong>則由堆操作主導 <code>O(M log N)</code>（每條邊最多入堆一次）。</p>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">T = <strong>O(M log M)</strong></div>
+      <div class="sc-formula__main">Kruskal <strong>O(M log M)</strong> &nbsp;·&nbsp; Prim <strong>O(M log N)</strong></div>
       <div class="sc-formula__hint">
-        M ≤ 2×10⁵ ⇒ 排序約 2×10⁵ × 18 ≈ 4×10⁶，輕鬆通過
+        M ≤ 2×10⁵ ⇒ 兩者皆約 ~4×10⁶ 量級，輕鬆通過（實測各 ~0.7 秒）
       </div>
     </div>
 
@@ -253,19 +299,19 @@
   </section>
 
   <!-- ============================================================
-       SECTION 07 — 一句洞察
+       SECTION 08 — 一句洞察
        ============================================================ -->
   <section class="sc-section">
     <div class="sc-section__head">
-      <span class="sc-section__num">07</span>
+      <span class="sc-section__num">08</span>
       <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
     </div>
 
     <div class="sc-insight">
-      <strong>邊權排序 + 由小到大貪心加邊 + 並查集判環 = MST。</strong><br/>
-      cut property 保證「跨切口的最小邊一定安全」，<br/>
-      所以每次選當前最小的「連接兩塊」之邊都不會錯。<br/>
-      <strong>加滿 N−1 條邊即停；權和要開 long long。</strong>
+      <strong>Kruskal「全域挑最小邊」、Prim「樹邊界挑最小邊」—— 同一條 cut property。</strong><br/>
+      Kruskal：邊權排序 + 由小到大加邊 + 並查集判環；<br/>
+      Prim：從一點長出樹 + min-heap 取離樹最近的點。<br/>
+      <strong>兩者都對；加滿邊即停、權和要開 long long。</strong>
     </div>
   </section>
 
