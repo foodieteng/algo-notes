@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P348 · 01 概念 // 可魚果運輸問題 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P348
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/348/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">可魚果運輸問題</h1>
+    <p class="sc-mast__subtitle">// Concave-Cost Transport → Single-Path Shortest Path</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 最短路 + 凹成本洞察
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(T · M log N)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>有 <code>N</code> 座城市、<code>M</code> 條運輸方案。每條方案是一條<strong>有向</strong>路線
+      <code>Aᵢ → Bᵢ</code>，每箱收費 <code>Cᵢ</code>。但有<strong>折扣</strong>：若這條方案運超過 <code>Dᵢ</code> 箱，
+      <strong>多出來的每箱改收較便宜的 C'ᵢ</strong>（<code>C'ᵢ ≤ Cᵢ</code>）。要把 <code>F</code> 箱可魚果從
+      <code>S</code> 運到 <code>E</code>，求<strong>最小總花費</strong>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      <code>N ≤ 100 · M ≤ N(N−1) · F ≤ 10⁹ · Cᵢ ≤ 50216 · Dᵢ ≤ 10⁹ · T ≤ 20</code>。
+      一條邊運 <code>x</code> 箱的花費是<strong>分段函數</strong>：
+      <code>x ≤ Dᵢ</code> 時 <code>x·Cᵢ</code>；<code>x &gt; Dᵢ</code> 時 <code>Dᵢ·Cᵢ + (x−Dᵢ)·C'ᵢ</code>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼是「單路徑最短路」
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼最後變成最短路<span class="sc-section__title-en">// Why Shortest Path</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">逐箱送最便宜路</span>
+            <span class="sc-ko-card__o">F ≤ 10⁹</span>
+          </div>
+          <div class="sc-ko-card__body">F 高達十億，逐箱不可能；且折扣使「下一箱」越送越便宜，逐箱貪心也錯。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">最小成本流 MCMF</span>
+            <span class="sc-ko-card__o">凸才對</span>
+          </div>
+          <div class="sc-ko-card__body">折扣 = <strong>凹成本</strong>（邊際遞減），MCMF 需要凸成本，直接套會算錯（偷拿折扣價）。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG MODEL</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">單路徑 + Dijkstra</span>
+          <span class="sc-ko-card__o">O(M log N)</span>
+        </div>
+        <div class="sc-ko-card__body">凹成本 ⇒ 把 F 箱<strong>全集中在一條路徑</strong>最省。邊權 = 該邊運完 F 箱的花費 ⇒ 跑最短路。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · OPTIMAL</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵洞察</strong>：折扣讓「運越多、單價越低」⇒ <strong>規模經濟（凹成本）</strong>。
+      把貨拆到兩條路反而吃不到折扣 ⇒ 最優一定是「<strong>全部走同一條路</strong>」。下面證明這件事。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <ol style="margin-top:6px;">
+      <li><strong>把每條邊壓成單一權重</strong> · 邊權 <code>w = (F ≤ D) ? F·C : D·C + (F−D)·C'</code>，
+        意思是「整批 F 箱都走這條邊」要付多少。</li>
+      <li><strong>跑 Dijkstra</strong> · 從 S 對這張帶權有向圖求到 E 的最短路（邊權皆非負）。</li>
+      <li><strong>輸出 dist[E]</strong> · 那就是把 F 箱全走最短路徑的最小花費。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>注意</strong> · 邊權是「<strong>整批 F 箱</strong>」的固定花費，不是「每箱單價」。
+      把折扣一次算進邊權後，問題就退化成最單純的最短路。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 邊權壓縮 + 最短路<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用樣本第 2 組：<code>N=4, S=1, E=4, F=2</code>，4 條方案。注意 <code>3→4</code> 折扣很猛
+    （<code>C=6 → C'=1</code>），讓 2 箱的路徑 <code>1→3→4</code> 反而最便宜：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · F-BOX EDGE WEIGHT + DIJKSTRA</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="440" style="height:440px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 先把每條邊「運 F=2 箱」的花費算成單一權重
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">●</span> 一般邊 &nbsp;·&nbsp;
+      <span style="color:#d4a868">●</span> 吃到折扣（F &gt; D） &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 最短路徑上的邊 &nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 已定下最短距離的點
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 凹成本 ⇒ 集中單路徑（證明）
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何凹成本要「集中在一條路」<span class="sc-section__title-en">// Concavity ⇒ Concentrate</span></h2>
+    </div>
+
+    <p style="font-size:14px;">折扣讓每條邊的「花費對運量」是<strong>凹函數</strong>（先 C、後更便宜的 C'，邊際遞減）。
+    凹函數有個關鍵性質：<strong>把量拆開分送，總和不會比集中送更便宜</strong>。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">凹性論證 · 拆流永遠不划算</div>
+      <div class="sc-dark-box__body">
+        <p>設某條邊的花費函數 <code>g(x)</code>（運 x 箱要 g(x)）。折扣結構 ⇒ <code>g</code> 是凹的、且 <code>g(0)=0</code>。
+        凹 + 過原點 ⇒ <strong>次可加（subadditive）</strong>：對任意 <code>a, b ≥ 0</code>，</p>
+        <ol>
+          <li><code>g(a + b) ≤ g(a) + g(b)</code> ——「合併送」不貴於「分兩次送」。</li>
+          <li>把任何一個「分流方案」想成多條 S→E 路徑各送一些箱。沿著<strong>每條邊</strong>套上式，
+            可以把兩條路徑上的流量「合併」到較便宜的那條，總花費<strong>只會變小或不變</strong>。</li>
+          <li>一路合併到底 ⇒ 最優解必存在一個「<strong>所有 F 箱走同一條 S→E 路徑</strong>」的版本。</li>
+          <li>於是只要在「每條邊 = 運完整批 F 箱的花費」的圖上，找<strong>最便宜的單一路徑</strong> ⇒ 最短路。</li>
+        </ol>
+        <p style="margin-top:6px;">（對照：若是<strong>漲價</strong>（凸成本、邊際遞增），結論相反 —— 那才需要拆流、才是 MCMF。）</p>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;">
+      <strong>實測佐證</strong>：對 4000+ 組隨機凹成本圖，「集中單路徑最短路」與「窮舉所有分流的真正最優」
+      <strong>答案完全一致、零反例</strong>。這也是為什麼能放心退化成 Dijkstra。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">壓邊權 <code>O(M)</code>，Dijkstra（堆實作）<code>O(M log N)</code>。每組測資獨立，乘上 <code>T</code>：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(T · M log N)</strong></div>
+      <div class="sc-formula__hint">
+        N ≤ 100、M ≤ N(N−1) ≈ 10⁴、T ≤ 20 ⇒ 規模極小，輕鬆通過
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(T · M log N)</strong></td><td>每組壓邊權 + 一次 Dijkstra</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>鄰接表 + dist 陣列</td></tr>
+        <tr><td>數值範圍</td><td class="mono">long long</td><td>F·C 可達 10⁹×50216 ≈ 5×10¹³，必用 64-bit</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>圖很小，堆操作可忽略</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>折扣 = 凹成本 = 規模經濟 ⇒ 全部走同一條路最省。</strong><br/>
+      把每條邊「運完 F 箱」的花費壓成單一邊權，<br/>
+      問題就退化成單純的 <strong>S → E 最短路（Dijkstra）</strong>。<br/>
+      <strong>是凹（折扣）才用最短路；若是凸（漲價）才需要 MCMF。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">折扣 = 凹成本 ⇒ 集中單路徑最省；邊權 = 運完 F 箱的花費，跑 Dijkstra 求 S→E 最短路。</div>
+    <div class="sc-summary-bar__detail">邊權 w = (F≤D) ? F·C : D·C + (F−D)·C' · 全程 long long · 凹才最短路、凸才 MCMF</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p348-transport.js"></script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P348 · 03 Review // 可魚果運輸問題 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P348
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/348/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">可魚果運輸問題</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>成本型態</td>
+            <td>折扣 ⇒ 邊際遞減 ⇒ <strong>凹成本</strong>（規模經濟）。</td></tr>
+        <tr><td>核心洞察</td>
+            <td>凹 + 過原點 ⇒ 次可加 ⇒ 拆流不划算 ⇒ <strong>全部走同一條路</strong>。</td></tr>
+        <tr><td>邊權公式</td>
+            <td><code>w = (F ≤ D) ? F·C : D·C + (F−D)·C'</code>，整批 F 箱的花費。</td></tr>
+        <tr><td>演算法</td>
+            <td>壓好邊權後跑 <strong>Dijkstra</strong>（邊權非負）求 S→E 最短路。</td></tr>
+        <tr><td>常見錯</td>
+            <td>套 MCMF：凹成本拆邊會偷拿折扣價 ⇒ 答案偏低、錯。</td></tr>
+        <tr><td>數值</td>
+            <td>F·C ~5×10¹³ ⇒ 全程 <code>long long</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">建模</span>
+      <h4>為什麼可以把「每箱分段收費」的方案壓成<strong>一條固定權重</strong>的邊？權重怎麼算？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">凹 vs 凸</span>
+      <h4>折扣讓成本變凹。為什麼凹成本可以「集中單路徑 + 最短路」，而凸成本不行？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">反例</span>
+      <h4>若直接把每條邊拆成「容量 D 成本 C」「容量 ∞ 成本 C'」兩條邊跑 MCMF，會算出什麼？為什麼錯？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">演算法選擇</span>
+      <h4>邊權都非負，為什麼用 Dijkstra 而不是 Bellman-Ford 或 SPFA？這題能用 Floyd 嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">資料型別</span>
+      <h4>哪些變數一定要用 <code>long long</code>？舉一個用 <code>int</code> 會溢位的具體數字。</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用樣本第 2 組：<code>N=4, M=4, S=1, E=4, F=2</code>。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>4 4 1 4 2
+1 2 1 1 1      (A=1 B=2 C=1 D=1 C'=1)
+2 4 5 1 3      (A=2 B=4 C=5 D=1 C'=3)
+1 3 1 1 1      (A=1 B=3 C=1 D=1 C'=1)
+3 4 6 1 1      (A=3 B=4 C=6 D=1 C'=1)</pre>
+
+    <p><strong>STEP 1 · 壓邊權（F=2 箱）</strong>，每條都 F=2 &gt; D=1 ⇒ 走折扣分支 <code>D·C + (F−D)·C'</code>：</p>
+    <table class="sc-table">
+      <thead><tr><th>邊</th><th>C</th><th>D</th><th>C'</th><th>w = 1·C + 1·C'</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1→2</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1+1 = <strong>2</strong></td></tr>
+        <tr><td class="mono">2→4</td><td class="mono">5</td><td class="mono">1</td><td class="mono">3</td><td class="mono">5+3 = <strong>8</strong></td></tr>
+        <tr><td class="mono">1→3</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1+1 = <strong>2</strong></td></tr>
+        <tr><td class="mono">3→4</td><td class="mono">6</td><td class="mono">1</td><td class="mono">1</td><td class="mono">6+1 = <strong>7</strong> ← 折扣猛</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>STEP 2 · Dijkstra 從 S=1</strong>：</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INIT</span>
+dist = [_, 0, ∞, ∞, ∞]    (索引 1..4)
+pq = {(0,1)}</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// POP (0, 1)</span>
+鬆弛 1→2 (w=2): dist[2] = 2  push (2,2)
+鬆弛 1→3 (w=2): dist[3] = 2  push (2,3)
+dist = [_, 0, 2, 2, ∞]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// POP (2, 2)</span>
+鬆弛 2→4 (w=8): dist[4] = 2+8 = 10  push (10,4)
+dist = [_, 0, 2, 2, 10]</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// POP (2, 3)</span>
+鬆弛 3→4 (w=7): 2+7 = 9 &lt; 10 ⇒ dist[4] = 9  push (9,4)
+dist = [_, 0, 2, 2, 9]      ← 走 1→3→4 比 1→2→4 便宜</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// POP (9, 4)</span>
+u = 4 = E，dist[4] 已定 = 9
+(後續 pop (10,4) 時 d=10 &gt; dist[4]=9 ⇒ 跳過)</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>9</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：兩箱全走 <code>1→3→4</code> = 2 + 7 = <strong>9</strong>，贏過 <code>1→2→4</code> = 2 + 8 = 10。
+      勝負手是 <code>3→4</code> 的折扣（第 2 箱從 6 降到 1）。<strong>沒有拆箱、整批走同一條路</strong> —— 這正是凹成本的最優型態。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>樣本第 1 組同圖但 <code>F=1</code>，請手算輸出。第 3 組 <code>N=2, F=10⁹, 邊 C=C'=50216, D=1000</code> 又是多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">變形</span>
+      <h4>若改成「運越多越貴」（漲價，<code>C' ≥ C</code>，凸成本），這個單路徑最短路還對嗎？該換什麼演算法？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">無解</span>
+      <h4>若 S 根本到不了 E（沒有路徑），程式會輸出什麼？這樣合理嗎？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 建模</span>
+      <p>
+        因為最優解一定「整批 F 箱走同一條路」（見 A2），所以每條邊上的運量<strong>要嘛 0、要嘛 F</strong>，
+        不會是中間值。既然只有「運 F 箱」這一種情況，就能事先把它的花費算成固定權重：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 邊權</span>
+w = (F &lt;= D) ? F*C : D*C + (F-D)*C'</pre>
+      <p>之後在這張固定權重的圖上找最便宜路徑，就是最短路。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 凹 vs 凸</span>
+      <p>
+        折扣 ⇒ 每條邊的花費函數 <code>g(x)</code> 是<strong>凹的、過原點</strong> ⇒ <strong>次可加</strong>：
+        <code>g(a+b) ≤ g(a)+g(b)</code>。意思是「合併送」永遠不比「分開送」貴。
+      </p>
+      <p>
+        把任何分流方案沿每條邊合併，總花費只減不增 ⇒ 一定能合併成「全部走一條路」。
+        於是只要找最便宜的單一路徑 ⇒ <strong>最短路</strong>。
+      </p>
+      <p>
+        反之，<strong>凸</strong>成本（漲價、邊際遞增）是<strong>超可加</strong>：<code>g(a+b) ≥ g(a)+g(b)</code> ⇒
+        分開送才便宜 ⇒ 要拆流 ⇒ 這才是<strong>最小成本流（MCMF）</strong>的場景。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · MCMF 反例</span>
+      <p>
+        把邊拆成「容量 D 成本 C」+「容量 ∞ 成本 C'」後，MCMF 會優先用便宜的 C' 那條
+        （因為 <code>C' ≤ C</code>），等於<strong>沒先付前 D 箱的全額就偷拿折扣價</strong> ⇒ 算出比實際更低的花費。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 樣本 2 套 MCMF（錯）</span>
+正確答案 = 9
+兩邊拆 MCMF 算出 = 4   ← 偷拿折扣，嚴重偏低</pre>
+      <p>根因：MCMF 的正確性建立在<strong>凸成本</strong>上；凹成本拆邊後模型本身就錯了。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 演算法選擇</span>
+      <p>
+        壓完邊權後所有邊權都 <strong>≥ 0</strong>（C, D, C', F 都正），所以 <strong>Dijkstra</strong> 正確且最快
+        <code>O(M log N)</code>。Bellman-Ford / SPFA 也會對但較慢、無負邊也沒必要。
+      </p>
+      <p>
+        <strong>Floyd 也可以</strong>（N ≤ 100 ⇒ <code>O(N³) = 10⁶</code>，× T=20 = 2×10⁷ 仍可過），
+        且寫起來更短；但只需要單源最短路時 Dijkstra 更貼題。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 資料型別</span>
+      <p>
+        邊權 <code>w</code>、<code>dist[]</code>、以及讀入的 <code>F, C, D, C'</code> 都建議用 <code>long long</code>。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// int 溢位例</span>
+F = 10⁹, C = 50216
+F * C = 50216 × 10⁹ ≈ 5.02 × 10¹³
+int 上限 ≈ 2.1 × 10⁹  ⇒  乘法當下就溢位 ❌
+long long 上限 ≈ 9.2 × 10¹⁸  ⇒  OK ✓</pre>
+      <p>樣本第 3 組答案 <code>50215999949784</code> 本身就 &gt; 5×10¹³，用 int 直接爆。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        <strong>樣本 1（F=1）</strong>：F=1 ≤ D=1 ⇒ 每邊全額 C。路徑 <code>1→2→4</code> = 1+5 = <strong>6</strong>，
+        <code>1→3→4</code> = 1+6 = 7。最短 = <strong>6</strong>。
+      </p>
+      <p>
+        <strong>樣本 3</strong>：F=10⁹ &gt; D=1000，邊 <code>1→2</code> 權重 = <code>1000·50216 + (10⁹−1000)·50216</code>
+        = <code>10⁹ · 50216</code>（因 C=C' 折扣無差）= <strong>50215999949784</strong>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        <strong>不對了</strong>。漲價 = 凸成本 = 超可加 ⇒ 把流量拆到多條路徑才便宜，單路徑反而可能更貴。
+        這時要改用<strong>最小成本最大流（MCMF）</strong>：每條邊拆成多段遞增單價的子邊（容量 D 成本 C、其餘成本 C'≥C），
+        逐單位沿最短增廣路送 F 箱。凸成本下這個拆邊模型才正確。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        S 到不了 E 時 <code>dist[E]</code> 仍是初始的 <code>INF (LLONG_MAX)</code>，程式會原樣印出這個巨大數字。
+      </p>
+      <p>
+        本題保證有解（測資不會出無路徑的情況），所以這樣寫沒問題；但若題目可能無解，正式做法應<strong>特判
+        <code>dist[E] == INF</code> 輸出指定的「無解」字樣</strong>，而不是印出 LLONG_MAX。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 Dijkstra trace — 看懂凹成本為何退化成單路徑最短路。</div>
+    <div class="sc-summary-bar__detail">範例輸出：9（1→3→4，靠 3→4 折扣 6→1）· 凹用最短路、凸才 MCMF</div>
+  </div>
+
+</body>
+</html>

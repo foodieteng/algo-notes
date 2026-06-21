@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P348 · 02 Code // 可魚果運輸問題 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P348
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/348/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">可魚果運輸問題</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · Dijkstra
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(T · M log N)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N + M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p348.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<span class="k">typedef</span> <span class="t">long long</span> ll<span class="p">;</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> T<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> T<span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>T<span class="p">--)</span> <span class="p">{</span>
+        <span class="t">int</span> N<span class="p">,</span> M<span class="p">,</span> S<span class="p">,</span> E<span class="p">;</span>
+        ll F<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M <span class="p">&gt;&gt;</span> S <span class="p">&gt;&gt;</span> E <span class="p">&gt;&gt;</span> F<span class="p">;</span>
+
+        <span class="c">// 邊權 = 把整批 F 箱都走這條邊的花費（折扣一次算進去）</span>
+        <span class="c">// 凹成本（折扣）⇒ 全部集中在一條路徑最省 ⇒ 退化成最短路</span>
+        <span class="t">vector</span><span class="p">&lt;</span><span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> ll<span class="p">&gt;&gt;&gt;</span> adj<span class="p">(</span>N <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> M<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+            ll A<span class="p">,</span> B<span class="p">,</span> C<span class="p">,</span> D<span class="p">,</span> Cp<span class="p">;</span>
+            cin <span class="p">&gt;&gt;</span> A <span class="p">&gt;&gt;</span> B <span class="p">&gt;&gt;</span> C <span class="p">&gt;&gt;</span> D <span class="p">&gt;&gt;</span> Cp<span class="p">;</span>
+
+            ll w<span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span>F <span class="p">&lt;=</span> D<span class="p">)</span> w <span class="p">=</span> F <span class="p">*</span> C<span class="p">;</span>                 <span class="c">// 沒超過 D 箱：全額 C</span>
+            <span class="k">else</span>        w <span class="p">=</span> D <span class="p">*</span> C <span class="p">+</span> <span class="p">(</span>F <span class="p">-</span> D<span class="p">)</span> <span class="p">*</span> Cp<span class="p">;</span>  <span class="c">// 超出部份折扣 C'</span>
+
+            adj<span class="p">[</span>A<span class="p">].</span><span class="f">push_back</span><span class="p">({(</span><span class="t">int</span><span class="p">)</span>B<span class="p">,</span> w<span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="c">// Dijkstra（邊權非負）</span>
+        <span class="k">const</span> ll INF <span class="p">=</span> LLONG_MAX<span class="p">;</span>
+        <span class="t">vector</span><span class="p">&lt;</span>ll<span class="p">&gt;</span> dist<span class="p">(</span>N <span class="p">+</span> <span class="n">1</span><span class="p">,</span> INF<span class="p">);</span>
+        priority_queue<span class="p">&lt;</span>pair<span class="p">&lt;</span>ll<span class="p">,</span> <span class="t">int</span><span class="p">&gt;,</span> <span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span>ll<span class="p">,</span> <span class="t">int</span><span class="p">&gt;&gt;,</span> greater<span class="p">&lt;&gt;&gt;</span> pq<span class="p">;</span>
+        dist<span class="p">[</span>S<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        pq<span class="p">.</span><span class="f">push</span><span class="p">({</span><span class="n">0</span><span class="p">,</span> S<span class="p">});</span>
+        <span class="k">while</span> <span class="p">(!</span>pq<span class="p">.</span><span class="f">empty</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">auto</span> <span class="p">[</span>d<span class="p">,</span> u<span class="p">]</span> <span class="p">=</span> pq<span class="p">.</span><span class="f">top</span><span class="p">();</span> pq<span class="p">.</span><span class="f">pop</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span>d <span class="p">&gt;</span> dist<span class="p">[</span>u<span class="p">])</span> <span class="k">continue</span><span class="p">;</span>           <span class="c">// 過期條目，跳過</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="p">[</span>v<span class="p">,</span> w<span class="p">]</span> <span class="p">:</span> adj<span class="p">[</span>u<span class="p">])</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span>d <span class="p">+</span> w <span class="p">&lt;</span> dist<span class="p">[</span>v<span class="p">])</span> <span class="p">{</span>
+                    dist<span class="p">[</span>v<span class="p">]</span> <span class="p">=</span> d <span class="p">+</span> w<span class="p">;</span>
+                    pq<span class="p">.</span><span class="f">push</span><span class="p">({</span>dist<span class="p">[</span>v<span class="p">],</span> v<span class="p">});</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        cout <span class="p">&lt;&lt;</span> dist<span class="p">[</span>E<span class="p">]</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span> <span class="f">solve</span><span class="p">();</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      整段精華只有那 2 行邊權判斷：把「分段折扣」一次折成單一數字，後面就是教科書 Dijkstra。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>單組測資拆解：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>讀邊 + 壓權</td><td>每條邊算一次分段花費</td><td class="mono">O(M)</td></tr>
+        <tr><td>Dijkstra</td><td>堆 + 鬆弛 M 條邊</td><td class="mono">O(M log N)</td></tr>
+        <tr><td>輸出</td><td>印 dist[E]</td><td class="mono">O(1)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(T · M log N)</strong></div>
+      <div class="sc-formula__hint">N ≤ 100, M ≤ N(N−1) ≈ 10⁴, T ≤ 20 ⇒ 數百萬次操作，秒過</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(T · M log N)</strong></td><td>每組壓邊權 + 一次 Dijkstra</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>鄰接表 + dist 陣列</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>F·C 最大 ~5×10¹³，路徑和 ~5×10¹⁵</td></tr>
+        <tr><td>Constant factor</td><td>低</td><td>圖極小，堆操作可忽略</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>別套 MCMF</strong></td>
+          <td>折扣是<strong>凹成本</strong>（邊際遞減），最小成本流需要凸成本。硬把邊拆成「D 箱 C + 其餘 C'」兩條，MCMF 會先偷拿便宜的 C' ⇒ 算出比實際更低、<strong>錯誤</strong>的答案。</td>
+        </tr>
+        <tr>
+          <td><strong>邊權是整批不是單價</strong></td>
+          <td>w 要算「<strong>F 箱整批</strong>」的花費，不是「每箱單價」。先壓成單一邊權，最短路才有意義。</td>
+        </tr>
+        <tr>
+          <td><strong>F ≤ D 的分支</strong></td>
+          <td>若 F 沒超過 D，整批都是全額 <code>F·C</code>，吃不到折扣。漏判會錯用折扣價。</td>
+        </tr>
+        <tr>
+          <td><strong>long long 全程</strong></td>
+          <td><code>F·C</code> 達 10⁹×50216 ≈ 5×10¹³；路徑最多 ~100 條邊 ⇒ 總和 ~5×10¹⁵。<code>int</code> 必爆。連 A,B,C,D,C' 讀進來都用 ll 最省心。</td>
+        </tr>
+        <tr>
+          <td><strong>有向邊</strong></td>
+          <td>路線是 <code>A → B</code> 單向（東→西），<strong>不可反走</strong>。只加單向邊。</td>
+        </tr>
+        <tr>
+          <td><strong>多筆測資清空</strong></td>
+          <td><code>adj</code> / <code>dist</code> 宣告在 <code>while(T--)</code> 內，每組自動乾淨。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 壓邊權（折扣一次折進去）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// edge weight</span>
+讀 (A, B, C, D, C')
+if F &lt;= D:  w = F * C              ← 整批沒超過 D 箱，全額
+else:       w = D*C + (F-D)*C'     ← 前 D 箱 C，超出折扣 C'
+adj[A].push_back({B, w})           ← 單向邊 A→B，權重 w</pre>
+
+    <p><strong>② Dijkstra 初始化</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// init</span>
+dist[] = INF; dist[S] = 0
+pq = min-heap of (距離, 點)，先放 (0, S)</pre>
+
+    <p><strong>③ 取最近點 + 鬆弛</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// relax</span>
+while pq 非空:
+    (d, u) = pq.top(); pop
+    if d &gt; dist[u]: continue       ← 過期條目跳過（lazy deletion）
+    for (v, w) in adj[u]:
+        if d + w &lt; dist[v]:
+            dist[v] = d + w
+            pq.push({dist[v], v})</pre>
+
+    <p><strong>④ 輸出</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// output</span>
+印 dist[E]   ← 把 F 箱全走最短路徑的最小花費</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">2 行壓邊權（折扣折進去）+ 教科書 Dijkstra；別套 MCMF（凹成本會算錯）。</div>
+    <div class="sc-summary-bar__detail">w = (F≤D)?F·C:D·C+(F−D)·C' · long long 全程 · T = O(T·M log N)</div>
+  </div>
+
+</body>
+</html>
