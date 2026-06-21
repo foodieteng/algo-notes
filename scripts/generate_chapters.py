@@ -41,7 +41,7 @@ CHAPTERS = [
     ('07', '07-dp1',                'DP 1',                 'DP 入門、狀態設計、最佳化',                       6),
     ('08', '08-dp2',                'DP 2',                 '區間 DP、樹 DP',                                  5),
     ('09', '09-dp3',                'DP 3',                 '狀態壓縮、位元 DP、進階技巧',                    10),
-    ('10', '10-mst-shortest',       'MST · Shortest',       '拓樸排序、最小生成樹、最短路徑',                  7),
+    ('10', '10-mst-shortest',       'MST · Shortest',       '拓樸排序、最小生成樹、最短路徑',                 10),
     ('11', '11-string-trie-kmp',    'Trie · KMP',           '字串匹配、Trie、KMP',                            4),
     ('12', '12-geometry-math-game', 'Geom · Math · Game',   '計算幾何、數論、賽局理論',                       10),
     ('13', '13-connect-segtree',    'Connect · Segtree',    '連通性、線段樹',                                 11),
@@ -101,6 +101,18 @@ PROBLEMS = {
         ('p374', '島嶼',                            'practice', 'todo'),
         ('p170', '烏龜疊疊樂',                      'practice', 'todo'),
     ],
+    '10': [
+        ('p151', '陣線推進',                        'main',     'done'),
+        ('p348', '可魚果運輸問題',                  'main',     'todo'),
+        ('p378', '江神與他的小火車',                'main',     'todo'),
+        ('p472', '最小生成樹',                      'main',     'todo'),
+        ('p351', '慘字道路規劃',                    'bonus',    'todo'),
+        ('p473', '道路工程',                        'bonus',    'todo'),
+        ('p474', '石油',                            'bonus',    'todo'),
+        ('p150', '關鍵邏輯閘',                      'practice', 'todo'),
+        ('p352', '次短距離',                        'practice', 'todo'),
+        ('p370', '邪教的咒語',                      'practice', 'todo'),
+    ],
 }
 
 CATEGORY_NAMES = {
@@ -119,6 +131,7 @@ WEEK_CONTEST = {
     '07': 24,
     '08': 26,
     '09': 28,
+    '10': 30,
 }
 DEFAULT_CONTEST = 20
 

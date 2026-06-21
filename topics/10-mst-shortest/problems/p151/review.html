@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P151 · 03 Review // 陣線推進 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P151
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/151/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">陣線推進</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>「攻 b 前先攻 a」= 有向邊 a→b ⇒ 求<strong>拓樸排序</strong>。</td></tr>
+        <tr><td>字典序最小</td>
+            <td>Kahn 把 queue 換成 <strong>min-heap</strong>，每步取可選中最小編號。</td></tr>
+        <tr><td>解鎖機制</td>
+            <td>取出 u 後對每條 u→w 做 <code>--indeg[w]</code>，降到 0 才進堆。</td></tr>
+        <tr><td>循環判定</td>
+            <td>輸出個數 ≠ n ⇒ 有環 ⇒ 輸出 <code>QAQ</code>，不必額外偵測。</td></tr>
+        <tr><td>貪心正確性</td>
+            <td>交換論證：第一格非「最小可選」不可，逐格歸納 ⇒ 全域字典序最小。</td></tr>
+        <tr><td>複雜度</td>
+            <td><code>O((n + m) log n)</code>，每點進出堆一次、每邊掃一次。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">資料結構</span>
+      <h4>普通 Kahn 用一般 queue 也能拓樸排序，為什麼本題一定要換成 min-heap？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">邊方向</span>
+      <h4>輸入「<code>a b</code>」代表攻 b 前先攻 a。建圖時邊該朝哪個方向？<code>indeg</code> 加在誰身上？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">循環偵測</span>
+      <h4>程式沒有寫任何「找環」的程式碼，卻能正確輸出 <code>QAQ</code>。它是怎麼判斷無解的？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">貪心反例</span>
+      <h4>「把答案最後排序一下不就字典序最小了？」這個想法為什麼錯？舉個會壞掉的例子。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">正確性</span>
+      <h4>為什麼「每步取目前可選的最小」能保證<strong>整個序列</strong>字典序最小，而不只是區域最優？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>取一個能看出「小編號被迫延後」的例子：<code>n = 5</code>，兩條邊 <code>0→1</code>、<code>3→2</code>。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>1
+5 2
+0 1
+3 2</pre>
+
+    <p>建圖後：</p>
+    <table class="sc-table">
+      <thead><tr><th>陣地 v</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">adj[v]</td><td class="mono">{1}</td><td class="mono">{}</td><td class="mono">{}</td><td class="mono">{2}</td><td class="mono">{}</td></tr>
+        <tr><td class="mono">indeg[v]</td><td class="mono">0</td><td class="mono">1</td><td class="mono">1</td><td class="mono">0</td><td class="mono">0</td></tr>
+      </tbody>
+    </table>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// SEED · indeg=0 進堆</span>
+heap = {0, 3, 4}    ← 1 欠 0、2 欠 3，先不能進
+order = []</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// STEP 1 · pop 0</span>
+取最小 → u = 0
+order = [0]
+鬆弛 adj[0] = {1}: --indeg[1] = 0 → push 1
+heap = {1, 3, 4}</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// STEP 2 · pop 1</span>
+取最小 → u = 1
+order = [0, 1]
+adj[1] = {} → 無解鎖
+heap = {3, 4}</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// STEP 3 · pop 3</span>
+取最小 → u = 3    ← 注意：2 還沒進堆（還欠 3），所以取 3 不是 2
+order = [0, 1, 3]
+鬆弛 adj[3] = {2}: --indeg[2] = 0 → push 2
+heap = {2, 4}</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// STEP 4 · pop 2</span>
+取最小 → u = 2    ← 2 終於解鎖，才被排進來（在 3 之後）
+order = [0, 1, 3, 2]
+heap = {4}</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// STEP 5 · pop 4</span>
+取最小 → u = 4
+order = [0, 1, 3, 2, 4]
+heap = {}  → 結束，order.size() = 5 = n ✓</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>0 1 3 2 4</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：<code>2</code> 編號比 <code>3</code> 小，卻排在 <code>3</code> 後面 —
+      因為在「該不該選 2」的那一刻，<strong>2 還欠著前置 3</strong>，根本不在可選集合裡。
+      貪心取的是「<strong>目前可選</strong>的最小」，不是「全場最小」。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>官方樣本第一組 <code>n=3</code>、邊 <code>0→1, 1→2, 0→2</code>，請手動跑出輸出。第二組 <code>0→1, 1→2, 2→0</code> 又是什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">資料量</span>
+      <h4>m 可達 3×10⁵、再 ×5 組測資。若忘了關 <code>sync_with_stdio</code> 或用了 <code>endl</code>，會發生什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形</span>
+      <h4>若題目改成要「字典序<strong>最大</strong>」的拓樸序，程式要怎麼改？只動一行可以嗎？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 資料結構</span>
+      <p>
+        一般 queue 的 Kahn 只能保證輸出「<strong>某一個</strong>合法拓樸序」— 出隊順序取決於入隊先後，
+        無法控制字典序。本題要的是<strong>字典序最小</strong>的那一個，必須在每一步都從「目前可選的點」裡
+        挑<strong>編號最小</strong>者。能在動態變化的集合裡反覆取最小值的資料結構，正是
+        <strong>min-heap（小根堆）</strong> ⇒ <code>priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 邊方向</span>
+      <p>
+        「攻 b 前先攻 a」表示 a 是 b 的<strong>前置條件</strong>，邊朝 <code>a → b</code>。
+        b 多了一個必須先完成的對象 ⇒ <code>indeg[b]++</code>。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// edge (a, b)</span>
+adj[a].push_back(b);   // a 完成 → b 解鎖一步
+indeg[b]++;            // b 的「欠債數」+1</pre>
+      <p>若把方向寫反成 <code>b → a</code>，整個依賴關係顛倒，輸出會是錯的（通常變成「答案的反序」）。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 循環偵測</span>
+      <p>
+        靠「<strong>輸出個數</strong>」隱式判斷。一個點只有在 <code>indeg</code> 降到 0 時才會進堆；
+        若它在一個環裡，環上每個點都互相欠著對方，<strong>沒有人能先降到 0</strong>，於是它們永遠進不了堆。
+      </p>
+      <p>
+        堆空、迴圈結束時，這些環上的點都沒被輸出 ⇒ <code>order.size() &lt; n</code> ⇒ 判定無解、印 <code>QAQ</code>。
+        所以不需要額外的 DFS 找環。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 貪心反例</span>
+      <p>
+        「最後把答案排序」會破壞合法性，根本不是同一個問題。看本頁 trace 的例子，正確答案是
+        <code>0 1 3 2 4</code>；若硬把它排序成 <code>0 1 2 3 4</code>，就違反了「攻 2 前先攻 3」
+        （2 跑到 3 前面）⇒ <strong>不合法</strong>。
+      </p>
+      <p>
+        字典序最小必須在<strong>滿足依賴的前提下</strong>逐格取最小，而不是事後排序。這正是 min-heap Kahn 在做的事。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 正確性（交換論證）</span>
+      <p>
+        設 <code>v</code> = 目前所有 indeg=0 的點中最小者。對任何合法序 <code>S</code>：v 無前置，
+        把 v 抽出移到最前面仍合法，而第一格從 <code>S₁</code> 變成更小的 <code>v</code> ⇒ 字典序更小。
+        所以最佳序的第一格<strong>必是 v</strong>。
+      </p>
+      <p>
+        固定第一格後移除 v、更新入度，剩下的子問題結構完全相同 ⇒ 第二格同理取「現在可選的最小」⇒
+        一路歸納到底。因此「每步取堆頂最小」逐格都是最優選擇 ⇒ 整體字典序最小，不只是區域最優。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p><strong>第一組</strong> <code>n=3</code>，邊 <code>0→1, 1→2, 0→2</code>：indeg = [0,1,2]。</p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 第一組</span>
+heap={0} → pop 0, 解鎖 1(indeg 1→0)、2(indeg 2→1)  heap={1}
+pop 1, 解鎖 2(indeg 1→0)  heap={2}
+pop 2  heap={}
+輸出 = 0 1 2   （唯一合法序）</pre>
+      <p><strong>第二組</strong> <code>0→1, 1→2, 2→0</code>：三點互相依賴成環，indeg 全為 1，沒有點能進堆 ⇒
+      <code>order.size()=0 ≠ 3</code> ⇒ 輸出 <code>QAQ</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        輸入規模 m×T 可達 1.5×10⁶ 行。沒關 <code>sync_with_stdio(false)</code> 時 cin 跟 C 的 stdio 同步，
+        讀入會慢數倍；用 <code>endl</code> 每次強制 flush 緩衝區，輸出也會嚴重變慢 ⇒ <strong>很可能 TLE</strong>。
+      </p>
+      <p>對策：<code>ios::sync_with_stdio(false); cin.tie(nullptr);</code> 開頭加上，輸出一律用 <code>'\n'</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        要字典序<strong>最大</strong>只需把小根堆改成<strong>大根堆</strong>，<strong>只動一行</strong>：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 字典序最大</span>
+priority_queue&lt;int&gt; pq;   // 預設就是 max-heap
+// 其餘邏輯完全不變</pre>
+      <p>
+        交換論證對稱地成立：每步取「目前可選的最大」⇒ 整體字典序最大。判循環的方式也一樣（輸出個數 ≠ n ⇒ 有環）。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 看懂「貪心取目前可選的最小」逐格最優。</div>
+    <div class="sc-summary-bar__detail">範例輸出：0 1 3 2 4（2 因欠前置 3 被迫延後）· 字典序最大只需改成 max-heap</div>
+  </div>
+
+</body>
+</html>

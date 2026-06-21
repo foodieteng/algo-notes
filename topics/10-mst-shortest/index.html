@@ -38,7 +38,7 @@
     <div class="meta-row">
       <span><span class="dot"></span>CHAPTER 10</span>
       <span>WEEK 10</span>
-      <span>07 PROBLEMS</span>
+      <span>10 PROBLEMS</span>
     </div>
     <h1 class="workshop-title">MST · Shortest.</h1>
     <p class="workshop-subtitle">
@@ -61,7 +61,7 @@
           <li><a href="../../topics/07-dp1/index.html">W07 · DP 1 <span class="tag">06</span></a></li>
           <li><a href="../../topics/08-dp2/index.html">W08 · DP 2 <span class="tag">05</span></a></li>
           <li><a href="../../topics/09-dp3/index.html">W09 · DP 3 <span class="tag">10</span></a></li>
-          <li><a href="../../topics/10-mst-shortest/index.html" class="is-active">W10 · MST · Shortest <span class="tag">07</span></a></li>
+          <li><a href="../../topics/10-mst-shortest/index.html" class="is-active">W10 · MST · Shortest <span class="tag">10</span></a></li>
           <li><a href="../../topics/11-string-trie-kmp/index.html">W11 · Trie · KMP <span class="tag">04</span></a></li>
           <li><a href="../../topics/12-geometry-math-game/index.html">W12 · Geom · Math · Game <span class="tag">10</span></a></li>
           <li><a href="../../topics/13-connect-segtree/index.html">W13 · Connect · Segtree <span class="tag">11</span></a></li>
@@ -93,14 +93,62 @@
         <h2>本章節大綱</h2>
         <div class="article-meta">
           <span>W10</span>
-          <span>07 PROBLEMS</span>
+          <span>10 PROBLEMS</span>
         </div>
 
         <ul class="notes-list">
+          <li><a href="#sec-quick-index">⚡ 快速索引</a></li>
           <li><a href="#sec-concept">10.1 · 核心概念</a></li>
-          <li><a href="#sec-problems">10.2 · 題目列表</a></li>
-          <li><a href="#sec-notes">10.3 · 筆記與補充</a></li>
+          <li><a href="#sec-main">10.2 · 上機作業</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><a href="problems/p151/index.html">P151 · 陣線推進</a> <a href="https://tioj.sprout.tw/contests/30/problems/151/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P348 · 可魚果運輸問題 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/348/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P378 · 江神與他的小火車 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/378/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P472 · 最小生成樹 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/472/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-bonus">10.3 · Bonus</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P351 · 慘字道路規劃 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/351/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P473 · 道路工程 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/473/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P474 · 石油 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/474/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-practice">10.4 · 自由練習</a>
+            <ul class="notes-list" style="margin: 6px 0 6px 16px;">
+              <li><span style="color:var(--concrete)">P150 · 關鍵邏輯閘 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/150/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P352 · 次短距離 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/352/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+              <li><span style="color:var(--concrete)">P370 · 邪教的咒語 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/370/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+            </ul>
+          </li>
+          <li><a href="#sec-notes">10.5 · 筆記與補充</a></li>
         </ul>
+      </article>
+
+      <article id="sec-quick-index">
+        <span class="stamp">▼ QUICK INDEX</span>
+        <h2>題目快速索引</h2>
+        <div class="article-meta">
+          <span>SUMMARY</span>
+          <span>10 PROBLEMS</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>類別</th><th>題號</th><th>題目</th><th>原題</th><th>狀態</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P151</td><td><a href="problems/p151/index.html">陣線推進</a></td><td><a href="https://tioj.sprout.tw/contests/30/problems/151/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:#6ba368">✓ done</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P348</td><td><span style="color:var(--concrete)">可魚果運輸問題</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/348/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P378</td><td><span style="color:var(--concrete)">江神與他的小火車</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/378/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">上機作業</span></td><td style="font-family:var(--font-mono);">P472</td><td><span style="color:var(--concrete)">最小生成樹</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/472/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">Bonus</span></td><td style="font-family:var(--font-mono);">P351</td><td><span style="color:var(--concrete)">慘字道路規劃</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/351/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">Bonus</span></td><td style="font-family:var(--font-mono);">P473</td><td><span style="color:var(--concrete)">道路工程</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/473/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">Bonus</span></td><td style="font-family:var(--font-mono);">P474</td><td><span style="color:var(--concrete)">石油</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/474/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P150</td><td><span style="color:var(--concrete)">關鍵邏輯閘</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/150/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P352</td><td><span style="color:var(--concrete)">次短距離</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/352/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+            <tr><td><span class="chip">自由練習</span></td><td style="font-family:var(--font-mono);">P370</td><td><span style="color:var(--concrete)">邪教的咒語</span></td><td><a href="https://tioj.sprout.tw/contests/30/problems/370/" target="_blank" rel="noopener" style="color:var(--rust-bright);border:none;">原題 ↗</a></td><td><span style="color:var(--concrete)">○ todo</span></td></tr>
+          </tbody>
+        </table>
       </article>
 
       <article id="sec-concept">
@@ -112,19 +160,48 @@
         <p>—— 待補 ——</p>
       </article>
 
-      <article id="sec-problems">
+      <article id="sec-main">
         <span class="stamp">▼ 10.2</span>
-        <h2>題目列表</h2>
+        <h2>上機作業</h2>
         <div class="article-meta">
-          <span>PROBLEMS</span>
+          <span>4 PROBLEMS</span>
         </div>
         <ul class="notes-list">
-          <li><span style="color:var(--concrete)">—— 待新增題目 ——</span></li>
+          <li><a href="problems/p151/index.html">P151 · 陣線推進</a> <a href="https://tioj.sprout.tw/contests/30/problems/151/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P348 · 可魚果運輸問題 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/348/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P378 · 江神與他的小火車 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/378/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P472 · 最小生成樹 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/472/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+        </ul>
+      </article>
+
+      <article id="sec-bonus">
+        <span class="stamp">▼ 10.3</span>
+        <h2>Bonus</h2>
+        <div class="article-meta">
+          <span>3 PROBLEMS</span>
+        </div>
+        <ul class="notes-list">
+          <li><span style="color:var(--concrete)">P351 · 慘字道路規劃 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/351/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P473 · 道路工程 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/473/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P474 · 石油 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/474/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+        </ul>
+      </article>
+
+      <article id="sec-practice">
+        <span class="stamp">▼ 10.4</span>
+        <h2>自由練習</h2>
+        <div class="article-meta">
+          <span>3 PROBLEMS</span>
+        </div>
+        <ul class="notes-list">
+          <li><span style="color:var(--concrete)">P150 · 關鍵邏輯閘 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/150/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P352 · 次短距離 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/352/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
+          <li><span style="color:var(--concrete)">P370 · 邪教的咒語 <span style="color:var(--line-bright)">(待補)</span></span> <a href="https://tioj.sprout.tw/contests/30/problems/370/" target="_blank" rel="noopener" style="margin-left:8px;font-size:11px;color:var(--rust-bright);border:none;">原題 ↗</a></li>
         </ul>
       </article>
 
       <article id="sec-notes">
-        <span class="stamp">▼ 10.3</span>
+        <span class="stamp">▼ 10.5</span>
         <h2>筆記與補充</h2>
         <div class="article-meta">
           <span>NOTES</span>

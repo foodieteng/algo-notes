@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P151 · 01 概念 // 陣線推進 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P151
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/151/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">陣線推進</h1>
+    <p class="sc-mast__subtitle">// Lexicographically Smallest Topological Order</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 拓樸排序 · Kahn + min-heap
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O((n + m) log n)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p><code>n</code> 個陣地（編號 0 ~ n−1），<code>m</code> 條依賴關係。每條 <code>a b</code> 代表
+      <strong>攻破 b 之前必須先攻破 a</strong>。請輸出一個合法的攻破順序，且要是<strong>字典序最小</strong>的那一個；
+      若根本不存在合法順序（出現循環依賴），輸出 <code>QAQ</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      <code>1 ≤ n ≤ 10⁵ · 0 ≤ m ≤ 3×10⁵</code>，共 <code>T ≤ 5</code> 組測資。
+      「<code>a b</code>」就是一條有向邊 <code>a → b</code>（a 是 b 的前置）— 這整題的骨架就是
+      <strong>有向圖的拓樸排序（topological sort）</strong>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼用 min-heap Kahn
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 min-heap Kahn<span class="sc-section__title-en">// Why min-heap Kahn</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉全排列</span>
+            <span class="sc-ko-card__o">O(n!)</span>
+          </div>
+          <div class="sc-ko-card__body">試每個排列、檢查合法又比字典序。n = 10⁵ 直接爆炸。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">DFS 拓樸排序</span>
+            <span class="sc-ko-card__o">O(n + m)</span>
+          </div>
+          <div class="sc-ko-card__body">後序反轉雖能拓樸，但<strong>無法保證字典序最小</strong>。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · WRONG ORDER</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">Kahn + min-heap</span>
+          <span class="sc-ko-card__o">O((n+m) log n)</span>
+        </div>
+        <div class="sc-ko-card__body">用 priority_queue 維護「目前可選」的集合，<strong>每次貪心取編號最小</strong>。順手判循環。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · OPTIMAL</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      普通 Kahn 用一般 queue 只保證「某個」合法序；把 queue 換成 <strong>min-heap（小根堆）</strong>，
+      就把它升級成「<strong>字典序最小</strong>」的合法序。改動只有一行，這就是本題的全部精華。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">建好「鄰接表 <code>adj</code>」與「入度 <code>indeg</code>」後：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>初始化堆</strong> · 把所有 <code>indeg == 0</code> 的陣地（沒有前置、現在就能打）丟進 min-heap。</li>
+      <li><strong>反覆取最小</strong> · 從堆取出編號最小的 <code>u</code>，加入答案序列；對每條 <code>u → w</code>
+        做 <code>--indeg[w]</code>，若降到 0 就把 <code>w</code> 推進堆。</li>
+      <li><strong>判循環</strong> · 堆空後若已輸出 <code>n</code> 個 ⇒ 合法；否則剩下的點卡在循環裡 ⇒ 輸出 <code>QAQ</code>。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵</strong> · 「貪心取目前可選的最小」不是「取全場最小」— 一個小編號若還有前置沒打完，
+      就得乖乖等。下面的動畫示範這個「<strong>被迫延後</strong>」的時刻。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · min-heap Kahn<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p><code>n = 5</code>，兩條邊 <code>0 → 1</code>、<code>3 → 2</code>（攻 1 前先攻 0；攻 2 前先攻 3）。
+    注意 <strong>2 比 3 小，卻被迫排在 3 後面</strong>，因為 2 還欠著前置 3：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · MIN-HEAP KAHN</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="430" style="height:430px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 算好每個陣地的入度，indeg=0 者進堆
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">●</span> 還欠前置（indeg &gt; 0） &nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 在堆裡（可選） &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 本步取出 &nbsp;·&nbsp;
+      <span style="color:#9a9a9a">●</span> 已完成輸出
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為何貪心取最小 = 字典序最小
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何「每次取最小」就是字典序最小<span class="sc-section__title-en">// Greedy Correctness</span></h2>
+    </div>
+
+    <p style="font-size:14px;">直覺上好像理所當然，但要證明「<strong>貪心 = 全域最佳</strong>」需要一個交換論證
+    （exchange argument）。重點是：<strong>第一個位置一定要放「目前 indeg=0 中最小的那個」</strong>，
+    之後每一格遞迴同理。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">交換論證 · 為何第一格非最小不可</div>
+      <div class="sc-dark-box__body">
+        <p>設 <code>v</code> = 目前所有 <code>indeg=0</code> 的點裡編號最小者。考慮任何一個合法拓樸序 <code>S</code>：</p>
+        <ol>
+          <li><code>v</code> 沒有任何前置（indeg=0），所以放在序列最前面<strong>不會違反任何依賴</strong>。</li>
+          <li>若 <code>S</code> 的第一個元素 <code>S₁ ≠ v</code>，那 <code>v</code> 一定出現在 <code>S</code> 的後面某處。
+            把 <code>v</code> 抽出來、移到最前面 ⇒ 因為 v 無前置，<strong>移動後仍是合法序</strong>。</li>
+          <li>新序列第一格變成 <code>v &lt; S₁</code> ⇒ <strong>字典序更小</strong>。
+            ⇒ 任何「第一格不是 v」的序，都能被改造得更小 ⇒ 最佳序的第一格必是 <code>v</code>。</li>
+          <li>固定第一格為 <code>v</code> 後，把 v 移除、更新入度，剩下的子問題<strong>結構完全一樣</strong> ⇒
+            第二格同理取「現在可選的最小」⇒ 一路歸納到底。</li>
+        </ol>
+        <p style="margin-top:6px;">⇒ 「每步取堆頂最小」逐格都是最優選擇 ⇒ 整體就是<strong>字典序最小的拓樸序</strong>。</p>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;">
+      <strong>常見誤區</strong>：以為「先把答案排序」或「DFS 後序反轉」能拿到字典序最小 — 都不行。
+      字典序由<strong>最前面的元素主導</strong>，必須在每個前綴都貪心取最小可選，這正是 min-heap 在做的事。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">每個點進、出堆各一次 ⇒ <code>O(n log n)</code>；每條邊在「鬆弛入度」時被掃一次 ⇒ <code>O(m)</code>
+    （配合可能的入堆是 <code>O(m log n)</code>）。合起來：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O((n + m) log n)</strong></div>
+      <div class="sc-formula__hint">
+        n = 10⁵、m = 3×10⁵ ⇒ 約 4×10⁵ × 17 ≈ 7×10⁶ 次操作，每組測資都秒過
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O((n+m) log n)</strong></td><td>log 來自 priority_queue 的進出</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(n + m)</strong></td><td>鄰接表 + 入度陣列 + 堆</td></tr>
+        <tr><td>多筆測資</td><td class="mono">× T (≤ 5)</td><td>每組獨立重建圖，記得清空</td></tr>
+        <tr><td>Constant factor</td><td>中</td><td>堆操作常數略高，但量級內輕鬆</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「字典序最小拓樸序」= Kahn 把 queue 換成 min-heap。</strong><br/>
+      每步在「目前能打的陣地」裡貪心取編號最小，<br/>
+      交換論證保證逐格最優 ⇒ 整體字典序最小。<br/>
+      <strong>輸出不滿 n 個 ⇒ 有循環 ⇒ QAQ。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">拓樸排序 + 字典序最小 = Kahn 演算法把 queue 換成 min-heap，每步取可選中編號最小。</div>
+    <div class="sc-summary-bar__detail">交換論證保證逐格最優；輸出不滿 n 個代表有環 ⇒ QAQ。</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p151-toposort.js"></script>
+</body>
+</html>
