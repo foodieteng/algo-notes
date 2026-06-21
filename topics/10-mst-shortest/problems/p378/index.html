@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P378 · 01 概念 // 江神與他的小火車 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P378
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/378/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">江神與他的小火車</h1>
+    <p class="sc-mast__subtitle">// Two-Sided Dijkstra · 每條候選邊 O(1) 回答</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      核心 最短路 · 正反兩次 Dijkstra
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(M log N + Q)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p><code>N</code> 個城市、<code>M</code> 條<strong>有向</strong>軌道（<code>aᵢ → bᵢ</code>，長度 <code>wᵢ</code>）。
+      江神想各別評估 <code>Q</code> 種<strong>新增軌道</strong>的方案：第 <code>i</code> 種是加一條
+      <code>cᵢ → dᵢ</code>、<strong>長度固定為 1</strong> 的有向軌道。對<strong>每一種方案分開回答</strong>：
+      若在原圖加上這條軌道，城市 1 到城市 N 的<strong>最短路徑</strong>會變成多少？</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      <code>N ≤ 2×10⁵ · M ≤ 5×10⁵ · Q ≤ 10⁵ · wᵢ ≤ 10⁹</code>。每個 query <strong>獨立</strong>
+      （候選邊只是「假設加上去」，不會累積）。保證原圖本來就存在 1 → N 的路徑。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼正反兩次 Dijkstra
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼正反各跑一次最短路<span class="sc-section__title-en">// Why Two Dijkstras</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">每 query 重跑最短路</span>
+            <span class="sc-ko-card__o">O(Q·M log N)</span>
+          </div>
+          <div class="sc-ko-card__body">每次加一條邊重算 1→N。Q=10⁵ × Dijkstra ⇒ 太慢，TLE。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">全加進去再跑一次</span>
+            <span class="sc-ko-card__o">語意錯</span>
+          </div>
+          <div class="sc-ko-card__body">query 是<strong>各自獨立</strong>，不能把 Q 條候選邊一起塞進圖。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · 誤解題意</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">正 + 反 兩次 Dijkstra</span>
+          <span class="sc-ko-card__o">O(M log N + Q)</span>
+        </div>
+        <div class="sc-ko-card__body">預處理 <code>d1[]</code>（1 到各點）與 <code>dN[]</code>（各點到 N），每個 query <strong>O(1)</strong>。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · OPTIMAL</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵觀察</strong>：候選邊 <code>c → d</code> 只可能讓最短路長這樣 ——
+      「<strong>1 ⇝ c</strong>」走原圖 → 走候選邊 <code>c→d</code>（長度 1）→「<strong>d ⇝ N</strong>」走原圖。
+      把這條新路徑的長度算出來，跟原本的最短路比小即可。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 三步驟<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <ol style="margin-top:6px;">
+      <li><strong>正向 Dijkstra</strong> · 從城市 1 在原圖求 <code>d1[v]</code> = 1 到 v 的最短距離。</li>
+      <li><strong>反向 Dijkstra</strong> · 把每條邊反向建一張<strong>反圖</strong>，從城市 N 出發求
+        <code>dN[v]</code> = v 到 N 的最短距離（在反圖上 = N 到 v）。</li>
+      <li><strong>每個 query O(1)</strong> · 答案 = <code>min(d1[N], d1[c] + 1 + dN[d])</code>。
+        前項是原最短路，後項是「借候選邊 c→d」的新路徑。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為何只需兩次</strong> · <code>d1[]</code> 一次算好「從起點到任何 c」，<code>dN[]</code> 一次算好
+      「從任何 d 到終點」，組合起來就能 O(1) 回答任意候選邊 —— 預處理一次、查詢無數次。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · d1[] + dN[] + 查詢<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用樣本 1：6 城市鏈 <code>1→2→…→6</code>（每段長 1）。先算 <code>d1[]</code>、<code>dN[]</code>，
+    再回答候選邊 <code>2→5</code>：新路徑 = <code>d1[2] + 1 + dN[5]</code> = 1+1+1 = <strong>3</strong>：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · FORWARD + REVERSE DIJKSTRA + QUERY</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="450" style="height:450px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 6 城市鏈，先算 1 到各點 d1[]、各點到 6 的 dN[]
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">●</span> d1（從起點 1） &nbsp;·&nbsp;
+      <span style="color:#d4a868">●</span> dN（到終點 N） &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 候選邊 c→d / 新路徑 &nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 本步算出的答案
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為何答案就是那條式子（證明）
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何答案 = min(原最短路, d1[c]+1+dN[d])<span class="sc-section__title-en">// Correctness</span></h2>
+    </div>
+
+    <p style="font-size:14px;">加一條邊後的最短路，要嘛<strong>不用</strong>這條新邊、要嘛<strong>用</strong>它。兩種情形取最小就是答案。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">CASE 分析 · 用 or 不用候選邊</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li><strong>不用候選邊</strong> · 最短路就是原圖的 <code>d1[N]</code>，不變。</li>
+          <li><strong>用候選邊（恰一次）</strong> · 因為候選邊只有一條 <code>c→d</code>，任何用到它的路徑都長
+            「1 ⇝ c → d ⇝ N」。其中 1⇝c 段最短就是 <code>d1[c]</code>、d⇝N 段最短就是 <code>dN[d]</code>、
+            中間那條邊長 1 ⇒ 最佳 = <code>d1[c] + 1 + dN[d]</code>。</li>
+          <li><strong>會不會用兩次？</strong> 用兩次代表路徑經過 c→d 兩遍 ⇒ 中間繞了一個含 c、d 的環。
+            邊權非負 ⇒ 繞環不會更短 ⇒ <strong>用一次一定不劣</strong>，所以只需考慮「恰用一次」。</li>
+          <li>兩種情形取 min ⇒ <code>ans = min(d1[N], d1[c] + 1 + dN[d])</code>。</li>
+        </ol>
+        <p style="margin-top:6px;">（<code>dN[d]</code> 怎麼來？把所有邊反向得反圖，從 N 跑 Dijkstra；
+        反圖上「N 到 d」的距離 = 原圖「d 到 N」的距離。）</p>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;">
+      <strong>邊不可達的處理</strong>：若 <code>d1[c]</code> 或 <code>dN[d]</code> 為 ∞（c 到不了 / d 出不去），
+      這條候選邊形不成有效路徑 ⇒ 該項視為 ∞、不參與 min。題目保證原圖 1→N 連通，所以 base 一定有限。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">兩次 Dijkstra 各 <code>O(M log N)</code>，預處理完每個 query 只是一次比較 <code>O(1)</code>：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(M log N + Q)</strong></div>
+      <div class="sc-formula__hint">
+        M=5×10⁵、N=2×10⁵、Q=10⁵ ⇒ 約 5×10⁵×18 + 10⁵ ≈ 10⁷，輕鬆通過
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(M log N + Q)</strong></td><td>兩次 Dijkstra 預處理 + 每 query O(1)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>正圖 + 反圖鄰接表 + 兩個 dist 陣列</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>路徑和最大 ~N·10⁹ ≈ 2×10¹⁴，INF 設更大</td></tr>
+        <tr><td>查詢</td><td class="mono">O(1) / 個</td><td>一次加法 + 一次 min</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>候選邊 c→d 只能讓路長「1⇝c → d⇝N」。</strong><br/>
+      正向 Dijkstra 算好 <code>d1[]</code>、反圖 Dijkstra 算好 <code>dN[]</code>，<br/>
+      每個 query 就是 <code>min(d1[N], d1[c] + 1 + dN[d])</code>，<strong>O(1)</strong>。<br/>
+      <strong>預處理一次，無數查詢秒答。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">正向 Dijkstra 求 d1[]、反圖 Dijkstra 求 dN[]，每個候選邊 ans = min(d1[N], d1[c]+1+dN[d])。</div>
+    <div class="sc-summary-bar__detail">候選邊只能讓路長 1⇝c→d⇝N · 預處理 O(M log N)、每 query O(1) · 全程 long long</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p378-twosided.js"></script>
+</body>
+</html>

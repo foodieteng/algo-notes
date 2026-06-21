@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P378 · 03 Review // 江神與他的小火車 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P378
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/378/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">江神與他的小火車</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>核心觀察</td>
+            <td>候選邊 <code>c→d</code> 只能讓路長「<strong>1⇝c → d⇝N</strong>」。</td></tr>
+        <tr><td>正向 Dijkstra</td>
+            <td>從 1 求 <code>d1[v]</code> = 起點到 v 的最短距離。</td></tr>
+        <tr><td>反向 Dijkstra</td>
+            <td>建反圖、從 N 求 <code>dN[v]</code> = v 到終點的最短距離。</td></tr>
+        <tr><td>查詢公式</td>
+            <td><code>ans = min(d1[N], d1[c] + 1 + dN[d])</code>，O(1)。</td></tr>
+        <tr><td>獨立性</td>
+            <td>每個 query 各自假設、互不影響，不能一起塞圖。</td></tr>
+        <tr><td>數值</td>
+            <td>距離 ~2×10¹⁴ ⇒ <code>long long</code>；不可達先判 <code>&lt; INF</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">核心建模</span>
+      <h4>為什麼任何「用到候選邊 c→d」的最短路一定長「1⇝c → d⇝N」？怎麼把它拆成兩段預處理？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">反圖</span>
+      <h4><code>dN[v]</code>（v 到 N 的距離）為什麼要在<strong>反圖</strong>跑，而不是在正圖從 N 跑？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">獨立性</span>
+      <h4>能不能把全部 Q 條候選邊一起加進圖、只跑一次最短路就回答所有 query？為什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">用幾次</span>
+      <h4>最短路有沒有可能「用候選邊兩次」而更短？用邊權非負說明為什麼只需考慮用一次。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">資料型別</span>
+      <h4>INF 為什麼要設到 <code>4×10¹⁸</code> 這麼大，而不是 <code>10⁹</code> 或 <code>LLONG_MAX</code>？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用樣本 1：<code>N=6, M=5, Q=3</code>，一條鏈 <code>1→2→3→4→5→6</code>，每段長 1。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>6 5 3
+1 2 1
+2 3 1
+3 4 1
+4 5 1
+5 6 1
+2 5      ← query 1
+1 6      ← query 2
+3 2      ← query 3</pre>
+
+    <p><strong>STEP 1 · 兩次 Dijkstra</strong>：</p>
+    <table class="sc-table">
+      <thead><tr><th>v</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">d1[v] (1→v)</td><td class="mono">0</td><td class="mono">1</td><td class="mono">2</td><td class="mono">3</td><td class="mono">4</td><td class="mono">5</td></tr>
+        <tr><td class="mono">dN[v] (v→6)</td><td class="mono">5</td><td class="mono">4</td><td class="mono">3</td><td class="mono">2</td><td class="mono">1</td><td class="mono">0</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13.5px;"><code>base = d1[6] = 5</code>（原最短路）。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// QUERY 1 · (c=2, d=5)</span>
+cand = d1[2] + 1 + dN[5] = 1 + 1 + 1 = 3
+ans  = min(base=5, 3) = <span class="sc-trace__out">3</span>
+（借 2→5 把中段抄捷徑：1→2 →(新)5 →6）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// QUERY 2 · (c=1, d=6)</span>
+cand = d1[1] + 1 + dN[6] = 0 + 1 + 0 = 1
+ans  = min(5, 1) = <span class="sc-trace__out">1</span>
+（1→6 直達，整條路只剩長度 1）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// QUERY 3 · (c=3, d=2)</span>
+cand = d1[3] + 1 + dN[2] = 2 + 1 + 4 = 7
+ans  = min(5, 7) = <span class="sc-trace__out">5</span>
+（3→2 是往回走，沒幫助 ⇒ 維持原最短路 5）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>3
+1
+5</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：query 3 的候選邊 3→2 是<strong>往回</strong>，繞回去再前進反而更長（7 &gt; 5），
+      所以 <code>min</code> 保住原最短路 5。<strong>候選邊只有「有幫助才採用」</strong>，這個取 min 自動處理。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>承上圖，若候選邊改成 <code>1→5</code>，答案是多少？改成 <code>4→2</code> 呢？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>若改成「每個 query 真的把邊加進去重跑 Dijkstra」，總複雜度多少？Q=10⁵ 時大約幾次運算？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形</span>
+      <h4>若候選邊長度不是固定 1，而是各自給定 <code>lᵢ</code>，程式要改哪裡？複雜度會變嗎？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 核心建模</span>
+      <p>
+        因為候選邊只有<strong>一條</strong> <code>c→d</code>。任何用到它的 1→N 路徑，必然在某處走過這條邊，
+        把路徑切成「到達 c 之前」和「離開 d 之後」兩段。
+      </p>
+      <ul>
+        <li>「1 ⇝ c」這段在原圖，最短就是 <code>d1[c]</code>。</li>
+        <li>「d ⇝ N」這段在原圖，最短就是 <code>dN[d]</code>。</li>
+        <li>中間那條候選邊長 1。</li>
+      </ul>
+      <p>三者相加 <code>d1[c] + 1 + dN[d]</code> 就是「一定用這條候選邊」的最短路。預處理 <code>d1[]</code>、<code>dN[]</code> 各一次即可。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 反圖</span>
+      <p>
+        軌道是<strong>有向</strong>的。<code>dN[v]</code> 要的是「沿著邊的方向，從 v 能走到 N 的最短距離」。
+        在<strong>正圖</strong>從 N 跑 Dijkstra 求的是「N 出發能到的點」，方向相反、意義不對。
+      </p>
+      <p>
+        把每條邊 <code>a→b</code> 反向成 <code>b→a</code> 建反圖，再從 N 跑一次 ——
+        反圖上「N 到 v」的距離，正好等於原圖「v 到 N」的距離。一次跑完拿到所有 <code>dN[]</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 獨立性</span>
+      <p>
+        <strong>不行</strong>。題目是「<strong>各別</strong>評估每種方案」——
+        每個 query 都是「只加這一條候選邊」的假設情境，彼此互不影響。
+      </p>
+      <p>
+        若把 Q 條邊全加進圖再跑一次，等於同時擁有所有捷徑，會算出比任何單一方案都短的錯誤答案。
+        正確做法是預處理 <code>d1[]</code>、<code>dN[]</code> 後對每條候選邊<strong>分別</strong>套公式。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 用幾次</span>
+      <p>
+        若一條路徑用候選邊兩次，代表它離開 d 之後又繞回 c、再走一次 c→d ——
+        中間那段「d ⇝ … ⇝ c」加上兩條候選邊形成一個<strong>環</strong>。
+      </p>
+      <p>
+        邊權<strong>非負</strong> ⇒ 任何環的長度 ≥ 0 ⇒ 把這個環整段刪掉、改成只用一次，路徑只會更短或一樣。
+        所以最佳解一定可以「恰用一次」達成，公式只考慮用一次即可。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · INF 大小</span>
+      <p>
+        合法距離最大約 <code>2×10⁵ 段 × 10⁹ = 2×10¹⁴</code>，所以 INF 必須<strong>遠大於</strong>這個值，
+        取 <code>10⁹</code> 會跟真實距離混淆 ⇒ 太小不行。
+      </p>
+      <p>
+        又因為公式有 <code>d1[c] + 1 + dN[d]</code>，若直接拿 <code>LLONG_MAX</code> 當 INF，
+        「INF + 1 + INF」會<strong>溢位</strong>變負數。取 <code>4×10¹⁸</code>：夠大能當哨兵、相加也不爆
+        <code>long long</code>（上限 ~9.2×10¹⁸）。再加上「先判 <code>&lt; INF</code> 才相加」更穩。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        用 <code>d1=[0,1,2,3,4,5]</code>、<code>dN=[5,4,3,2,1,0]</code>、<code>base=5</code>：
+      </p>
+      <ul>
+        <li><strong>1→5</strong>：cand = d1[1]+1+dN[5] = 0+1+1 = 2 ⇒ ans = min(5,2) = <strong>2</strong>。</li>
+        <li><strong>4→2</strong>：cand = d1[4]+1+dN[2] = 3+1+4 = 8 ⇒ ans = min(5,8) = <strong>5</strong>（往回走沒用）。</li>
+      </ul>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        每 query 重跑一次 Dijkstra 是 <code>O(M log N)</code>，Q 個就是 <code>O(Q · M log N)</code>。
+      </p>
+      <p>
+        Q=10⁵、M=5×10⁵、log N≈18 ⇒ 約 <code>10⁵ × 5×10⁵ × 18 ≈ 10¹²</code> 次運算，<strong>必定 TLE</strong>。
+        這正是為什麼要改成「兩次預處理 + 每 query O(1)」的 <code>O(M log N + Q)</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        把公式中間的常數 <code>1</code> 換成該候選邊的長度 <code>lᵢ</code> 即可：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 長度可變</span>
+cand = d1[c] + l_i + dN[d]   // 原本的 +1 改成 +l_i</pre>
+      <p>
+        其餘（兩次 Dijkstra 預處理、取 min、判不可達）完全不變。複雜度<strong>不變</strong>，仍是
+        <code>O(M log N + Q)</code> —— 預處理跟候選邊長度無關。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 trace — 看懂「候選邊只能讓路長 1⇝c→d⇝N」如何 O(1) 回答。</div>
+    <div class="sc-summary-bar__detail">樣本 1 輸出 3 / 1 / 5（query 3 往回走、維持原最短路）· 兩次 Dijkstra 預處理</div>
+  </div>
+
+</body>
+</html>

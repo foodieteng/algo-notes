@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P378 · 02 Code // 江神與他的小火車 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P378
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/378/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">江神與他的小火車</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · 正反兩次 Dijkstra
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(M log N + Q)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N + M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p378.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<span class="k">typedef</span> <span class="t">long long</span> ll<span class="p">;</span>
+<span class="k">const</span> ll INF <span class="p">=</span> <span class="p">(</span>ll<span class="p">)</span><span class="n">4e18</span><span class="p">;</span>
+
+<span class="c">// 在圖 g 上從 src 跑 Dijkstra，結果寫進 dist</span>
+<span class="t">void</span> <span class="f">dijkstra</span><span class="p">(</span><span class="t">int</span> src<span class="p">,</span> <span class="t">vector</span><span class="p">&lt;</span><span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> ll<span class="p">&gt;&gt;&gt;&amp;</span> g<span class="p">,</span> <span class="t">vector</span><span class="p">&lt;</span>ll<span class="p">&gt;&amp;</span> dist<span class="p">)</span> <span class="p">{</span>
+    dist<span class="p">.</span><span class="f">assign</span><span class="p">(</span>g<span class="p">.</span><span class="f">size</span><span class="p">(),</span> INF<span class="p">);</span>
+    priority_queue<span class="p">&lt;</span>pair<span class="p">&lt;</span>ll<span class="p">,</span> <span class="t">int</span><span class="p">&gt;,</span> <span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span>ll<span class="p">,</span> <span class="t">int</span><span class="p">&gt;&gt;,</span> greater<span class="p">&lt;&gt;&gt;</span> pq<span class="p">;</span>
+    dist<span class="p">[</span>src<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    pq<span class="p">.</span><span class="f">push</span><span class="p">({</span><span class="n">0</span><span class="p">,</span> src<span class="p">});</span>
+    <span class="k">while</span> <span class="p">(!</span>pq<span class="p">.</span><span class="f">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">auto</span> <span class="p">[</span>d<span class="p">,</span> u<span class="p">]</span> <span class="p">=</span> pq<span class="p">.</span><span class="f">top</span><span class="p">();</span> pq<span class="p">.</span><span class="f">pop</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span>d <span class="p">&gt;</span> dist<span class="p">[</span>u<span class="p">])</span> <span class="k">continue</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="p">[</span>v<span class="p">,</span> w<span class="p">]</span> <span class="p">:</span> g<span class="p">[</span>u<span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span>d <span class="p">+</span> w <span class="p">&lt;</span> dist<span class="p">[</span>v<span class="p">])</span> <span class="p">{</span> dist<span class="p">[</span>v<span class="p">]</span> <span class="p">=</span> d <span class="p">+</span> w<span class="p">;</span> pq<span class="p">.</span><span class="f">push</span><span class="p">({</span>dist<span class="p">[</span>v<span class="p">],</span> v<span class="p">});</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> N<span class="p">,</span> M<span class="p">,</span> Q<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M <span class="p">&gt;&gt;</span> Q<span class="p">;</span>
+
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> ll<span class="p">&gt;&gt;&gt;</span> g<span class="p">(</span>N <span class="p">+</span> <span class="n">1</span><span class="p">),</span> gr<span class="p">(</span>N <span class="p">+</span> <span class="n">1</span><span class="p">);</span>   <span class="c">// 正圖、反圖</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> M<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">int</span> a<span class="p">,</span> b<span class="p">;</span> ll w<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> a <span class="p">&gt;&gt;</span> b <span class="p">&gt;&gt;</span> w<span class="p">;</span>
+        g<span class="p">[</span>a<span class="p">].</span><span class="f">push_back</span><span class="p">({</span>b<span class="p">,</span> w<span class="p">});</span>          <span class="c">// a → b</span>
+        gr<span class="p">[</span>b<span class="p">].</span><span class="f">push_back</span><span class="p">({</span>a<span class="p">,</span> w<span class="p">});</span>         <span class="c">// 反圖：b → a</span>
+    <span class="p">}</span>
+
+    <span class="t">vector</span><span class="p">&lt;</span>ll<span class="p">&gt;</span> d1<span class="p">,</span> dN<span class="p">;</span>
+    <span class="f">dijkstra</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> g<span class="p">,</span>  d1<span class="p">);</span>     <span class="c">// d1[v] = 1 到 v 的最短距離</span>
+    <span class="f">dijkstra</span><span class="p">(</span>N<span class="p">,</span> gr<span class="p">,</span> dN<span class="p">);</span>     <span class="c">// dN[v] = v 到 N 的最短距離（反圖上 N 到 v）</span>
+
+    ll base <span class="p">=</span> d1<span class="p">[</span>N<span class="p">];</span>            <span class="c">// 不加任何邊的原最短路</span>
+
+    <span class="k">while</span> <span class="p">(</span>Q<span class="p">--)</span> <span class="p">{</span>
+        <span class="t">int</span> c<span class="p">,</span> d<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> c <span class="p">&gt;&gt;</span> d<span class="p">;</span>
+
+        ll cand <span class="p">=</span> INF<span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span>d1<span class="p">[</span>c<span class="p">]</span> <span class="p">&lt;</span> INF <span class="p">&amp;&amp;</span> dN<span class="p">[</span>d<span class="p">]</span> <span class="p">&lt;</span> INF<span class="p">)</span>
+            cand <span class="p">=</span> d1<span class="p">[</span>c<span class="p">]</span> <span class="p">+</span> <span class="n">1</span> <span class="p">+</span> dN<span class="p">[</span>d<span class="p">];</span>   <span class="c">// 1 ⇝ c → d ⇝ N</span>
+
+        cout <span class="p">&lt;&lt;</span> <span class="f">min</span><span class="p">(</span>base<span class="p">,</span> cand<span class="p">)</span> <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span> <span class="f">solve</span><span class="p">();</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      建反圖只要在讀每條邊時順手把 <code>(a,b,w)</code> 反著塞進 <code>gr</code>。兩次 Dijkstra 共用同一個函式。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>拆成預處理 + 查詢兩段：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>建圖</td><td>讀 M 條邊，同時建正圖 + 反圖</td><td class="mono">O(M)</td></tr>
+        <tr><td>正向 Dijkstra</td><td>從 1 求 d1[]</td><td class="mono">O(M log N)</td></tr>
+        <tr><td>反向 Dijkstra</td><td>從 N 在反圖求 dN[]</td><td class="mono">O(M log N)</td></tr>
+        <tr><td>每個 query</td><td>一次加法 + min</td><td class="mono">O(1)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(M log N + Q)</strong></div>
+      <div class="sc-formula__hint">兩次 Dijkstra 預處理，Q 個查詢各 O(1)</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(M log N + Q)</strong></td><td>M=5×10⁵ ⇒ ~10⁷</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>正圖 + 反圖 + d1[] + dN[]</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>路徑和 ~2×10¹⁴；INF 設 4×10¹⁸</td></tr>
+        <tr><td>查詢</td><td class="mono">O(1)</td><td>預處理後純查表</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>query 各自獨立</strong></td>
+          <td>候選邊只是「假設加上去」，<strong>不會累積到下一個 query</strong>。千萬別把 Q 條邊一起塞進圖再跑一次。</td>
+        </tr>
+        <tr>
+          <td><strong>反圖求 dN[]</strong></td>
+          <td>軌道是<strong>有向</strong>的。「v 到 N 的距離」要在<strong>反圖</strong>上從 N 出發跑，不能在正圖從 N 跑（方向相反）。</td>
+        </tr>
+        <tr>
+          <td><strong>候選邊長度固定 1</strong></td>
+          <td>不論 c、d 是誰，新邊長度都是 <code>1</code>，公式中間那項是常數 1。</td>
+        </tr>
+        <tr>
+          <td><strong>不可達要擋掉</strong></td>
+          <td>若 <code>d1[c]</code> 或 <code>dN[d]</code> 為 INF，<code>d1[c]+1+dN[d]</code> 會溢位或變垃圾值。先判 <code>&lt; INF</code> 再相加。</td>
+        </tr>
+        <tr>
+          <td><strong>long long + INF 夠大</strong></td>
+          <td>w ≤ 10⁹、路徑 ~2×10⁵ 段 ⇒ 距離 ~2×10¹⁴。INF 取 4×10¹⁸，避免「INF+1」溢位 long long。</td>
+        </tr>
+        <tr>
+          <td><strong>I/O 速度</strong></td>
+          <td>M、Q 都很大 ⇒ <code>sync_with_stdio(false); cin.tie(nullptr);</code> 必加，輸出用 <code>'\n'</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 建正圖 + 反圖</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// build both graphs</span>
+for each edge (a, b, w):
+    g[a].push_back({b, w})     ← 正圖 a→b
+    gr[b].push_back({a, w})    ← 反圖 b→a（同一條邊反著存）</pre>
+
+    <p><strong>② 兩次 Dijkstra 預處理</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// preprocess</span>
+dijkstra(1, g,  d1)   ← d1[v] = 起點 1 到 v
+dijkstra(N, gr, dN)   ← dN[v] = v 到終點 N（反圖上 N 到 v）
+base = d1[N]          ← 原本的最短路</pre>
+
+    <p><strong>③ 每個 query O(1)</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// per query (c, d)</span>
+cand = INF
+if d1[c] &lt; INF and dN[d] &lt; INF:
+    cand = d1[c] + 1 + dN[d]   ← 1 ⇝ c → d ⇝ N
+ans = min(base, cand)          ← 用 or 不用候選邊
+print ans</pre>
+
+    <p><strong>④ 為何 dN 要在反圖跑</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// why reverse graph</span>
+原圖「d 到 N」的最短路
+ = 反圖「N 到 d」的最短路   ← 把每條邊反向，起終點互換
+所以從 N 在反圖跑一次，就一次拿到所有 dN[d]。</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">建正圖 + 反圖 → dijkstra(1) 得 d1[]、dijkstra(N, 反圖) 得 dN[] → 每 query min(base, d1[c]+1+dN[d])。</div>
+    <div class="sc-summary-bar__detail">不可達先判 &lt; INF；long long + INF=4e18 · T = O(M log N + Q)</div>
+  </div>
+
+</body>
+</html>
