@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P472 · 02 Code // 最小生成樹 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P472
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/472/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">最小生成樹</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      C++17 · Kruskal + DSU
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(M log M)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N + M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p472.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<span class="k">typedef</span> <span class="t">long long</span> ll<span class="p">;</span>
+
+<span class="c">// ── 並查集（路徑壓縮 + 按秩合併）</span>
+<span class="t">int</span> par<span class="p">[</span><span class="n">200005</span><span class="p">],</span> rnk<span class="p">[</span><span class="n">200005</span><span class="p">];</span>
+
+<span class="t">int</span> <span class="f">find</span><span class="p">(</span><span class="t">int</span> x<span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span>par<span class="p">[</span>x<span class="p">]</span> <span class="p">!=</span> x<span class="p">)</span> <span class="p">{</span>
+        par<span class="p">[</span>x<span class="p">]</span> <span class="p">=</span> par<span class="p">[</span>par<span class="p">[</span>x<span class="p">]];</span>      <span class="c">// 路徑壓縮（半路徑）</span>
+        x <span class="p">=</span> par<span class="p">[</span>x<span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> x<span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">bool</span> <span class="f">unite</span><span class="p">(</span><span class="t">int</span> a<span class="p">,</span> <span class="t">int</span> b<span class="p">)</span> <span class="p">{</span>
+    a <span class="p">=</span> <span class="f">find</span><span class="p">(</span>a<span class="p">);</span> b <span class="p">=</span> <span class="f">find</span><span class="p">(</span>b<span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span>a <span class="p">==</span> b<span class="p">)</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>             <span class="c">// 已同塊 ⇒ 會成環</span>
+    <span class="k">if</span> <span class="p">(</span>rnk<span class="p">[</span>a<span class="p">]</span> <span class="p">&lt;</span> rnk<span class="p">[</span>b<span class="p">])</span> <span class="f">swap</span><span class="p">(</span>a<span class="p">,</span> b<span class="p">);</span>
+    par<span class="p">[</span>b<span class="p">]</span> <span class="p">=</span> a<span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>rnk<span class="p">[</span>a<span class="p">]</span> <span class="p">==</span> rnk<span class="p">[</span>b<span class="p">])</span> rnk<span class="p">[</span>a<span class="p">]++;</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> N<span class="p">,</span> M<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M<span class="p">;</span>
+
+    <span class="c">// 邊存成 {w, u, v}，按權重由小到大排序（array 的字典序就先比 w）</span>
+    <span class="t">vector</span><span class="p">&lt;</span>array<span class="p">&lt;</span>ll<span class="p">,</span> <span class="n">3</span><span class="p">&gt;&gt;</span> edges<span class="p">(</span>M<span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> M<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        ll u<span class="p">,</span> v<span class="p">,</span> w<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> u <span class="p">&gt;&gt;</span> v <span class="p">&gt;&gt;</span> w<span class="p">;</span>
+        edges<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="p">{</span>w<span class="p">,</span> u<span class="p">,</span> v<span class="p">};</span>
+    <span class="p">}</span>
+    <span class="f">sort</span><span class="p">(</span>edges<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> edges<span class="p">.</span><span class="f">end</span><span class="p">());</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span> par<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> i<span class="p">;</span> rnk<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="c">// 由小到大貪心加邊，只取「連接兩個不同連通塊」的邊</span>
+    ll total <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="t">int</span> used <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="p">&amp;</span> e <span class="p">:</span> edges<span class="p">)</span> <span class="p">{</span>
+        ll w <span class="p">=</span> e<span class="p">[</span><span class="n">0</span><span class="p">];</span> <span class="t">int</span> u <span class="p">=</span> e<span class="p">[</span><span class="n">1</span><span class="p">],</span> v <span class="p">=</span> e<span class="p">[</span><span class="n">2</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="f">unite</span><span class="p">(</span>u<span class="p">,</span> v<span class="p">))</span> <span class="p">{</span>
+            total <span class="p">+=</span> w<span class="p">;</span>
+            <span class="k">if</span> <span class="p">(++</span>used <span class="p">==</span> N <span class="p">-</span> <span class="n">1</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>      <span class="c">// 已連成生成樹，提早結束</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> total <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span> <span class="f">solve</span><span class="p">();</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      把邊存成 <code>{w, u, v}</code> 順序，<code>array</code> 的字典序比較剛好先比 <code>w</code> ⇒ 一個 <code>sort</code> 就排好權重。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>三段拆解：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>讀邊</td><td>M 條邊存進陣列</td><td class="mono">O(M)</td></tr>
+        <tr><td>排序</td><td>按權重 sort</td><td class="mono">O(M log M)</td></tr>
+        <tr><td>掃邊 + DSU</td><td>M 次 find/union</td><td class="mono">O(M α(N))</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(M log M)</strong></div>
+      <div class="sc-formula__hint">排序主導；DSU 的 α(N) 近乎常數，可忽略</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(M log M)</strong></td><td>M ≤ 2×10⁵ ⇒ ~4×10⁶</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>edges 陣列 + par/rnk</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>權和最大 (N−1)·10⁹ ≈ 2×10¹⁴</td></tr>
+        <tr><td>DSU 單次</td><td class="mono">~O(α(N))</td><td>路徑壓縮 + 按秩 ⇒ 反阿克曼</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>權和開 long long</strong></td>
+          <td>最多 N−1 ≈ 2×10⁵ 條邊、每條 w ≤ 10⁹ ⇒ 權和達 2×10¹⁴，遠超 <code>int</code>。<code>total</code> 必用 ll。</td>
+        </tr>
+        <tr>
+          <td><strong>DSU 不優化會 TLE/退化</strong></td>
+          <td>沒有路徑壓縮 + 按秩，find 最壞 O(N)、整體退化。兩個優化都要加。</td>
+        </tr>
+        <tr>
+          <td><strong>判環靠 find 比較</strong></td>
+          <td>加邊前先 <code>find(u)==find(v)</code> ⇒ 同塊就跳過（成環）。這就是 Kruskal 的核心過濾。</td>
+        </tr>
+        <tr>
+          <td><strong>提早結束</strong></td>
+          <td>加滿 <code>N−1</code> 條邊就能 <code>break</code>，省下後面的邊。圖保證連通 ⇒ 一定湊得滿。</td>
+        </tr>
+        <tr>
+          <td><strong>無向邊</strong></td>
+          <td>MST 是無向圖概念，<code>unite(u,v)</code> 不分方向，一條邊處理一次即可。</td>
+        </tr>
+        <tr>
+          <td><strong>I/O 速度</strong></td>
+          <td>M 達 2×10⁵ ⇒ <code>sync_with_stdio(false); cin.tie(nullptr);</code> 必加，輸出用 <code>'\n'</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 讀邊 + 排序</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// read & sort</span>
+edges[i] = {w, u, v}          ← w 放最前，sort 自動先比權重
+sort(edges)                   ← 由小到大</pre>
+
+    <p><strong>② 初始化並查集</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// DSU init</span>
+for v in [1, N]: par[v] = v; rnk[v] = 0
+每個點各自一塊（N 個獨立連通塊）</pre>
+
+    <p><strong>③ 貪心加邊（核心）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// kruskal main</span>
+total = 0; used = 0
+for (w, u, v) in edges:        ← 已由小到大
+    if find(u) != find(v):     ← 不同塊 ⇒ 加它不成環
+        unite(u, v)
+        total += w
+        if ++used == N-1: break   ← 連滿就停
+    else:
+        skip                   ← 同塊，加了會成環</pre>
+
+    <p><strong>④ find / unite 細節</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// path compression + union by rank</span>
+find: while par[x]!=x: par[x]=par[par[x]]; x=par[x]   ← 半路徑壓縮
+unite: 把矮的接到高的；同高則被接者 rank+1</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">edges{w,u,v} 排序 → 掃邊 find 判環、unite 加邊累加 → 滿 N−1 條 break。</div>
+    <div class="sc-summary-bar__detail">DSU 路徑壓縮 + 按秩 · total 開 long long · T = O(M log M)</div>
+  </div>
+
+</body>
+</html>

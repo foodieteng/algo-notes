@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P472 · 03 Review // 最小生成樹 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P472
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/472/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">最小生成樹</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>目標</td>
+            <td>挑 <code>N−1</code> 條邊連通全圖、權和最小 = MST。</td></tr>
+        <tr><td>Kruskal</td>
+            <td>邊權由小到大，貪心加「不成環」的邊。</td></tr>
+        <tr><td>判環工具</td>
+            <td>並查集 DSU：<code>find</code> 同根 ⇒ 同塊 ⇒ 成環 ⇒ 跳過。</td></tr>
+        <tr><td>正確性</td>
+            <td>cut property：跨任意切口的最小邊必屬某棵 MST。</td></tr>
+        <tr><td>DSU 優化</td>
+            <td>路徑壓縮 + 按秩合併 ⇒ 單次近 <code>O(α(N))</code>。</td></tr>
+        <tr><td>數值</td>
+            <td>權和達 2×10¹⁴ ⇒ <code>total</code> 用 <code>long long</code>。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">貪心正確性</span>
+      <h4>Kruskal 每次都加「當前最小且不成環」的邊，為什麼能保證最後是<strong>全域最小</strong>而非區域最優？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">並查集</span>
+      <h4>為什麼用並查集判環，而不是每次加邊後跑 DFS/BFS 檢查連通？兩者複雜度差在哪？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">跳過的邊</span>
+      <h4>被跳過的邊（兩端已同塊）對 MST 有沒有可能有用？為什麼可以直接丟掉？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">資料型別</span>
+      <h4>哪個變數最容易忘了開 <code>long long</code> 而 WA？給一個會溢位的數量級。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">Prim vs Kruskal</span>
+      <h4>什麼情況下 Prim 比 Kruskal 適合？這題（稀疏、邊表）為什麼選 Kruskal？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用官方樣本：<code>N=3, M=3</code>，邊 (1-2,3)、(2-3,4)、(3-1,5)。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>3 3
+1 2 3
+2 3 4
+3 1 5</pre>
+
+    <p><strong>STEP 1 · 排序</strong>（已由小到大）：</p>
+    <table class="sc-table">
+      <thead><tr><th>順序</th><th>邊</th><th>權重 w</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td class="mono">1—2</td><td class="mono">3</td></tr>
+        <tr><td class="mono">2</td><td class="mono">2—3</td><td class="mono">4</td></tr>
+        <tr><td class="mono">3</td><td class="mono">3—1</td><td class="mono">5</td></tr>
+      </tbody>
+    </table>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// DSU INIT</span>
+par = [_, 1, 2, 3]   ← 每點自成一塊
+total = 0; used = 0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// EDGE 1 · (1—2, w=3)</span>
+find(1)=1, find(2)=2  不同塊 ⇒ 加入
+unite(1,2)  → {1,2} 一塊
+total = 3; used = 1</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// EDGE 2 · (2—3, w=4)</span>
+find(2)=1, find(3)=3  不同塊 ⇒ 加入
+unite(2,3)  → {1,2,3} 一塊
+total = 7; used = 2 = N-1 ⇒ break ✓</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// (EDGE 3 · (3—1, w=5) 不會被處理，已提早結束)</span>
+若處理：find(3)=find(1) 同塊 ⇒ 成環 ⇒ 會被跳過</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>7</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：MST 取了最便宜的兩條邊 3 + 4 = <strong>7</strong>，自然避開最貴的 (3-1, w=5)。
+      就算沒提早 break，這條邊也會因「1、3 已同塊（成環）」而被跳過 —— <strong>貪心 + 判環</strong>兩件事就構成整個 Kruskal。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>5 點 6 邊：(1-2,1)(2-3,2)(1-3,3)(3-4,4)(4-5,5)(2-5,6)。請手動跑 Kruskal，哪些邊被跳過？權和多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">邊界</span>
+      <h4>若有兩條邊權重相同，Kruskal 的結果會受「誰先誰後」影響嗎？MST 權和會變嗎？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形</span>
+      <h4>若要的是<strong>最大</strong>生成樹（權和最大），程式怎麼改？最少改幾行？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 貪心正確性</span>
+      <p>
+        由 <strong>cut property</strong>：對任意把點切兩堆的切口，跨切口的<strong>最小邊</strong>一定屬於某棵 MST。
+      </p>
+      <p>
+        Kruskal 每次加的邊，正是「把已連好那塊當一邊、其餘當另一邊」這個切口的最小跨切邊 ⇒ 每步都安全。
+        用交換論證：若某 MST 不含這條邊，加它成環、環上必有另一條更貴（或等重）的跨切邊，換掉它權和不增 ⇒
+        存在含這條邊的 MST。逐步歸納 ⇒ 整體最優。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 並查集</span>
+      <p>
+        每次加邊後跑 DFS/BFS 檢查連通是 <code>O(N+M)</code>，整體 <code>O(M·(N+M))</code> 太慢。
+        並查集把「判兩點是否同塊」與「合併兩塊」都做到攤銷近 <code>O(α(N))</code>（反阿克曼，幾乎常數）。
+      </p>
+      <p>整體因此降到由<strong>排序主導</strong>的 <code>O(M log M)</code>。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 跳過的邊</span>
+      <p>
+        被跳過的邊兩端已在同一連通塊 ⇒ 它<strong>不是跨切邊</strong>，加進去只會在塊內形成環，
+        不連通任何新的點。
+      </p>
+      <p>
+        而且因為是「由小到大」掃，現在這條（同塊）邊一定 ≥ 當初連起這兩端的那些邊 ⇒ 換掉也不會更好。
+        所以直接丟掉，對 MST 毫無損失。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 資料型別</span>
+      <p>
+        最容易忘的是<strong>累加權和 <code>total</code></strong>。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 溢位量級</span>
+邊數最多 N-1 ≈ 2×10⁵
+每條 w 最大 10⁹
+權和最大 ≈ 2×10⁵ × 10⁹ = 2×10¹⁴
+int 上限 ≈ 2.1×10⁹  ⇒  必爆 ❌
+long long 上限 ≈ 9.2×10¹⁸  ⇒  OK ✓</pre>
+      <p>單一 <code>w ≤ 10⁹</code> 雖然塞得進 int，但累加會爆 ⇒ <code>total</code> 一定要 ll。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · Prim vs Kruskal</span>
+      <p>
+        <strong>Prim</strong>（堆實作 <code>O(M log N)</code>）適合<strong>稠密圖</strong>或已有鄰接表、且想從一點長出樹；
+        樸素 Prim <code>O(N²)</code> 在稠密小 N 時甚至更快。
+      </p>
+      <p>
+        <strong>Kruskal</strong> 以<strong>邊</strong>為中心、只需邊表 + 排序 + DSU，對<strong>稀疏圖</strong>（M 與 N 同量級）最直覺。
+        本題給的就是邊表、且 M ≤ 2×10⁵ 稀疏 ⇒ Kruskal 寫起來最短最穩。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>排序後依序：(1-2,1)(2-3,2)(1-3,3)(3-4,4)(4-5,5)(2-5,6)。</p>
+      <pre class="sc-trace"><span class="sc-trace__head">// kruskal trace</span>
+(1-2,1): {1,2}        加 → total=1
+(2-3,2): {1,2,3}      加 → total=3
+(1-3,3): 1,3 已同塊   <strong>跳過（環）</strong>
+(3-4,4): {1,2,3,4}    加 → total=7
+(4-5,5): {1,2,3,4,5}  加 → total=12, used=4=N-1 break
+(2-5,6): 未處理（若處理會因同塊跳過）</pre>
+      <p>被跳過：<strong>(1-3,3)、(2-5,6)</strong>。MST 權和 = <strong>12</strong>。（與動畫一致。）</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        相同權重時，誰先被加可能讓<strong>選到的邊集合不同</strong>（MST 不唯一），
+        但<strong>權和一定相同</strong> —— 因為所有 MST 權和都等於最小值，這是 MST 的基本性質。
+      </p>
+      <p>本題只要權和，所以 tie-break 怎麼排都不影響答案。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>要<strong>最大生成樹</strong>只需把排序改成<strong>由大到小</strong>，其餘（DSU 判環、加滿 N−1）完全不變：</p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 最大生成樹</span>
+sort(edges.rbegin(), edges.rend());   // 由大到小
+// 或自訂 comparator 反向；其餘照舊</pre>
+      <p>cut property 對稱地成立（跨切口的<strong>最大</strong>邊屬某棵最大生成樹），所以只改排序方向即可。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 完整 Kruskal trace — 看懂 cut property 為何讓貪心成立。</div>
+    <div class="sc-summary-bar__detail">官方樣本 = 7（取 3+4，跳過 w=5 成環邊）· 最大生成樹只需改排序方向</div>
+  </div>
+
+</body>
+</html>
