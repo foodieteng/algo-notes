@@ -35,7 +35,7 @@
     <p class="sc-mast__subtitle">// Code + Complexity</p>
     <div class="sc-mast__meta">
       <span class="sc-mast__stars">★ ★ ★ ☆ ☆</span>
-      C++17 · Kruskal + DSU
+      C++17 · Kruskal + Prim 兩解
       <span class="sc-mast__sep">·</span>
       時間 <strong>O(M log M)</strong>
       <span class="sc-mast__sep">·</span>
@@ -59,7 +59,7 @@
   <section class="sc-section">
     <div class="sc-section__head">
       <span class="sc-section__num">01</span>
-      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+      <h2 class="sc-section__title">完整實作 · Kruskal + Prim<span class="sc-section__title-en">// Two Implementations</span></h2>
     </div>
 
     <div class="sc-codewindow">
@@ -132,6 +132,82 @@
     <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
       把邊存成 <code>{w, u, v}</code> 順序，<code>array</code> 的字典序比較剛好先比 <code>w</code> ⇒ 一個 <code>sort</code> 就排好權重。
     </p>
+
+    <!-- ── 另解：Prim ── -->
+    <h3 style="font-family:'Noto Serif TC',serif;font-size:16px;margin:24px 0 10px;color:var(--sc-ink);">
+      <span style="background:var(--sc-coral);color:#fff;padding:1px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;margin-right:8px;">另解</span>
+      Prim（min-heap）—— 從一點長出樹
+    </h3>
+
+    <p style="font-size:14px;">Kruskal 以<strong>邊</strong>為中心（排序 + 並查集判環）；Prim 以<strong>點</strong>為中心：
+    從任一點出發，反覆用 min-heap 取「<strong>離當前樹最近的點</strong>」把它併進來，直到 N 個點全進樹。</p>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p472_prim.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<span class="k">typedef</span> <span class="t">long long</span> ll<span class="p">;</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> N<span class="p">,</span> M<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M<span class="p">;</span>
+
+    <span class="c">// 鄰接表：無向圖，每條邊雙向加入</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> ll<span class="p">&gt;&gt;&gt;</span> adj<span class="p">(</span>N <span class="p">+</span> <span class="n">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> M<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">int</span> u<span class="p">,</span> v<span class="p">;</span> ll w<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> u <span class="p">&gt;&gt;</span> v <span class="p">&gt;&gt;</span> w<span class="p">;</span>
+        adj<span class="p">[</span>u<span class="p">].</span><span class="f">push_back</span><span class="p">({</span>v<span class="p">,</span> w<span class="p">});</span>
+        adj<span class="p">[</span>v<span class="p">].</span><span class="f">push_back</span><span class="p">({</span>u<span class="p">,</span> w<span class="p">});</span>          <span class="c">// 無向 ⇒ 兩邊都加</span>
+    <span class="p">}</span>
+
+    <span class="c">// Prim：從點 1 長出樹，min-heap 取「離樹最近的點」</span>
+    <span class="t">vector</span><span class="p">&lt;</span><span class="t">char</span><span class="p">&gt;</span> inTree<span class="p">(</span>N <span class="p">+</span> <span class="n">1</span><span class="p">,</span> <span class="n">0</span><span class="p">);</span>
+    priority_queue<span class="p">&lt;</span>pair<span class="p">&lt;</span>ll<span class="p">,</span> <span class="t">int</span><span class="p">&gt;,</span> <span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span>ll<span class="p">,</span> <span class="t">int</span><span class="p">&gt;&gt;,</span> greater<span class="p">&lt;&gt;&gt;</span> pq<span class="p">;</span>
+    pq<span class="p">.</span><span class="f">push</span><span class="p">({</span><span class="n">0</span><span class="p">,</span> <span class="n">1</span><span class="p">});</span>                       <span class="c">// (連到樹的成本, 點)</span>
+
+    ll total <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="t">int</span> cnt <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(!</span>pq<span class="p">.</span><span class="f">empty</span><span class="p">()</span> <span class="p">&amp;&amp;</span> cnt <span class="p">&lt;</span> N<span class="p">)</span> <span class="p">{</span>
+        <span class="k">auto</span> <span class="p">[</span>w<span class="p">,</span> u<span class="p">]</span> <span class="p">=</span> pq<span class="p">.</span><span class="f">top</span><span class="p">();</span> pq<span class="p">.</span><span class="f">pop</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span>inTree<span class="p">[</span>u<span class="p">])</span> <span class="k">continue</span><span class="p">;</span>            <span class="c">// 過期條目：u 已在樹裡，跳過</span>
+        inTree<span class="p">[</span>u<span class="p">]</span> <span class="p">=</span> <span class="n">1</span><span class="p">;</span>
+        total <span class="p">+=</span> w<span class="p">;</span>                        <span class="c">// 把連 u 進來的那條邊計入</span>
+        cnt<span class="p">++;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="p">[</span>v<span class="p">,</span> ew<span class="p">]</span> <span class="p">:</span> adj<span class="p">[</span>u<span class="p">])</span>
+            <span class="k">if</span> <span class="p">(!</span>inTree<span class="p">[</span>v<span class="p">])</span> pq<span class="p">.</span><span class="f">push</span><span class="p">({</span>ew<span class="p">,</span> v<span class="p">});</span>  <span class="c">// 鬆弛：u 的鄰居入堆</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> total <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span> <span class="f">solve</span><span class="p">();</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>lazy 版 Prim</strong>：不更新堆裡的舊值，靠 <code>if (inTree[u]) continue;</code> 略過過期條目。
+      圖保證連通 ⇒ 一定長到 N 個點。本題給的是邊表，<strong>Kruskal 寫起來更短</strong>；Prim 在稠密圖或鄰接表已建好時更順手。
+    </p>
+
+    <table class="sc-table" style="margin-top:14px;">
+      <thead><tr><th>面向</th><th>Kruskal</th><th>Prim（min-heap）</th></tr></thead>
+      <tbody>
+        <tr><td>中心思想</td><td>以<strong>邊</strong>為主：排序 + 並查集判環</td><td>以<strong>點</strong>為主：從一點長出樹</td></tr>
+        <tr><td>主要結構</td><td>邊陣列 + DSU</td><td>鄰接表 + min-heap</td></tr>
+        <tr><td>複雜度</td><td class="mono">O(M log M)</td><td class="mono">O(M log N)</td></tr>
+        <tr><td>適合</td><td>稀疏圖、給定邊表</td><td>稠密圖、已有鄰接表</td></tr>
+        <tr><td>判環/重複</td><td><code>find(u)==find(v)</code> 跳過</td><td><code>inTree[u]</code> 跳過過期條目</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <!-- ============================================================
@@ -157,8 +233,8 @@
     </table>
 
     <div class="sc-formula">
-      <div class="sc-formula__main">T = <strong>O(M log M)</strong></div>
-      <div class="sc-formula__hint">排序主導；DSU 的 α(N) 近乎常數，可忽略</div>
+      <div class="sc-formula__main">Kruskal <strong>O(M log M)</strong> &nbsp;·&nbsp; Prim <strong>O(M log N)</strong></div>
+      <div class="sc-formula__hint">Kruskal 由排序主導、DSU 的 α(N) 近乎常數；Prim 由堆操作主導（每條邊最多入堆一次）</div>
     </div>
 
     <table class="sc-table">

@@ -121,6 +121,12 @@
       <strong>貪心成立的理由（cut property）</strong>：對任意把點切成兩半的方式，<strong>跨越這個切口的最小邊
       一定屬於某棵 MST</strong>。Kruskal 由小到大加邊、只跳過會成環的，等於每次都安全地選了一條 cut 上的最小邊。
     </p>
+
+    <p style="margin-top:10px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>註</strong>：被淘汰的是<strong>樸素 O(N²) Prim</strong>（鄰接矩陣，N=2×10⁵ 開不下）。
+      換成 <strong>min-heap 版 Prim（O(M log N)）</strong>同樣正確、同樣能過 —— 它也靠 cut property，只是改成「以點為中心、從一點長出樹」。
+      Code 頁<strong>兩種寫法都附上</strong>，可對照學習。
+    </p>
   </section>
 
   <!-- ============================================================
