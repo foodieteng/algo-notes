@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P351 · 02 Code // 慘字道路規劃 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P351
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/351/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">慘字道路規劃</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · 增量 Floyd
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N³)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N²)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p351.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+<span class="k">typedef</span> <span class="t">long long</span> ll<span class="p">;</span>
+<span class="k">const</span> ll INF <span class="p">=</span> <span class="p">(</span>ll<span class="p">)</span><span class="n">1e18</span><span class="p">;</span>
+
+<span class="t">int</span> N<span class="p">;</span>
+ll dist<span class="p">[</span><span class="n">505</span><span class="p">][</span><span class="n">505</span><span class="p">];</span>   <span class="c">// 目前最短距離（只用已加入城市當中繼）</span>
+ll c<span class="p">[</span><span class="n">505</span><span class="p">][</span><span class="n">505</span><span class="p">];</span>      <span class="c">// 原始鄰接矩陣</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    cin <span class="p">&gt;&gt;</span> N<span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> i<span class="p">++)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> N<span class="p">;</span> j<span class="p">++)</span> <span class="p">{</span>
+            ll x<span class="p">;</span> cin <span class="p">&gt;&gt;</span> x<span class="p">;</span>
+            c<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">=</span> <span class="p">(</span>x <span class="p">==</span> <span class="p">-</span><span class="n">1</span> <span class="p">?</span> INF <span class="p">:</span> x<span class="p">);</span>   <span class="c">// -1 ⇒ 沒有直接道路</span>
+        <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> i<span class="p">++)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> N<span class="p">;</span> j<span class="p">++)</span>
+            dist<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">=</span> INF<span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> k <span class="p">=</span> <span class="n">1</span><span class="p">;</span> k <span class="p">&lt;=</span> N<span class="p">;</span> k<span class="p">++)</span> <span class="p">{</span>
+        <span class="c">// 1) 加入城市 k：填入 k 與 {1..k} 之間的直接邊</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> k<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+            dist<span class="p">[</span>i<span class="p">][</span>k<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dist<span class="p">[</span>i<span class="p">][</span>k<span class="p">],</span> c<span class="p">[</span>i<span class="p">][</span>k<span class="p">]);</span>
+            dist<span class="p">[</span>k<span class="p">][</span>i<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dist<span class="p">[</span>k<span class="p">][</span>i<span class="p">],</span> c<span class="p">[</span>k<span class="p">][</span>i<span class="p">]);</span>
+        <span class="p">}</span>
+        dist<span class="p">[</span>k<span class="p">][</span>k<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dist<span class="p">[</span>k<span class="p">][</span>k<span class="p">],</span> <span class="p">(</span>ll<span class="p">)</span><span class="n">0</span><span class="p">);</span>
+
+        <span class="c">// 2) 先用「之前的城市 m」當中繼，修好 k 的行/列（多跳進出 k）</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> m <span class="p">=</span> <span class="n">1</span><span class="p">;</span> m <span class="p">&lt;</span> k<span class="p">;</span> m<span class="p">++)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> k<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span>dist<span class="p">[</span>i<span class="p">][</span>m<span class="p">]</span> <span class="p">&lt;</span> INF <span class="p">&amp;&amp;</span> dist<span class="p">[</span>m<span class="p">][</span>k<span class="p">]</span> <span class="p">&lt;</span> INF<span class="p">)</span>
+                    dist<span class="p">[</span>i<span class="p">][</span>k<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dist<span class="p">[</span>i<span class="p">][</span>k<span class="p">],</span> dist<span class="p">[</span>i<span class="p">][</span>m<span class="p">]</span> <span class="p">+</span> dist<span class="p">[</span>m<span class="p">][</span>k<span class="p">]);</span>
+                <span class="k">if</span> <span class="p">(</span>dist<span class="p">[</span>k<span class="p">][</span>m<span class="p">]</span> <span class="p">&lt;</span> INF <span class="p">&amp;&amp;</span> dist<span class="p">[</span>m<span class="p">][</span>i<span class="p">]</span> <span class="p">&lt;</span> INF<span class="p">)</span>
+                    dist<span class="p">[</span>k<span class="p">][</span>i<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dist<span class="p">[</span>k<span class="p">][</span>i<span class="p">],</span> dist<span class="p">[</span>k<span class="p">][</span>m<span class="p">]</span> <span class="p">+</span> dist<span class="p">[</span>m<span class="p">][</span>i<span class="p">]);</span>
+            <span class="p">}</span>
+
+        <span class="c">// 3) 以 k 為中繼，鬆弛 {1..k} 之間所有對</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> k<span class="p">;</span> i<span class="p">++)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> k<span class="p">;</span> j<span class="p">++)</span>
+                <span class="k">if</span> <span class="p">(</span>dist<span class="p">[</span>i<span class="p">][</span>k<span class="p">]</span> <span class="p">&lt;</span> INF <span class="p">&amp;&amp;</span> dist<span class="p">[</span>k<span class="p">][</span>j<span class="p">]</span> <span class="p">&lt;</span> INF<span class="p">)</span>
+                    dist<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">=</span> <span class="f">min</span><span class="p">(</span>dist<span class="p">[</span>i<span class="p">][</span>j<span class="p">],</span> dist<span class="p">[</span>i<span class="p">][</span>k<span class="p">]</span> <span class="p">+</span> dist<span class="p">[</span>k<span class="p">][</span>j<span class="p">]);</span>
+
+        <span class="c">// 4) 慘字度 = max over i,j in {1..k} of dist[i][j]（有 ∞ ⇒ -1）</span>
+        ll worst <span class="p">=</span> <span class="n">0</span><span class="p">;</span> <span class="t">bool</span> bad <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> k <span class="p">&amp;&amp;</span> <span class="p">!</span>bad<span class="p">;</span> i<span class="p">++)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="t">int</span> j <span class="p">=</span> <span class="n">1</span><span class="p">;</span> j <span class="p">&lt;=</span> k<span class="p">;</span> j<span class="p">++)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span>dist<span class="p">[</span>i<span class="p">][</span>j<span class="p">]</span> <span class="p">&gt;=</span> INF<span class="p">)</span> <span class="p">{</span> bad <span class="p">=</span> <span class="k">true</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+                worst <span class="p">=</span> <span class="f">max</span><span class="p">(</span>worst<span class="p">,</span> dist<span class="p">[</span>i<span class="p">][</span>j<span class="p">]);</span>
+            <span class="p">}</span>
+
+        cout <span class="p">&lt;&lt;</span> <span class="p">(</span>bad <span class="p">?</span> <span class="p">-</span><span class="n">1</span> <span class="p">:</span> worst<span class="p">);</span>
+        cout <span class="p">&lt;&lt;</span> <span class="p">(</span>k <span class="p">==</span> N <span class="p">?</span> <span class="s">'\n'</span> <span class="p">:</span> <span class="s">' '</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span> <span class="f">solve</span><span class="p">();</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      步驟 2 是這題的關鍵：少了它，<code>k</code> 的進出最短路只算到「直接邊」⇒ 漏掉多跳捷徑、答案偏大。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>第 k 層的工作量：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>單層成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>填直接邊</td><td>k 的行/列</td><td class="mono">O(k)</td></tr>
+        <tr><td>修 k 行列</td><td>m × i 兩層迴圈</td><td class="mono">O(k²)</td></tr>
+        <tr><td>k 當中繼鬆弛</td><td>i × j 兩層</td><td class="mono">O(k²)</td></tr>
+        <tr><td>掃 max</td><td>i × j 兩層</td><td class="mono">O(k²)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">Σ<sub>k=1..N</sub> O(k²) = <strong>O(N³)</strong></div>
+      <div class="sc-formula__hint">每層 O(k²)，加總即 O(N³)，跟跑一次完整 Floyd 同量級</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N³)</strong></td><td>N=500 ⇒ ~1.25×10⁸，實測 0.3 秒</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N²)</strong></td><td>dist + c 兩個 505×505 矩陣</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>距離其實 ≤ 5×10⁵，但 INF 相加要防溢位，索性全用 ll</td></tr>
+        <tr><td>Constant factor</td><td>中</td><td>每層三趟 O(k²)，常數約 3</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>少了「修 k 行列」</strong></td>
+          <td>只填 k 的直接邊、直接以 k 鬆弛 ⇒ 進出 k 的多跳捷徑沒算到。樣本最後一項會錯成 12（正解 11）。步驟 2 不可省。</td>
+        </tr>
+        <tr>
+          <td><strong>−1 要轉成 INF</strong></td>
+          <td><code>c[i][j] = -1</code> 是「沒有直接道路」，要轉成 INF；別當成「距離 −1」拿去做 min。</td>
+        </tr>
+        <tr>
+          <td><strong>不可達輸出 −1</strong></td>
+          <td>掃 max 時若有任何 <code>dist[i][j] = INF</code>，代表這個前綴有點互相到不了 ⇒ 整個輸出 <code>-1</code>（大慘字規劃）。</td>
+        </tr>
+        <tr>
+          <td><strong>INF 相加防溢位</strong></td>
+          <td><code>dist[i][k] + dist[k][j]</code> 前先判兩者 <code>&lt; INF</code>，否則 INF+INF 會溢位變垃圾甚至負數。</td>
+        </tr>
+        <tr>
+          <td><strong>只掃 {1..k}</strong></td>
+          <td>第 k 層只考慮「已加入的城市」，max 與鬆弛都只跑 1..k，別掃到還沒加入的 k+1..N。</td>
+        </tr>
+        <tr>
+          <td><strong>輸出格式</strong></td>
+          <td>N 個整數一行、空白隔開，最後接換行；別忘了 <code>dist[i][i]=0</code> 不影響 max。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 讀矩陣（−1 → INF）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// read</span>
+c[i][j] = (x == -1) ? INF : x    ← -1 代表沒有直接道路
+dist[][] 全部初始化成 INF</pre>
+
+    <p><strong>② 加入城市 k：填直接邊</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// step 1</span>
+for i in [1, k]:
+    dist[i][k] = min(dist[i][k], c[i][k])   ← 進 k 的直接邊
+    dist[k][i] = min(dist[k][i], c[k][i])   ← 出 k 的直接邊
+dist[k][k] = 0</pre>
+
+    <p><strong>③ 修 k 的行列（多跳進出）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// step 2 (關鍵)</span>
+for m in [1, k-1]:           ← 用之前的城市當中繼
+    for i in [1, k]:
+        dist[i][k] = min(dist[i][k], dist[i][m] + dist[m][k])
+        dist[k][i] = min(dist[k][i], dist[k][m] + dist[m][i])</pre>
+
+    <p><strong>④ 以 k 鬆弛全對 + 掃 max</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// step 3 + 4</span>
+for i in [1,k]: for j in [1,k]:
+    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+worst = max dist[i][j]；若有 INF ⇒ 輸出 -1</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">每加一城跑一層 Floyd：填直接邊 → 修 k 行列 → 以 k 鬆弛 → 掃 max 慘字度。</div>
+    <div class="sc-summary-bar__detail">步驟 2「修 k 行列」不可省 · −1→INF、相加防溢位、有 ∞ 輸出 −1 · O(N³)</div>
+  </div>
+
+</body>
+</html>

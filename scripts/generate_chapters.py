@@ -106,7 +106,7 @@ PROBLEMS = {
         ('p348', '可魚果運輸問題',                  'main',     'done'),
         ('p378', '江神與他的小火車',                'main',     'done'),
         ('p472', '最小生成樹',                      'main',     'done'),
-        ('p351', '慘字道路規劃',                    'bonus',    'todo'),
+        ('p351', '慘字道路規劃',                    'bonus',    'done'),
         ('p473', '道路工程',                        'bonus',    'todo'),
         ('p474', '石油',                            'bonus',    'todo'),
         ('p150', '關鍵邏輯閘',                      'practice', 'todo'),

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P351 · 03 Review // 慘字道路規劃 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P351
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/351/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">慘字道路規劃</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>核心對應</td>
+            <td>「加入城市 k」= Floyd 的「第 k 層 pivot（允許用 k 當中繼）」。</td></tr>
+        <tr><td>Floyd 不變量</td>
+            <td>第 k 層後 <code>dist[i][j]</code> = 只用編號 ≤ k 的點當中繼的最短距離。</td></tr>
+        <tr><td>慘字度</td>
+            <td>當前所有點對最短路的 <code>max</code>；有 ∞ ⇒ <code>-1</code>。</td></tr>
+        <tr><td>步驟 2 不可省</td>
+            <td>先用舊城市修好 k 的行/列，否則漏算進出 k 的多跳捷徑。</td></tr>
+        <tr><td>−1 語意</td>
+            <td>輸入 −1 = 沒有直接道路 ⇒ 轉成 INF。</td></tr>
+        <tr><td>複雜度</td>
+            <td>每層 O(k²)，加總 <code>O(N³)</code>，與一次完整 Floyd 同量級。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">核心對應</span>
+      <h4>為什麼「加入城市 k」可以對應到 Floyd 最外層 <code>for k</code> 的「第 k 層」？兩者的意義怎麼吻合？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">關鍵步驟</span>
+      <h4>程式裡「先用之前的城市修正 dist[i][k]、dist[k][j]」那一步如果省掉，會發生什麼？哪個樣本值會錯？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">不變量</span>
+      <h4>Floyd 第 k 層跑完，<code>dist[i][j]</code> 的精確含義是什麼？為什麼「經過 k 一次」就涵蓋所有新最短路？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">−1 處理</span>
+      <h4>輸入的 <code>-1</code> 代表什麼？如果直接把它當成距離 −1 拿去 min，會出什麼錯？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">複雜度</span>
+      <h4>為什麼總複雜度是 <code>O(N³)</code> 而不是 <code>O(N⁴)</code>？跟「每加一點重跑整次 Floyd」差在哪？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用官方樣本（N=5）。下面是每加入一城後的 dist 矩陣（只列已加入的 {1..k}）。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>5
+ 0  1 -1  2  3
+ 3  0 -1  4  2
+-1 -1  0  9  8
+ 1  3  8  0  9
+ 5  4  3  8  0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 加入城市 1</span>
+dist = [ 0 ]
+慘字度 = max = <span class="sc-trace__out">0</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 加入城市 2</span>
+dist = [ 0  1 ]
+       [ 3  0 ]
+慘字度 = max(1, 3) = <span class="sc-trace__out">3</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 加入城市 3</span>
+dist = [ 0    1   INF ]
+       [ 3    0   INF ]
+       [ INF INF   0  ]
+3 進不去、也出不來（c[*][3]、c[3][1..2] 全 -1）⇒ 有 INF
+慘字度 = <span class="sc-trace__out">-1</span>  （大慘字規劃）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 加入城市 4</span>
+dist = [  0   1  10   2 ]
+       [  3   0  12   4 ]
+       [ 10  11   0   9 ]
+       [  1   2   8   0 ]
+4 把 3 接通了（4↔3 有邊）。最大是 dist[2][3] = 12
+慘字度 = <span class="sc-trace__out">12</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// 加入城市 5</span>
+dist = [  0   1   6   2   3 ]
+       [  3   0   5   4   2 ]
+       [ 10  11   0   9   8 ]
+       [  1   2   7   0   4 ]
+       [  5   4   3   7   0 ]
+5 當中繼把 dist[2][3] 從 12 壓到 5（2→5→3 = 2+3）
+新的最大變成 dist[3][2] = 11
+慘字度 = <span class="sc-trace__out">11</span></pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>0 3 -1 12 11</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：加入城市 5 後，它當中繼幫 2→3 抄了捷徑（12 → 5），<strong>整體最大值反而下降</strong>
+      （12 → 11）。慘字度<strong>不是單調遞增</strong>的 —— 新城市可能讓既有路徑變短、規劃變好。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>承上，為什麼加入城市 5 後 <code>dist[2][3]</code> 變成 5？寫出那條最短路徑。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">單調性</span>
+      <h4>慘字度序列會不會一定遞增？用本範例 <code>12 → 11</code> 說明，並解釋為什麼。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形</span>
+      <h4>若改成「移除」城市（從 N 倒著刪），還能用增量 Floyd 嗎？該怎麼想？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 核心對應</span>
+      <p>
+        Floyd 最外層 <code>for k</code> 的第 k 圈，意思是「<strong>現在允許用編號 k 的點當中繼</strong>，
+        重新鬆弛所有 dist[i][j]」。題目「加入城市 k」恰好就是「讓 k 變成可用的中繼點」。
+      </p>
+      <p>
+        兩者語意完全一致 ⇒ 把 Floyd 的三層迴圈攤開，按 k=1..N 一層一層跑，
+        每跑完一層就是「加完城市 k 後」的全點對最短路，順手掃 max 即得慘字度。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 關鍵步驟</span>
+      <p>
+        會<strong>少算進出 k 的多跳捷徑</strong>。只填 k 的直接邊、馬上以 k 當中繼鬆弛，
+        等於假設「到 k / 從 k」只能走一條直接道路，忽略「i → 某舊城市 m → k」這種更短的走法。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 省掉步驟 2 的後果</span>
+樣本最後一項：正解 11，少了步驟 2 會算成 <strong>12</strong>
+（因為某些 dist[i][k] 沒被舊城市 m 修短）</pre>
+      <p>所以一定要先用 m ∈ {1..k−1} 修好 <code>dist[i][k]</code>、<code>dist[k][j]</code>，再以 k 鬆弛全對。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 不變量</span>
+      <p>
+        第 k 層跑完後，<code>dist[i][j]</code> = 「i 到 j、<strong>只允許用編號 ≤ k 的點當中繼</strong>」的最短距離。
+      </p>
+      <p>
+        新增 k 後的任何最短路，若用到 k，可拆成 <code>i ⇝ k</code> 與 <code>k ⇝ j</code> 兩段。
+        <strong>只需經過 k 一次</strong>：邊權非負 ⇒ 經過 k 兩次代表繞了一個含 k 的環，不會更短。
+        所以 <code>min(dist[i][j], dist[i][k] + dist[k][j])</code> 就完整涵蓋所有「用 k」的新最短路。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · −1 處理</span>
+      <p>
+        輸入 <code>-1</code> 代表 <strong>i 到 j 沒有直接道路</strong>（不是距離 −1）。要轉成
+        <code>INF</code> 表示「目前不可達」。
+      </p>
+      <p>
+        若直接把 −1 當成距離拿去 min，會得到負的「最短路」、甚至製造負權環，
+        整個 Floyd 崩潰、答案全錯。正確做法：讀入時 <code>c = (x==-1 ? INF : x)</code>。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 複雜度</span>
+      <p>
+        增量版只把 Floyd 的三層迴圈<strong>攤開一次</strong>：外層 k 跑 N 次，每層做 O(k²) 的鬆弛 + 掃 max，
+        加總 <code>Σ k² = O(N³)</code>。
+      </p>
+      <p>
+        「每加一點重跑整次 Floyd」則是<strong>每個前綴都重跑一次 O(k³)</strong>，
+        加總 <code>Σ k³ = O(N⁴)</code>。N=500 時 N⁴ = 6×10¹⁰ 會 TLE，N³ = 1.25×10⁸ 則秒過。
+        差別就在「複用上一層的結果」而非從頭重算。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <p>
+        加入城市 5 前，<code>dist[2][3] = 12</code>（要繞 2→4→3 = 4+8）。加入 5 後，5 當中繼提供捷徑：
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 2 → 5 → 3</span>
+dist[2][5] = 2  (2→5 直接邊)
+dist[5][3] = 3  (5→3 直接邊)
+dist[2][3] = min(12, 2 + 3) = <strong>5</strong></pre>
+      <p>路徑是 <code>2 → 5 → 3</code>，長度 5。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        <strong>不一定遞增</strong>。本範例第 4 項 12、第 5 項 11，就降下來了。
+      </p>
+      <p>
+        原因：新城市除了「自己跟別人的距離」會被加進來（可能拉高 max），也能<strong>當中繼把既有點對的最短路變短</strong>。
+        當「縮短既有最大那條」的效果勝過「新增的點對」時，慘字度就下降。所以序列可升可降，不能假設單調。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        <strong>可以，但要倒著想</strong>。刪除城市無法直接「反做」一層 Floyd（中繼的影響已散佈到整個矩陣，難以撤銷）。
+      </p>
+      <p>
+        標準技巧是<strong>離線、把刪除反轉成加入</strong>：把「依序刪 N, N−1, …」倒過來看成「依序加 1, 2, …」，
+        正好就是本題的增量 Floyd，再把答案反序輸出即可。「刪除 → 反轉成加入」是這類問題的通用套路。
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 逐城 trace — 看懂「加一城 = 跑一層 Floyd」與慘字度非單調。</div>
+    <div class="sc-summary-bar__detail">樣本輸出 0 3 -1 12 11（加城 5 後 2→5→3 把 12 壓到 5，max 降為 11）</div>
+  </div>
+
+</body>
+</html>

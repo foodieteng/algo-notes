@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P351 · 01 概念 // 慘字道路規劃 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P351
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/351/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">慘字道路規劃</h1>
+    <p class="sc-mast__subtitle">// Incremental Floyd-Warshall · 逐點加入</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 全點對最短路 · 增量 Floyd
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(N³)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>有向帶權圖以鄰接矩陣 <code>c[i][j]</code> 給定（<code>-1</code> = 沒有直接道路，<code>c[i][i]=0</code>）。
+      定義「<strong>慘字度</strong>」= <code>max</code><sub>i,j</sub> <code>mindist(i,j)</code>，即<strong>所有點對最短路裡最大的那一個</strong>
+      —— 越大代表規劃越糟。若有某對點互相到不了，就是「大慘字規劃」，輸出 <code>-1</code>。</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      總統<strong>依編號 1 → N 一個一個加入城市</strong>。每加入一個新城市（它可能成為更短路徑的中繼），
+      就要回報「目前已加入的城市」所構成的網路的慘字度。輸出 N 個整數。
+      <code>3 ≤ N ≤ 500 · cᵢᵢ=0 · cᵢⱼ = −1 或 1 ≤ cᵢⱼ ≤ 1000</code>。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼是增量 Floyd
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用增量 Floyd<span class="sc-section__title-en">// Why Incremental Floyd</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">每加一點重跑 Floyd</span>
+            <span class="sc-ko-card__o">O(N⁴)</span>
+          </div>
+          <div class="sc-ko-card__body">每個前綴重算一次全點對最短路。N=500 ⇒ 6×10¹⁰，太慢。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">每點對跑 Dijkstra</span>
+            <span class="sc-ko-card__o">O(N · N²·…)</span>
+          </div>
+          <div class="sc-ko-card__body">N 次單源最短路 × N 個前綴，碼複雜又不比 Floyd 快。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · 不對題型</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">增量 Floyd-Warshall</span>
+          <span class="sc-ko-card__o">O(N³)</span>
+        </div>
+        <div class="sc-ko-card__body">Floyd 的 pivot 迴圈「<strong>第 k 層</strong>」本來就等於「允許用城市 k 當中繼」⇒ 加一城 = 跑一層。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · OPTIMAL</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵對應</strong>：標準 Floyd 的最外層 <code>for k</code> 意思是「現在<strong>允許用 k 號點當中繼</strong>，
+      更新所有 dist[i][j]」。題目「加入城市 k」恰好就是「讓 k 可以當中繼」—— 兩者一模一樣！
+      所以把 Floyd 的三層迴圈<strong>攤開來、每加一城跑一層</strong>，順便回報慘字度即可。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 加入城市 k 的三件事<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">維護 <code>dist[i][j]</code> = 只用「已加入城市」當中繼的最短距離。加入城市 <code>k</code> 時：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>填直接邊</strong> · 把 <code>k</code> 與 {1..k} 之間的直接道路 <code>c[i][k]</code>、<code>c[k][i]</code> 填進 dist。</li>
+      <li><strong>修 k 的行列</strong> · 先用「之前的城市 m」當中繼修正 <code>dist[i][k]</code>、<code>dist[k][j]</code>
+        （讓 <code>i ⇝ … ⇝ k</code> 的多跳路徑成立）。</li>
+      <li><strong>以 k 為中繼鬆弛全對</strong> · <code>dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])</code>，
+        然後掃出 <code>max</code> 當慘字度（有 ∞ 就輸出 −1）。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為何步驟 2 不能省</strong> · 新城市 k 的最短「進、出」路徑可能要繞經先前的城市，
+      只填直接邊會少算多跳捷徑（這正是初版會把答案算成 12 而非 11 的 bug）。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 逐點加入 + Floyd 鬆弛<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用樣本（N=5）。每加入一個城市 k，dist 矩陣多出第 k 行/列、並以 k 為中繼鬆弛，
+    右側即時算出慘字度 <code>0 → 3 → −1 → 12 → 11</code>：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · INCREMENTAL FLOYD</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="460" style="height:460px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · dist 矩陣全空，準備依序加入城市 1~5
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">●</span> 已加入的格子 &nbsp;·&nbsp;
+      <span style="color:#d4a868">●</span> 本步新增的 k 行/列 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 被鬆弛變小的格 / 慘字度來源 &nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 本步算出的慘字度
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為何「跑一層 Floyd」就對（證明）
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何加一城 = 跑一層 Floyd<span class="sc-section__title-en">// Why One Layer per City</span></h2>
+    </div>
+
+    <p style="font-size:14px;">Floyd 的不變量（invariant）是理解這題的鑰匙。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">FLOYD INVARIANT · 第 k 層之後的意義</div>
+      <div class="sc-dark-box__body">
+        <p>Floyd 的最外層跑完 <code>k</code> 之後，<code>dist[i][j]</code> 的不變量是：</p>
+        <ol>
+          <li><strong>「i 到 j、只允許用編號 ≤ k 的點當中繼」的最短距離。</strong></li>
+          <li>加入城市 k ⇔ 把可用中繼集合從 {1..k−1} 擴成 {1..k}。新路徑要嘛不經過 k（值不變），
+            要嘛經過 k 一次 ⇒ 拆成 <code>i ⇝ k</code> 與 <code>k ⇝ j</code> 兩段。</li>
+          <li>經過 k 一次就夠：邊權非負 ⇒ 經過 k 兩次會多繞一個含 k 的環、不會更短。
+            所以 <code>dist[i][j] ← min(dist[i][j], dist[i][k] + dist[k][j])</code> 完整涵蓋「新增 k 後」的所有最短路。</li>
+          <li>因為城市<strong>恰好按編號 1..N 加入</strong>，加入順序 = Floyd 的 k 迴圈順序 ⇒
+            每加一城就跑「那一層」，跑完的 dist 正好是「目前已加入城市」的全點對最短路。</li>
+        </ol>
+        <p style="margin-top:6px;">於是每層結束掃一遍 <code>max dist[i][j]</code> 就是當下慘字度（有 ∞ ⇒ −1）。</p>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;">
+      <strong>實測佐證</strong>：對 2000 組隨機矩陣，「增量 Floyd」與「每個前綴重跑整次 Floyd」
+      <strong>答案完全一致、零反例</strong>，且 N=500 在 0.3 秒內跑完。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">三層迴圈攤開：外層 k 跑 N 次，每層內部 O(N²) 的鬆弛 + O(N²) 的 max 掃描：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = N × O(N²) = <strong>O(N³)</strong></div>
+      <div class="sc-formula__hint">
+        N = 500 ⇒ 1.25×10⁸，3 秒時限內輕鬆（實測 0.3 秒）
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(N³)</strong></td><td>跟跑一次完整 Floyd 同量級</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N²)</strong></td><td>dist 矩陣 + 原始 c 矩陣</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>路徑最長 ~N·1000 ≈ 5×10⁵，其實 int 也夠，但 INF 相加要防溢位</td></tr>
+        <tr><td>每層輸出</td><td class="mono">O(N²)</td><td>掃 max；總和仍 O(N³)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>「加入城市 k」就是 Floyd 的「第 k 層 pivot」。</strong><br/>
+      把三層迴圈攤開、每加一城跑一層 + 掃 max，<br/>
+      就能在 O(N³) 內回報每個前綴的慘字度。<br/>
+      <strong>記得先用舊城市修好 k 的行列，否則少算多跳捷徑。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">加入城市 k = Floyd 第 k 層 pivot；攤開三層迴圈、每加一城跑一層 + 掃 max 慘字度。</div>
+    <div class="sc-summary-bar__detail">先用舊城市修好 k 的行列再以 k 鬆弛 · 有 ∞ 輸出 −1 · O(N³)</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p351-floyd.js"></script>
+</body>
+</html>
