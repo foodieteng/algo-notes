@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P473 · 03 Review // 道路工程 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P473
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/473/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">道路工程</h1>
+    <p class="sc-mast__subtitle">// Review · 觀念題 · Trace 範例</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      Self-check
+      <span class="sc-mast__sep">·</span>
+      範例 trace
+      <span class="sc-mast__sep">·</span>
+      答案
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 3 / 3 &nbsp;·&nbsp; REVIEW
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 重點回顧
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">重點回顧<span class="sc-section__title-en">// Concept Recap</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>關鍵點</th><th>內容</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>問題本質</td>
+            <td>刪最少邊，使「最小花費不變」且「MST 唯一」。</td></tr>
+        <tr><td>非唯一來源</td>
+            <td>只來自<strong>同權重邊之間的選擇</strong>，跨權重無選擇。</td></tr>
+        <tr><td>核心公式</td>
+            <td>每權重類別：<code>冗餘 = 候選邊數 − 實際合併數</code>。</td></tr>
+        <tr><td>候選定義</td>
+            <td>處理組前 DSU 下 <code>find(u) ≠ find(v)</code> 的邊。</td></tr>
+        <tr><td>實作關鍵</td>
+            <td><strong>先收集候選、再統一合併</strong>，不可邊掃邊 union。</td></tr>
+        <tr><td>正確性</td>
+            <td>刪冗餘不改各權重合併次數 ⇒ 最小花費不變。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 觀念題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">觀念題<span class="sc-section__title-en">// Concept Questions</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q1</span>
+      <span class="qa__tag">非唯一來源</span>
+      <h4>為什麼 MST 的「不唯一」一定只發生在<strong>同權重</strong>邊之間，而不會跨不同權重？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q2</span>
+      <span class="qa__tag">核心公式</span>
+      <h4>「冗餘 = 候選邊數 − 合併數」為什麼正好是這個權重類別要刪的邊數？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q3</span>
+      <span class="qa__tag">實作陷阱</span>
+      <h4>為什麼同一權重組要「先收集候選、再合併」，不能邊掃邊 union？舉個會出錯的例子。</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q4</span>
+      <span class="qa__tag">花費不變</span>
+      <h4>怎麼確定刪掉這些冗餘邊後，「最小花費」一定沒變？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">Q5</span>
+      <span class="qa__tag">候選定義</span>
+      <h4>一條邊兩端早已在同一連通塊（被更輕的邊連起），它算不算冗餘？該不該刪、計不計數？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 範例 Trace
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">範例 Trace · 跑一次 code 看會輸出什麼<span class="sc-section__title-en">// Worked Trace</span></h2>
+    </div>
+
+    <p>用樣本 1：<code>N=6, M=10</code>。按權重分組逐類別處理。</p>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// INPUT</span>6 10
+1 2 3 | 1 3 3 | 2 3 2 | 2 4 5 | 2 5 2
+3 4 4 | 3 5 1 | 3 6 1 | 4 5 4 | 5 6 1</pre>
+
+    <p>排序後依權重分組，每組「候選 − 合併」：</p>
+
+    <table class="sc-table">
+      <thead><tr><th>權重 w</th><th>邊</th><th>候選</th><th>合併</th><th>冗餘</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td class="mono">3-5, 3-6, 5-6</td><td class="mono">3</td><td class="mono">2</td><td class="mono"><strong>1</strong></td></tr>
+        <tr><td class="mono">2</td><td class="mono">2-3, 2-5</td><td class="mono">2</td><td class="mono">1</td><td class="mono"><strong>1</strong></td></tr>
+        <tr><td class="mono">3</td><td class="mono">1-2, 1-3</td><td class="mono">2</td><td class="mono">1</td><td class="mono"><strong>1</strong></td></tr>
+        <tr><td class="mono">4</td><td class="mono">3-4, 4-5</td><td class="mono">2</td><td class="mono">1</td><td class="mono"><strong>1</strong></td></tr>
+        <tr><td class="mono">5</td><td class="mono">2-4</td><td class="mono">0</td><td class="mono">0</td><td class="mono">0</td></tr>
+      </tbody>
+    </table>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// w = 1 · {3,5,6} 三角形</span>
+候選 = 3-5, 3-6, 5-6（三點互不同塊）
+union 3-5 ✓、union 3-6 ✓（已連 {3,5,6}）、5-6 同塊 ✗
+merges = 2，候選 = 3 ⇒ 冗餘 = 1
+（三條等權任選兩條都連通 ⇒ 刪 1 條才唯一）</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// w = 2 · 2-3, 2-5</span>
+此刻 {3,5,6} 已一塊。2-3 與 2-5 都把 2 接上同一塊
+候選 = 2（兩端不同塊）, union 2-3 ✓、2-5 已同塊 ✗
+merges = 1 ⇒ 冗餘 = 1</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// w = 3 / 4 同理各冗餘 1；w = 5 候選 0</span>
+w=3: 1-2,1-3 → 候選2 合併1 冗餘1
+w=4: 3-4,4-5 → 候選2 合併1 冗餘1
+w=5: 2-4 兩端已同塊 → 候選0 冗餘0</pre>
+
+    <pre class="sc-trace"><span class="sc-trace__head">// OUTPUT</span>1 + 1 + 1 + 1 + 0 = 4</pre>
+
+    <div class="sc-insight">
+      <strong>觀察</strong>：每個權重類別獨立貢獻自己的冗餘數，彼此不互相干擾（因為更輕的邊先把連通塊定下來了）。
+      把各層冗餘 <strong>1+1+1+1+0 = 4</strong> 加總就是答案 —— 刪 4 條後 MST 唯一、最小花費不變。
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 應用題
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">應用題<span class="sc-section__title-en">// Quick Calculations</span></h2>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 1</span>
+      <span class="qa__tag">手算</span>
+      <h4>樣本 2：3 點、3 條權重 1 的邊（三角形）。手算候選/合併/冗餘，輸出多少？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 2</span>
+      <span class="qa__tag">邊界</span>
+      <h4>若全部邊的權重<strong>兩兩不同</strong>，答案一定是多少？為什麼？</h4>
+    </div>
+
+    <div class="qa">
+      <span class="qa__id">App 3</span>
+      <span class="qa__tag">變形</span>
+      <h4>若改問「MST 一共有幾種不同的權重組合」太難；但若問「哪些邊一定出現在所有 MST」，怎麼用同個框架判？</h4>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANSWERS
+       ============================================================ -->
+  <div class="answer-divider" id="answers">
+    <span class="answer-divider__label">// ANSWERS</span>
+    <span class="answer-divider__rule"></span>
+  </div>
+
+  <p style="max-width:900px;margin:0 auto var(--sp-5);color:var(--sc-ink-dim); font-size:13px;">
+    先自己想過再對答案 — Q 對應 Q、App 對應 App。
+  </p>
+
+  <section class="sc-section">
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A1 · 非唯一來源</span>
+      <p>
+        Kruskal 嚴格按權重由小到大加邊。處理完所有權重 &lt; w 的邊後，連通塊結構是<strong>確定</strong>的
+        （跟選了哪些等權邊無關）。
+      </p>
+      <p>
+        所以「要不要選某條更輕的邊」從來沒有猶豫 —— 跨權重沒有選擇。唯一的自由度是
+        「<strong>同一個權重裡，多條候選邊連接同一批連通塊，挑誰</strong>」。非唯一只可能由此而來。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A2 · 核心公式</span>
+      <p>
+        某權重類別需要 <code>merges</code> 次合併（這個數字固定，等於該權重在 MST 的貢獻邊數）。
+        但有 <code>c</code> 條候選邊都「能做這些合併」。
+      </p>
+      <p>
+        每次合併只需 1 條邊，多出來的 <code>c − merges</code> 條都是<strong>替代品</strong>（平行邊，或在收縮圖上成環）——
+        留著它們就有選擇、MST 不唯一。把這些全刪掉，每次合併剛好只剩唯一可用邊 ⇒ 該層唯一。
+        所以這層要刪 <code>c − merges</code> 條。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A3 · 實作陷阱</span>
+      <p>
+        要先把整組候選邊收集完（都用「組前」的 DSU 判 <code>find</code>），再統一 union。
+        否則前一條 union 會改變後一條的 <code>find</code> 結果。
+      </p>
+      <pre class="sc-trace"><span class="sc-trace__head">// 三角形 {3,5,6} 全權重 1</span>
+邊掃邊 union（錯）:
+  3-5 不同塊 → 候選, union → {3,5}
+  3-6 不同塊 → 候選, union → {3,5,6}
+  5-6 此刻已同塊 → 不算候選    ← 漏掉這條冗餘！
+正確（先收集）: 三條都不同塊 → 候選=3, 合併=2, 冗餘=1 ✓</pre>
+      <p>本例邊掃邊會算出冗餘 0，先收集才得正確的 1。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A4 · 花費不變</span>
+      <p>
+        我們刪的都是「同權重的多餘候選邊」，<strong>每個權重類別的合併次數一條都沒少</strong>。
+      </p>
+      <p>
+        合併次數固定 ⇒ 每個權重貢獻給 MST 的邊數不變 ⇒ 總權重（最小花費）不變。
+        刪掉的只是「本來就用不到、只是製造選擇」的替代邊，不碰真正被選進去的那些。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A5 · 候選定義</span>
+      <p>
+        兩端早已同塊的邊<strong>不算候選、也不用刪、不計數</strong>。
+      </p>
+      <p>
+        它根本進不了任何 MST（加進去會成環、且權重不比已連起兩端的邊小），對唯一性毫無影響。
+        程式裡用 <code>find(u) != find(v)</code> 過濾，正是只把「有資格進 MST」的邊納入候選。
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 1</span>
+      <pre class="sc-trace"><span class="sc-trace__head">// 樣本 2：三角形 1-2,2-3,3-1 全 w=1</span>
+組前三點互不同塊 ⇒ 候選 = 3 條
+union 1-2 ✓、union 2-3 ✓（連成 {1,2,3}）、3-1 同塊 ✗
+merges = 2，候選 = 3 ⇒ 冗餘 = 3 − 2 = <strong>1</strong></pre>
+      <p>輸出 <strong>1</strong>：三條等權任選兩條都連通（3 棵 MST），刪 1 條後剩 2 條成一條路徑 ⇒ 唯一。</p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 2</span>
+      <p>
+        答案一定是 <strong>0</strong>。權重兩兩不同 ⇒ 每個權重類別只有 1 條邊 ⇒ 候選數 ≤ 1、冗餘恆為 0。
+      </p>
+      <p>
+        這對應一個經典結論：<strong>邊權全相異的圖，MST 唯一</strong>。所以不用刪任何邊。
+        （這也是為什麼隨機 10⁹ 權重的大測資答案常常是 0。）
+      </p>
+    </div>
+
+    <div class="qa qa--answer">
+      <span class="qa__id">A · App 3</span>
+      <p>
+        用同一個 Kruskal-分類別框架即可判「<strong>必選邊（出現在所有 MST）</strong>」：
+      </p>
+      <ul>
+        <li>在處理權重 w 的組時，把已收縮的連通塊當點、這組候選邊當圖。</li>
+        <li>一條候選邊是<strong>必選</strong> ⟺ 它是它所連那兩塊之間的<strong>橋（bridge）</strong>
+          —— 拿掉它，這組就無法完成同樣的合併。</li>
+        <li>反之，落在環上的候選邊都是「可換」的，不是必選。</li>
+      </ul>
+      <p>本題的「冗餘 = 候選 − 合併」其實就是在數「非必選（可換）」的邊有幾條。</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="code.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code</span>
+    </a>
+    <a href="../../index.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">↑ 回 W10 章節</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">5 觀念題 + 3 應用題 + 1 逐權重 trace — 看懂「冗餘 = 候選 − 合併」與先收集再合併。</div>
+    <div class="sc-summary-bar__detail">樣本 1：權重 1~4 各冗餘 1、權重 5 冗餘 0 ⇒ 共刪 4 · 邊權全相異則答案 0</div>
+  </div>
+
+</body>
+</html>

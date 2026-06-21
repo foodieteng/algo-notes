@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P473 · 01 概念 // 道路工程 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P473
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/473/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">道路工程</h1>
+    <p class="sc-mast__subtitle">// MST Uniqueness · Kruskal 分權重類別</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      核心 MST 唯一性 · Kruskal + DSU
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(M log M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 1 / 3 &nbsp;·&nbsp; 概念
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 題目簡介
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">題目簡介<span class="sc-section__title-en">// Brief</span></h2>
+    </div>
+
+    <div class="sc-question">
+      <span class="sc-question__label">QUESTION</span>
+      <p>無向帶權圖（N 城市、M 條道路計劃，計劃 i 連 <code>uᵢ–vᵢ</code> 花費 <code>wᵢ</code>）。
+      資芽國要用<strong>最小總花費</strong>把全部城市連通（= 最小生成樹 MST）。但達到最小花費的方法可能<strong>不只一種</strong>
+      （多棵 MST）。小 Y 想讓「最終建造方式<strong>唯一</strong>」，又<strong>不能改變最小花費本身</strong>。
+      問：<strong>最少要刪掉幾條道路計劃</strong>，才能讓 MST 變唯一？</p>
+    </div>
+
+    <p style="font-size:13.5px;color:var(--sc-ink-dim);margin-top:10px;">
+      <code>1 ≤ N ≤ 10⁵ · 0 ≤ M ≤ 3×10⁵ · 1 ≤ wᵢ ≤ 10⁹ · uᵢ ≠ vᵢ</code>，保證圖連通。
+      換句話說：刪最少邊使「最小花費不變」且「MST 唯一」。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 為什麼是「分權重類別數冗餘邊」
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">為什麼用 Kruskal 分類別<span class="sc-section__title-en">// Why Group by Weight</span></h2>
+    </div>
+
+    <div class="sc-ko">
+      <div class="sc-ko__row">
+        <div class="sc-ko-card sc-ko-card--bad">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">A</span>
+            <span class="sc-ko-card__title">枚舉所有 MST</span>
+            <span class="sc-ko-card__o">指數級</span>
+          </div>
+          <div class="sc-ko-card__body">MST 可能有指數多棵，列出來比對不可行。</div>
+          <div class="sc-ko-card__verdict">× REJECT · TLE</div>
+        </div>
+        <div class="sc-ko-card sc-ko-card--mid">
+          <div class="sc-ko-card__head">
+            <span class="sc-ko-card__badge">B</span>
+            <span class="sc-ko-card__title">逐邊判是否必選</span>
+            <span class="sc-ko-card__o">O(M²)</span>
+          </div>
+          <div class="sc-ko-card__body">對每條邊單獨判「是否在所有 MST」太慢，也沒直接給刪除數。</div>
+          <div class="sc-ko-card__verdict">△ REJECT · 太慢</div>
+        </div>
+      </div>
+
+      <div class="sc-ko__arrow">BOTH FAIL · ADOPT</div>
+
+      <div class="sc-ko-card sc-ko-card--good">
+        <div class="sc-ko-card__head">
+          <span class="sc-ko-card__badge">C</span>
+          <span class="sc-ko-card__title">Kruskal 分權重類別</span>
+          <span class="sc-ko-card__o">O(M log M)</span>
+        </div>
+        <div class="sc-ko-card__body">同權重邊一起處理：<strong>候選邊數 − 實際合併數 = 該類別冗餘邊</strong>，全部加起來就是答案。</div>
+        <div class="sc-ko-card__verdict">● ADOPT · OPTIMAL</div>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>關鍵觀察</strong>：MST 不唯一<strong>只會發生在同權重邊之間的選擇</strong>。
+      把邊按權重分組、依 Kruskal 順序處理，每一組裡「能連接不同連通塊但用不到的多餘候選邊」
+      就是製造選擇的元兇 —— 數出來、刪掉它們即可。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — 三步驟策略
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">核心策略 · 每個權重類別做三件事<span class="sc-section__title-en">// Algorithm Outline</span></h2>
+    </div>
+
+    <p style="font-size:14px;">把邊按權重<strong>由小到大排序、分組</strong>。處理某個權重 <code>w</code> 的那一組時：</p>
+
+    <ol style="margin-top:6px;">
+      <li><strong>找候選邊</strong> · 在「處理完所有更輕邊」的 DSU 狀態下，挑出這組裡 <code>find(u) ≠ find(v)</code>
+        的邊（兩端在不同連通塊）—— 這些才有資格進 MST。</li>
+      <li><strong>合併並數冗餘</strong> · 對候選邊逐一 <code>union</code>；真正造成合併的數量 = <code>merges</code>。
+        <strong>候選數 − merges = 這組要刪的冗餘邊</strong>。</li>
+      <li><strong>累加</strong> · 把每組的冗餘邊數加總，就是答案（讓 MST 唯一所需的最少刪除數）。</li>
+    </ol>
+
+    <p style="margin-top:8px;font-size:13.5px;color:var(--sc-ink-dim);">
+      <strong>為何「候選 − merges」就是冗餘</strong> · 一組裡若有 <code>c</code> 條候選邊但只需 <code>m</code> 次合併，
+      多出來的 <code>c − m</code> 條都是「可換可不換」的選擇來源（平行邊或在收縮圖上成環）⇒ 全刪掉才唯一。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 動畫
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">動畫演示 · 分權重類別數冗餘<span class="sc-section__title-en">// Animation</span></h2>
+    </div>
+
+    <p>用樣本 2：3 城市、3 條邊全是權重 1（三角形）。連通 3 點只需 2 條，但有 3 條等權候選 ⇒
+    任選 2 條都行（3 棵 MST）⇒ 刪 <strong>1</strong> 條才唯一：</p>
+
+    <div class="sc-viz">
+      <div class="sc-viz__title">// VIZ · MST UNIQUENESS BY WEIGHT CLASS</div>
+      <canvas id="viz-canvas" class="sc-viz__canvas" height="450" style="height:450px"></canvas>
+      <div class="sc-viz__controls">
+        <button class="sc-btn" id="viz-reset">Reset</button>
+        <button class="sc-btn" id="viz-prev">Prev</button>
+        <button class="sc-btn sc-btn--primary" id="viz-play">Play</button>
+        <button class="sc-btn" id="viz-next">Next</button>
+        <span class="sc-viz__step" id="viz-step">-- / --</span>
+      </div>
+      <div class="sc-viz__label" id="viz-label">
+        <strong>INITIAL</strong> · 3 條邊都是權重 1，分成同一個權重類別處理
+      </div>
+    </div>
+
+    <p style="margin-top:14px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>顏色說明</strong>：
+      <span style="color:#8fb3d4">●</span> 尚未處理的邊 &nbsp;·&nbsp;
+      <span style="color:#5fa866">●</span> 造成合併（進 MST） &nbsp;·&nbsp;
+      <span style="color:#c97b7b">●</span> 冗餘 ⇒ 要刪 &nbsp;·&nbsp;
+      <span style="color:#d96e4e">●</span> 本步正在判斷的邊
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — 為何唯一性只看同權重類別（證明）
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">05</span>
+      <h2 class="sc-section__title">為何非唯一只發生在同權重之間<span class="sc-section__title-en">// Why Equal Weights Only</span></h2>
+    </div>
+
+    <p style="font-size:14px;">這題的正確性建立在 MST 的兩個性質上。</p>
+
+    <div class="sc-dark-box">
+      <div class="sc-dark-box__title">MST 唯一性 · 兩個關鍵事實</div>
+      <div class="sc-dark-box__body">
+        <ol>
+          <li><strong>每個權重類別的「合併次數」是固定的。</strong> 不管選哪些等權邊，處理完權重 ≤ w 的所有邊後，
+            連通塊結構完全相同 ⇒ 每個權重在 MST 裡貢獻的邊數固定（這也是「最小花費不變」的保證）。</li>
+          <li><strong>選擇只來自同權重組內。</strong> 跨權重不會有選擇：更輕的邊永遠優先，Kruskal 不會猶豫。
+            非唯一<strong>只可能</strong>是「同權重的多條候選邊，連接同一批連通塊，挑誰都行」。</li>
+          <li>所以在處理權重 w 的那組時，把已收縮的連通塊當點，這組候選邊在上面若有<strong>多餘</strong>
+            （平行邊、或成環），就是選擇來源。需要 <code>merges</code> 次合併、卻有 <code>c</code> 條候選 ⇒
+            多餘 <code>c − merges</code> 條。</li>
+          <li>刪掉這 <code>c − merges</code> 條後，這組剛好只剩「每次合併唯一可用的邊」⇒ 無從選擇 ⇒ 該層唯一。
+            各層都唯一 ⇒ 整棵 MST 唯一，且因為合併次數不變、<strong>最小花費不變</strong>。</li>
+        </ol>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;font-size:13.5px;">
+      <strong>實測佐證</strong>：對 2900+ 組隨機圖，「分權重類別數冗餘」與「窮舉刪最少邊使 MST 唯一」
+      <strong>答案完全一致、零反例</strong>，且 N=10⁵、M=3×10⁵ 在 1 秒內跑完。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — 複雜度
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">06</span>
+      <h2 class="sc-section__title">複雜度<span class="sc-section__title-en">// Complexity</span></h2>
+    </div>
+
+    <p style="font-size:14px;">瓶頸是排序 <code>O(M log M)</code>；掃邊 + DSU 近乎線性 <code>O(M α(N))</code>：</p>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(M log M)</strong></div>
+      <div class="sc-formula__hint">
+        M = 3×10⁵ ⇒ 排序約 3×10⁵ × 18 ≈ 5×10⁶，實測 1 秒內
+      </div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(M log M)</strong></td><td>排序主導；DSU 近乎 O(M·α)</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>邊陣列 + 並查集 par/rank</td></tr>
+        <tr><td>候選邊暫存</td><td class="mono">O(類別大小)</td><td>每組先收集候選再合併（避免同組互相影響）</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>答案/權重；刪除數本身不大，但 w ≤ 10⁹ 排序鍵用 ll</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — 一句洞察
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">07</span>
+      <h2 class="sc-section__title">一句洞察<span class="sc-section__title-en">// One-Sentence Insight</span></h2>
+    </div>
+
+    <div class="sc-insight">
+      <strong>MST 不唯一，只因同權重邊有得選。</strong><br/>
+      Kruskal 分權重類別：每組「候選邊數 − 實際合併數」= 冗餘邊，<br/>
+      把各組冗餘加總就是要刪的最少邊數。<br/>
+      <strong>刪冗餘不改合併次數 ⇒ 最小花費不變、MST 變唯一。</strong>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <span class="sc-pager__item sc-pager__item--prev is-disabled">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">—</span>
+    </span>
+    <a href="code.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 2 · 完整 Code + 複雜度分析</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">Kruskal 分權重類別：每組候選邊數 − 實際合併數 = 冗餘邊，加總即「刪到 MST 唯一」的最少邊數。</div>
+    <div class="sc-summary-bar__detail">非唯一只來自同權重選擇 · 刪冗餘不改合併次數 ⇒ 最小花費不變 · O(M log M)</div>
+  </div>
+
+  <script src="../../../../assets/js/viz/p473-mst-unique.js"></script>
+</body>
+</html>

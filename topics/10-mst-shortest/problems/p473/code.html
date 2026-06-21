@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P473 · 02 Code // 道路工程 // ALGO WORKSHOP</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+
+  <link rel="stylesheet" href="../../../../assets/css/study-card.css" />
+</head>
+<body class="study-card">
+
+  <!-- Top nav strip -->
+  <div class="sc-topnav">
+    <span>
+      <a href="../../../../index.html">Home</a>
+      &nbsp;/&nbsp;
+      <a href="../../index.html">W10 · MST · Shortest</a>
+      &nbsp;/&nbsp;
+      P473
+    </span>
+    <span>
+      <a href="https://tioj.sprout.tw/contests/30/problems/473/" target="_blank" rel="noopener">原題 ↗</a>
+      &nbsp;·&nbsp; STUDY CARD · 2026.06.21
+    </span>
+  </div>
+
+  <!-- Masthead -->
+  <header class="sc-mast">
+    <span class="sc-mast__chip">學習卡 · STUDY CARD</span>
+    <h1 class="sc-mast__title">道路工程</h1>
+    <p class="sc-mast__subtitle">// Code + Complexity</p>
+    <div class="sc-mast__meta">
+      <span class="sc-mast__stars">★ ★ ★ ★ ☆</span>
+      C++17 · Kruskal + DSU
+      <span class="sc-mast__sep">·</span>
+      時間 <strong>O(M log M)</strong>
+      <span class="sc-mast__sep">·</span>
+      空間 <strong>O(N + M)</strong>
+    </div>
+  </header>
+
+  <!-- Page indicator -->
+  <div class="sc-pageind">
+    PAGE 2 / 3 &nbsp;·&nbsp; CODE
+    <span class="sc-pageind__dot"></span>
+    <span class="sc-pageind__dot is-active"></span>
+    <span class="sc-pageind__dot"></span>
+  </div>
+
+  <div class="sc-mast__rule"></div>
+
+  <!-- ============================================================
+       SECTION 01 — 完整實作
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">01</span>
+      <h2 class="sc-section__title">完整實作<span class="sc-section__title-en">// Full C++</span></h2>
+    </div>
+
+    <div class="sc-codewindow">
+      <div class="sc-codewindow__chrome">
+        <span class="sc-codewindow__dot sc-codewindow__dot--r"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--y"></span>
+        <span class="sc-codewindow__dot sc-codewindow__dot--g"></span>
+        <span class="sc-codewindow__tab">p473.cpp</span>
+        <span class="sc-codewindow__lang">C++17</span>
+      </div>
+<pre class="sc-code"><span class="k">#include</span> <span class="s">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span> <span class="k">namespace</span> std<span class="p">;</span>
+
+<span class="c">// ── 並查集（路徑壓縮 + 按秩合併）</span>
+<span class="t">int</span> par<span class="p">[</span><span class="n">100005</span><span class="p">],</span> rnk<span class="p">[</span><span class="n">100005</span><span class="p">];</span>
+
+<span class="t">int</span> <span class="f">find</span><span class="p">(</span><span class="t">int</span> x<span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span>par<span class="p">[</span>x<span class="p">]</span> <span class="p">!=</span> x<span class="p">)</span> <span class="p">{</span> par<span class="p">[</span>x<span class="p">]</span> <span class="p">=</span> par<span class="p">[</span>par<span class="p">[</span>x<span class="p">]];</span> x <span class="p">=</span> par<span class="p">[</span>x<span class="p">];</span> <span class="p">}</span>
+    <span class="k">return</span> x<span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">bool</span> <span class="f">unite</span><span class="p">(</span><span class="t">int</span> a<span class="p">,</span> <span class="t">int</span> b<span class="p">)</span> <span class="p">{</span>
+    a <span class="p">=</span> <span class="f">find</span><span class="p">(</span>a<span class="p">);</span> b <span class="p">=</span> <span class="f">find</span><span class="p">(</span>b<span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span>a <span class="p">==</span> b<span class="p">)</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>rnk<span class="p">[</span>a<span class="p">]</span> <span class="p">&lt;</span> rnk<span class="p">[</span>b<span class="p">])</span> <span class="f">swap</span><span class="p">(</span>a<span class="p">,</span> b<span class="p">);</span>
+    par<span class="p">[</span>b<span class="p">]</span> <span class="p">=</span> a<span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span>rnk<span class="p">[</span>a<span class="p">]</span> <span class="p">==</span> rnk<span class="p">[</span>b<span class="p">])</span> rnk<span class="p">[</span>a<span class="p">]++;</span>
+    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">void</span> <span class="f">solve</span><span class="p">()</span> <span class="p">{</span>
+    ios<span class="p">::</span><span class="f">sync_with_stdio</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    cin<span class="p">.</span><span class="f">tie</span><span class="p">(</span><span class="k">nullptr</span><span class="p">);</span>
+
+    <span class="t">int</span> N<span class="p">,</span> M<span class="p">;</span>
+    cin <span class="p">&gt;&gt;</span> N <span class="p">&gt;&gt;</span> M<span class="p">;</span>
+
+    <span class="t">vector</span><span class="p">&lt;</span>array<span class="p">&lt;</span><span class="t">long long</span><span class="p">,</span> <span class="n">3</span><span class="p">&gt;&gt;</span> es<span class="p">(</span>M<span class="p">);</span>   <span class="c">// {w, u, v}，sort 先比 w</span>
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span> i <span class="p">&lt;</span> M<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span>
+        <span class="t">long long</span> u<span class="p">,</span> v<span class="p">,</span> w<span class="p">;</span>
+        cin <span class="p">&gt;&gt;</span> u <span class="p">&gt;&gt;</span> v <span class="p">&gt;&gt;</span> w<span class="p">;</span>
+        es<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="p">{</span>w<span class="p">,</span> u<span class="p">,</span> v<span class="p">};</span>
+    <span class="p">}</span>
+    <span class="f">sort</span><span class="p">(</span>es<span class="p">.</span><span class="f">begin</span><span class="p">(),</span> es<span class="p">.</span><span class="f">end</span><span class="p">());</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="t">int</span> i <span class="p">=</span> <span class="n">1</span><span class="p">;</span> i <span class="p">&lt;=</span> N<span class="p">;</span> i<span class="p">++)</span> <span class="p">{</span> par<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> i<span class="p">;</span> rnk<span class="p">[</span>i<span class="p">]</span> <span class="p">=</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="t">long long</span> deletions <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="t">int</span> i <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span>i <span class="p">&lt;</span> M<span class="p">)</span> <span class="p">{</span>
+        <span class="t">int</span> j <span class="p">=</span> i<span class="p">;</span>
+        <span class="t">long long</span> w <span class="p">=</span> es<span class="p">[</span>i<span class="p">][</span><span class="n">0</span><span class="p">];</span>
+
+        <span class="c">// 1) 收集此權重類別「連接不同連通塊」的候選邊</span>
+        <span class="c">//    （先收集再合併，避免同組邊互相改變 DSU 狀態）</span>
+        <span class="t">vector</span><span class="p">&lt;</span>pair<span class="p">&lt;</span><span class="t">int</span><span class="p">,</span> <span class="t">int</span><span class="p">&gt;&gt;</span> cand<span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span>j <span class="p">&lt;</span> M <span class="p">&amp;&amp;</span> es<span class="p">[</span>j<span class="p">][</span><span class="n">0</span><span class="p">]</span> <span class="p">==</span> w<span class="p">)</span> <span class="p">{</span>
+            <span class="t">int</span> u <span class="p">=</span> es<span class="p">[</span>j<span class="p">][</span><span class="n">1</span><span class="p">],</span> v <span class="p">=</span> es<span class="p">[</span>j<span class="p">][</span><span class="n">2</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="f">find</span><span class="p">(</span>u<span class="p">)</span> <span class="p">!=</span> <span class="f">find</span><span class="p">(</span>v<span class="p">))</span> cand<span class="p">.</span><span class="f">push_back</span><span class="p">({</span>u<span class="p">,</span> v<span class="p">});</span>
+            j<span class="p">++;</span>
+        <span class="p">}</span>
+
+        <span class="c">// 2) 對候選邊合併，數真正造成合併的次數</span>
+        <span class="t">int</span> merges <span class="p">=</span> <span class="n">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="p">[</span>u<span class="p">,</span> v<span class="p">]</span> <span class="p">:</span> cand<span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="f">unite</span><span class="p">(</span>u<span class="p">,</span> v<span class="p">))</span> merges<span class="p">++;</span>
+
+        <span class="c">// 3) 候選數 − 合併數 = 此類別冗餘邊（製造非唯一的選擇）</span>
+        deletions <span class="p">+=</span> <span class="p">(</span><span class="t">long long</span><span class="p">)</span>cand<span class="p">.</span><span class="f">size</span><span class="p">()</span> <span class="p">-</span> merges<span class="p">;</span>
+
+        i <span class="p">=</span> j<span class="p">;</span>
+    <span class="p">}</span>
+
+    cout <span class="p">&lt;&lt;</span> deletions <span class="p">&lt;&lt;</span> <span class="s">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="t">int</span> <span class="f">main</span><span class="p">()</span> <span class="p">{</span> <span class="f">solve</span><span class="p">();</span> <span class="k">return</span> <span class="n">0</span><span class="p">;</span> <span class="p">}</span></pre>
+    </div>
+
+    <p style="margin-top:10px;font-size:13px;color:var(--sc-ink-dim);">
+      <strong>「先收集候選、再合併」很重要</strong>：同一權重類別內的邊不能邊掃邊 union，
+      否則前面的 union 會改變後面 <code>find</code> 的結果，把同組互相平行的冗餘邊誤判掉。
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — 複雜度分析
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">02</span>
+      <h2 class="sc-section__title">複雜度分析<span class="sc-section__title-en">// Complexity Derivation</span></h2>
+    </div>
+
+    <p>三段拆解：</p>
+
+    <table class="sc-table">
+      <thead>
+        <tr><th>步驟</th><th>內容</th><th>成本</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>讀邊</td><td>M 條存進陣列</td><td class="mono">O(M)</td></tr>
+        <tr><td>排序</td><td>按權重 sort（array 先比 w）</td><td class="mono">O(M log M)</td></tr>
+        <tr><td>分組掃 + DSU</td><td>每邊 find/union 各一次</td><td class="mono">O(M α(N))</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sc-formula">
+      <div class="sc-formula__main">T = <strong>O(M log M)</strong></div>
+      <div class="sc-formula__hint">排序主導；DSU 的 α(N) 近乎常數</div>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>項目</th><th>數量</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>Time</td><td class="mono"><strong>O(M log M)</strong></td><td>M=3×10⁵ ⇒ 實測約 1 秒</td></tr>
+        <tr><td>Space</td><td class="mono"><strong>O(N + M)</strong></td><td>es 陣列 + par/rnk + 候選暫存</td></tr>
+        <tr><td>候選暫存</td><td class="mono">O(類別大小)</td><td>每組重用一個 vector</td></tr>
+        <tr><td>數值型別</td><td class="mono">long long</td><td>w ≤ 10⁹ 排序鍵、deletions 累加都用 ll</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — Pitfalls
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">03</span>
+      <h2 class="sc-section__title">邊界與陷阱<span class="sc-section__title-en">// Pitfalls</span></h2>
+    </div>
+
+    <table class="sc-table">
+      <thead><tr><th>陷阱</th><th>說明 / 解法</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>先收集再合併</strong></td>
+          <td>同一權重組必須<strong>先把所有候選邊收集完（用組前的 DSU 判 find）</strong>，再統一 union。邊掃邊 union 會讓組內互相平行的冗餘邊被前一條提早合併、漏算刪除數。</td>
+        </tr>
+        <tr>
+          <td><strong>候選 = 不同塊</strong></td>
+          <td>只有 <code>find(u) ≠ find(v)</code> 的邊才算候選。兩端早已同塊（被更輕的邊連起）的邊不影響 MST，<strong>不算進冗餘</strong>。</td>
+        </tr>
+        <tr>
+          <td><strong>冗餘 = 候選 − 合併</strong></td>
+          <td>一組 c 條候選只需 merges 次合併 ⇒ 多出 <code>c − merges</code> 條是選擇來源，全刪。</td>
+        </tr>
+        <tr>
+          <td><strong>不改最小花費</strong></td>
+          <td>刪的都是「同權重多餘候選」，不影響每個權重的合併次數 ⇒ 最小花費保證不變。</td>
+        </tr>
+        <tr>
+          <td><strong>權重相同才同組</strong></td>
+          <td>分組依據是<strong>權重值相等</strong>，不是排序後相鄰。用 <code>while (es[j][0]==w)</code> 切組。</td>
+        </tr>
+        <tr>
+          <td><strong>I/O 速度</strong></td>
+          <td>M 達 3×10⁵ ⇒ <code>sync_with_stdio(false); cin.tie(nullptr);</code> 必加。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — 細節走讀
+       ============================================================ -->
+  <section class="sc-section">
+    <div class="sc-section__head">
+      <span class="sc-section__num">04</span>
+      <h2 class="sc-section__title">細節走讀<span class="sc-section__title-en">// Section Walkthrough</span></h2>
+    </div>
+
+    <p><strong>① 讀邊 + 排序</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// read & sort</span>
+es[i] = {w, u, v}          ← w 放最前，sort 先比權重
+sort(es)                   ← 由小到大</pre>
+
+    <p><strong>② 切權重類別</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// group by weight</span>
+i = 0
+while i &lt; M:
+    j = i; w = es[i].w
+    while j &lt; M and es[j].w == w: j++   ← [i, j) 同權重</pre>
+
+    <p><strong>③ 收集候選（用組前 DSU 判定）</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// collect candidates (關鍵)</span>
+cand = []
+for e in [i, j):
+    if find(u) != find(v):     ← 此刻 DSU 還沒被本組合併過
+        cand.push_back((u, v))</pre>
+
+    <p><strong>④ 合併 + 數冗餘</strong></p>
+    <pre class="sc-trace"><span class="sc-trace__head">// merge & count</span>
+merges = 0
+for (u, v) in cand:
+    if unite(u, v): merges++    ← 真正造成合併
+deletions += |cand| - merges    ← 冗餘 = 候選 − 合併
+i = j</pre>
+  </section>
+
+  <!-- ============================================================
+       PAGER
+       ============================================================ -->
+  <div class="sc-pager">
+    <a href="index.html" class="sc-pager__item sc-pager__item--prev">
+      <span class="sc-pager__label">PREV</span>
+      <span class="sc-pager__title">PAGE 1 · 演算法概念</span>
+    </a>
+    <a href="review.html" class="sc-pager__item sc-pager__item--next">
+      <span class="sc-pager__label">NEXT</span>
+      <span class="sc-pager__title">PAGE 3 · 題目複習 + Trace</span>
+    </a>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="sc-summary-bar">
+    <div class="sc-summary-bar__label">ONE-LINE SUMMARY</div>
+    <div class="sc-summary-bar__body">排序分權重類別 → 先收集候選邊（不同塊）→ 合併數 merges → 加總 (候選 − merges) 冗餘。</div>
+    <div class="sc-summary-bar__detail">先收集再合併（不可邊掃邊 union）· 刪冗餘不改最小花費 · T = O(M log M)</div>
+  </div>
+
+</body>
+</html>
